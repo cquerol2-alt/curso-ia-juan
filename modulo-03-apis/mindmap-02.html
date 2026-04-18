@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: Temperature, Tokens y Messages</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #0f0f2e 100%); color: #e8e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; padding: 20px; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header { margin-bottom: 30px; text-align: center; }
+        .back-link { display: inline-block; margin-bottom: 20px; padding: 10px 20px; background: rgba(0, 240, 255, 0.1); border: 2px solid #00f0ff; color: #00f0ff; text-decoration: none; border-radius: 6px; font-weight: 600; transition: all 0.3s ease; }
+        .back-link:hover { background: rgba(0, 240, 255, 0.2); transform: translateX(-4px); }
+        h1 { font-size: 2.5em; margin: 20px 0 10px 0; background: linear-gradient(45deg, #00f0ff, #ff00e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .subtitle { font-size: 1.1em; color: #a0a0b8; margin-bottom: 30px; font-style: italic; }
+        .controls { margin-bottom: 25px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 12px 24px; border: 2px solid; border-radius: 6px; background: transparent; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1em; }
+        .btn-expand { border-color: #39ff14; color: #39ff14; }
+        .btn-expand:hover { background: rgba(57, 255, 20, 0.15); transform: scale(1.05); }
+        .btn-collapse { border-color: #ff00e5; color: #ff00e5; }
+        .btn-collapse:hover { background: rgba(255, 0, 229, 0.15); transform: scale(1.05); }
+        .mindmap { background: rgba(20, 20, 40, 0.6); border: 2px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 30px; overflow-x: auto; }
+        .tree-view { display: inline-block; min-width: 100%; font-size: 0.95em; }
+        .node { margin: 10px 0; padding: 15px 20px; background: rgba(30, 30, 50, 0.8); border-left: 4px solid; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; position: relative; display: flex; align-items: center; gap: 12px; }
+        .node:hover { background: rgba(40, 40, 60, 0.9); transform: translateX(8px); }
+        .node[data-level="0"] { border-left-color: #00f0ff; background: rgba(0, 240, 255, 0.08); font-size: 1.2em; font-weight: 700; padding: 20px 25px; margin: 20px 0; }
+        .node[data-level="0"]:hover { background: rgba(0, 240, 255, 0.15); box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
+        .node[data-level="1"] { border-left-color: #ff00e5; margin-left: 30px; font-weight: 600; }
+        .node[data-level="1"]:hover { box-shadow: 0 0 15px rgba(255, 0, 229, 0.2); }
+        .node[data-level="2"] { border-left-color: #39ff14; margin-left: 60px; font-weight: 500; }
+        .node[data-level="2"]:hover { box-shadow: 0 0 15px rgba(57, 255, 20, 0.2); }
+        .node[data-level="3"], .node[data-level="4"], .node[data-level="5"] { border-left-color: #ffd700; margin-left: 90px; font-weight: 400; font-size: 0.95em; }
+        .node[data-level="3"]:hover, .node[data-level="4"]:hover, .node[data-level="5"]:hover { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
+        .toggle { display: inline-block; width: 24px; height: 24px; background: rgba(0, 240, 255, 0.2); border: 2px solid #00f0ff; border-radius: 4px; text-align: center; line-height: 20px; font-weight: bold; color: #00f0ff; flex-shrink: 0; transition: all 0.2s ease; }
+        .toggle:hover { background: rgba(0, 240, 255, 0.4); transform: scale(1.1); }
+        .toggle.collapsed::before { content: "+"; }
+        .toggle.expanded::before { content: "−"; }
+        .toggle.empty { visibility: hidden; }
+        .node-content { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .node-title { font-weight: 600; color: #e8e8f0; }
+        .node-description { font-size: 0.85em; color: #a0a0b8; font-weight: 400; max-width: 800px; }
+        .hidden { display: none; }
+        .children { max-height: 10000px; overflow: hidden; transition: max-height 0.4s ease; }
+        .children.collapsed { max-height: 0; overflow: hidden; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .subtitle { font-size: 0.95em; }
+            .node { padding: 12px 15px; font-size: 0.85em; margin: 8px 0; gap: 10px; }
+            .node[data-level="0"] { padding: 16px 20px; font-size: 1em; }
+            .node[data-level="1"] { margin-left: 20px; }
+            .node[data-level="2"] { margin-left: 40px; }
+            .node[data-level="3"], .node[data-level="4"], .node[data-level="5"] { margin-left: 60px; }
+            .toggle { width: 20px; height: 20px; border-width: 1.5px; font-size: 0.9em; line-height: 17px; }
+            .node-title { font-size: 0.95em; }
+            .node-description { font-size: 0.8em; }
+            .controls { gap: 10px; }
+            .btn { padding: 10px 18px; font-size: 0.9em; }
+        }
+        .footer { text-align: center; margin-top: 40px; color: #606078; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="clase-02.html" class="back-link">← Volver a Clase 02</a>
+            <h1>Mind Map: Temperature, Tokens y Messages</h1>
+            <p class="subtitle">Guía visual de los parámetros de la API de OpenAI</p>
+        </header>
+        <div class="controls">
+            <button class="btn btn-expand" onclick="expandAll()">📖 Expandir todo</button>
+            <button class="btn btn-collapse" onclick="collapseAll()">📕 Colapsar todo</button>
+        </div>
+        <div class="mindmap">
+            <div class="tree-view" id="mindmap"></div>
+        </div>
+        <div class="footer">
+            <p>Haz clic en los nodos para expandir/colapsar.</p>
+        </div>
+    </div>
+    <script>
+        const mindmapData = {
+            title: "Parámetros de la API de OpenAI",
+            description: "Guía completa de los parámetros principales para hacer llamadas a la API",
+            level: 0,
+            expanded: true,
+            children: [
+                {
+                    title: "Array de Messages",
+                    description: "Estructura que define el contexto y las instrucciones de la conversación",
+                    level: 1,
+                    expanded: true,
+                    children: [
+                        {
+                            title: "system",
+                            description: "Define la personalidad e instrucciones del asistente. Se envía una sola vez al inicio.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Ejemplo",
+                                    description: '"role": "system", "content": "Eres un asistente experto en Python"',
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Uso",
+                                    description: "Controla el tono, estilo y conocimiento del modelo. Crucial para resultados consistentes.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "user",
+                            description: "Mensajes enviados por el usuario. Pueden ser múltiples en una conversación.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Ejemplo",
+                                    description: '"role": "user", "content": "¿Cómo se crea una lista en Python?"',
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Características",
+                                    description: "Pueden contener preguntas, peticiones de código, solicitudes de análisis, etc.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "assistant",
+                            description: "Respuestas previas del modelo. Se incluyen para mantener contexto en la conversación.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Ejemplo",
+                                    description: '"role": "assistant", "content": "Una lista se crea con corchetes: [1, 2, 3]"',
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Propósito",
+                                    description: "Permite conversaciones multi-turno coherentes. El modelo recuerda lo que dijo antes.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    title: "Temperature (0.0 a 2.0)",
+                    description: "Controla la creatividad y aleatoriedad de las respuestas",
+                    level: 1,
+                    expanded: true,
+                    children: [
+                        {
+                            title: "0.0 = Determinista",
+                            description: "Siempre la misma respuesta. Perfecto para código, datos y hechos.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Casos de uso",
+                                    description: "Generación de código, extracción de datos, resúmenes factuales",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Ventaja",
+                                    description: "Respuestas predecibles y consistentes. Ideal para producción.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "0.7 = Balance (por defecto)",
+                            description: "Punto equilibrio entre coherencia y diversidad. Recomendado para chatbots generales.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Casos de uso",
+                                    description: "Chatbots, asistentes virtuales, preguntas y respuestas generales",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Ventaja",
+                                    description: "Buen balance: natural pero coherente. La opción más segura para empezar.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "1.5+ = Muy creativo",
+                            description: "Respuestas altamente variadas y creativas. Usa para brainstorming e ideas nuevas.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Casos de uso",
+                                    description: "Brainstorming, escritura creativa, poesía, generación de ideas nuevas",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Advertencia",
+                                    description: "Puede generar respuestas incoherentes o erróneas. No recomendado para producción.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    title: "max_tokens / max_completion_tokens",
+                    description: "Limita la longitud máxima de la respuesta generada",
+                    level: 1,
+                    expanded: true,
+                    children: [
+                        {
+                            title: "¿Qué es un token?",
+                            description: "Unidad de texto. Aproximadamente 1 token = 4 caracteres en inglés, ~3 en español.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Ejemplo",
+                                    description: '"Hola" = 1 token, "¿Cómo estás?" = 4-5 tokens',
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "Impacto en costo",
+                            description: "Más tokens = más caro. Reducir max_tokens reduce gastos en API.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Estrategia",
+                                    description: "Usa max_tokens bajo para resúmenes, medio para respuestas normales, alto para análisis profundos.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "Context window",
+                            description: "Límite total de tokens que el modelo puede procesar en una llamada.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "gpt-4o-mini",
+                                    description: "128,000 tokens (input + output)",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "gpt-4o",
+                                    description: "128,000 tokens (input + output)",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    title: "Otros parámetros importantes",
+                    description: "Parámetros adicionales para fine-tuning avanzado",
+                    level: 1,
+                    expanded: true,
+                    children: [
+                        {
+                            title: "top_p (Nucleus Sampling)",
+                            description: "Alternativa a temperature. Controla qué porcentaje de tokens más probables considerar.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Rango",
+                                    description: "0.0 a 1.0. Típicamente entre 0.8 y 0.95.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Uso",
+                                    description: "Usa top_p=0.9 para balance entre diversidad y coherencia. Evita cambiar temperatura y top_p juntos.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "frequency_penalty",
+                            description: "Penaliza palabras que ya han aparecido, reduciendo repetición.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Rango",
+                                    description: "-2.0 a 2.0. Por defecto 0 (sin penalización).",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Ejemplo",
+                                    description: "frequency_penalty=0.5 evita que el modelo repita la palabra 'por ejemplo' constantemente.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "presence_penalty",
+                            description: "Fomenta hablar de temas nuevos, castigando tópicos ya mencionados.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Rango",
+                                    description: "-2.0 a 2.0. Por defecto 0 (sin penalización).",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Diferencia con frequency_penalty",
+                                    description: "presence_penalty castiga palabras por ser mencionadas (sin importar cuántas veces), frequency_penalty castiga por repetición frecuente.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "stop sequences",
+                            description: "Secuencias de texto que hacen parar la generación en un punto concreto.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Ejemplo",
+                                    description: 'stop: ["\\n\\n", "Usuario:"] hace que pare en salto doble o cuando aparece "Usuario:"',
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Uso",
+                                    description: "Ideal para controlar formato de salida en conversaciones multi-turno.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "response_format (JSON Mode)",
+                            description: "Fuerza respuestas en formato JSON estructurado.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Ejemplo",
+                                    description: 'response_format: { "type": "json_object" } garantiza salida JSON válida.',
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Ventaja",
+                                    description: "Perfecto para APIs y procesamiento de datos. El modelo respeta la estructura.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    title: "Modelos disponibles",
+                    description: "Opciones de modelos para diferentes casos de uso",
+                    level: 1,
+                    expanded: true,
+                    children: [
+                        {
+                            title: "gpt-4o",
+                            description: "Modelo más potente y avanzado. Mejor comprensión y respuestas, pero más caro.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Cuándo usarlo",
+                                    description: "Tareas complejas, análisis profundo, razonamiento avanzado, multimodal (texto + imágenes).",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Limitación",
+                                    description: "Más caro (~10x gpt-4o-mini). Usa solo cuando realmente lo necesites.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "gpt-4o-mini",
+                            description: "Versión ligera, rápida y económica. Suficiente para el 90% de casos de uso.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Ventajas",
+                                    description: "Barato, rápido, 128K context window, muy competente. Recomendado para empezar.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Cuándo usarlo",
+                                    description: "Chatbots, resúmenes, análisis de datos, código simple, la mayoría de aplicaciones.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "gpt-3.5-turbo",
+                            description: "Modelo antiguo. Aún funciona pero no recomendado.",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Estado",
+                                    description: "Legacy. OpenAI sigue manteniéndolo pero incentiva migración a gpt-4o-mini.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                },
+                                {
+                                    title: "Recomendación",
+                                    description: "No lo uses en proyectos nuevos. Usa gpt-4o-mini en su lugar.",
+                                    level: 3,
+                                    expanded: false,
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        function renderNode(data, parentElement) {
+            const nodeEl = document.createElement('div');
+            nodeEl.className = 'node';
+            nodeEl.setAttribute('data-level', data.level);
+            const toggleEl = document.createElement('div');
+            toggleEl.className = 'toggle';
+            if (!data.children || data.children.length === 0) {
+                toggleEl.classList.add('empty');
+            } else {
+                toggleEl.classList.add(data.expanded ? 'expanded' : 'collapsed');
+                toggleEl.addEventListener('click', (e) => { e.stopPropagation(); toggleNode(nodeEl, data); });
+            }
+            const contentEl = document.createElement('div');
+            contentEl.className = 'node-content';
+            const titleEl = document.createElement('div');
+            titleEl.className = 'node-title';
+            titleEl.textContent = data.title;
+            contentEl.appendChild(titleEl);
+            if (data.description) {
+                const descEl = document.createElement('div');
+                descEl.className = 'node-description';
+                descEl.textContent = data.description;
+                contentEl.appendChild(descEl);
+            }
+            nodeEl.appendChild(toggleEl);
+            nodeEl.appendChild(contentEl);
+            nodeEl.addEventListener('click', (e) => {
+                if (data.children && data.children.length > 0 && (e.target === nodeEl || e.target === contentEl)) { toggleNode(nodeEl, data); }
+            });
+            parentElement.appendChild(nodeEl);
+            if (data.children && data.children.length > 0) {
+                const childrenEl = document.createElement('div');
+                childrenEl.className = 'children';
+                if (!data.expanded) { childrenEl.classList.add('collapsed'); }
+                data.children.forEach(child => { renderNode(child, childrenEl); });
+                parentElement.appendChild(childrenEl);
+            }
+            return nodeEl;
+        }
+
+        function toggleNode(nodeEl, data) {
+            data.expanded = !data.expanded;
+            const toggle = nodeEl.querySelector('.toggle');
+            toggle.classList.toggle('expanded');
+            toggle.classList.toggle('collapsed');
+            const childrenEl = nodeEl.nextElementSibling;
+            if (childrenEl && childrenEl.classList.contains('children')) { childrenEl.classList.toggle('collapsed'); }
+        }
+
+        function expandAll() { expandAllRecursive(mindmapData); renderMindmap(); }
+        function collapseAll() { collapseAllRecursive(mindmapData); renderMindmap(); }
+        function expandAllRecursive(node) { node.expanded = true; if (node.children) { node.children.forEach(child => expandAllRecursive(child)); } }
+        function collapseAllRecursive(node) { if (node.children && node.children.length > 0) { node.expanded = false; node.children.forEach(child => collapseAllRecursive(child)); } }
+        function renderMindmap() { const container = document.getElementById('mindmap'); container.innerHTML = ''; renderNode(mindmapData, container); }
+        document.addEventListener('DOMContentLoaded', () => { renderMindmap(); });
+    </script>
+</body>
+</html>

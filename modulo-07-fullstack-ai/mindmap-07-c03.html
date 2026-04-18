@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: Autenticación y Rate Limiting | Módulo 7</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            color: #00e676;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
+        }
+
+        header p {
+            color: #888;
+            font-size: 1.1em;
+        }
+
+        .mindmap-wrapper {
+            background: #111;
+            border: 2px solid #00e676;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .node {
+            margin-left: 0;
+        }
+
+        .node-title {
+            background: linear-gradient(135deg, #00e676 0%, #00c853 100%);
+            color: #000;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 230, 118, 0.3);
+        }
+
+        .node-title:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 16px rgba(0, 230, 118, 0.5);
+        }
+
+        .node-title.collapsed {
+            background: linear-gradient(135deg, #666 0%, #555 100%);
+            color: #e0e0e0;
+        }
+
+        .toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .node-content {
+            margin-left: 20px;
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            border-left: 3px solid #00e676;
+            padding-left: 15px;
+        }
+
+        .node-content.collapsed {
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .sub-node {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .sub-node:hover {
+            background: #242424;
+            border-color: #00e676;
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.2);
+        }
+
+        .sub-node-title {
+            font-weight: bold;
+            color: #00e676;
+            margin-bottom: 8px;
+        }
+
+        .sub-node-content {
+            color: #b0b0b0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .sub-node-content ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .sub-node-content li {
+            margin: 4px 0;
+        }
+
+        .sub-node-content code {
+            background: #0a0a0a;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #00e676;
+            font-size: 0.9em;
+            font-family: 'Courier New', monospace;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .footer a {
+            color: #00e676;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .mindmap-wrapper {
+                padding: 20px;
+            }
+
+            .node-content {
+                margin-left: 10px;
+                padding-left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧠 Mind Map: Autenticación y Rate Limiting</h1>
+            <p>Conceptos clave de seguridad en aplicaciones de IA — Módulo 7, Clase 03</p>
+        </header>
+
+        <div class="mindmap-wrapper">
+            <div class="mindmap">
+
+                <!-- Nodo 1: Autenticación -->
+                <div class="node">
+                    <div class="node-title" onclick="toggleNode(this)">
+                        <span>🔐 Autenticación: Identificar Usuarios</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="sub-node">
+                            <div class="sub-node-title">¿Por qué es crítica en apps de IA?</div>
+                            <div class="sub-node-content">
+                                <ul>
+                                    <li><strong>Proteger API keys:</strong> Nunca exponer credenciales en cliente</li>
+                                    <li><strong>Controlar costes:</strong> Cada request cuesta dinero, necesitas saber quién gasta</li>
+                                    <li><strong>Personalización:</strong> Guardar históricos, preferencias, contexto por usuario</li>
+                                    <li><strong>RGPD/CCPA:</strong> Cumplimiento normativo</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Auth.js (NextAuth)</div>
+                            <div class="sub-node-content">
+                                <strong>Qué proporciona:</strong>
+                                <ul>
+                                    <li>OAuth2 con múltiples proveedores (Google, GitHub, Discord...)</li>
+                                    <li>Email/Contraseña</li>
+                                    <li>Sesiones seguras (cookies httpOnly)</li>
+                                    <li>Middleware para proteger rutas</li>
+                                    <li>Callbacks personalizables</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Flujo OAuth Típico</div>
+                            <div class="sub-node-content">
+                                <ol style="margin-left: 20px; color: #b0b0b0;">
+                                    <li>Usuario selecciona proveedor (ej: Google)</li>
+                                    <li>Redirección a Google (autorizar acceso)</li>
+                                    <li>Google devuelve token de autorización</li>
+                                    <li>Auth.js crea sesión segura (cookie httpOnly)</li>
+                                    <li>Usuario puede acceder a rutas protegidas</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Sessions vs JWT</div>
+                            <div class="sub-node-content">
+                                <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+                                    <tr style="border-bottom: 1px solid #333; color: #00e676;">
+                                        <td style="padding: 4px; text-align: left;"><strong>Sessions</strong></td>
+                                        <td style="padding: 4px; text-align: left;"><strong>JWT</strong></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #333;">
+                                        <td style="padding: 4px;">✅ Más seguro</td>
+                                        <td style="padding: 4px;">📦 Stateless</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #333;">
+                                        <td style="padding: 4px;">✅ Fácil revocar</td>
+                                        <td style="padding: 4px;">⚡ Más escalable</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 4px;">Usa en: Next.js</td>
+                                        <td style="padding: 4px;">Usa en: APIs REST</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Instalación Rápida</div>
+                            <div class="sub-node-content">
+                                <code>npm install next-auth</code>
+                                <p style="margin-top: 8px;">Luego: crear <code>app/api/auth/[...nextauth]/route.ts</code> y configurar proveedores</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nodo 2: Rate Limiting -->
+                <div class="node">
+                    <div class="node-title" onclick="toggleNode(this)">
+                        <span>⏱️ Rate Limiting: Proteger tu Presupuesto</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="sub-node">
+                            <div class="sub-node-title">¿Qué es y por qué CRÍTICO?</div>
+                            <div class="sub-node-content">
+                                <strong>Definición:</strong> Controla cuántas requests puede hacer un usuario en un período (ej: 100/minuto)
+                                <br><br>
+                                <strong>¿Por qué es crítico?</strong>
+                                <ul>
+                                    <li>Cada request a OpenAI, Anthropic, etc. <strong>cuesta dinero</strong></li>
+                                    <li>Sin límites: atacante hace 10,000 requests = $10,000 en 1 minuto</li>
+                                    <li>DoS attack: hacer el servicio inusable para otros</li>
+                                    <li><strong>Obligatorio en producción</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Estrategias de Rate Limiting</div>
+                            <div class="sub-node-content">
+                                <ul>
+                                    <li><strong>Por Usuario:</strong> Cada account tiene cuota (ej: 1000/día). ✅ Justo | ⚠️ Requiere DB</li>
+                                    <li><strong>Por IP:</strong> Limitar por dirección origen. ✅ Rápido | ⚠️ Fácil de evadir</li>
+                                    <li><strong>Por API Key:</strong> Cada cliente obtiene clave con límite. ✅ Flexible | ⚠️ Gestión de claves</li>
+                                    <li><strong>Global:</strong> Límite total del servicio. ✅ Simple | ⚠️ Poco granular</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Implementación Básica (En Memoria)</div>
+                            <div class="sub-node-content">
+                                <code>Map&lt;userId, [timestamp1, timestamp2...]&gt;</code>
+                                <p style="margin-top: 8px;">Filtrar timestamps fuera de la ventana → si count >= limit → bloquear</p>
+                                <p style="margin-top: 8px; color: #888;"><strong>⚠️ Solo para desarrollo.</strong> Pierde datos si reinicia el servidor.</p>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Upstash: Rate Limiting en Producción</div>
+                            <div class="sub-node-content">
+                                <ul>
+                                    <li><strong>Redis serverless</strong> en la nube</li>
+                                    <li>Plan gratuito: 10,000 comandos/día</li>
+                                    <li>Integración perfecta con Next.js + Vercel</li>
+                                    <li>Muy rápido (Redis es ultrarrápido)</li>
+                                </ul>
+                                <code style="display: block; margin-top: 8px;">npm install @upstash/ratelimit redis</code>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">HTTP Status Codes</div>
+                            <div class="sub-node-content">
+                                <ul>
+                                    <li><code>429 Too Many Requests</code> — Rate limit excedido</li>
+                                    <li><code>401 Unauthorized</code> — No autenticado</li>
+                                    <li><code>403 Forbidden</code> — Permisos insuficientes</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nodo 3: Proteger una API Route -->
+                <div class="node">
+                    <div class="node-title" onclick="toggleNode(this)">
+                        <span>🛡️ Proteger una API Route (Full Stack)</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="sub-node">
+                            <div class="sub-node-title">Pasos Clave</div>
+                            <div class="sub-node-content">
+                                <ol style="margin-left: 20px;">
+                                    <li><strong>Autenticación:</strong> <code>const session = await getServerSession()</code></li>
+                                    <li><strong>Rate Limiting:</strong> <code>await checkRateLimit(userId)</code></li>
+                                    <li><strong>Operación costosa:</strong> Llamar a OpenAI (en servidor, API key protegida)</li>
+                                    <li><strong>Devolver resultado al cliente</strong></li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Puntos Críticos de Seguridad</div>
+                            <div class="sub-node-content">
+                                <ul>
+                                    <li>❌ NUNCA expongas API keys en cliente (JavaScript, HTML)</li>
+                                    <li>✅ SIEMPRE usa variables .env.local (no en Git)</li>
+                                    <li>✅ SIEMPRE verifica sesión antes de operación costosa</li>
+                                    <li>✅ SIEMPRE limita requests antes de llamar a APIs caras</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Middleware para Proteger Rutas</div>
+                            <div class="sub-node-content">
+                                Crea <code>middleware.ts</code> en la raíz:
+                                <p style="margin-top: 8px;">Define qué rutas necesitan autenticación: <code>/api/chat/:path*</code>, <code>/dashboard/:path*</code>, etc.</p>
+                                <p style="margin-top: 8px; color: #888;">Auth.js automáticamente redirige a signin si no hay sesión válida</p>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Ejemplo Mínimo de API Route Segura</div>
+                            <div class="sub-node-content">
+                                <code>app/api/chat/route.ts</code>
+                                <ol style="margin-left: 20px; margin-top: 8px;">
+                                    <li>Verificar sesión con <code>getServerSession()</code></li>
+                                    <li>Comprobar rate limit del usuario</li>
+                                    <li>Llamar a OpenAI con credenciales del servidor</li>
+                                    <li>Devolver respuesta</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nodo 4: Arquitectura de Seguridad -->
+                <div class="node">
+                    <div class="node-title" onclick="toggleNode(this)">
+                        <span>🏗️ Arquitectura de Seguridad Completa</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="sub-node">
+                            <div class="sub-node-title">Componentes</div>
+                            <div class="sub-node-content">
+                                <ul>
+                                    <li><strong>Cliente (Navegador):</strong> UI, login button, almacena solo cookie de sesión (httpOnly)</li>
+                                    <li><strong>Auth Server:</strong> Auth.js maneja login, devuelve sesión segura</li>
+                                    <li><strong>API Routes:</strong> Protegidas con getServerSession()</li>
+                                    <li><strong>Rate Limit Cache:</strong> Redis/Upstash para tracking rápido</li>
+                                    <li><strong>Secrets Server:</strong> OpenAI key, variables .env.local</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Flujo Típico de una Request Segura</div>
+                            <div class="sub-node-content">
+                                <ol style="margin-left: 20px;">
+                                    <li>Usuario hace request a <code>/api/chat</code></li>
+                                    <li>Middleware valida sesión (cookie)</li>
+                                    <li>API route llama a getServerSession()</li>
+                                    <li>Rate limit check en Upstash</li>
+                                    <li>Llamada a OpenAI (desde servidor, key protegida)</li>
+                                    <li>Devolver respuesta al cliente</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Variables de Entorno Necesarias</div>
+                            <div class="sub-node-content">
+                                <code>.env.local</code> (NO versionado):
+                                <ul style="margin-left: 20px; margin-top: 8px;">
+                                    <li><code>NEXTAUTH_URL=http://localhost:3000</code></li>
+                                    <li><code>NEXTAUTH_SECRET=aleatorio-secreto</code></li>
+                                    <li><code>GOOGLE_CLIENT_ID=xxxxx</code></li>
+                                    <li><code>GOOGLE_CLIENT_SECRET=xxxxx</code></li>
+                                    <li><code>OPENAI_API_KEY=sk-xxxxx</code></li>
+                                    <li><code>UPSTASH_REDIS_REST_URL=xxxxx</code></li>
+                                    <li><code>UPSTASH_REDIS_REST_TOKEN=xxxxx</code></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Checklist de Seguridad</div>
+                            <div class="sub-node-content">
+                                <ul>
+                                    <li>✓ Middleware protege rutas sensibles</li>
+                                    <li>✓ API keys en servidor, NUNCA en cliente</li>
+                                    <li>✓ Rate limiting antes de operaciones costosas</li>
+                                    <li>✓ Sesiones con httpOnly (no accesibles desde JS)</li>
+                                    <li>✓ NEXTAUTH_SECRET en producción (aleatorio, largo)</li>
+                                    <li>✓ .env.local en .gitignore</li>
+                                    <li>✓ Logging de requests para auditoría</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nodo 5: Errores Comunes -->
+                <div class="node">
+                    <div class="node-title" onclick="toggleNode(this)">
+                        <span>⚠️ Errores Comunes a Evitar</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="node-content">
+                        <div class="sub-node">
+                            <div class="sub-node-title">Error #1: API Key en Cliente</div>
+                            <div class="sub-node-content">
+                                ❌ <code>const response = await fetch('openai', { headers: { 'Authorization': 'Bearer ' + process.env.OPENAI_API_KEY } })</code>
+                                <br><br>
+                                ✅ <code>const response = await fetch('/api/chat', { method: 'POST', body: JSON.stringify({ message }) })</code>
+                                <p style="margin-top: 8px; color: #f44336;"><strong>process.env en el cliente es accesible a cualquiera que abra DevTools.</strong></p>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Error #2: Sin Rate Limiting</div>
+                            <div class="sub-node-content">
+                                ❌ Aceptar requests sin límite
+                                <br><br>
+                                ✅ Implementar rate limit ANTES de operación costosa
+                                <p style="margin-top: 8px; color: #f44336;"><strong>Costo: $10,000 en 1 minuto si alguien spam 10,000 requests.</strong></p>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Error #3: Saltar Validación de Sesión</div>
+                            <div class="sub-node-content">
+                                ❌ Asumir que si llegó a la API, el usuario está autenticado
+                                <br><br>
+                                ✅ <strong>SIEMPRE</strong> llamar a <code>getServerSession()</code>
+                                <p style="margin-top: 8px; color: #f44336;"><strong>Alguien podría hacer requests directas a tu API sin pasar por el cliente.</strong></p>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Error #4: Rate Limit en Memoria</div>
+                            <div class="sub-node-content">
+                                ❌ Usar un Map en memoria en producción
+                                <br><br>
+                                ✅ Usar Upstash o Redis persistente
+                                <p style="margin-top: 8px; color: #f44336;"><strong>Al reiniciar el servidor, se pierden todos los límites.</strong></p>
+                            </div>
+                        </div>
+
+                        <div class="sub-node">
+                            <div class="sub-node-title">Error #5: NEXTAUTH_SECRET Débil</div>
+                            <div class="sub-node-content">
+                                ❌ <code>NEXTAUTH_SECRET=abc123</code>
+                                <br><br>
+                                ✅ <code>NEXTAUTH_SECRET=</code> (generar con: <code>openssl rand -base64 32</code>)
+                                <p style="margin-top: 8px; color: #f44336;"><strong>Token débil = sesiones falsificables.</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Mind map interactivo | <a href="clase-03.html">← Volver a Clase 03</a></p>
+        </div>
+    </div>
+
+    <script>
+        function toggleNode(element) {
+            const icon = element.querySelector('.toggle-icon');
+            const content = element.nextElementSibling;
+
+            element.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
+
+        // Cerrar todos los nodos por defecto
+        document.querySelectorAll('.node-title').forEach(title => {
+            title.classList.add('collapsed');
+            title.nextElementSibling.classList.add('collapsed');
+            title.querySelector('.toggle-icon').classList.add('collapsed');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 03: CrewAI — Crea un Equipo de Agentes que Colaboran</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="../index.html">Dashboard</a> >
+        <a href="index.html">Módulo 6</a> >
+        <span>Clase 03</span>
+    </nav>
+
+    <main>
+        <!-- Header -->
+        <header class="course-header">
+            <h1>Clase 03: CrewAI — Crea un Equipo de Agentes que Colaboran</h1>
+            <p class="subtitle">📅 Semana 8 — Miércoles | ⏱️ 45 minutos</p>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2>📹 Vídeo: CrewAI Crash Course</h2>
+            <p>En este vídeo, Alejandro AO nos introduce a CrewAI: cómo crear un equipo de agentes IA que colaboran entre sí para resolver problemas complejos.</p>
+
+            <div class="warning" style="margin-top: 12px; border-left: 3px solid #ffe600;">
+                <strong>⚠️ Contexto v2:</strong> CrewAI es un framework alto-nivel para equipos de agentes. Útil para ver el patrón "rol + task + herramientas + equipo", pero la filosofía canónica del curso es <strong>Anthropic SDK directo con agentic loops</strong> (clases 01 y 02). Quédate con los conceptos (agentes con rol, delegación, colaboración) y, para proyectos reales, implementa esos patrones tú mismo con el SDK — más control, menos dependencias, más barato.
+            </div>
+
+            <div class="video-wrapper">
+                <iframe width="100%" height="500" src="https://www.youtube.com/embed/kBXYFaZ0EN0" title="CrewAI Crash Course" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-06-c03.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- Recursos Complementarios -->
+        <section class="card">
+            <h2>🔗 Recursos Complementarios</h2>
+            <ul>
+                <li>
+                    <strong>DeepLearning.AI Short Course:</strong>
+                    <a href="https://www.deeplearning.ai/short-courses/multi-ai-agent-systems-with-crewai/" target="_blank">
+                        Multi-AI Agent Systems with CrewAI
+                    </a>
+                    — Curso oficial gratis de DeepLearning.AI (1-2 horas)
+                </li>
+                <li>
+                    <strong>Documentación oficial:</strong>
+                    <a href="https://docs.crewai.com/" target="_blank">docs.crewai.com</a>
+                </li>
+                <li>
+                    <strong>GitHub:</strong>
+                    <a href="https://github.com/joaomdmoura/crewAI" target="_blank">crewAI repository</a>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Resumen de Conceptos -->
+        <section class="card">
+            <h2>📚 Resumen de Conceptos Clave</h2>
+
+            <div class="info-box">
+                <h3>¿Qué es CrewAI?</h3>
+                <p>CrewAI es un framework de código abierto en Python para construir <strong>sistemas multi-agente</strong> donde varios agentes IA colaboran entre sí. A diferencia de un único agente, CrewAI permite orquestar equipos completos que trabajan juntos, delegando tareas y compartiendo información.</p>
+            </div>
+
+            <h3>Conceptos Clave</h3>
+            <div class="info-box">
+                <h4>Agent (Agente)</h4>
+                <p>Entidad autónoma con:</p>
+                <ul>
+                    <li><strong>Role:</strong> Su función en el equipo (ej: "Researcher", "Writer")</li>
+                    <li><strong>Goal:</strong> Su objetivo principal</li>
+                    <li><strong>Backstory:</strong> Contexto y personalidad que define cómo actúa</li>
+                    <li><strong>Tools:</strong> Herramientas que puede usar (búsqueda, web scraping, archivos, etc.)</li>
+                    <li><strong>Memory:</strong> Acceso a memoria corta y larga para aprender del contexto</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h4>Task (Tarea)</h4>
+                <p>Trabajo específico asignado a un agente:</p>
+                <ul>
+                    <li><strong>Description:</strong> Qué debe hacer</li>
+                    <li><strong>Expected Output:</strong> Qué esperas que devuelva (estructura y contenido)</li>
+                    <li><strong>Agent:</strong> Qué agente ejecuta la tarea</li>
+                    <li><strong>Tools:</strong> Herramientas específicas para esta tarea</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h4>Crew (Equipo)</h4>
+                <p>Orquestador que coordina múltiples agentes y tareas:</p>
+                <ul>
+                    <li><strong>Agents:</strong> Lista de agentes en el equipo</li>
+                    <li><strong>Tasks:</strong> Secuencia de tareas a ejecutar</li>
+                    <li><strong>Process:</strong> Cómo se ejecutan las tareas (Sequential o Hierarchical)</li>
+                    <li><strong>Verbose:</strong> Mostrar logs detallados durante la ejecución</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h4>Tools (Herramientas)</h4>
+                <p>CrewAI proporciona herramientas integradas:</p>
+                <ul>
+                    <li><strong>SerperDevTool:</strong> Buscar en Google (requiere API key gratis)</li>
+                    <li><strong>ScrapeWebsiteTool:</strong> Extraer contenido de páginas web</li>
+                    <li><strong>FileReadTool:</strong> Leer archivos locales</li>
+                    <li><strong>FileWriteTool:</strong> Crear/escribir archivos</li>
+                    <li><strong>DirectoryReadTool:</strong> Listar contenido de directorios</li>
+                    <li><strong>CodeInterpreterTool:</strong> Ejecutar código Python</li>
+                    <li><strong>Custom Tools:</strong> Puedes crear herramientas propias con @tool decorator</li>
+                </ul>
+            </div>
+
+            <h3>Procesos de Ejecución</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1em;">
+                <thead>
+                    <tr style="background-color: rgba(0, 240, 255, 0.15); color: white;">
+                        <th style="padding: 12px; text-align: left;">Proceso</th>
+                        <th style="padding: 12px; text-align: left;">Descripción</th>
+                        <th style="padding: 12px; text-align: left;">Cuándo Usar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--border-glow);">
+                        <td style="padding: 12px;"><strong>Sequential</strong></td>
+                        <td style="padding: 12px;">Las tareas se ejecutan una tras otra, en orden. Cada tarea ve los resultados de la anterior.</td>
+                        <td style="padding: 12px;">Flujos lineales (ej: Investigar → Analizar → Escribir)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-glow);">
+                        <td style="padding: 12px;"><strong>Hierarchical</strong></td>
+                        <td style="padding: 12px;">Un agente "Manager" coordina y delega tareas a otros agentes. Útil para parallelización y toma de decisiones complejas.</td>
+                        <td style="padding: 12px;">Equipos grandes, problemas complejos que requieren coordinación</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-box" style="margin-top: 1.5em;">
+                <h4>Memory en CrewAI</h4>
+                <p>CrewAI soporta tres tipos de memoria:</p>
+                <ul>
+                    <li><strong>Short-term Memory:</strong> Lo que pasó en la conversación actual</li>
+                    <li><strong>Long-term Memory:</strong> Información persistente entre conversaciones (requiere base de datos)</li>
+                    <li><strong>Entity Memory:</strong> Recuerda entidades específicas (personas, empresas, etc.)</li>
+                </ul>
+            </div>
+
+            <div class="info-box" style="margin-top: 1em;">
+                <h4>Delegación</h4>
+                <p>Un agente puede pedir ayuda a otros agentes del equipo. Esto permite descomponer problemas complejos de forma elegante.</p>
+            </div>
+
+            <div class="info-box" style="margin-top: 1em;">
+                <h4>¿CrewAI vs Agente Único?</h4>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 0.5em;">
+                    <tr style="background-color: #1a1a3e; border-bottom: 1px solid rgba(0, 240, 255, 0.15);">
+                        <th style="padding: 8px; text-align: left;"><strong>Usa CrewAI cuando:</strong></th>
+                        <th style="padding: 8px; text-align: left;"><strong>Usa un Agente Único cuando:</strong></th>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-glow);">
+                        <td style="padding: 8px;">Necesitas múltiples especializaciones (investigador, escritor, analista)</td>
+                        <td style="padding: 8px;">La tarea es simple y centralizada</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-glow);">
+                        <td style="padding: 8px;">Las tareas son secuenciales o requieren coordinación</td>
+                        <td style="padding: 8px;">Un agente puede hacer todo bien</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-glow);">
+                        <td style="padding: 8px;">Quieres explicabilidad (ver qué hace cada agente)</td>
+                        <td style="padding: 8px;">Buscas máxima velocidad y simpleza</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px;">El workflow es complejo y se beneficia de separación de responsabilidades</td>
+                        <td style="padding: 8px;">Los costos de tokens son críticos (CrewAI añade overhead)</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- Práctica Guiada -->
+        <section class="card">
+            <h2>🚀 Práctica Guiada: Tu Primer Crew</h2>
+
+            <div class="tip">
+                <strong>Objetivo:</strong> Crear un equipo de 2 agentes que investiga un tema y escribe un artículo.
+            </div>
+
+            <h3>Step 1: Instalación</h3>
+            <div class="info-box">
+                <p>Abre tu terminal y ejecuta:</p>
+                <pre><code>pip install crewai crewai-tools</code></pre>
+                <p style="margin-top: 0.5em; font-size: 0.9em; color: var(--text-muted)acc;">Opcionalmente, si quieres usar búsqueda web, también instala: <code>pip install serper-dev</code></p>
+            </div>
+
+            <h3>Step 2: Crear un Agente Simple (Researcher)</h3>
+            <div class="info-box">
+                <p>Crea un archivo <code>crew_example.py</code>:</p>
+                <pre><code>from crewai import Agent, Task, Crew
+from crewai_tools import SerperDevTool, ScrapeWebsiteTool
+
+# Definir herramientas
+search_tool = SerperDevTool()
+scrape_tool = ScrapeWebsiteTool()
+
+# Crear agente Researcher
+researcher = Agent(
+    role='Researcher',
+    goal='Investigar temas en profundidad y recopilar información relevante',
+    backstory='''Eres un investigador experiente con años de experiencia
+    en búsqueda de información. Sabes cómo encontrar fuentes confiables
+    y extraer los puntos clave de cualquier tema.''',
+    tools=[search_tool, scrape_tool],
+    verbose=True
+)
+
+print("✓ Agente Researcher creado")</code></pre>
+            </div>
+
+            <h3>Step 3: Crear un Crew con 2 Agentes</h3>
+            <div class="info-box">
+                <p>Añade a tu archivo (debajo del agente Researcher):</p>
+                <pre><code># Crear agente Writer
+writer = Agent(
+    role='Writer',
+    goal='Escribir artículos claros, bien estructurados y atractivos',
+    backstory='''Eres un escritor profesional especializado en crear
+    contenido que enganche a la audiencia. Transformas información
+    compleja en artículos claros y amenos.''',
+    tools=[],
+    verbose=True
+)
+
+# Crear tareas
+research_task = Task(
+    description='''Investiga sobre "Inteligencia Artificial Generativa en 2025".
+    Busca:
+    - Tendencias principales
+    - Aplicaciones prácticas
+    - Desafíos y oportunidades
+    Recopila al menos 5 puntos clave.''',
+    expected_output='''Un informe estructurado con al menos 5 puntos clave
+    sobre IA Generativa en 2025, con fuentes.''',
+    agent=researcher
+)
+
+writing_task = Task(
+    description='''Basándote en la investigación del Researcher,
+    escribe un artículo de 500-700 palabras sobre
+    "Inteligencia Artificial Generativa en 2025".
+    Estructura: Introducción, 3-4 secciones principales, Conclusión.''',
+    expected_output='''Un artículo bien escrito, estructurado y listo
+    para publicar en un blog.''',
+    agent=writer
+)
+
+# Crear el Crew (Sequential)
+crew = Crew(
+    agents=[researcher, writer],
+    tasks=[research_task, writing_task],
+    process='sequential',
+    verbose=True
+)
+
+# Ejecutar
+result = crew.kickoff()
+print("\n" + "="*60)
+print("ARTÍCULO FINAL:")
+print("="*60)
+print(result)</code></pre>
+            </div>
+
+            <h3>Step 4: Ejecutar tu Primer Crew</h3>
+            <div class="info-box">
+                <p>En la terminal:</p>
+                <pre><code>python crew_example.py</code></pre>
+                <p style="margin-top: 0.5em; color: var(--text-muted)acc;"><strong>Nota:</strong> La ejecución tardará 30-60 segundos. Verás los logs de cada agente trabajando.</p>
+            </div>
+
+            <h3>Step 5: Añadir Más Complejidad (Hierarchical)</h3>
+            <div class="info-box">
+                <p>Para un crew más avanzado con un Manager:</p>
+                <pre><code># Crear Manager
+manager = Agent(
+    role='Manager',
+    goal='Coordinar el equipo para producir un artículo de excelente calidad',
+    backstory='''Eres un manager experimentado que sabe cómo delegar
+    y coordinar a especialistas. Tu objetivo es que el trabajo
+    final supere las expectativas.''',
+    verbose=True
+)
+
+# Crear el Crew (Hierarchical)
+crew = Crew(
+    agents=[manager, researcher, writer],
+    tasks=[research_task, writing_task],
+    process='hierarchical',
+    manager_agent=manager,
+    verbose=True
+)
+
+result = crew.kickoff()</code></pre>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ Importante:</strong> Para usar <code>SerperDevTool</code>, necesitas una API key gratuita de <a href="https://serper.dev/" target="_blank">serper.dev</a>. Guárdala como variable de entorno: <code>export SERPER_API_KEY="tu_clave"</code>
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>💡 Consejo:</strong> Empieza sin herramientas (tools=[]), luego añádelas gradualmente. Así ves cómo funciona la arquitectura básica antes de complejidad.
+            </div>
+        </section>
+
+        <!-- Mini-Reto -->
+        <section class="card" style="background-color: rgba(0, 240, 255, 0.06); border-left: 4px solid #00e676;">
+            <h2>🎯 Mini-Reto: Crew de Análisis Tecnológico</h2>
+            <p>Crea un crew de <strong>3 agentes</strong> que trabaje juntos:</p>
+
+            <ol>
+                <li>
+                    <strong>Researcher:</strong> Investiga sobre un tema tech (ej: "Quantum Computing en 2025")
+                </li>
+                <li>
+                    <strong>Analyst:</strong> Analiza los hallazgos y extrae insights sobre tendencias e impacto
+                </li>
+                <li>
+                    <strong>Writer:</strong> Escribe un blog post de 800+ palabras con análisis y conclusiones
+                </li>
+            </ol>
+
+            <p style="margin-top: 1em;"><strong>Requisitos:</strong></p>
+            <ul>
+                <li>Cada agente debe tener role, goal y backstory únicos</li>
+                <li>Las tareas deben encadenarse (sequential): Researcher → Analyst → Writer</li>
+                <li>El Writer debe recibir y refinar el trabajo del Analyst</li>
+                <li>Imprime el resultado final</li>
+            </ul>
+
+            <p style="margin-top: 1em;"><strong>Bonus:</strong> Crea un segundo crew con <code>process='hierarchical'</code> y añade un Manager. Compara los resultados.</p>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📤</span>
+                Entrega de ejercicios
+            </h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: CrewAI - Equipo de 2 agentes</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-1" rows="4" placeholder="Explicación de cómo colaboran los agentes..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-c03', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>🎯 Entregar reto: Crew de Análisis Tecnológico (3 agentes)</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega tu código del crew (Researcher + Analyst + Writer)..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Ejemplo de ejecución: informe técnico final sobre la tecnología elegida (ej: Quantum Computing en 2025)..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-c03', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Test de Conocimiento -->
+        <section class="card">
+            <h2>✅ Test de Conocimiento</h2>
+            <p>Responde las siguientes preguntas para consolidar tu aprendizaje:</p>
+
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Navegación -->
+        <nav class="clase-nav">
+            <a href="clase-02.html" class="nav-prev">← Clase 02</a>
+            <a href="clase-04.html" class="nav-next">Clase 04 →</a>
+        </nav>
+    </main>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es la diferencia principal entre CrewAI y un único agente?",
+                options: [
+                    "CrewAI solo funciona con APIs gratuitas",
+                    "CrewAI permite múltiples agentes especializados que colaboran",
+                    "CrewAI es más rápido porque ejecuta tareas en paralelo",
+                    "No hay diferencia real, es solo un nombre"
+                ],
+                correct: 1,
+                explanation: "CrewAI permite crear equipos de múltiples agentes especializados que pueden colaborar, delegarse tareas y compartir información. Un agente único es menos flexible para workflows complejos."
+            },
+            {
+                question: "¿Qué son las 3 partes fundamentales de un Agent en CrewAI?",
+                options: [
+                    "Name, Type, Skills",
+                    "Role, Goal, Backstory",
+                    "Input, Process, Output",
+                    "Agent, Task, Crew"
+                ],
+                correct: 1,
+                explanation: "Un Agent requiere Role (función), Goal (objetivo) y Backstory (contexto/personalidad). Opcionalmente también tiene Tools y Memory."
+            },
+            {
+                question: "¿Cuál es la diferencia entre 'Sequential' y 'Hierarchical' processes?",
+                options: [
+                    "Sequential es más rápido, Hierarchical es más lento",
+                    "Sequential ejecuta tareas una tras otra; Hierarchical usa un Manager que coordina",
+                    "Hierarchical es obligatorio para todos los crews",
+                    "No hay diferencia, son palabras intercambiables"
+                ],
+                correct: 1,
+                explanation: "Sequential ejecuta tareas en orden lineal (Tarea1 → Tarea2 → Tarea3). Hierarchical asigna un Manager que coordina y puede paralelizar trabajo."
+            },
+            {
+                question: "¿Para qué sirve la herramienta SerperDevTool?",
+                options: [
+                    "Para escribir artículos automáticamente",
+                    "Para buscar información en Google (requiere API key)",
+                    "Para guardar datos en una base de datos",
+                    "Para convertir voz a texto"
+                ],
+                correct: 1,
+                explanation: "SerperDevTool integra la API de Serper (búsqueda en Google) en tus agentes. Requiere una API key gratuita de serper.dev."
+            },
+            {
+                question: "¿Qué hace un Task en CrewAI?",
+                options: [
+                    "Define cómo se estructura una carpeta",
+                    "Asigna trabajo específico a un agente con descripción y output esperado",
+                    "Guarda datos en la memoria del sistema",
+                    "Configura la conexión a la base de datos"
+                ],
+                correct: 1,
+                explanation: "Un Task es trabajo específico: tiene una description (qué hacer), expected_output (qué esperas recibir) y se asigna a un Agent concreto."
+            },
+            {
+                question: "¿Cuál es la función de Crew en CrewAI?",
+                options: [
+                    "Almacenar logs de errores",
+                    "Orquestar múltiples Agents y Tasks (definir orden, proceso, coordinación)",
+                    "Compilar código Python",
+                    "Gestionar licencias de software"
+                ],
+                correct: 1,
+                explanation: "Crew es el orquestador: reúne Agents y Tasks, define el proceso (Sequential/Hierarchical) y coordina toda la ejecución."
+            },
+            {
+                question: "¿Cuándo deberías usar CrewAI en lugar de un agente único?",
+                options: [
+                    "Solo cuando tienes mucho dinero",
+                    "Cuando necesitas múltiples especializaciones, tasks secuenciales, y explicabilidad",
+                    "Nunca, un agente es siempre mejor",
+                    "Cuando quieres escribir más código"
+                ],
+                correct: 1,
+                explanation: "CrewAI brilla cuando: (1) necesitas roles especializados, (2) hay workflows complejos, (3) quieres entender qué hace cada componente."
+            },
+            {
+                question: "¿Qué es Memory en CrewAI?",
+                options: [
+                    "El RAM de tu ordenador",
+                    "Acceso de los agentes a contexto previo (short-term, long-term, entity memory)",
+                    "Un archivo de configuración",
+                    "Un tipo de base de datos NoSQL"
+                ],
+                correct: 1,
+                explanation: "Memory permite a los agentes recordar: conversaciones actuales (short-term), aprendizajes previos (long-term), y entidades específicas (entity memory)."
+            },
+            {
+                question: "¿Qué significa 'Delegación' en CrewAI?",
+                options: [
+                    "Pasar todo el trabajo a otro programa",
+                    "Un agente pide ayuda a otro agente del equipo para resolver algo",
+                    "Eliminar tareas innecesarias",
+                    "Copiar código de otros proyectos"
+                ],
+                correct: 1,
+                explanation: "Delegación: un agente puede decir 'necesito ayuda de alguien más especializado' y pedir a otro agente del crew que contribuya."
+            },
+            {
+                question: "¿Cuál es el código correcto para iniciar un Crew?",
+                options: [
+                    "crew.start()",
+                    "crew.run()",
+                    "crew.kickoff()",
+                    "crew.execute()"
+                ],
+                correct: 2,
+                explanation: "El método para ejecutar un Crew es .kickoff(). Devuelve el resultado final del workflow."
+            }
+        ];
+
+        // Inicializar quiz y submission indicators
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm6-c03');
+        if (typeof CourseProgress !== 'undefined') {
+            CourseProgress.initSubmissionIndicators('m6-c03');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 03 - Preparar Entrevistas Técnicas de IA | Curso IA Juan</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .question-bank {
+            background: #1a1a3e;
+            border-left: 4px solid #00e676;
+            padding: 1.2em;
+            margin: 1.5em 0;
+            border-radius: 4px;
+        }
+        .question-bank h4 {
+            color: #00e676;
+            margin: 0.8em 0 0.5em 0;
+            font-size: 1em;
+        }
+        .question-bank p {
+            margin: 0.5em 0;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        .bank-category {
+            margin-bottom: 1.5em;
+        }
+        .bank-category strong {
+            color: #00e676;
+            display: block;
+            margin-bottom: 0.6em;
+            font-size: 1.05em;
+        }
+        .practice-task {
+            background: rgba(57, 255, 20, 0.08);
+            border-left: 4px solid #00e676;
+            padding: 1.2em;
+            margin: 1.5em 0;
+            border-radius: 4px;
+        }
+        .practice-task h4 {
+            color: #00e676;
+            margin-top: 0;
+        }
+        .practice-task ol {
+            margin: 0.8em 0;
+            padding-left: 1.5em;
+        }
+        .practice-task li {
+            margin: 0.5em 0;
+        }
+        .tip {
+            background: rgba(255, 107, 0, 0.08);
+            border-left: 3px solid #ff9800;
+            padding: 1em;
+            margin: 1.5em 0;
+            border-radius: 4px;
+        }
+        .tip strong {
+            color: #e65100;
+        }
+        .challenge-box {
+            background: rgba(255, 0, 229, 0.08);
+            border-left: 4px solid #e91e63;
+            padding: 1.2em;
+            margin: 1.5em 0;
+            border-radius: 4px;
+        }
+        .challenge-box h4 {
+            color: #e91e63;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 style="color: #00e676;">Clase 03: Preparar Entrevistas Técnicas de IA — Simulacro</h1>
+            <p class="subtitle">Módulo 09 - Empleabilidad y Carrera Tech</p>
+        </header>
+
+        <main>
+            <!-- Vídeo -->
+            <section class="card">
+                <h2>Cómo Destacar en una Entrevista de Trabajo como Desarrollador</h2>
+                <p>Vídeo de KeepCoding: estrategias, tips y ejemplos reales para brillar en entrevistas tech (77 min).</p>
+                <div class="video-wrapper">
+                    <iframe width="100%" height="450" src="https://www.youtube.com/embed/q5D4zfKdmTA"
+                        title="Cómo destacar en una entrevista de trabajo como desarrollador"
+                        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+                </div>
+            </section>
+
+            <!-- Tipos de Entrevista -->
+            <section>
+                <h2>1. Tipos de Entrevista en Empresas Tech en España</h2>
+                <p>Las entrevistas técnicas tienen estructuras diferentes según el tamaño de la empresa y el rol:</p>
+
+                <div>
+                    <h4>Screening Call (RRHH)</h4>
+                    <p><strong>Duración:</strong> 15-30 minutos</p>
+                    <p><strong>Enfoque:</strong> Motivación, disponibilidad, expectativas salariales, soft skills.</p>
+                    <p><strong>Tip:</strong> Prepara un pitch de 1 minuto sobre ti y por qué te interesa la vacante.</p>
+                </div>
+
+                <div>
+                    <h4>Entrevista Técnica</h4>
+                    <p><strong>Duración:</strong> 45-60 minutos</p>
+                    <p><strong>Enfoque:</strong> Preguntas conceptuales + ejercicio de live coding. Evalúan conocimiento y pensamiento en voz alta.</p>
+                    <p><strong>Tip:</strong> Piensa en voz alta. El proceso importa más que tener la respuesta perfecta.</p>
+                </div>
+
+                <div>
+                    <h4>Prueba Técnica en Casa</h4>
+                    <p><strong>Duración:</strong> 2-5 días para completar</p>
+                    <p><strong>Enfoque:</strong> Proyecto pequeño (backend, frontend, o IA). Evalúan código limpio, documentación, decisiones arquitectónicas.</p>
+                    <p><strong>Tip:</strong> Dedica tiempo a documentar tu código y explicar tus decisiones de diseño.</p>
+                </div>
+
+                <div>
+                    <h4>Entrevista Cultural Fit</h4>
+                    <p><strong>Duración:</strong> 30-45 minutos</p>
+                    <p><strong>Enfoque:</strong> Valores, trabajo en equipo, adaptación a la cultura de la empresa.</p>
+                    <p><strong>Tip:</strong> Investiga la misión y valores de la empresa antes de la entrevista.</p>
+                </div>
+
+                <div class="tip" style="margin-top: 1.5em;">
+                    <strong>📊 Número de rondas según empresa:</strong>
+                    <ul style="margin: 0.5em 0; padding-left: 1.5em;">
+                        <li><strong>Startups:</strong> 2-3 rondas (más ágil)</li>
+                        <li><strong>Empresas medianas:</strong> 3-4 rondas</li>
+                        <li><strong>Grandes empresas:</strong> 4-5 rondas (más formal)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Banco de Preguntas -->
+            <section>
+                <h2>2. Banco de Preguntas Frecuentes para AI Developer</h2>
+                <p>Aquí tienes las preguntas más comunes en entrevistas técnicas de IA. Estudia y prepara respuestas para cada una:</p>
+
+                <div class="bank-category">
+                    <strong>Conceptos de IA / LLMs</strong>
+
+                    <div>
+                        <h4>¿Qué es un LLM y cómo funciona?</h4>
+                        <p><strong>Respuesta clave:</strong> Large Language Model. Explica: tokens (unidades de texto), transformers (arquitectura), mecanismo de atención (cómo "entiende" el contexto), predicción de siguiente token.</p>
+                    </div>
+
+                    <div>
+                        <h4>¿Qué diferencia hay entre fine-tuning y RAG?</h4>
+                        <p><strong>Respuesta clave:</strong> Fine-tuning: reentrenar el modelo con datos específicos (lento, caro). RAG: alimentar al modelo con documentos externos en tiempo real (rápido, flexible). Use fine-tuning para patrones muy específicos; RAG para información actualizada.</p>
+                    </div>
+
+                    <div>
+                        <h4>¿Qué son los embeddings?</h4>
+                        <p><strong>Respuesta clave:</strong> Representaciones vectoriales de texto. Convertir palabras/frases en números (vectors) para que los modelos entienda similitud. Ejemplo: "gato" y "felino" tienen vectores parecidos.</p>
+                    </div>
+
+                    <div>
+                        <h4>¿Qué es la temperatura en un LLM?</h4>
+                        <p><strong>Respuesta clave:</strong> Parámetro (0-1) que controla creatividad. T=0: determinista (respuestas fijas). T=1: más variedad. Usa T baja para tareas lógicas; T alta para escritura creativa.</p>
+                    </div>
+
+                    <div>
+                        <h4>¿Explica qué es prompt engineering?</h4>
+                        <p><strong>Respuesta clave:</strong> Arte de escribir prompts efectivos. Técnicas: few-shot (ejemplos), chain-of-thought (pasos), system prompts (rol del modelo), instrucciones claras. Impacta directamente en calidad de respuestas.</p>
+                    </div>
+                </div>
+
+                <div class="bank-category">
+                    <strong>RAG (Retrieval-Augmented Generation)</strong>
+
+                    <div>
+                        <h4>¿Cómo implementarías un sistema RAG?</h4>
+                        <p><strong>Respuesta clave:</strong> Paso a paso: (1) Cargar documentos, (2) Dividir en chunks, (3) Generar embeddings, (4) Guardar en vector store, (5) En query: recuperar chunks similares, (6) Pasar al LLM con contexto, (7) Generar respuesta.</p>
+                    </div>
+
+                    <div>
+                        <h4>¿Qué es un vector store? Nombra algunos.</h4>
+                        <p><strong>Respuesta clave:</strong> Base de datos para almacenar embeddings. Ejemplos: ChromaDB (local, fácil), FAISS (Facebook, rápido), Pinecone (cloud), Weaviate, Milvus.</p>
+                    </div>
+
+                    <div>
+                        <h4>¿Cómo mejorarías las respuestas de un sistema RAG?</h4>
+                        <p><strong>Respuesta clave:</strong> (1) Reranking: ranking adicional de chunks recuperados. (2) Hybrid search: combinar búsqueda vectorial + keyword. (3) Chunking inteligente: mantener contexto en fragmentos. (4) Metadata filtering: filtrar por fecha, tipo, etc.</p>
+                    </div>
+                </div>
+
+                <div class="bank-category">
+                    <strong>APIs y Coding</strong>
+
+                    <div>
+                        <h4>¿Cómo funciona la API de OpenAI?</h4>
+                        <p><strong>Respuesta clave:</strong> REST API. Endpoint: POST /v1/chat/completions. Estructura: messages array (system, user, assistant), temperature, max_tokens. Respuesta: choices con finish_reason. Streaming disponible.</p>
+                    </div>
+
+                    <div>
+                        <h4>¿Qué es function calling / tool use?</h4>
+                        <p><strong>Respuesta clave:</strong> Permite que el LLM ejecute funciones. Defines funciones disponibles, LLM elige cuál llamar, tú ejecutas y devuelves resultado. Ej: LLM decide llamar a "get_weather(city)" y recibe temperatura actual.</p>
+                    </div>
+
+                    <div>
+                        <h4>¿Cómo protegerías una app de IA contra prompt injection?</h4>
+                        <p><strong>Respuesta clave:</strong> (1) Validar entrada del usuario. (2) Usar system prompts claros y que no se pueden sobrescribir. (3) Moderate API (contenido). (4) Guardrails: restricciones de temas. (5) Sandboxing de código generado.</p>
+                    </div>
+
+                    <div>
+                        <h4>Escribe una función que llame a la API de OpenAI con streaming</h4>
+                        <p><strong>Respuesta clave (Python):</strong></p>
+                        <pre style="background: #1a1a2e; padding: 1em; border-radius: 4px; overflow-x: auto;">
+from openai import OpenAI
+
+client = OpenAI(api_key="tu-key")
+
+def chat_stream(prompt):
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        stream=True
+    )
+    for chunk in response:
+        if chunk.choices[0].delta.content:
+            print(chunk.choices[0].delta.content, end="", flush=True)
+
+chat_stream("Explica qué es IA")
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="bank-category">
+                    <strong>Proyectos y Experiencia</strong>
+
+                    <div>
+                        <h4>Háblame de tu proyecto más desafiante</h4>
+                        <p><strong>Respuesta clave (Framework STAR):</strong></p>
+                        <ul style="margin: 0.5em 0; padding-left: 1.5em;">
+                            <li><strong>Situación:</strong> Contexto. Ej: "Empresa necesitaba chatbot para soporte"</li>
+                            <li><strong>Tarea:</strong> Tu responsabilidad. Ej: "Yo era responsable de implementar el RAG"</li>
+                            <li><strong>Acción:</strong> Qué hiciste. Ej: "Elegí ChromaDB, parseé 500 docs, fine-tuneé embeddings"</li>
+                            <li><strong>Resultado:</strong> Impacto medible. Ej: "Reducimos latencia 60%, precisión 95%"</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4>¿Qué harías diferente si empezaras tu proyecto RAG de cero?</h4>
+                        <p><strong>Respuesta clave:</strong> Muestra aprendizaje. Ej: "Empezaría con estrategia de chunking clara, metrics desde día 1, tests de calidad, documentaría decisiones".</p>
+                    </div>
+
+                    <div>
+                        <h4>¿Cómo escalarías tu chatbot a 1000 usuarios?</h4>
+                        <p><strong>Respuesta clave:</strong> Arquitectura: (1) Load balancer, (2) Cache de responses frecuentes, (3) Vector store escalable (Pinecone), (4) Queue para requests concurrentes, (5) Logging y monitoring, (6) CDN para assets.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cómo Responder Bien -->
+            <section>
+                <h2>3. Estrategias para Responder Bien</h2>
+
+                <div>
+                    <h4>Piensa en Voz Alta</h4>
+                    <p>El entrevistador quiere ver tu proceso, no solo la respuesta. Si dices "hmm, déjame pensar en esto paso a paso...", demuestra que razonas bien. Es normal no saber todo.</p>
+                </div>
+
+                <div>
+                    <h4>Si No Sabes Algo</h4>
+                    <p>Di: "No lo sé, pero investigaría X" o "He trabajado con Y pero no con Z". Honestidad + iniciativa es mejor que bullshit.</p>
+                </div>
+
+                <div>
+                    <h4>Framework STAR para Experiencias</h4>
+                    <p><strong>Situación → Tarea → Acción → Resultado</strong>. Cada respuesta sobre tu carrera debe seguir este patrón. Dados concretos (números, porcentajes) = más creíble.</p>
+                </div>
+
+                <div>
+                    <h4>Prepara 3 Preguntas para el Entrevistador</h4>
+                    <p>Ej: "¿Cómo es el equipo de IA en el día a día?", "¿Qué tech stack usan para RAG?", "¿Cuál fue tu reto más grande en este rol?". Demuestra interés y curiosidad genuina.</p>
+                </div>
+            </section>
+
+            <!-- Live Coding Tips -->
+            <section>
+                <h2>4. Tips para Live Coding</h2>
+
+                <div class="tip">
+                    <strong>Antes de empezar:</strong>
+                    <ul style="margin: 0.5em 0; padding-left: 1.5em;">
+                        <li>Lee el problema completo sin interrupciones</li>
+                        <li>Pregunta por edge cases y restricciones</li>
+                        <li>Pregunta qué lenguaje prefieres usar</li>
+                    </ul>
+                </div>
+
+                <div class="tip">
+                    <strong>Mientras codeas:</strong>
+                    <ul style="margin: 0.5em 0; padding-left: 1.5em;">
+                        <li>Explica tu pensamiento ("primero voy a validar entrada")</li>
+                        <li>Comenta tu código mientras escribes</li>
+                        <li>Empieza con pseudocódigo, luego implementa</li>
+                        <li>No te apures; calidad &gt; velocidad</li>
+                    </ul>
+                </div>
+
+                <div class="tip">
+                    <strong>Plataformas de práctica:</strong>
+                    <ul style="margin: 0.5em 0; padding-left: 1.5em;">
+                        <li><strong>LeetCode:</strong> Problemas algoritmos, nivel fácil-medio</li>
+                        <li><strong>HackerRank:</strong> Problemas estructurados por tema</li>
+                        <li><strong>Codewars:</strong> Gamificado, comunidad activa</li>
+                        <li><strong>CodinGame:</strong> Retos IA y lógica</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Simulacro Guiado -->
+            <section>
+                <h2>5. El Simulacro: Estructura Completa (45 min)</h2>
+                <p>Un simulacro de entrevista técnica real, para practicar bajo presión:</p>
+
+                <div>
+                    <h4>Fase 1: Preguntas Conceptuales (10 min)</h4>
+                    <p>El entrevistador elige 3-4 preguntas del banco de arriba y te pide que las expliques en voz alta. Énfasis en pensar en voz alta y comunicación clara.</p>
+                </div>
+
+                <div>
+                    <h4>Fase 2: Live Coding (20 min)</h4>
+                    <p>Problema típico: "Escribe una función que conecte con OpenAI API y devuelva respuestas con streaming". Código limpio, manejo de errores, testing.</p>
+                </div>
+
+                <div>
+                    <h4>Fase 3: Preguntas sobre Proyectos (10 min)</h4>
+                    <p>Explica 2-3 de tus proyectos usando framework STAR. Enfoque: qué aprendiste, retos, resultados.</p>
+                </div>
+
+                <div>
+                    <h4>Fase 4: Tus Preguntas (5 min)</h4>
+                    <p>Haz las 3 preguntas que preparaste. Escucha con atención, toma notas (demuestra interés).</p>
+                </div>
+            </section>
+
+            <!-- Práctica -->
+            <section>
+                <h2>6. Práctica Guiada</h2>
+                <p>Para consolidar, completa estas 5 tareas:</p>
+
+                <div class="practice-task">
+                    <h4>Tarea 1: Banco de Respuestas Escritas</h4>
+                    <p>Crea un documento (Google Docs o Word) con respuestas escritas para las 15 preguntas principales del banco. Objetivo: tener contenido de referencia para estudiar.</p>
+                </div>
+
+                <div class="practice-task">
+                    <h4>Tarea 2: Grabación de Respuestas</h4>
+                    <p>Coge tu teléfono. Elige 5 preguntas al azar del banco y grábate respondiendo en voz alta (sin leer de papeles). Objetivo: acostumbrarte a explicar con fluidez.</p>
+                </div>
+
+                <div class="practice-task">
+                    <h4>Tarea 3: Ejercicio Live Coding</h4>
+                    <p>Implementa en Python/JS una función que:</p>
+                    <ol style="margin: 0.5em 0;">
+                        <li>Conecte con OpenAI API</li>
+                        <li>Envíe un prompt del usuario</li>
+                        <li>Reciba respuesta con streaming</li>
+                        <li>Maneje errores (API down, rate limit, etc.)</li>
+                    </ol>
+                </div>
+
+                <div class="practice-task">
+                    <h4>Tarea 4: Framework STAR en Acción</h4>
+                    <p>Elige 3 proyectos propios (o del curso). Escribe + graba (2 min cada una) tu explicación usando STAR:</p>
+                    <ol style="margin: 0.5em 0;">
+                        <li><strong>S:</strong> ¿Cuál era el problema?</li>
+                        <li><strong>T:</strong> ¿Cuál fue tu rol?</li>
+                        <li><strong>A:</strong> ¿Qué hiciste?</li>
+                        <li><strong>R:</strong> ¿Cuál fue el resultado (medible)?</li>
+                    </ol>
+                </div>
+
+                <div class="practice-task">
+                    <h4>Tarea 5: Preguntas para el Entrevistador</h4>
+                    <p>Investiga 3 empresas tech (tamaño pequeño, mediano, grande). Para cada una, prepara 3 preguntas personalizadas basadas en su misión y tech stack.</p>
+                </div>
+            </section>
+
+            <!-- Challenge -->
+            <section>
+                <h2>7. Desafío Final</h2>
+
+                <div class="challenge-box">
+                    <h4>Simulacro Completo con Compañero/Familiar</h4>
+                    <p><strong>Objetivo:</strong> Replicar una entrevista real de 45 minutos.</p>
+                    <p><strong>Setup:</strong></p>
+                    <ol style="margin: 0.5em 0; padding-left: 1.5em;">
+                        <li>Busca un amigo, familiar o compañero</li>
+                        <li>Dale el banco de preguntas + la estructura de simulacro</li>
+                        <li>Que te pregunte aleatoriamente (Fase 1, 2, 3, 4)</li>
+                        <li>Graba todo (audio + vídeo si puedes)</li>
+                    </ol>
+                    <p><strong>Revisión:</strong> Mira la grabación. ¿Dónde no fue fluido? ¿Qué mejorar? ¿Qué pregunta te sorprendió?</p>
+                    <p><strong>Bonus:</strong> Repite el simulacro 2-3 veces con diferentes personas. Cada ronda será más confiado.</p>
+                </div>
+            </section>
+
+            <!-- Submission Section -->
+            <section>
+                <h2 style="color: #00e676;">📤 Envío de ejercicios</h2>
+                <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along" style="background: rgba(57, 255, 20, 0.08); border-left: 3px solid #00e676; padding: 1.5em; margin: 1.5em 0; border-radius: 4px;">
+                    <h4>📤 Entregar práctica: Banco de respuestas para entrevistas</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95em;">Crea un documento con respuestas escritas para las 15 preguntas principales del banco. Incluye ejemplos y explicaciones claras.</p>
+                    <textarea id="code-ejercicio-1" placeholder="Comparte: 1) Enlace a Google Docs o Word con tus respuestas, 2) Las 15 preguntas + respuestas desarrolladas, 3) Ejemplos prácticos donde aplique" rows="8"></textarea>
+                    <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                    <div class="submit-row">
+                        <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                        <button onclick="CourseProgress.submitExercise('m9-c03', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                    </div>
+                    <div id="submit-status-ejercicio-1" class="submit-status"></div>
+                </div>
+                <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto" style="background: rgba(57, 255, 20, 0.08); border-left: 3px solid #00e676; padding: 1.5em; margin: 1.5em 0; border-radius: 4px;">
+                    <h4>📤 Entregar práctica: Simulacro de entrevista técnica</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95em;">Realiza un simulacro completo de 45 minutos con un compañero/familiar. Graba video o audio. Incluye: preguntas conceptuales, live coding, proyectos STAR, tus preguntas.</p>
+                    <textarea id="code-ejercicio-2" placeholder="Comparte: 1) Enlace a video/audio del simulacro (Google Drive, etc.), 2) Duración y estructura (Q conceptuales, live coding, STAR, preguntas), 3) Autoevaluación: qué salió bien y qué mejorar" rows="8"></textarea>
+                    <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                    <div class="submit-row">
+                        <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                        <button onclick="CourseProgress.submitExercise('m9-c03', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                    </div>
+                    <div id="submit-status-ejercicio-2" class="submit-status"></div>
+                </div>
+            </section>
+
+            <!-- Quiz -->
+            <section>
+                <h2>Quiz: Entrevistas Técnicas de IA</h2>
+                <p>Demuestra que dominas los conceptos clave. Necesitas 8 o más respuestas correctas para pasar.</p>
+                <div id="quiz-container"></div>
+            </section>
+
+            <!-- Navegación -->
+            <nav class="bottom-nav">
+                <a href="clase-02.html" class="btn">← Clase 02</a>
+                <a href="../index.html" class="btn">Dashboard</a>
+                <a href="clase-04.html" class="btn btn-next">Clase 04 →</a>
+            </nav>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Curso IA Juan. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+
+        const quizQuestions = [
+            {
+                question: "¿Cuántos minutos dura típicamente un screening call?",
+                options: ["5-10 min", "15-30 min", "45-60 min", "2-5 días"],
+                correct: 1,
+                explanation: "Un screening call es una entrevista inicial con RRHH que dura entre 15 y 30 minutos. Se enfoca en motivación, disponibilidad y salario esperado."
+            },
+            {
+                question: "¿Cuál es la diferencia principal entre fine-tuning y RAG?",
+                options: [
+                    "Fine-tuning es más rápido",
+                    "RAG es más caro",
+                    "Fine-tuning reentierna el modelo; RAG alimenta documentos externos en tiempo real",
+                    "No hay diferencia"
+                ],
+                correct: 2,
+                explanation: "Fine-tuning requiere reentrenamiento del modelo (lento, caro). RAG recupera documentos externos en tiempo real (rápido, flexible). Usa fine-tuning para patrones específicos; RAG para información actualizada."
+            },
+            {
+                question: "¿Qué controla el parámetro 'temperatura' en un LLM?",
+                options: [
+                    "La precisión del modelo",
+                    "La velocidad de procesamiento",
+                    "Creatividad vs determinismo (0=fijo, 1=variado)",
+                    "El número de tokens"
+                ],
+                correct: 2,
+                explanation: "Temperatura (0-1) controla aleatoriedad. T=0 = determinista (respuestas idénticas). T=1 = creativo (respuestas variadas). Baja para lógica, alta para creatividad."
+            },
+            {
+                question: "¿Qué es un vector store?",
+                options: [
+                    "Una base de datos SQL",
+                    "Un servicio de almacenamiento en cloud",
+                    "Una base de datos para almacenar embeddings",
+                    "Una librería de Python"
+                ],
+                correct: 2,
+                explanation: "Vector store guarda embeddings (representaciones vectoriales) para búsqueda rápida. Ejemplos: ChromaDB, FAISS, Pinecone, Weaviate."
+            },
+            {
+                question: "¿Cuál es el framework recomendado para hablar de experiencias en entrevistas?",
+                options: [
+                    "ABC: Análisis, Beneficios, Conclusión",
+                    "STAR: Situación, Tarea, Acción, Resultado",
+                    "PQR: Problema, Que hiciste, Resultado",
+                    "XYZ: eXperiencia, Y después, siempre"
+                ],
+                correct: 1,
+                explanation: "STAR (Situación → Tarea → Acción → Resultado) es el framework estándar. Cada respuesta sobre experiencia debe seguir estos 4 pasos, con datos concretos."
+            },
+            {
+                question: "¿Qué deberías hacer antes de escribir código en un live coding?",
+                options: [
+                    "Empezar a codear inmediatamente",
+                    "Leer el problema completo y preguntar dudas",
+                    "Buscar soluciones en Google",
+                    "Escribir pseudocódigo sin preguntar"
+                ],
+                correct: 1,
+                explanation: "Siempre: (1) Lee completo, (2) Pregunta por edge cases y restricciones, (3) Elige lenguaje, (4) Empieza con pseudocódigo. El proceso importa más que la velocidad."
+            },
+            {
+                question: "¿Cómo protegerías una app de IA contra prompt injection?",
+                options: [
+                    "No hay forma de protegerse",
+                    "Validar entrada, usar system prompts claros, moderación, guardrails, sandboxing",
+                    "Usar cifrado",
+                    "Pedir contraseña al usuario"
+                ],
+                correct: 1,
+                explanation: "Múltiples capas: validar entrada, system prompts robustos (no sobrescribibles), API de moderación, guardrails (restricciones de temas), sandboxing de código generado."
+            },
+            {
+                question: "¿Cuántas rondas de entrevistas típicamente tiene una startup tech?",
+                options: ["1-2 rondas", "2-3 rondas", "4-5 rondas", "6+ rondas"],
+                correct: 1,
+                explanation: "Startups: 2-3 rondas (ágil). Medianas: 3-4. Grandes: 4-5 (más formal y exhaustivas)."
+            },
+            {
+                question: "¿Qué técnica de prompt engineering implica proporcionar ejemplos al modelo?",
+                options: [
+                    "Chain-of-thought",
+                    "Few-shot learning",
+                    "System prompt",
+                    "Temperature tuning"
+                ],
+                correct: 1,
+                explanation: "Few-shot: dar ejemplos de input-output para que el modelo entienda el patrón. Ej: 'Ejemplos: Input: gato → Output: felino. Input: perro → Output: canino. Ahora: Input: loro → Output: ?'"
+            },
+            {
+                question: "En el framework STAR, ¿qué representa 'R'?",
+                options: [
+                    "Riesgos identificados",
+                    "Recursos utilizados",
+                    "Resultado y impacto medible",
+                    "Responsabilidad del equipo"
+                ],
+                correct: 2,
+                explanation: "'R' = Resultado. Siempre con datos concretos: % mejora, tiempo ahorrado, usuarios impactados, etc. Ej: 'Reducimos latencia 60%, precisión 95%'."
+            }
+        ];
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm9-c03');
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm9-c03');
+        }
+    </script>
+</body>
+</html>

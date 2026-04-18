@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 04: Modelos Cerrados vs Open Source — Módulo 2</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <a href="index.html">Módulo 2</a>
+            <span> > </span>
+            <strong>Clase 04</strong>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <h1>Clase 04: Modelos Cerrados vs Open Source</h1>
+            <div class="subtitle">📅 Semana 3 — Jueves | 🎬 25 min vídeo + 💻 60 min práctica + 🧪 20 min test</div>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎬</span>
+                Vídeo de la lección
+            </h2>
+            <p>Mira esta introducción a Ollama y los modelos open-source. Entenderás por qué ejecutar IA en tu ordenador es cada vez más viable.</p>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/GyllRd2E6fg" allowfullscreen></iframe>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="info">
+                <strong>📌 Nota importante:</strong> Hoy no solo aprendes teoría: vas a correr un modelo de IA en TU ordenador con Ollama.
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue el ecosistema de modelos con el mind map visual en español.
+                <a href="mindmap-04.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📖</span>
+                Resumen
+            </h2>
+
+            <h3>El ecosistema de modelos de IA en 2026</h3>
+            <p>En 2026, tienes dos caminos principales para usar modelos de lenguaje: <strong>APIs propietarias</strong> (cerradas) u <strong>open-source</strong> (o "open weights"). Cada una tiene ventajas y limitaciones.</p>
+
+            <h3>Modelos Cerrados (Closed-Source)</h3>
+            <p>Son modelos desarrollados por grandes empresas y accesibles solo a través de APIs. Tú no tienes acceso al código ni a los pesos (parámetros) del modelo.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Comparativa de Modelos Cerrados</span>
+                <pre><code>┌─────────────────┬──────────┬────────────────────────────────┬──────────────────────────┐
+│ Modelo          │ Empresa  │ Ventajas                       │ Limitaciones             │
+├─────────────────┼──────────┼────────────────────────────────┼──────────────────────────┤
+│ GPT-4o          │ OpenAI   │ Muy capaz, multimodal          │ Caro para alto volumen   │
+│                 │          │ Ecosistema enorme              │ Datos en servidores      │
+│                 │          │                                │ ~$2.50/1M tokens input   │
+├─────────────────┼──────────┼────────────────────────────────┼──────────────────────────┤
+│ Claude 3.5      │ Anthropic│ Excelente en código            │ Menos ecosistema         │
+│ Sonnet          │          │ Muy buen razonamiento          │ ~$3/1M tokens input      │
+│                 │          │ Ventana 200K tokens            │                          │
+├─────────────────┼──────────┼────────────────────────────────┼──────────────────────────┤
+│ Gemini 1.5 Pro  │ Google   │ Ventana enorme (1M tokens)     │ Menos consistente        │
+│                 │          │ Integración Google Workspace   │ ~$1.25/1M tokens input   │
+│                 │          │                                │                          │
+└─────────────────┴──────────┴────────────────────────────────┴──────────────────────────┘</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Pro tip:</strong> Para un proyecto personal o startup, estas APIs son geniales. Para una empresa con datos sensibles o alto volumen, puede que necesites open source.
+            </div>
+
+            <h3>Modelos Open Source (Open Weights)</h3>
+            <p><strong>Open weights</strong> significa que los pesos (parámetros) del modelo están disponibles para descargar y usar libremente. No es lo mismo que código "open source" tradicional. Los pesos son el "cerebro" del modelo.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Comparativa de Modelos Open Source</span>
+                <pre><code>┌──────────────┬────────────┬────────────────────────────┬──────────────────────────┐
+│ Modelo       │ Empresa    │ Características            │ Ventajas                 │
+├──────────────┼────────────┼────────────────────────────┼──────────────────────────┤
+│ Llama 3.1    │ Meta       │ 8B, 70B, 405B parámetros  │ Muy capaz                │
+│              │            │                            │ Licencia permisiva       │
+│              │            │                            │ Comunitario              │
+├──────────────┼────────────┼────────────────────────────┼──────────────────────────┤
+│ Mistral      │ Mistral AI │ 7B, Mixtral 8x7B           │ Excelente rendimiento    │
+│              │            │                            │ Relación tamaño/calidad  │
+│              │            │                            │                          │
+├──────────────┼────────────┼────────────────────────────┼──────────────────────────┤
+│ Phi-3        │ Microsoft  │ 3.8B parámetros            │ Muy pequeño              │
+│              │            │                            │ Sorprendentemente capaz  │
+│              │            │                            │ Ideal para móvil/local   │
+├──────────────┼────────────┼────────────────────────────┼──────────────────────────┤
+│ Gemma 2      │ Google     │ 2B, 9B, 27B                │ Buenos para poca RAM     │
+│              │            │                            │ Eficientes               │
+│              │            │                            │                          │
+└──────────────┴────────────┴────────────────────────────┴──────────────────────────┘</code></pre>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ Advertencia importante:</strong> Open source no significa gratis en producción. Necesitas servidores (GPU) para correrlos. Pero tienes control total de tus datos y evitas dependencia de un proveedor.
+            </div>
+
+            <h3>¿Cuándo usar cada tipo?</h3>
+
+            <div class="code-block">
+                <span class="lang-label">Marco de decisión</span>
+                <pre><code>USA API CERRADA si:
+  ✓ Necesitas un prototipo rápido
+  ✓ No tienes GPU disponible
+  ✓ Quieres el modelo más potente en este momento
+  ✓ Tus datos no son sensibles/confidenciales
+  ✓ Puedes pagar por uso (pago por token)
+
+USA OPEN SOURCE si:
+  ✓ Trabajas con datos sensibles/privados
+  ✓ Quieres control total del modelo
+  ✓ Quieres evitar dependencia de un proveedor
+  ✓ Tienes costes predecibles (hardware propio)
+  ✓ Tu caso de uso es específico (puedes fine-tunear)</code></pre>
+            </div>
+
+            <h3>Ollama: Corre Modelos en Tu Ordenador</h3>
+            <p><strong>Ollama</strong> es una herramienta simple que te permite descargar y ejecutar modelos de IA localmente (en tu ordenador). Sin APIs externas, sin pagos por token, sin enviar datos a internet.</p>
+
+            <div class="tip">
+                <strong>Paso 1: Descarga Ollama desde <a href="https://ollama.com/download" target="_blank">ollama.com/download</a></strong>. Disponible para macOS, Linux y Windows. La instalación tarda menos de 2 minutos.
+            </div>
+
+            <div class="code-block">
+                <span class="lang-label">Instalación de Ollama</span>
+                <pre><code># Instalar Ollama en macOS/Linux (alternativa por terminal)
+curl -fsSL https://ollama.com/install.sh | sh
+
+# En Windows: descarga el instalador desde https://ollama.com/download
+
+# Descargar y ejecutar un modelo
+ollama run llama3.2
+
+# Listar modelos descargados
+ollama list
+
+# Correr un modelo más pequeño (para PCs con poca RAM)
+ollama run phi3</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>📌 Requisitos mínimos:</strong> 8GB RAM para modelos 7B, 16GB para modelos 13B. Si tu PC tiene menos, usa los modelos pequeños (phi3, gemma2:2b). Mejor si tienes GPU NVIDIA (CUDA) o AMD (ROCm).
+            </div>
+
+            <h3>Ollama como API Local</h3>
+            <p>Ollama no solo es una aplicación de terminal. Expone una API REST en <code>localhost:11434</code> para que puedas usarla desde tus aplicaciones.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Llamar a Ollama con curl</span>
+                <pre><code># Ollama sirve una API REST en localhost:11434
+curl http://localhost:11434/api/generate -d '{
+  "model": "llama3.2",
+  "prompt": "Explica qué es Python en 2 frases"
+}'
+
+# La respuesta es JSON con el texto generado:
+# {
+#   "model": "llama3.2",
+#   "response": "Python es un lenguaje de programación...",
+#   "done": true
+# }</code></pre>
+            </div>
+
+            <div class="code-block">
+                <span class="lang-label">Llamar a Ollama con Python</span>
+                <pre><code>import requests
+
+# Llamar a Ollama local
+response = requests.post('http://localhost:11434/api/generate', json={
+    'model': 'llama3.2',
+    'prompt': '¿Qué es una API REST?',
+    'stream': False
+})
+
+# Extraer la respuesta
+resultado = response.json()['response']
+print(resultado)</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Pro tip:</strong> Esto es exactamente igual que llamar a la API de OpenAI, pero gratis y en tu máquina. En el Módulo 3 verás cómo integrar tanto APIs cerradas como Ollama en la misma aplicación.
+            </div>
+
+            <h3>Hugging Face: El GitHub de la IA</h3>
+            <p><strong>Hugging Face Hub</strong> es el repositorio central de modelos de IA. Es como GitHub, pero para ML. Aquí encuentras:</p>
+            <ul>
+                <li><strong>Modelos</strong> pre-entrenados (miles de ellos)</li>
+                <li><strong>Datasets</strong> públicos para entrenamiento</li>
+                <li><strong>Spaces</strong>: aplicaciones web de demostración</li>
+                <li><strong>Librerías</strong>: Transformers (la estándar de facto)</li>
+            </ul>
+
+            <div class="code-block">
+                <span class="lang-label">Usar Hugging Face desde Python</span>
+                <pre><code>from transformers import pipeline
+
+# Cargar un modelo desde Hugging Face
+classifier = pipeline('sentiment-analysis',
+                     model='nlptown/bert-base-multilingual-uncased-sentiment')
+
+# Usar el modelo
+resultado = classifier("¡Me encanta este curso de IA!")
+print(resultado)
+# Salida: [{'label': 'positive', 'score': 0.999}]</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>🔗 Enlace:</strong> <a href="https://huggingface.co/" target="_blank">https://huggingface.co/</a> — Explora miles de modelos, datasets y herramientas.
+            </div>
+        </section>
+
+        <!-- Guided Practice Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">💻</span>
+                Práctica guiada
+            </h2>
+            <p>En esta práctica vamos a experimentar con Ollama, comparar modelos y explorar Hugging Face.</p>
+
+            <h3>Ejercicio 1: Instalar Ollama y Descargar un Modelo</h3>
+            <div class="code-block">
+                <span class="lang-label">Terminal</span>
+                <pre><code># 1. Instalar Ollama (si no lo tienes)
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 2. Descargar y ejecutar llama3.2
+ollama run llama3.2
+
+# 3. Una vez dentro de Ollama, hazle preguntas:
+>>> ¿Qué es machine learning?
+>>> Explica la diferencia entre IA y machine learning
+>>> ¿Cuál es el mejor lenguaje para IA?
+>>> Diseña una arquitectura de base de datos para una tienda online
+
+# 4. Escribe las respuestas en un archivo llamado respuestas_ollama.txt
+# 5. Evalúa la calidad: ¿Es precisa? ¿Es clara? ¿Cometió errores?</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>💡 Nota:</strong> Si tu PC es lento o tiene poca RAM, usa <code>ollama run phi3</code> en lugar de llama3.2. Es más pequeño pero también muy capaz.
+            </div>
+
+            <h3>Ejercicio 2: Comparar ChatGPT, Claude y Ollama</h3>
+            <p>Usa la MISMA pregunta en los tres y compara calidad, velocidad y coste.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Pregunta recomendada</span>
+                <pre><code>PREGUNTA: "Escribe una función Python que ordene una lista
+de diccionarios por una clave dada. Incluye un ejemplo de uso
+y explica cada línea del código."</code></pre>
+            </div>
+
+            <div class="code-block">
+                <span class="lang-label">Tabla de comparación (rellenar)</span>
+                <pre><code>┌────────────┬──────────────┬─────────────┬────────┬──────────┐
+│ Modelo     │ Calidad (1-5)│ Velocidad   │ Coste  │ Notas    │
+├────────────┼──────────────┼─────────────┼────────┼──────────┤
+│ ChatGPT    │              │             │        │          │
+├────────────┼──────────────┼─────────────┼────────┼──────────┤
+│ Claude     │              │             │        │          │
+├────────────┼──────────────┼─────────────┼────────┼──────────┤
+│ Ollama     │              │             │ Gratis │          │
+│(llama3.2)  │              │             │        │          │
+└────────────┴──────────────┴─────────────┴────────┴──────────┘</code></pre>
+            </div>
+
+            <h3>Ejercicio 3: Usar la API Local de Ollama con curl</h3>
+            <div class="code-block">
+                <span class="lang-label">Terminal (con Ollama ejecutándose en otra pestaña)</span>
+                <pre><code># 1. Abre una terminal NUEVA (Ollama sigue ejecutándose en otra)
+# 2. Envía 3 prompts diferentes a Ollama via REST API
+
+# Prompt 1: Definición técnica
+curl http://localhost:11434/api/generate -d '{
+  "model": "llama3.2",
+  "prompt": "¿Qué es una API REST?",
+  "stream": false
+}'
+
+# Prompt 2: Comparación
+curl http://localhost:11434/api/generate -d '{
+  "model": "llama3.2",
+  "prompt": "Compara GET y POST en HTTP",
+  "stream": false
+}'
+
+# Prompt 3: Código
+curl http://localhost:11434/api/generate -d '{
+  "model": "llama3.2",
+  "prompt": "Crea una clase Python llamada Usuario con atributos nombre, email y edad",
+  "stream": false
+}'</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>📌 Nota:</strong> El parámetro <code>"stream": false</code> significa que obtendrás toda la respuesta de una vez (más lento pero más simple). Con <code>"stream": true</code> recibirías chunks en tiempo real.
+            </div>
+
+            <h3>Ejercicio 4: Explorar Hugging Face Hub</h3>
+            <div class="code-block">
+                <span class="lang-label">Tarea</span>
+                <pre><code>1. Ve a https://huggingface.co/models
+2. Filtra por "Task: Text Generation"
+3. Filtra por "Language: Spanish"
+4. Abre los 3 modelos más descargados (top downloads)
+5. Para cada uno, anota:
+   - Nombre del modelo
+   - Número de descargas
+   - Parámetros (tamaño)
+   - Licencia
+   - Descripción breve
+
+6. ¿Podrías usar alguno de estos en Ollama?
+   (Pista: muchos modelos de Hugging Face se pueden descargar con Ollama)</code></pre>
+            </div>
+
+            <div class="code-block">
+                <span class="lang-label">Ejemplo: Descargar un modelo de Hugging Face con Ollama</span>
+                <pre><code># Algunos modelos de Hugging Face están disponibles en Ollama
+# Ejemplo: NousResearch/Hermes-2-Mistral-7B-DPO
+ollama run hermes
+
+# Si no está disponible directamente, puedes usar Ollama con
+# modelos de Hugging Face a través de la librería transformers
+# (veremos esto en módulos posteriores)</code></pre>
+            </div>
+        </section>
+
+        <!-- Challenge Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🧪</span>
+                Mini-reto del día
+            </h2>
+
+            <div class="reto-box">
+                <h3>🎯 Ollama Challenge: Duelo de Modelos</h3>
+                <p>Instala Ollama y descarga 2 modelos de diferente tamaño. Hazles la MISMA pregunta compleja y compara calidad, velocidad y uso de RAM.</p>
+
+                <h4>Pasos:</h4>
+                <ol>
+                    <li><strong>Instala Ollama</strong> (si no lo tienes ya)</li>
+                    <li><strong>Descarga 2 modelos:</strong>
+                        <ul>
+                            <li>Opción A: phi3 (pequeño, 3.8B) y llama3.2 (mediano, 8B)</li>
+                            <li>Opción B: gemma2:2b (tiny, 2B) y mistral (mediano, 7B)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Formula una pregunta compleja:</strong>
+                        <div class="code-block">
+                            <span class="lang-label">Pregunta recomendada</span>
+                            <pre><code>"Diseña la estructura de una base de datos para un restaurante
+que gestione:
+  - Menú (platos, ingredientes, alergenos, precio)
+  - Pedidos (cliente, platos, cantidad, fecha)
+  - Reservas (cliente, mesa, fecha, hora)
+
+Incluye tablas, claves primarias, claves foráneas y relaciones."</code></pre>
+                        </div>
+                    </li>
+                    <li><strong>Ejecuta y compara:</strong>
+                        <div class="code-block">
+                            <span class="lang-label">Terminal</span>
+                            <pre><code># Terminal 1: Ejecuta el primer modelo
+time ollama run phi3  # o el que hayas elegido
+# (copia tu pregunta cuando veas >>>)
+
+# Anota:
+# - Tiempo de respuesta
+# - Memoria usada: abre otra terminal y ejecuta
+ollama ps
+
+# Repite con el segundo modelo</code></pre>
+                        </div>
+                    </li>
+                    <li><strong>Completa tu reporte:</strong>
+                        <div class="code-block">
+                            <span class="lang-label">Plantilla de análisis</span>
+                            <pre><code>MODELO 1: ____________________
+  - Tamaño: _________ B parámetros
+  - Tiempo respuesta: _________
+  - RAM usado: _________
+  - Calidad respuesta (1-5): ____
+  - Errores encontrados: _________
+
+MODELO 2: ____________________
+  - Tamaño: _________ B parámetros
+  - Tiempo respuesta: _________
+  - RAM usado: _________
+  - Calidad respuesta (1-5): ____
+  - Errores encontrados: _________
+
+CONCLUSIÓN:
+¿Cuál es mejor para producción? ¿Por qué?
+¿Qué trade-off entre tamaño/velocidad/calidad observaste?</code></pre>
+                        </div>
+                    </li>
+                </ol>
+
+                <p><strong>💡 Bonus:</strong> Si tienes GPU NVIDIA, compara también el tiempo con/sin GPU (CUDA). La diferencia es dramática.</p>
+            </div>
+        </section>
+
+        <!-- ===== ENTREGA DE EJERCICIO ===== -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Ollama Challenge — Duelo de Modelos</h4>
+                <p style="color: var(--text-muted); font-size: 0.95em;">Pega tu reporte con los dos modelos probados: tamaño, tiempo de respuesta, RAM usada, calidad (1-5), errores y conclusión sobre qué trade-off observaste.</p>
+                <textarea id="code-ejercicio-1" rows="14" placeholder="MODELO 1: ____________________&#10;  - Tamaño: _________ B parámetros&#10;  - Tiempo respuesta: _________&#10;  - RAM usado: _________&#10;  - Calidad respuesta (1-5): ____&#10;  - Errores encontrados: _________&#10;&#10;MODELO 2: ____________________&#10;  - Tamaño: _________ B parámetros&#10;  - Tiempo respuesta: _________&#10;  - RAM usado: _________&#10;  - Calidad respuesta (1-5): ____&#10;  - Errores encontrados: _________&#10;&#10;CONCLUSIÓN:&#10;¿Cuál es mejor para producción? ¿Por qué?&#10;¿Qué trade-off entre tamaño/velocidad/calidad observaste?"></textarea>
+                <label><input type="checkbox" required> He ejecutado los dos modelos con la misma pregunta y medido tiempo y RAM</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m2-c04', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📝</span>
+                Test de conocimiento
+            </h2>
+            <p>Responde las siguientes 10 preguntas para verificar tu comprensión. Necesitas al menos 8 correctas para marcar esta clase como completada.</p>
+
+            <div class="quiz-container" id="quiz-container"></div>
+
+            <button class="btn btn-green" onclick="submitQuiz()">Enviar respuestas</button>
+            <div id="quizResult"></div>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <div class="clase-nav">
+            <a href="clase-03.html">← Clase 03</a>
+            <span> | </span>
+            <a href="clase-05-boss-battle.html">Boss Battle →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        // Quiz data
+        const quizQuestions = [
+            {
+                question: "¿Cuál de estos es un modelo open source (open weights)?",
+                options: ["GPT-4o", "Claude 3.5 Sonnet", "Llama 3", "Gemini Pro"],
+                correct: 2  // Llama 3
+            },
+            {
+                question: "¿Qué ventaja principal tienen los modelos open source sobre los cerrados?",
+                options: [
+                    "Son siempre más rápidos",
+                    "Control total de datos y sin dependencia de proveedor",
+                    "Tienen mejor soporte técnico",
+                    "Son más fáciles de usar"
+                ],
+                correct: 1  // Control total
+            },
+            {
+                question: "¿Qué es Ollama?",
+                options: [
+                    "Una API de OpenAI",
+                    "Una herramienta para correr modelos de IA en local",
+                    "Un modelo de lenguaje específico",
+                    "Un editor de código"
+                ],
+                correct: 1  // Herramienta para correr modelos
+            },
+            {
+                question: "¿Cuánta RAM mínima necesitas para correr un modelo de 7B parámetros?",
+                options: ["2GB", "4GB", "8GB", "32GB"],
+                correct: 2  // 8GB
+            },
+            {
+                question: "¿En qué puerto sirve Ollama su API local por defecto?",
+                options: ["3000", "8080", "11434", "5000"],
+                correct: 2  // 11434
+            },
+            {
+                question: "¿Qué es Hugging Face?",
+                options: [
+                    "Una red social para desarrolladores",
+                    "Un repositorio de modelos, datasets y herramientas de IA",
+                    "Un lenguaje de programación",
+                    "Un competidor de GitHub"
+                ],
+                correct: 1  // Repositorio
+            },
+            {
+                question: "¿Cuándo es mejor usar una API cerrada (como GPT-4o)?",
+                options: [
+                    "Siempre es la mejor opción",
+                    "Para prototipos rápidos cuando no tienes GPU",
+                    "Nunca, siempre es mejor open source",
+                    "Solo para proyectos muy grandes"
+                ],
+                correct: 1  // Prototipos rápidos
+            },
+            {
+                question: "¿Qué significa 'open weights'?",
+                options: [
+                    "El código fuente es público",
+                    "Los pesos del modelo están disponibles para descargar",
+                    "El modelo es gratuito para uso comercial",
+                    "El modelo no tiene restricciones legales"
+                ],
+                correct: 1  // Pesos disponibles
+            },
+            {
+                question: "¿Cuál de estos modelos es de Meta?",
+                options: ["Mistral", "Gemma", "Llama", "Phi"],
+                correct: 2  // Llama
+            },
+            {
+                question: "¿Qué comando descarga y ejecuta un modelo en Ollama?",
+                options: ["ollama download", "ollama start", "ollama run", "ollama install"],
+                correct: 2  // ollama run
+            }
+        ];
+
+        // Render quiz
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            quizQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'quiz-question';
+                questionDiv.innerHTML = `
+                    <div class="quiz-question-text">${index + 1}. ${q.question}</div>
+                    <div class="quiz-options">
+                        ${q.options.map((option, optIndex) => `
+                            <label class="quiz-option">
+                                <input type="radio" name="q${index}" value="${optIndex}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        // Submit quiz
+        function submitQuiz() {
+            let correct = 0;
+            const answers = [];
+
+            for (let i = 0; i < quizQuestions.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+
+                if (!selected) {
+                    alert(`Por favor responde la pregunta ${i + 1}`);
+                    return;
+                }
+
+                const userAnswer = parseInt(selected.value);
+                answers.push(userAnswer);
+
+                if (userAnswer === quizQuestions[i].correct) {
+                    correct++;
+                }
+            }
+
+            // Show results
+            const resultDiv = document.getElementById('quizResult');
+            const percentage = (correct / quizQuestions.length) * 100;
+            const passed = correct >= 8;
+
+            resultDiv.innerHTML = `
+                <div class="quiz-result ${passed ? 'correct' : 'incorrect'}">
+                    ${passed ? '✅' : '❌'} ${correct} de ${quizQuestions.length} respuestas correctas (${percentage.toFixed(0)}%)
+                    ${passed ? '<br>¡Excelente! Has completado esta clase.' : '<br>Necesitas al menos 8 respuestas correctas. Intenta de nuevo.'}
+                </div>
+            `;
+
+            if (passed) {
+                // Mark class as completed
+                if (typeof CourseProgress !== 'undefined') {
+                    CourseProgress.initQuiz('quiz-container', quizQuestions, 'm2-c04');
+                }
+            }
+        }
+
+        // Initialize on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+renderQuiz();
+
+            // Check if already completed
+            if (typeof CourseProgress !== 'undefined') {
+                if (CourseProgress.isClassCompleted('m2-c04')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'score-display';
+                    badge.textContent = '✅ COMPLETADA';
+                    document.querySelector('header h1').parentElement.appendChild(badge);
+                }
+            }
+            });
+        } else {
+renderQuiz();
+
+            // Check if already completed
+            if (typeof CourseProgress !== 'undefined') {
+                if (CourseProgress.isClassCompleted('m2-c04')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'score-display';
+                    badge.textContent = '✅ COMPLETADA';
+                    document.querySelector('header h1').parentElement.appendChild(badge);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

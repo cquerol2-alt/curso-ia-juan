@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: IA, ML y Deep Learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a1a 0%, #0f0f2e 100%);
+            color: #e8e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 2px solid #00f0ff;
+            color: #00f0ff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(0, 240, 255, 0.2);
+            transform: translateX(-4px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin: 20px 0 10px 0;
+            background: linear-gradient(45deg, #00f0ff, #ff00e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #a0a0b8;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .controls {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: 2px solid;
+            border-radius: 6px;
+            background: transparent;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .btn-expand {
+            border-color: #39ff14;
+            color: #39ff14;
+        }
+
+        .btn-expand:hover {
+            background: rgba(57, 255, 20, 0.15);
+            transform: scale(1.05);
+        }
+
+        .btn-collapse {
+            border-color: #ff00e5;
+            color: #ff00e5;
+        }
+
+        .btn-collapse:hover {
+            background: rgba(255, 0, 229, 0.15);
+            transform: scale(1.05);
+        }
+
+        .mindmap {
+            background: rgba(20, 20, 40, 0.6);
+            border: 2px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .tree-view {
+            display: inline-block;
+            min-width: 100%;
+            font-size: 0.95em;
+        }
+
+        .node {
+            margin: 10px 0;
+            padding: 15px 20px;
+            background: rgba(30, 30, 50, 0.8);
+            border-left: 4px solid;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .node:hover {
+            background: rgba(40, 40, 60, 0.9);
+            transform: translateX(8px);
+        }
+
+        /* Profundidad 0 - Raíz */
+        .node[data-level="0"] {
+            border-left-color: #00f0ff;
+            background: rgba(0, 240, 255, 0.08);
+            font-size: 1.2em;
+            font-weight: 700;
+            padding: 20px 25px;
+            margin: 20px 0;
+        }
+
+        .node[data-level="0"]:hover {
+            background: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+
+        /* Profundidad 1 */
+        .node[data-level="1"] {
+            border-left-color: #ff00e5;
+            margin-left: 30px;
+            font-weight: 600;
+        }
+
+        .node[data-level="1"]:hover {
+            box-shadow: 0 0 15px rgba(255, 0, 229, 0.2);
+        }
+
+        /* Profundidad 2 */
+        .node[data-level="2"] {
+            border-left-color: #39ff14;
+            margin-left: 60px;
+            font-weight: 500;
+        }
+
+        .node[data-level="2"]:hover {
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+        }
+
+        /* Profundidad 3+ */
+        .node[data-level="3"],
+        .node[data-level="4"],
+        .node[data-level="5"] {
+            border-left-color: #ffd700;
+            margin-left: 90px;
+            font-weight: 400;
+            font-size: 0.95em;
+        }
+
+        .node[data-level="3"]:hover,
+        .node[data-level="4"]:hover,
+        .node[data-level="5"]:hover {
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .toggle {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 240, 255, 0.2);
+            border: 2px solid #00f0ff;
+            border-radius: 4px;
+            text-align: center;
+            line-height: 20px;
+            font-weight: bold;
+            color: #00f0ff;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .toggle:hover {
+            background: rgba(0, 240, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        .toggle.collapsed::before {
+            content: "+";
+        }
+
+        .toggle.expanded::before {
+            content: "−";
+        }
+
+        .toggle.empty {
+            visibility: hidden;
+        }
+
+        .node-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .node-title {
+            font-weight: 600;
+            color: #e8e8f0;
+        }
+
+        .node-description {
+            font-size: 0.85em;
+            color: #a0a0b8;
+            font-weight: 400;
+            max-width: 800px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .children {
+            max-height: 10000px;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .children.collapsed {
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        /* Mobile responsivo */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 0.95em;
+            }
+
+            .node {
+                padding: 12px 15px;
+                font-size: 0.85em;
+                margin: 8px 0;
+                gap: 10px;
+            }
+
+            .node[data-level="0"] {
+                padding: 16px 20px;
+                font-size: 1em;
+            }
+
+            .node[data-level="1"] {
+                margin-left: 20px;
+            }
+
+            .node[data-level="2"] {
+                margin-left: 40px;
+            }
+
+            .node[data-level="3"],
+            .node[data-level="4"],
+            .node[data-level="5"] {
+                margin-left: 60px;
+            }
+
+            .toggle {
+                width: 20px;
+                height: 20px;
+                border-width: 1.5px;
+                font-size: 0.9em;
+                line-height: 17px;
+            }
+
+            .node-title {
+                font-size: 0.95em;
+            }
+
+            .node-description {
+                font-size: 0.8em;
+            }
+
+            .controls {
+                gap: 10px;
+            }
+
+            .btn {
+                padding: 10px 18px;
+                font-size: 0.9em;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #606078;
+            font-size: 0.9em;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid #00f0ff;
+            border-radius: 20px;
+            font-size: 0.75em;
+            color: #00f0ff;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
+        </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="clase-01.html" class="back-link">← Volver a Clase 01</a>
+            <h1>Mind Map: IA, Machine Learning y Deep Learning</h1>
+            <p class="subtitle">Guía visual para seguir el vídeo de 3Blue1Brown</p>
+        </header>
+
+        <div class="controls">
+            <button class="btn btn-expand" onclick="expandAll()">📖 Expandir todo</button>
+            <button class="btn btn-collapse" onclick="collapseAll()">📕 Colapsar todo</button>
+</div>
+<div class="mindmap">
+            <div class="tree-view" id="mindmap"></div>
+        </div>
+
+        <div class="footer">
+            <p>Haz clic en los nodos para expandir/colapsar. Diseñado para acompañar la clase sobre fundamentos de IA.</p>
+        </div>
+    </div>
+
+    <script>
+
+
+        const mindmapData = {
+            title: "Inteligencia Artificial (IA)",
+            description: "Máquinas que realizan tareas que requieren inteligencia humana",
+            level: 0,
+            expanded: true,
+            children: [
+                {
+                    title: "Definición",
+                    description: "Máquinas que realizan tareas que requieren inteligencia humana",
+                    level: 1,
+                    expanded: true,
+                    children: []
+                },
+                {
+                    title: "Tipos de IA",
+                    level: 1,
+                    expanded: true,
+                    children: [
+                        {
+                            title: "IA Estrecha (Narrow AI)",
+                            description: "Siri, GPS, filtro spam — especializada en UNA tarea",
+                            level: 2,
+                            expanded: true,
+                            children: []
+                        },
+                        {
+                            title: "IA General (AGI)",
+                            description: "No existe aún — sería inteligencia general como la humana",
+                            level: 2,
+                            expanded: true,
+                            children: []
+                        }
+                    ]
+                },
+                {
+                    title: "Machine Learning (ML)",
+                    description: "La máquina aprende de DATOS, no de reglas programadas",
+                    level: 1,
+                    expanded: true,
+                    children: [
+                        {
+                            title: "Definición",
+                            description: "Aprende patrones de datos sin ser programada explícitamente",
+                            level: 2,
+                            expanded: true,
+                            children: []
+                        },
+                        {
+                            title: "Analogía",
+                            description: "Como enseñar a un niño mostrándole miles de fotos de gatos",
+                            level: 2,
+                            expanded: true,
+                            children: []
+                        },
+                        {
+                            title: "Tipos de ML",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Aprendizaje Supervisado",
+                                    description: "Datos etiquetados. Ej: 'esto es spam / no es spam'",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                },
+                                {
+                                    title: "Aprendizaje No Supervisado",
+                                    description: "Sin etiquetas. Descubre patrones por sí solo (clustering)",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                },
+                                {
+                                    title: "Aprendizaje por Refuerzo",
+                                    description: "Aprende por prueba y error. Ej: robot jugando a juegos",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "Conceptos Clave",
+                            level: 2,
+                            expanded: false,
+                            children: [
+                                {
+                                    title: "Dataset",
+                                    description: "Conjunto de datos para entrenar el modelo",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                },
+                                {
+                                    title: "Modelo",
+                                    description: "El 'cerebro' entrenado que hace predicciones",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                },
+                                {
+                                    title: "Entrenamiento",
+                                    description: "Proceso de ajustar los pesos (como un for loop gigante)",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                },
+                                {
+                                    title: "Inferencia",
+                                    description: "Usar el modelo entrenado para hacer predicciones",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                },
+                                {
+                                    title: "Parámetros",
+                                    description: "Los 'botones' que el modelo ajusta (millones o billones)",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                },
+                                {
+                                    title: "Epoch",
+                                    description: "Una pasada completa por todos los datos de entrenamiento",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                },
+                                {
+                                    title: "Overfitting",
+                                    description: "El modelo 'memoriza' en vez de 'aprender' — falla con datos nuevos",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            title: "Deep Learning (DL)",
+                            description: "ML con redes neuronales de MUCHAS capas",
+                            level: 2,
+                            expanded: true,
+                            children: [
+                                {
+                                    title: "Definición",
+                                    description: "Machine Learning con redes neuronales profundas",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                },
+                                {
+                                    title: "Estructura de una Red Neuronal",
+                                    level: 3,
+                                    expanded: false,
+                                    children: [
+                                        {
+                                            title: "Capa de Entrada",
+                                            description: "Recibe los datos crudos (imagen, texto, audio)",
+                                            level: 4,
+                                            expanded: true,
+                                            children: []
+                                        },
+                                        {
+                                            title: "Capas Ocultas (Hidden Layers)",
+                                            description: "Procesan y extraen patrones cada vez más complejos",
+                                            level: 4,
+                                            expanded: true,
+                                            children: []
+                                        },
+                                        {
+                                            title: "Capa de Salida",
+                                            description: "Da el resultado final (clasificación, texto, número)",
+                                            level: 4,
+                                            expanded: true,
+                                            children: []
+                                        }
+                                    ]
+                                },
+                                {
+                                    title: "¿Por qué 'Deep'?",
+                                    description: "Muchas capas ocultas → profundidad → mayor capacidad de aprender",
+                                    level: 3,
+                                    expanded: true,
+                                    children: []
+                                },
+                                {
+                                    title: "Aplicaciones",
+                                    level: 3,
+                                    expanded: false,
+                                    children: [
+                                        {
+                                            title: "Visión por Computador",
+                                            description: "Reconocimiento facial, coches autónomos, detección de objetos",
+                                            level: 4,
+                                            expanded: true,
+                                            children: []
+                                        },
+                                        {
+                                            title: "Procesamiento de Lenguaje Natural (NLP)",
+                                            description: "Traducción automática, chatbots, análisis de sentimientos",
+                                            level: 4,
+                                            expanded: true,
+                                            children: []
+                                        },
+                                        {
+                                            title: "Audio y Voz",
+                                            description: "Reconocimiento de voz, síntesis de voz, generación de música",
+                                            level: 4,
+                                            expanded: true,
+                                            children: []
+                                        }
+                                    ]
+                                },
+                                {
+                                    title: "LLMs (Large Language Models)",
+                                    description: "Modelos entrenados con TONELADAS de texto",
+                                    level: 3,
+                                    expanded: true,
+                                    children: [
+                                        {
+                                            title: "Definición",
+                                            description: "Redes neuronales profundas entrenadas con datos de texto masivos",
+                                            level: 4,
+                                            expanded: true,
+                                            children: []
+                                        },
+                                        {
+                                            title: "Ejemplos",
+                                            description: "GPT-4, Claude, Gemini, Llama",
+                                            level: 4,
+                                            expanded: true,
+                                            children: []
+                                        },
+                                        {
+                                            title: "Cómo Funcionan",
+                                            description: "Predicen la siguiente palabra, pero lo hacen tan bien que parece que 'entienden'",
+                                            level: 4,
+                                            expanded: true,
+                                            children: []
+                                        },
+                                        {
+                                            title: "Por Qué Importan",
+                                            description: "Base de ChatGPT, asistentes de IA, herramientas de código...",
+                                            level: 4,
+                                            expanded: true,
+                                            children: []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    title: "Para Desarrolladores Web",
+                    level: 1,
+                    expanded: false,
+                    children: [
+                        {
+                            title: "Ya usas IA sin saberlo",
+                            description: "Autocompletado, búsqueda, recomendaciones... están por todas partes",
+                            level: 2,
+                            expanded: true,
+                            children: []
+                        },
+                        {
+                            title: "Python es el lenguaje dominante",
+                            description: "Por eso empezaste con él — es el estándar de la industria en IA",
+                            level: 2,
+                            expanded: true,
+                            children: []
+                        },
+                        {
+                            title: "Tu Ventaja Competitiva",
+                            description: "Sabes programar → puedes CONSTRUIR con IA, no solo usarla",
+                            level: 2,
+                            expanded: true,
+                            children: []
+                        }
+                    ]
+                }
+            ]
+        };
+
+        function renderNode(data, parentElement) {
+            const nodeEl = document.createElement('div');
+            nodeEl.className = 'node';
+            nodeEl.setAttribute('data-level', data.level);
+
+            const toggleEl = document.createElement('div');
+            toggleEl.className = 'toggle';
+
+            if (!data.children || data.children.length === 0) {
+                toggleEl.classList.add('empty');
+            } else {
+                toggleEl.classList.add(data.expanded ? 'expanded' : 'collapsed');
+                toggleEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleNode(nodeEl, data);
+                });
+            }
+
+            const contentEl = document.createElement('div');
+            contentEl.className = 'node-content';
+
+            const titleEl = document.createElement('div');
+            titleEl.className = 'node-title';
+            titleEl.textContent = data.title;
+
+            contentEl.appendChild(titleEl);
+
+            if (data.description) {
+                const descEl = document.createElement('div');
+                descEl.className = 'node-description';
+                descEl.textContent = data.description;
+                contentEl.appendChild(descEl);
+            }
+
+            nodeEl.appendChild(toggleEl);
+            nodeEl.appendChild(contentEl);
+
+            nodeEl.addEventListener('click', (e) => {
+                if (data.children && data.children.length > 0 && e.target === nodeEl || e.target === contentEl) {
+                    toggleNode(nodeEl, data);
+                }
+            });
+
+            parentElement.appendChild(nodeEl);
+
+            if (data.children && data.children.length > 0) {
+                const childrenEl = document.createElement('div');
+                childrenEl.className = 'children';
+
+                if (!data.expanded) {
+                    childrenEl.classList.add('collapsed');
+                }
+
+                data.children.forEach(child => {
+                    renderNode(child, childrenEl);
+                });
+
+                parentElement.appendChild(childrenEl);
+            }
+
+            return nodeEl;
+        }
+
+        function toggleNode(nodeEl, data) {
+            data.expanded = !data.expanded;
+
+            const toggle = nodeEl.querySelector('.toggle');
+            toggle.classList.toggle('expanded');
+            toggle.classList.toggle('collapsed');
+
+            const childrenEl = nodeEl.nextElementSibling;
+            if (childrenEl && childrenEl.classList.contains('children')) {
+                childrenEl.classList.toggle('collapsed');
+            }
+        }
+
+        function expandAll() {
+            expandAllRecursive(mindmapData);
+            renderMindmap();
+        }
+
+        function collapseAll() {
+            collapseAllRecursive(mindmapData);
+            renderMindmap();
+        }
+
+        function expandAllRecursive(node) {
+            node.expanded = true;
+            if (node.children) {
+                node.children.forEach(child => expandAllRecursive(child));
+            }
+        }
+
+        function collapseAllRecursive(node) {
+            if (node.children && node.children.length > 0) {
+                node.expanded = false;
+                node.children.forEach(child => collapseAllRecursive(child));
+            }
+        }
+
+        function renderMindmap() {
+            const container = document.getElementById('mindmap');
+            container.innerHTML = '';
+            renderNode(mindmapData, container);
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMindmap();
+        });
+    </script>
+</body>
+</html>

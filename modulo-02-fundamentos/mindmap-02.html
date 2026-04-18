@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: Cómo Funcionan los LLMs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+            color: #e8e8f0;
+            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .header {
+            max-width: 1400px;
+            margin: 0 auto 2rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #00f0ff;
+            text-decoration: none;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            color: #ff00e5;
+            transform: translateX(-4px);
+        }
+
+        h1 {
+            color: #00f0ff;
+            font-size: 2.2rem;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+
+        h2 {
+            color: #ff00e5;
+            font-size: 1.1rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 0.7rem 1.4rem;
+            background: linear-gradient(135deg, #00f0ff 0%, #39ff14 100%);
+            border: none;
+            color: #0a0a1a;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 25px rgba(0, 240, 255, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .mindmap-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(26, 26, 46, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .node {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .node-root {
+            margin-left: 0;
+        }
+
+        .node-toggle {
+            background: none;
+            border: none;
+            color: #00f0ff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 0.5rem;
+            margin-right: 0.5rem;
+            transition: all 0.2s ease;
+            width: 20px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .node-toggle:hover {
+            color: #ff00e5;
+            transform: scale(1.2);
+        }
+
+        .node-toggle.collapsed::before {
+            content: '▶';
+        }
+
+        .node-toggle.expanded::before {
+            content: '▼';
+        }
+
+        .node-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            flex-wrap: wrap;
+        }
+
+        .node-header:hover {
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        .node-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        /* Depth-based colors */
+        .depth-0 .node-title {
+            color: #00f0ff;
+            font-size: 1.2rem;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .depth-1 .node-title {
+            color: #ff00e5;
+            font-size: 1.05rem;
+        }
+
+        .depth-2 .node-title {
+            color: #39ff14;
+            font-size: 0.95rem;
+        }
+
+        .depth-3 .node-title {
+            color: #ffe600;
+            font-size: 0.9rem;
+        }
+
+        .depth-4 .node-title {
+            color: #ff6b00;
+            font-size: 0.85rem;
+        }
+
+        .node-children {
+            max-height: 10000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .node-children.collapsed {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .node-description {
+            color: #a0a0b0;
+            font-size: 0.9rem;
+            margin: 0.5rem 0 0 2.5rem;
+            font-style: italic;
+            line-height: 1.4;
+            max-width: 600px;
+            padding: 0.5rem 1rem;
+            background: rgba(57, 255, 20, 0.05);
+            border-left: 3px solid rgba(57, 255, 20, 0.3);
+            border-radius: 4px;
+        }
+
+        .node-title.has-children {
+            cursor: pointer;
+        }
+
+        .leaf-node {
+            color: #d0d0e0;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            margin-left: 2.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .depth-1 .leaf-node {
+            color: #c0c0d0;
+        }
+
+        .depth-2 .leaf-node {
+            color: #b0b0c0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .mindmap-container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            h2 {
+                font-size: 0.95rem;
+            }
+
+            .node {
+                margin-left: 1.2rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .node-description {
+                margin-left: 1.5rem;
+            }
+        }
+
+        .link-reference {
+            color: #39ff14;
+            text-decoration: none;
+            border-bottom: 1px dotted #39ff14;
+            transition: all 0.2s ease;
+        }
+
+        .link-reference:hover {
+            color: #ff00e5;
+            border-bottom-color: #ff00e5;
+        }
+
+        </style>
+</head>
+<body>
+    <div class="header">
+        <a href="clase-02.html" class="back-link">← Volver a Clase 02</a>
+        <h1>Mind Map: Cómo Funcionan los LLMs</h1>
+        <h2>Guía visual para seguir el vídeo de 3Blue1Brown</h2>
+    </div>
+
+    <div class="controls">
+        <button onclick="expandAll()">Expandir todo</button>
+        <button onclick="collapseAll()">Colapsar todo</button>
+</div>
+<div class="mindmap-container">
+        <div id="mindmap"></div>
+    </div>
+
+    <script>
+
+
+        const mindmapData = {
+            title: "Cómo Funcionan los LLMs",
+            expanded: true,
+            depth: 0,
+            children: [
+                {
+                    title: "Tokens: La Unidad Básica",
+                    expanded: true,
+                    depth: 1,
+                    children: [
+                        {
+                            title: "Un LLM NO lee palabras → lee TOKENS (trozos de texto)",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "1 token ≈ 3/4 de una palabra en inglés",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "En español: \"Inteligencia\" → 3-4 tokens",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Ejemplo: \"Hola mundo\" → [\"Hola\", \" mundo\"] → 2 tokens",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "¿Por qué importa?",
+                            expanded: true,
+                            depth: 2,
+                            children: [
+                                {
+                                    title: "Limita cuánto texto puede procesar",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                },
+                                {
+                                    title: "Determina el coste de usar la API",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                }
+                            ]
+                        },
+                        {
+                            title: "Herramienta: platform.openai.com/tokenizer",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        }
+                    ]
+                },
+                {
+                    title: "Ventana de Contexto",
+                    expanded: true,
+                    depth: 1,
+                    children: [
+                        {
+                            title: "Definición: Cantidad máxima de tokens que el modelo \"ve\" a la vez",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Analogía: La memoria de trabajo del modelo (como la RAM)",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Comparativa de modelos",
+                            expanded: true,
+                            depth: 2,
+                            children: [
+                                {
+                                    title: "GPT-4o: 128K tokens (~96K palabras)",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                },
+                                {
+                                    title: "Claude 3.5: 200K tokens (~150K palabras)",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                },
+                                {
+                                    title: "Gemini 1.5: 1M tokens (~750K palabras)",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                },
+                                {
+                                    title: "Llama 3.1: 128K tokens",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                }
+                            ]
+                        },
+                        {
+                            title: "Si el texto excede la ventana → el modelo \"olvida\" lo anterior",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        }
+                    ]
+                },
+                {
+                    title: "Temperatura y Creatividad",
+                    expanded: true,
+                    depth: 1,
+                    children: [
+                        {
+                            title: "Parámetro: 0.0 a 2.0",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Temp 0.0: Determinista → siempre la misma respuesta → ideal para código",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Temp 0.7: Equilibrio → creativo pero coherente → ideal para escritura",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Temp 1.5+: Muy aleatorio → puede perder coherencia → experimental",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Analogía: Como el volumen de la \"imaginación\" del modelo",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        }
+                    ]
+                },
+                {
+                    title: "Parámetros del Modelo",
+                    expanded: true,
+                    depth: 1,
+                    children: [
+                        {
+                            title: "¿Qué son? Los \"pesos\" que el modelo ajusta durante el entrenamiento",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "\"7B\" = 7 mil millones de parámetros",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Más parámetros = más capaz PERO más caro y lento",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Comparativa",
+                            expanded: true,
+                            depth: 2,
+                            children: [
+                                {
+                                    title: "Phi-3 (3.8B): Pequeño, rápido, corre en portátil",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                },
+                                {
+                                    title: "Llama 3.2 (8B): Buen equilibrio calidad/tamaño",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                },
+                                {
+                                    title: "Llama 3.1 (70B): Muy capaz, necesita GPU potente",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                },
+                                {
+                                    title: "GPT-4 (~1.8T estimado): El más potente, solo vía API",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                }
+                            ]
+                        },
+                        {
+                            title: "Trade-off: Calidad vs Coste vs Velocidad",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        }
+                    ]
+                },
+                {
+                    title: "Atención (Attention): El Mecanismo Clave",
+                    expanded: true,
+                    depth: 1,
+                    children: [
+                        {
+                            title: "Es lo que hace \"inteligentes\" a los LLMs",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Cada token \"mira\" a TODOS los demás tokens para entender el contexto",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Ejemplo: \"El banco está cerca del río\"",
+                            expanded: true,
+                            depth: 2,
+                            children: [
+                                {
+                                    title: "\"banco\" atiende a \"río\" → significado = orilla",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                }
+                            ]
+                        },
+                        {
+                            title: "Ejemplo: \"Fui al banco a sacar dinero\"",
+                            expanded: true,
+                            depth: 2,
+                            children: [
+                                {
+                                    title: "\"banco\" atiende a \"dinero\" → significado = entidad financiera",
+                                    expanded: false,
+                                    depth: 3,
+                                    isLeaf: true
+                                }
+                            ]
+                        },
+                        {
+                            title: "Sin atención: el modelo trataría cada palabra por separado (como un diccionario)",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Paper original: \"Attention Is All You Need\" (2017, Google) — revolucionó la IA",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        }
+                    ]
+                },
+                {
+                    title: "Embeddings: Palabras como Números",
+                    expanded: true,
+                    depth: 1,
+                    children: [
+                        {
+                            title: "¿Qué son? Representaciones numéricas (vectores) de palabras",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Palabras similares → vectores cercanos en el espacio",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "\"rey\" - \"hombre\" + \"mujer\" ≈ \"reina\" (¡las matemáticas funcionan con palabras!)",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Dimensiones: GPT usa vectores de 1536-3072 dimensiones",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "Preview: Los embeddings son la BASE del RAG (Módulo 5)",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        }
+                    ]
+                },
+                {
+                    title: "El Proceso Completo: De Texto a Respuesta",
+                    expanded: true,
+                    depth: 1,
+                    children: [
+                        {
+                            title: "1. Tokenización: \"Hola, ¿qué tal?\" → [tokens]",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "2. Embeddings: Cada token → vector numérico",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "3. Atención: Los vectores \"se miran\" entre sí → capturan contexto",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "4. Capas del Transformer: Procesan la información (×96 capas en GPT-4)",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "5. Predicción: El modelo calcula la probabilidad de cada posible siguiente token",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        },
+                        {
+                            title: "6. Sampling: Según la temperatura, elige el siguiente token → repite hasta terminar",
+                            expanded: false,
+                            depth: 2,
+                            isLeaf: true
+                        }
+                    ]
+                }
+            ]
+        };
+
+        function renderNode(node, depth = 0) {
+            const nodeEl = document.createElement('div');
+            nodeEl.className = `node depth-${depth}`;
+            if (depth === 0) nodeEl.classList.add('node-root');
+
+            const hasChildren = node.children && node.children.length > 0;
+
+            // Header row
+            const headerEl = document.createElement('div');
+            headerEl.style.display = 'flex';
+            headerEl.style.alignItems = 'center';
+            headerEl.style.gap = '0.5rem';
+
+            if (hasChildren) {
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = `node-toggle ${node.expanded ? 'expanded' : 'collapsed'}`;
+                toggleBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    node.expanded = !node.expanded;
+                    const childrenDiv = nodeEl.querySelector('.node-children');
+                    if (node.expanded) {
+                        childrenDiv.classList.remove('collapsed');
+                        toggleBtn.classList.remove('collapsed');
+                        toggleBtn.classList.add('expanded');
+                    } else {
+                        childrenDiv.classList.add('collapsed');
+                        toggleBtn.classList.add('collapsed');
+                        toggleBtn.classList.remove('expanded');
+                    }
+                };
+                headerEl.appendChild(toggleBtn);
+            }
+
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'node-title' + (hasChildren ? ' has-children' : '');
+            titleSpan.textContent = node.title;
+            headerEl.appendChild(titleSpan);
+
+            nodeEl.appendChild(headerEl);
+
+            // Children
+            if (hasChildren) {
+                const childrenDiv = document.createElement('div');
+                childrenDiv.className = `node-children ${node.expanded ? '' : 'collapsed'}`;
+                for (const child of node.children) {
+                    childrenDiv.appendChild(renderNode(child, depth + 1));
+                }
+                nodeEl.appendChild(childrenDiv);
+            }
+
+            return nodeEl;
+        }
+
+        function renderMindmap() {
+            const container = document.getElementById('mindmap');
+            container.innerHTML = '';
+            container.appendChild(renderNode(mindmapData, 0));
+        }
+
+        function expandAll() {
+            function expand(node) {
+                node.expanded = true;
+                if (node.children) {
+                    for (const child of node.children) {
+                        expand(child);
+                    }
+                }
+            }
+            expand(mindmapData);
+            renderMindmap();
+        }
+
+        function collapseAll() {
+            function collapse(node) {
+                if (node.depth > 0) {
+                    node.expanded = false;
+                }
+                if (node.children) {
+                    for (const child of node.children) {
+                        collapse(child);
+                    }
+                }
+            }
+            collapse(mindmapData);
+            renderMindmap();
+        }
+
+        // Initial render
+        renderMindmap();
+    </script>
+</body>
+</html>

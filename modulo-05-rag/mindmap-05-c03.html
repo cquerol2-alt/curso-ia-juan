@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map — Agentic search: el modelo decide qué buscar</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0a0a1a;color:#e8e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+        .topbar{padding:12px 20px;background:linear-gradient(90deg,#00f0ff,#0a6e5c);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+        .topbar a{color:#fff;text-decoration:none;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;font-size:.85em;transition:.3s}
+        .topbar a:hover{background:rgba(255,255,255,.3)}
+        .topbar h1{font-size:1.1em;color:#fff;text-align:center;flex:1;margin:0 12px}
+        .map{max-width:900px;margin:30px auto;padding:0 16px}
+        .center{text-align:center;margin-bottom:32px}
+        .center .pill{display:inline-block;background:linear-gradient(135deg,#ff00e5,#00f0ff);padding:16px 32px;border-radius:60px;font-size:1.4em;font-weight:800;color:#0a0a1a;box-shadow:0 0 30px rgba(255,0,229,.3)}
+        .center .sub{color:#8888aa;margin-top:8px;font-size:.95em}
+        .branch{margin-bottom:16px;border:1px solid rgba(255,0,229,.15);border-radius:12px;overflow:hidden;transition:.3s}
+        .branch:hover{border-color:rgba(255,0,229,.4);box-shadow:0 0 15px rgba(255,0,229,.08)}
+        .branch-head{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;background:#12122a;user-select:none;transition:.2s}
+        .branch-head:hover{background:#1a1a3e}
+        .branch-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2em;flex-shrink:0}
+        .b1 .branch-icon{background:rgba(255,0,229,.15);border:2px solid #ff00e5}
+        .b2 .branch-icon{background:rgba(0,240,255,.15);border:2px solid #00f0ff}
+        .b3 .branch-icon{background:rgba(57,255,20,.15);border:2px solid #39ff14}
+        .b4 .branch-icon{background:rgba(255,230,0,.15);border:2px solid #ffe600}
+        .b5 .branch-icon{background:rgba(255,107,107,.15);border:2px solid #ff6b6b}
+        .branch-title{flex:1;font-weight:700;font-size:1.05em}
+        .b1 .branch-title{color:#ff00e5}
+        .b2 .branch-title{color:#00f0ff}
+        .b3 .branch-title{color:#39ff14}
+        .b4 .branch-title{color:#ffe600}
+        .b5 .branch-title{color:#ff6b6b}
+        .toggle{color:#8888aa;font-size:1.4em;transition:transform .3s}
+        .branch.open .toggle{transform:rotate(45deg)}
+        .branch-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+        .branch.open .branch-body{max-height:800px}
+        .sub-list{padding:8px 20px 16px 72px;display:flex;flex-direction:column;gap:8px}
+        .sub-item{padding:10px 16px;background:#1a1a2e;border-radius:8px;border-left:3px solid;font-size:.93em;line-height:1.5}
+        .b1 .sub-item{border-color:#ff00e5}
+        .b2 .sub-item{border-color:#00f0ff}
+        .b3 .sub-item{border-color:#39ff14}
+        .b4 .sub-item{border-color:#ffe600}
+        .b5 .sub-item{border-color:#ff6b6b}
+        .sub-item strong{color:#fff}
+        .sub-item code{background:#12122a;padding:2px 6px;border-radius:4px;font-size:.88em;color:#39ff14;font-family:'Fira Code',monospace}
+        @media(max-width:600px){.topbar h1{font-size:.9em}.center .pill{font-size:1.1em;padding:12px 24px}.sub-list{padding-left:52px}}
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="clase-03.html">← Volver a la clase</a>
+        <h1>Mind Map — Clase 03: agentic search</h1>
+        <div style="width:80px"></div>
+    </div>
+
+    <div class="map">
+        <div class="center">
+            <div class="pill">El modelo decide</div>
+            <p class="sub">Tool use nativo de Anthropic: bucle ReAct, sin LangChain</p>
+        </div>
+
+        <!-- Rama 1 — Qué es tool use -->
+        <div class="branch b1">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🤖</div>
+                <div class="branch-title">¿Qué es tool use?</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Contrato:</strong> el modelo <em>pide</em> llamadas a funciones; <strong>tu código las ejecuta</strong></div>
+                    <div class="sub-item">Le pasas <code>tools=[...]</code> a <code>messages.create</code>; él devuelve bloques <code>tool_use</code></div>
+                    <div class="sub-item"><strong>Señal clave:</strong> <code>resp.stop_reason == "tool_use"</code> → hay que ejecutar y devolver <code>tool_result</code></div>
+                    <div class="sub-item">Así funcionan <strong>Claude Code, Cursor, Perplexity</strong> — no tienen "el doc entero" cargado, lo buscan</div>
+                    <div class="sub-item"><strong>Nombre técnico:</strong> function calling (OpenAI) = tool use (Anthropic). Mismo concepto.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 2 — Bucle ReAct -->
+        <div class="branch b2">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🔄</div>
+                <div class="branch-title">El bucle ReAct (Reason + Act)</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>1.</strong> Llama a la API con <code>tools</code> y <code>messages</code></div>
+                    <div class="sub-item"><strong>2.</strong> Si <code>stop_reason != "tool_use"</code> → respuesta final, break</div>
+                    <div class="sub-item"><strong>3.</strong> Añade el turno del <code>assistant</code> a <code>messages</code> (bloque <code>tool_use</code>)</div>
+                    <div class="sub-item"><strong>4.</strong> Ejecuta cada tool; añade <code>{role:user, content:[{type:"tool_result", tool_use_id:..., content:...}]}</code></div>
+                    <div class="sub-item"><strong>5.</strong> Vuelve a 1. Siempre con <code>max_turnos</code> (8–12) para evitar loops infinitos</div>
+                    <div class="sub-item"><strong>Mental model:</strong> tu programa es un loop; el "cerebro" del agente es el modelo dentro del loop</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 3 — Anatomía de una tool -->
+        <div class="branch b3">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🧬</div>
+                <div class="branch-title">Anatomía de una tool</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong><code>name</code></strong>: identificador snake_case único (ej: <code>search_docs</code>)</div>
+                    <div class="sub-item"><strong><code>description</code></strong>: el <strong>80% del trabajo</strong>. Dile <em>qué hace</em>, <em>qué devuelve</em> y <strong>cuándo usarla</strong></div>
+                    <div class="sub-item"><strong><code>input_schema</code></strong>: JSON Schema con <code>type</code>, <code>properties</code>, <code>required</code></div>
+                    <div class="sub-item"><strong>Regla:</strong> si dudas si el modelo la llamará cuando toca → tu description está floja</div>
+                    <div class="sub-item"><strong>Trampa:</strong> tools con nombres idénticos o descriptions solapadas → el modelo se confunde. Sé específico</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 4 — Ventajas -->
+        <div class="branch b4">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">✅</div>
+                <div class="branch-title">Ventajas vs stuffing</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Escala infinita:</strong> el corpus puede tener 10 GB; solo se leen los fragmentos que el agente decide abrir</div>
+                    <div class="sub-item"><strong>Datos vivos:</strong> tools pueden leer DB, API, web en tiempo real. Stuffing es estático</div>
+                    <div class="sub-item"><strong>Pago proporcional:</strong> una query barata cuesta poco, una compleja cuesta más. Más honesto que "paga el doc entero"</div>
+                    <div class="sub-item"><strong>Multi-paso:</strong> el agente puede encadenar "busca X → lee archivo → extrae dato" sin que lo orquestes tú</div>
+                    <div class="sub-item"><strong>Debug observable:</strong> ves los <code>tool_use</code> turno a turno → razonamiento explícito</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 5 — Cuándo gana -->
+        <div class="branch b5">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🎯</div>
+                <div class="branch-title">Cuándo agentic gana (y cuándo no)</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Gana cuando:</strong> corpus no cabe en 200K tokens, datos cambian, info no predecible, workflows multi-paso</div>
+                    <div class="sub-item"><strong>Pierde cuando:</strong> un doc cabe + se consulta muchas veces → stuffing + caché es más simple y más rápido</div>
+                    <div class="sub-item"><strong>Pierde cuando:</strong> latencia crítica (sub-segundo) → cada turno suma 1–3 s</div>
+                    <div class="sub-item"><strong>Riesgo real:</strong> tool mal descrita → el agente la llama cuando no toca, o no la llama cuando sí. Iterar descriptions es parte del trabajo</div>
+                    <div class="sub-item"><strong>Seguridad:</strong> tools con efectos (escribir archivos, ejecutar SQL) requieren validación estricta de inputs. El modelo NO es tu firewall</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

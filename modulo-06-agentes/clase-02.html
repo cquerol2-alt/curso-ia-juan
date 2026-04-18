@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 02: OpenAI Function Calling / Tool Use</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .code-block {
+            background-color: #1e1e1e;
+            border-left: 4px solid #00f0ff;
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .code-block code {
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .step-box {
+            background: linear-gradient(135deg, #1a1a3e 0%, #12122a 100%);
+            border-left: 4px solid #00f0ff;
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+        .step-box h4 {
+            color: #00e676;
+            margin-top: 0;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+        .comparison-table th {
+            background-color: #00e676;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-glow);
+        }
+        .comparison-table tr:nth-child(even) {
+            background-color: #1a1a2e;
+        }
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #00e676;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0d3d10;
+        }
+        .breadcrumb {
+            color: var(--text-muted)acc;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .breadcrumb a {
+            color: #00e676;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .concept-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .concept-list li {
+            padding-left: 24px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .concept-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #00e676;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="../index.html">Dashboard</a> >
+            <a href="index.html">Módulo 6</a> >
+            <span>Clase 02</span>
+        </div>
+
+        <!-- Header -->
+        <header class="header">
+            <h1>Clase 02: OpenAI Function Calling / Tool Use</h1>
+            <p class="subtitle">📅 Semana 8 — Martes | ⏱️ 45 minutos</p>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2>📹 Vídeo Principal</h2>
+            <p>Introducción práctica a Function Calling en OpenAI: cómo definir herramientas, el flujo de llamadas, y ejemplos reales.</p>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/xzXdLRUyjUg" allowfullscreen></iframe>
+            </div>
+
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-06-c02.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+
+            <div class="info-box" style="margin-top: 16px;">
+                <strong>📚 Documentación oficial:</strong>
+                <a href="https://platform.openai.com/docs/guides/function-calling" target="_blank" style="color: #00e676;">OpenAI Function Calling Guide</a>
+            </div>
+        </section>
+
+        <!-- Resumen de Conceptos -->
+        <section class="card">
+            <h2>📋 Resumen de Conceptos Clave</h2>
+
+            <h3 style="color: #00e676; margin-top: 20px;">¿Qué es Function Calling / Tool Use?</h3>
+            <p>
+                <strong>Function Calling (o Tool Use)</strong> es la capacidad de un modelo de lenguaje para determinar qué función o herramienta externa debe ejecutarse, basándose en el input del usuario y el contexto. El modelo <strong>NO ejecuta la función</strong> directamente — en su lugar, describe cuál es la mejor función a llamar y qué argumentos pasarle. Tu código es responsable de ejecutarla y devolver el resultado.
+            </p>
+
+            <h3 style="color: #00e676; margin-top: 20px;">El Flujo de Function Calling</h3>
+            <ol>
+                <li><strong>Usuario envía prompt:</strong> "¿Cuál es el tiempo en Barcelona?"</li>
+                <li><strong>Modelo analiza:</strong> Reconoce que necesita llamar a <code>get_weather</code></li>
+                <li><strong>Modelo sugiere tool_call:</strong> Devuelve <code>{"name": "get_weather", "arguments": {"city": "Barcelona"}}</code></li>
+                <li><strong>Tu código ejecuta:</strong> Llamas a tu función <code>get_weather("Barcelona")</code></li>
+                <li><strong>Devuelves resultado:</strong> Envías el resultado (ej: "24°C, soleado") de vuelta al modelo</li>
+                <li><strong>Modelo genera respuesta final:</strong> "En Barcelona hace 24°C y está soleado"</li>
+            </ol>
+
+            <h3 style="color: #00e676; margin-top: 20px;">Definir Herramientas con JSON Schema</h3>
+            <p>Las herramientas se definen usando <strong>JSON Schema</strong> en el parámetro <code>tools</code>:</p>
+            <div class="code-block">
+<code>tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_weather",
+            "description": "Obtiene el tiempo actual de una ciudad",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "city": {
+                        "type": "string",
+                        "description": "Nombre de la ciudad"
+                    },
+                    "units": {
+                        "type": "string",
+                        "enum": ["celsius", "fahrenheit"],
+                        "description": "Unidad de temperatura"
+                    }
+                },
+                "required": ["city"]
+            }
+        }
+    }
+]</code>
+            </div>
+
+            <h3 style="color: #00e676; margin-top: 20px;">Parámetros Clave de tool_choice</h3>
+            <ul class="concept-list">
+                <li><strong>auto</strong> (defecto): El modelo decide si llamar herramientas o no</li>
+                <li><strong>required</strong>: Fuerza al modelo a SIEMPRE usar una herramienta</li>
+                <li><strong>none</strong>: El modelo NUNCA usa herramientas</li>
+                <li><strong>Específica:</strong> Fuerza el uso de una herramienta concreta: <code>{"type": "function", "function": {"name": "get_weather"}}</code></li>
+            </ul>
+
+            <h3 style="color: #00e676; margin-top: 20px;">Tabla: Parámetros Clave de Herramientas</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parámetro</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Ejemplo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>name</code></td>
+                        <td>string</td>
+                        <td>Identificador único de la herramienta (snake_case)</td>
+                        <td><code>get_weather</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>description</code></td>
+                        <td>string</td>
+                        <td>Explicación clara de qué hace la herramienta</td>
+                        <td><code>Obtiene el tiempo actual</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>parameters</code></td>
+                        <td>JSON Schema</td>
+                        <td>Define los argumentos que acepta la función</td>
+                        <td><code>{"type": "object", "properties": {...}}</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>strict</code></td>
+                        <td>boolean</td>
+                        <td>Si es <code>true</code>, el modelo SIEMPRE devuelve JSON válido según el schema</td>
+                        <td><code>true</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="color: #00e676; margin-top: 20px;">Múltiples Herramientas en una Llamada (Parallel Tool Calls)</h3>
+            <p>
+                El modelo puede sugerir varias herramientas en una sola respuesta. Por ejemplo, si le pides "Calcula 2+2 y dame el tiempo en Madrid", el modelo puede devolver:
+            </p>
+            <div class="code-block">
+<code>tool_calls = [
+    {
+        "name": "calculator",
+        "arguments": {"operation": "+", "a": 2, "b": 2}
+    },
+    {
+        "name": "get_weather",
+        "arguments": {"city": "Madrid"}
+    }
+]</code>
+            </div>
+
+            <h3 style="color: #00e676; margin-top: 20px;">Errores Comunes y Cómo Evitarlos</h3>
+            <ul class="concept-list">
+                <li><strong>Descripción vaga:</strong> Si el modelo no entiende bien qué hace una herramienta, la llamará mal o no la usará. Sé específico.</li>
+                <li><strong>Schema incompleto:</strong> Siempre incluye <code>required</code> para los parámetros obligatorios.</li>
+                <li><strong>No manejar errores:</strong> Si una función falla, devuelve el error al modelo para que lo intente de otra forma.</li>
+                <li><strong>Loop infinito:</strong> Asegúrate de que el agente eventualmente deje de llamar herramientas y genere una respuesta final.</li>
+                <li><strong>Datos sensibles:</strong> NUNCA expongas API keys o datos confidenciales en las tool_calls — manéjalos en el backend.</li>
+            </ul>
+        </section>
+
+        <!-- Práctica Guiada -->
+        <section class="card">
+            <h2>💻 Práctica Guiada: Mi Primer Agente con Function Calling</h2>
+
+            <div class="step-box">
+                <h4>Step 1: Setup — Configurar la API Key</h4>
+                <p>Crea un archivo <code>.env</code> en la raíz de tu proyecto:</p>
+                <div class="code-block">
+<code>OPENAI_API_KEY=sk-proj-xxxxx...</code>
+                </div>
+                <p>Instala las dependencias necesarias:</p>
+                <div class="code-block">
+<code>pip install openai python-dotenv</code>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <h4>Step 2: Primera Función — get_weather con Function Calling</h4>
+                <p>Crea <code>agent_weather.py</code>:</p>
+                <div class="code-block">
+<code>import json
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI()
+
+# Definir la herramienta
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_weather",
+            "description": "Obtiene el tiempo actual para una ciudad",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "city": {
+                        "type": "string",
+                        "description": "Nombre de la ciudad (ej: Barcelona)"
+                    },
+                    "units": {
+                        "type": "string",
+                        "enum": ["celsius", "fahrenheit"],
+                        "description": "Unidad de temperatura (default: celsius)"
+                    }
+                },
+                "required": ["city"]
+            }
+        }
+    }
+]
+
+# Función real que simula una API de tiempo
+def get_weather(city, units="celsius"):
+    """Simula una llamada a una API de tiempo real"""
+    weather_data = {
+        "Barcelona": {"temp": 24, "condition": "soleado"},
+        "Madrid": {"temp": 22, "condition": "nublado"},
+        "Valencia": {"temp": 26, "condition": "parcialmente nublado"}
+    }
+    if city not in weather_data:
+        return f"No tengo datos del tiempo para {city}"
+
+    data = weather_data[city]
+    if units == "fahrenheit":
+        data["temp"] = int(data["temp"] * 9/5 + 32)
+
+    return f"{city}: {data['temp']}°{units[0].upper()}, {data['condition']}"
+
+# Llamada al modelo
+def chat_with_function_calling(user_message):
+    print(f"\n👤 Usuario: {user_message}\n")
+
+    messages = [{"role": "user", "content": user_message}]
+
+    # Primera llamada al modelo
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        tools=tools,
+        tool_choice="auto"
+    )
+
+    # Procesar la respuesta
+    if response.choices[0].finish_reason == "tool_calls":
+        # El modelo quiere usar una herramienta
+        tool_calls = response.choices[0].message.tool_calls
+
+        for tool_call in tool_calls:
+            tool_name = tool_call.function.name
+            tool_args = json.loads(tool_call.function.arguments)
+
+            print(f"🔧 El modelo llamó a: {tool_name}")
+            print(f"   Argumentos: {tool_args}")
+
+            # Ejecutar la función real
+            if tool_name == "get_weather":
+                result = get_weather(**tool_args)
+            else:
+                result = "Función desconocida"
+
+            print(f"   Resultado: {result}\n")
+
+            # Enviar el resultado de vuelta al modelo
+            messages.append({"role": "assistant", "content": response.choices[0].message.content})
+            messages.append({
+                "role": "tool",
+                "tool_call_id": tool_call.id,
+                "content": result
+            })
+
+        # Segunda llamada: el modelo genera la respuesta final
+        final_response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages
+        )
+
+        answer = final_response.choices[0].message.content
+    else:
+        # El modelo no necesitó herramientas
+        answer = response.choices[0].message.content
+
+    print(f"🤖 Asistente: {answer}")
+    return answer
+
+# Test
+if __name__ == "__main__":
+    chat_with_function_calling("¿Cuál es el tiempo en Barcelona?")
+    chat_with_function_calling("Dime el tiempo en Madrid y Valencia en Fahrenheit")</code>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <h4>Step 3: Agent Loop Completo</h4>
+                <p>Crea <code>agent_loop.py</code> para un agente que pueda hacer múltiples llamadas:</p>
+                <div class="code-block">
+<code>import json
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI()
+
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_weather",
+            "description": "Obtiene el tiempo actual para una ciudad",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "city": {"type": "string", "description": "Nombre de la ciudad"}
+                },
+                "required": ["city"]
+            }
+        }
+    }
+]
+
+def get_weather(city):
+    weather_db = {
+        "Barcelona": "24°C, soleado",
+        "Madrid": "22°C, nublado"
+    }
+    return weather_db.get(city, f"Datos no disponibles para {city}")
+
+def run_agent(user_message, max_iterations=10):
+    """Ejecuta el agent loop completo"""
+    print(f"\n👤 Usuario: {user_message}\n")
+
+    messages = [{"role": "user", "content": user_message}]
+    iteration = 0
+
+    while iteration < max_iterations:
+        iteration += 1
+        print(f"[Iteración {iteration}]")
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            tools=tools,
+            tool_choice="auto"
+        )
+
+        if response.choices[0].finish_reason == "tool_calls":
+            # Procesar tool_calls
+            messages.append(response.choices[0].message)
+
+            for tool_call in response.choices[0].message.tool_calls:
+                tool_name = tool_call.function.name
+                tool_args = json.loads(tool_call.function.arguments)
+
+                print(f"  🔧 Llamando a {tool_name} con {tool_args}")
+
+                if tool_name == "get_weather":
+                    result = get_weather(**tool_args)
+                else:
+                    result = "Desconocida"
+
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tool_call.id,
+                    "content": result
+                })
+                print(f"     Resultado: {result}")
+        else:
+            # El modelo ha generado la respuesta final
+            final_answer = response.choices[0].message.content
+            print(f"\n🤖 Respuesta Final:\n{final_answer}")
+            return final_answer
+
+    print("⚠️ Máximo de iteraciones alcanzado")
+    return None
+
+# Test
+if __name__ == "__main__":
+    run_agent("¿Cuál es el tiempo en Barcelona y Madrid?")</code>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <h4>Step 4: Múltiples Herramientas (Weather + Calculator)</h4>
+                <p>Crea <code>agent_multi_tools.py</code>:</p>
+                <div class="code-block">
+<code>import json
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI()
+
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_weather",
+            "description": "Obtiene el tiempo de una ciudad",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "city": {"type": "string"}
+                },
+                "required": ["city"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "calculator",
+            "description": "Realiza operaciones matemáticas",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "expression": {
+                        "type": "string",
+                        "description": "Expresión matemática (ej: 2 + 2)"
+                    }
+                },
+                "required": ["expression"]
+            }
+        }
+    }
+]
+
+def get_weather(city):
+    return {"Barcelona": "24°C, soleado", "Madrid": "22°C, nublado"}.get(city, "No disponible")
+
+def calculator(expression):
+    try:
+        result = eval(expression)
+        return str(result)
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+def run_multi_agent(user_message):
+    print(f"\n👤 Usuario: {user_message}\n")
+
+    messages = [{"role": "user", "content": user_message}]
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        tools=tools,
+        tool_choice="auto"
+    )
+
+    if response.choices[0].finish_reason == "tool_calls":
+        messages.append(response.choices[0].message)
+
+        for tool_call in response.choices[0].message.tool_calls:
+            tool_name = tool_call.function.name
+            tool_args = json.loads(tool_call.function.arguments)
+
+            print(f"🔧 {tool_name}: {tool_args}")
+
+            if tool_name == "get_weather":
+                result = get_weather(**tool_args)
+            elif tool_name == "calculator":
+                result = calculator(**tool_args)
+            else:
+                result = "Unknown"
+
+            messages.append({
+                "role": "tool",
+                "tool_call_id": tool_call.id,
+                "content": result
+            })
+
+        final = client.chat.completions.create(model="gpt-4o-mini", messages=messages)
+        answer = final.choices[0].message.content
+    else:
+        answer = response.choices[0].message.content
+
+    print(f"\n🤖 {answer}")
+    return answer
+
+# Test
+if __name__ == "__main__":
+    run_multi_agent("¿Cuál es el tiempo en Barcelona? Y calcula 15 * 8")</code>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mini-Reto -->
+        <section class="card">
+            <h2>🎯 Mini-Reto: Agente Experto con 3 Herramientas</h2>
+            <p>
+                <strong>Objetivo:</strong> Crea un agente que tenga <strong>3 herramientas</strong>: weather, calculator, y datetime. El agente debe poder responder preguntas como:
+            </p>
+            <ul class="concept-list">
+                <li>"¿Cuál es el tiempo en Madrid? Suma 50 + 30. ¿Qué hora es?"</li>
+                <li>"Es medianoche en Barcelona. ¿Cuál es la temperatura? Multiplica 12 * 5"</li>
+            </ul>
+            <p><strong>Requisitos:</strong></p>
+            <ul class="concept-list">
+                <li>Define las 3 herramientas en JSON Schema</li>
+                <li>Implementa las funciones reales (o simuladas)</li>
+                <li>El agent loop debe procesar todas las tool_calls</li>
+                <li>Prueba con al menos 2 prompts diferentes que llamen múltiples herramientas</li>
+            </ul>
+            <div class="warning" style="margin-top: 16px;">
+                <strong>💡 Pista:</strong> La herramienta <code>datetime</code> puede devolver la hora actual con <code>datetime.datetime.now().strftime("%H:%M:%S")</code>
+            </div>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📤</span>
+                Entrega de ejercicios
+            </h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Function calling con weather y calculator</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-1" rows="4" placeholder="Explicación de cómo funcionan las herramientas..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-c02', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>🎯 Entregar reto: Agente con 3 tools</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Pruebas realizadas (al menos 2 prompts complejos)..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-c02', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Test de Conocimiento -->
+        <section class="card">
+            <h2>📝 Test de Conocimiento</h2>
+            <p>Responde las siguientes preguntas para verificar tu comprensión:</p>
+
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Navegación -->
+        <section style="display: flex; justify-content: space-between; margin-top: 40px; padding: 20px 0;">
+            <a href="clase-01.html" class="btn">← Clase 01</a>
+            <a href="clase-03.html" class="btn">Clase 03 →</a>
+        </section>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Qué es lo que hace el modelo en Function Calling / Tool Use?",
+                options: [
+                    "Ejecuta la función directamente",
+                    "Describe qué función llamar y con qué argumentos",
+                    "Genera código Python",
+                    "Accede a bases de datos externas"
+                ],
+                correct: 1,
+                explanation: "El modelo NO ejecuta funciones. En su lugar, describe cuál es la mejor función a llamar y qué argumentos pasarle."
+            },
+            {
+                question: "¿Cuál es el parámetro tool_choice correcto si quieres que el modelo SIEMPRE use una herramienta?",
+                options: [
+                    '"auto"',
+                    '"required"',
+                    '"none"',
+                    '"forced"'
+                ],
+                correct: 1,
+                explanation: 'tool_choice="required" fuerza al modelo a SIEMPRE usar una herramienta.'
+            },
+            {
+                question: "¿En qué formato se definen las herramientas para OpenAI?",
+                options: [
+                    "XML Schema",
+                    "JSON Schema",
+                    "YAML",
+                    "CSV"
+                ],
+                correct: 1,
+                explanation: "Las herramientas se definen usando JSON Schema en el parámetro tools."
+            },
+            {
+                question: "¿Qué parámetros son OBLIGATORIOS en la definición de una herramienta?",
+                options: [
+                    "Solo name",
+                    "name y description",
+                    "name, description y parameters",
+                    "Todos excepto strict"
+                ],
+                correct: 2,
+                explanation: "Los parámetros obligatorios son name, description y parameters (que a su vez define los argumentos)."
+            },
+            {
+                question: "¿Qué significa 'Parallel Tool Calls'?",
+                options: [
+                    "Llamar herramientas una tras otra",
+                    "El modelo puede sugerir varias herramientas en una sola respuesta",
+                    "Usar threads en Python",
+                    "Ejecutar herramientas en diferentes procesos"
+                ],
+                correct: 1,
+                explanation: "Parallel Tool Calls significa que el modelo puede sugerir múltiples herramientas en una única respuesta."
+            },
+            {
+                question: "¿Cuál es el flujo correcto de Function Calling?",
+                options: [
+                    "Usuario → Modelo ejecuta función → Respuesta final",
+                    "Usuario → Modelo sugiere tool_call → Código ejecuta → Resultado al modelo → Respuesta final",
+                    "Usuario → Modelo genera JSON → API ejecuta → Response",
+                    "Usuario → Directamente a la base de datos"
+                ],
+                correct: 1,
+                explanation: "El flujo es: Usuario envía prompt → Modelo sugiere tool_call → Tu código ejecuta la función → Devuelves el resultado al modelo → Modelo genera respuesta final."
+            },
+            {
+                question: "¿Qué valor tiene finish_reason cuando el modelo quiere usar una herramienta?",
+                options: [
+                    '"stop"',
+                    '"tool_calls"',
+                    '"function"',
+                    '"complete"'
+                ],
+                correct: 1,
+                explanation: 'finish_reason = "tool_calls" indica que el modelo quiere llamar a una herramienta.'
+            },
+            {
+                question: "¿Por qué es importante incluir 'required' en el JSON Schema de los parámetros?",
+                options: [
+                    "Por estética",
+                    "Para que el modelo sepa qué argumentos son obligatorios",
+                    "Para acelerar la API",
+                    "No es importante"
+                ],
+                correct: 1,
+                explanation: "'required' le indica al modelo cuáles son los parámetros obligatorios para la función."
+            },
+            {
+                question: "¿Cuál es un error común al usar Function Calling?",
+                options: [
+                    "Usar demasiadas herramientas",
+                    "No manejar errores cuando una función falla",
+                    "Llamar herramientas con demasiados argumentos",
+                    "Todas las anteriores"
+                ],
+                correct: 1,
+                explanation: "Un error crítico es no manejar errores cuando una función falla. Debes devolver el error al modelo para que intente otra estrategia."
+            },
+            {
+                question: "¿Qué parámetro de una herramienta asegura que el modelo SIEMPRE devuelva JSON válido según el schema?",
+                options: [
+                    "validate",
+                    "strict",
+                    "enforce",
+                    "required"
+                ],
+                correct: 1,
+                explanation: 'El parámetro "strict" (cuando es true) asegura que el modelo devuelva JSON válido según el schema definido.'
+            }
+        ];
+
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm6-c02');
+        if (typeof CourseProgress !== 'undefined') {
+            CourseProgress.initSubmissionIndicators('m6-c02');
+        }
+    </script>
+</body>
+</html>

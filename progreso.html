@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progreso de Juan — Curso IA</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg-dark: #0a0a1a;
+            --bg-card: #12122a;
+            --neon-cyan: #00f0ff;
+            --neon-green: #39ff14;
+            --neon-magenta: #ff00e5;
+            --neon-yellow: #ffe600;
+            --neon-orange: #ff6b00;
+            --text-primary: #e8e8f0;
+            --text-muted: #8888aa;
+            --radius: 12px;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 1rem;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(0,240,255,0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255,0,229,0.03) 0%, transparent 50%);
+        }
+        .container { max-width: 720px; margin: 0 auto; }
+        header {
+            text-align: center;
+            padding: 2rem 0 1rem;
+        }
+        header h1 {
+            font-size: 1.6rem;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        header p { color: var(--text-muted); margin-top: 0.3rem; font-size: 0.95rem; }
+        .sync-info {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .sync-info span { color: var(--neon-green); }
+
+        /* Stats grid */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat {
+            background: var(--bg-card);
+            border: 1px solid rgba(0,240,255,0.1);
+            border-radius: var(--radius);
+            padding: 1.2rem 1rem;
+            text-align: center;
+        }
+        .stat-icon { font-size: 1.8rem; }
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            margin: 0.3rem 0 0.1rem;
+        }
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* XP bar */
+        .xp-section { margin-bottom: 1.5rem; }
+        .xp-bar-bg {
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            height: 22px;
+            overflow: hidden;
+            position: relative;
+        }
+        .xp-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+            border-radius: 10px;
+            transition: width 0.6s ease;
+            min-width: 2px;
+        }
+        .xp-bar-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* Section titles */
+        .section-title {
+            font-size: 1rem;
+            color: var(--neon-cyan);
+            margin-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(0,240,255,0.15);
+            padding-bottom: 0.4rem;
+        }
+
+        /* Badges */
+        .badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .badge-unlocked {
+            background: rgba(57,255,20,0.12);
+            border: 1px solid rgba(57,255,20,0.3);
+            color: var(--neon-green);
+        }
+        .badge-locked {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        /* Modules */
+        .modules { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.5rem; }
+        .mod {
+            background: var(--bg-card);
+            border: 1px solid rgba(0,240,255,0.08);
+            border-radius: var(--radius);
+            padding: 0.9rem 1rem;
+        }
+        .mod-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .mod-name { font-size: 0.9rem; font-weight: 600; }
+        .mod-count { font-size: 0.8rem; color: var(--neon-cyan); }
+        .mod-bar-bg {
+            background: rgba(255,255,255,0.06);
+            border-radius: 6px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .mod-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+            border-radius: 6px;
+            transition: width 0.4s ease;
+        }
+        .mod-complete .mod-bar-fill {
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-yellow));
+        }
+
+        /* Test scores */
+        .scores { margin-bottom: 1.5rem; }
+        .scores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.5rem;
+        }
+        .score-item {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 0.6rem;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        .score-item .score-val {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 0.2rem;
+        }
+        .score-high { color: var(--neon-green); }
+        .score-mid { color: var(--neon-yellow); }
+        .score-low { color: var(--neon-orange); }
+
+        /* Loading / error */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        .loading .spinner {
+            display: inline-block;
+            width: 30px; height: 30px;
+            border: 3px solid rgba(0,240,255,0.2);
+            border-top-color: var(--neon-cyan);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .error { color: var(--neon-orange); text-align: center; padding: 2rem; }
+        .no-data { text-align: center; padding: 2rem; color: var(--text-muted); }
+
+        /* Radar chart */
+        .radar-section { margin-bottom: 1.5rem; }
+        .radar-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid rgba(0,240,255,0.1);
+            border-radius: var(--radius);
+            padding: 1.5rem 1rem 1rem;
+        }
+        .radar-svg { max-width: 340px; width: 100%; }
+        .radar-legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem 1.2rem;
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 360px;
+        }
+        .radar-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+        }
+        .radar-legend-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .radar-legend-name { color: var(--text-muted); }
+        .radar-legend-val { color: var(--neon-cyan); font-weight: 600; margin-left: auto; }
+
+        /* Entregas / ejercicios */
+        .entregas { margin-bottom: 1.5rem; }
+        .entrega-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0,240,255,0.08);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 0.6rem;
+        }
+        .entrega-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .entrega-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+        }
+        .entrega-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .entrega-badge.aprobado {
+            background: rgba(57,255,20,0.15);
+            border: 1px solid rgba(57,255,20,0.3);
+            color: var(--neon-green);
+        }
+        .entrega-badge.pendiente {
+            background: rgba(255,230,0,0.12);
+            border: 1px solid rgba(255,230,0,0.3);
+            color: var(--neon-yellow);
+        }
+        .entrega-badge.revisado {
+            background: rgba(0,240,255,0.12);
+            border: 1px solid rgba(0,240,255,0.3);
+            color: var(--neon-cyan);
+        }
+        .entrega-meta {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .entrega-meta span { color: var(--neon-cyan); }
+        .entrega-feedback {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            line-height: 1.5;
+            border-left: 3px solid rgba(57,255,20,0.3);
+        }
+        .entrega-feedback strong { color: var(--neon-green); }
+        .entrega-empty {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px dashed rgba(0,240,255,0.1);
+        }
+
+        .refresh-btn {
+            display: block; margin: 1rem auto;
+            background: transparent;
+            border: 1px solid rgba(0,240,255,0.3);
+            color: var(--neon-cyan);
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .refresh-btn:hover { background: rgba(0,240,255,0.08); }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem 0;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+        footer a { color: var(--neon-cyan); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Progreso de Juan</h1>
+            <p>Curso IA para Desarrolladores Web</p>
+        </header>
+        <div id="app">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Cargando progreso...</p>
+            </div>
+        </div>
+        <footer>
+            <a href="index.html">Volver al curso</a>
+        </footer>
+    </div>
+
+    <script>
+    const GITHUB_REPO = 'cquerol2-alt/curso-ia-juan';
+    const PROGRESS_FILE = 'progress-data.json';
+
+    const MODULES = {
+        1: { name: 'Python para Devs Web', total: 10 },
+        2: { name: 'Fundamentos de IA y LLMs', total: 5 },
+        3: { name: 'APIs de IA — Tu Primer Chatbot', total: 7 },
+        4: { name: 'AI Coding Tools', total: 5 },
+        5: { name: 'RAG — IA con Tus Datos', total: 10 },
+        6: { name: 'Agentes de IA', total: 6 },
+        7: { name: 'Full-Stack AI App', total: 7 },
+        8: { name: 'Portfolio y CV', total: 5 },
+        9: { name: 'Búsqueda de Empleo', total: 5 },
+    };
+
+    const SKILL_AREAS = {
+        'Python':     { modules: [1], icon: '🐍', color: '#39ff14' },
+        'IA / LLMs':  { modules: [2], icon: '🧠', color: '#00f0ff' },
+        'APIs':       { modules: [3], icon: '🔌', color: '#ff00e5' },
+        'AI Tools':   { modules: [4], icon: '🤖', color: '#ffe600' },
+        'RAG':        { modules: [5], icon: '🧙', color: '#ff6b00' },
+        'Agentes':    { modules: [6], icon: '🏗️', color: '#00ff88' },
+        'Full-Stack': { modules: [7], icon: '🚀', color: '#ff4488' },
+        'Portfolio':  { modules: [8, 9], icon: '💼', color: '#aa88ff' },
+    };
+
+    function calcSkillProfile(data) {
+        const profile = {};
+        for (const [skill, cfg] of Object.entries(SKILL_AREAS)) {
+            let totalClasses = 0, completedCount = 0, scoreSum = 0, scoreCount = 0;
+            for (const modNum of cfg.modules) {
+                const mod = MODULES[modNum];
+                if (!mod) continue;
+                totalClasses += mod.total;
+                const prefix = `m${modNum}-`;
+                const done = (data.completedClasses || []).filter(c => c.startsWith(prefix));
+                completedCount += done.length;
+                done.forEach(classId => {
+                    const s = (data.testScores || {})[classId];
+                    if (s !== undefined) { scoreSum += s; scoreCount++; }
+                });
+            }
+            const progressPct = totalClasses > 0 ? (completedCount / totalClasses) : 0;
+            const avgScore = scoreCount > 0 ? (scoreSum / scoreCount) / 10 : 0;
+            profile[skill] = {
+                mastery: Math.round((progressPct * 0.6 + avgScore * 0.4) * 100),
+                completed: completedCount,
+                total: totalClasses,
+                avgScore: scoreCount > 0 ? Math.round((scoreSum / scoreCount) * 10) / 10 : null,
+                icon: cfg.icon,
+                color: cfg.color,
+            };
+        }
+        return profile;
+    }
+
+    function renderRadarSVG(profile) {
+        const skills = Object.entries(profile);
+        const n = skills.length;
+        const cx = 170, cy = 170, R = 130;
+        const angleStep = (2 * Math.PI) / n;
+        const startAngle = -Math.PI / 2; // top
+
+        // Grid rings
+        let svg = `<svg class="radar-svg" viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg">`;
+
+        // Background rings at 25%, 50%, 75%, 100%
+        [0.25, 0.5, 0.75, 1.0].forEach(pct => {
+            const r = R * pct;
+            const pts = [];
+            for (let i = 0; i < n; i++) {
+                const a = startAngle + i * angleStep;
+                pts.push(`${cx + r * Math.cos(a)},${cy + r * Math.sin(a)}`);
+            }
+            svg += `<polygon points="${pts.join(' ')}" fill="none" stroke="rgba(0,240,255,0.08)" stroke-width="1"/>`;
+        });
+
+        // Axis lines
+        for (let i = 0; i < n; i++) {
+            const a = startAngle + i * angleStep;
+            const x2 = cx + R * Math.cos(a);
+            const y2 = cy + R * Math.sin(a);
+            svg += `<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="rgba(0,240,255,0.06)" stroke-width="1"/>`;
+        }
+
+        // Data polygon
+        const dataPoints = [];
+        skills.forEach(([name, s], i) => {
+            const a = startAngle + i * angleStep;
+            const r = R * (s.mastery / 100);
+            dataPoints.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a), color: s.color });
+        });
+        const polyPts = dataPoints.map(p => `${p.x},${p.y}`).join(' ');
+        svg += `<polygon points="${polyPts}" fill="rgba(0,240,255,0.12)" stroke="var(--neon-cyan)" stroke-width="2"/>`;
+
+        // Data dots + labels
+        skills.forEach(([name, s], i) => {
+            const a = startAngle + i * angleStep;
+            const r = R * (s.mastery / 100);
+            const dx = cx + r * Math.cos(a);
+            const dy = cy + r * Math.sin(a);
+
+            // Dot
+            svg += `<circle cx="${dx}" cy="${dy}" r="4" fill="${s.color}" stroke="#0a0a1a" stroke-width="1.5"/>`;
+
+            // Label
+            const lR = R + 18;
+            const lx = cx + lR * Math.cos(a);
+            const ly = cy + lR * Math.sin(a);
+            const anchor = Math.abs(Math.cos(a)) < 0.1 ? 'middle' : (Math.cos(a) > 0 ? 'start' : 'end');
+            svg += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dominant-baseline="central" fill="#8888aa" font-size="11" font-family="system-ui">${s.icon} ${name}</text>`;
+        });
+
+        // Center mastery average
+        const avgMastery = Math.round(skills.reduce((s, [, v]) => s + v.mastery, 0) / n);
+        svg += `<text x="${cx}" y="${cy - 6}" text-anchor="middle" fill="var(--neon-cyan)" font-size="22" font-weight="800">${avgMastery}%</text>`;
+        svg += `<text x="${cx}" y="${cy + 14}" text-anchor="middle" fill="#8888aa" font-size="10">dominio global</text>`;
+
+        svg += '</svg>';
+        return svg;
+    }
+
+    const BADGES = {
+        'python-initiate': { name: 'Python Initiate', icon: '🐍' },
+        'api-master': { name: 'API Master', icon: '🔌' },
+        'ai-augmented': { name: 'AI-Augmented Dev', icon: '🤖' },
+        'rag-wizard': { name: 'RAG Wizard', icon: '🧙' },
+        'agent-builder': { name: 'Agent Builder', icon: '🏗️' },
+        'fullstack-ai': { name: 'Full-Stack AI Dev', icon: '🚀' },
+        'portfolio-pro': { name: 'Portfolio Pro', icon: '💼' },
+        'job-hunter': { name: 'Job Hunter', icon: '🎯' },
+        'first-blood': { name: 'First Blood', icon: '🩸' },
+        'streak-7': { name: 'En Racha x7', icon: '🔥' },
+        'perfect-score': { name: 'Nota Perfecta', icon: '💯' },
+        'combo-master': { name: 'Combo Master', icon: '⚡' },
+        'lucky-strike': { name: 'Lucky Strike', icon: '🍀' },
+        'streak-30': { name: 'Racha Imparable', icon: '🌋' },
+        'first-submit': { name: 'Primera Entrega', icon: '📤' },
+    };
+
+    async function fetchEntregas() {
+        const url = `https://api.github.com/repos/${GITHUB_REPO}/issues?state=all&labels=entrega&per_page=30&t=${Date.now()}`;
+        const res = await fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
+        if (!res.ok) return [];
+        const issues = await res.json();
+        // For each issue, fetch first comment (review) if closed
+        const entregas = [];
+        for (const issue of issues) {
+            const labels = (issue.labels || []).map(l => l.name);
+            const tipo = labels.includes('mini-reto') ? 'Mini-Reto' : labels.includes('code-along') ? 'Práctica Guiada' : labels.includes('boss-battle') ? 'Boss Battle' : 'Ejercicio';
+            let estado = 'pendiente';
+            if (labels.includes('aprobado')) estado = 'aprobado';
+            else if (issue.state === 'closed') estado = 'revisado';
+
+            // Extract module/class from labels like m1, m1-c07
+            const claseLabel = labels.find(l => /^m\d+-c\d+$/.test(l) || /^m\d+-bb$/.test(l));
+            const modLabel = labels.find(l => /^m\d+$/.test(l));
+
+            let feedback = null;
+            if (issue.comments > 0) {
+                try {
+                    const cUrl = `https://api.github.com/repos/${GITHUB_REPO}/issues/${issue.number}/comments?per_page=1`;
+                    const cRes = await fetch(cUrl, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
+                    if (cRes.ok) {
+                        const comments = await cRes.json();
+                        if (comments.length > 0) {
+                            const body = comments[0].body || '';
+                            const resultMatch = body.match(/\*\*Resultado:\s*(.+?)\*\*/);
+                            const bienMatch = body.match(/### Lo que está bien\n([\s\S]*?)(?=\n### |$)/);
+                            const sugerMatch = body.match(/### Sugerencias para mejorar\n([\s\S]*?)(?=\n### |$)/);
+
+                            if (bienMatch || sugerMatch) {
+                                // Structured review format
+                                feedback = {
+                                    resultado: resultMatch ? resultMatch[1].trim() : (estado === 'aprobado' ? '✅ APROBADO' : ''),
+                                    loBien: bienMatch ? bienMatch[1].trim().replace(/^- /gm, '• ') : '',
+                                    sugerencias: sugerMatch ? sugerMatch[1].trim().replace(/^- /gm, '• ') : '',
+                                    freeText: '',
+                                };
+                            } else {
+                                // Free-form review — clean up markdown and show body
+                                let cleanBody = body
+                                    .replace(/^## .*\n?/gm, '')           // remove ## headers
+                                    .replace(/\*\*(.+?)\*\*/g, '$1')      // bold → plain
+                                    .replace(/^\d+\.\s*/gm, '• ')         // numbered lists → bullets
+                                    .replace(/^- /gm, '• ')               // dash lists → bullets
+                                    .trim();
+                                // Show full comment without truncation
+                                feedback = {
+                                    resultado: estado === 'aprobado' ? '✅ APROBADO' : '',
+                                    loBien: '',
+                                    sugerencias: '',
+                                    freeText: cleanBody,
+                                };
+                            }
+                        }
+                    }
+                } catch(e) { /* silently ignore */ }
+            }
+
+            entregas.push({
+                number: issue.number,
+                title: issue.title,
+                tipo,
+                estado,
+                clase: claseLabel || '',
+                modulo: modLabel || '',
+                fecha: issue.created_at,
+                url: issue.html_url,
+                feedback,
+            });
+        }
+        return entregas;
+    }
+
+    async function fetchProgress() {
+        // Use API (not raw) to avoid CDN cache
+        const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${PROGRESS_FILE}?ref=main&t=${Date.now()}`;
+        const res = await fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const file = await res.json();
+        const decoded = decodeURIComponent(escape(atob(file.content)));
+        return JSON.parse(decoded);
+    }
+
+    function timeAgo(iso) {
+        if (!iso) return 'nunca';
+        const diff = Date.now() - new Date(iso).getTime();
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return 'ahora mismo';
+        if (mins < 60) return `hace ${mins} min`;
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return `hace ${hrs}h`;
+        const days = Math.floor(hrs / 24);
+        return `hace ${days} día${days > 1 ? 's' : ''}`;
+    }
+
+    function render(data) {
+        const totalClasses = Object.values(MODULES).reduce((s, m) => s + m.total, 0);
+        const maxXP = totalClasses * 10 + 50 * 9; // estimate
+        const xpPct = Math.min(100, Math.round((data.xp / maxXP) * 100));
+
+        // Module progress
+        const modProgress = {};
+        for (const [num, mod] of Object.entries(MODULES)) {
+            const prefix = `m${num}-`;
+            const done = (data.completedClasses || []).filter(c => c.startsWith(prefix)).length;
+            modProgress[num] = { done, total: mod.total, pct: mod.total > 0 ? Math.round((done / mod.total) * 100) : 0 };
+        }
+
+        let html = '';
+
+        // Sync info
+        html += `<div class="sync-info">Última actualización: <span>${timeAgo(data.lastSync)}</span></div>`;
+
+        // Level info
+        const level = data.level || 1;
+        const levelTitle = data.levelTitle || 'Novato';
+
+        // Stats — 6 cards now
+        html += `<div class="stats" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="stat"><div class="stat-icon">🎮</div><div class="stat-value">${level}</div><div class="stat-label">${levelTitle}</div></div>
+            <div class="stat"><div class="stat-icon">⚡</div><div class="stat-value">${data.xp || 0}</div><div class="stat-label">XP Total</div></div>
+            <div class="stat"><div class="stat-icon">✓</div><div class="stat-value">${(data.completedClasses||[]).length}/${totalClasses}</div><div class="stat-label">Clases</div></div>
+            <div class="stat"><div class="stat-icon">🔥</div><div class="stat-value">${data.streak || 0}</div><div class="stat-label">Racha (días)</div></div>
+            <div class="stat"><div class="stat-icon">🎁</div><div class="stat-value">${data.totalRewardsEarned || 0}</div><div class="stat-label">Recompensas</div></div>
+            <div class="stat"><div class="stat-icon">🏆</div><div class="stat-value">${(data.badges||[]).length}/${Object.keys(BADGES).length}</div><div class="stat-label">Medallas</div></div>
+        </div>`;
+
+        // Combo record
+        if (data.highestCombo && data.highestCombo >= 2) {
+            html += `<div class="sync-info" style="margin-bottom: 1rem;">Récord de combo en una sesión: <span>${data.highestCombo} clases seguidas</span></div>`;
+        }
+
+        // XP bar
+        html += `<div class="xp-section">
+            <div class="xp-bar-bg"><div class="xp-bar-fill" style="width:${xpPct}%"></div>
+            <span class="xp-bar-text">${data.xp || 0} XP — ${xpPct}%</span></div>
+        </div>`;
+
+        // Badges
+        html += `<div class="section-title">Medallas</div><div class="badges">`;
+        for (const [id, b] of Object.entries(BADGES)) {
+            const unlocked = (data.badges || []).includes(id);
+            html += `<span class="badge ${unlocked ? 'badge-unlocked' : 'badge-locked'}">${b.icon} ${b.name}</span>`;
+        }
+        html += `</div>`;
+
+        // Skill Radar
+        const profile = data.skillProfile || calcSkillProfile(data);
+        html += `<div class="radar-section">`;
+        html += `<div class="section-title">Perfil de Conocimiento</div>`;
+        html += `<div class="radar-wrap">`;
+        html += renderRadarSVG(profile);
+        html += `<div class="radar-legend">`;
+        for (const [name, s] of Object.entries(profile)) {
+            html += `<div class="radar-legend-item">
+                <span class="radar-legend-dot" style="background:${s.color}"></span>
+                <span class="radar-legend-name">${s.icon} ${name}</span>
+                <span class="radar-legend-val">${s.mastery}%</span>
+            </div>`;
+        }
+        html += `</div></div></div>`;
+
+        // Modules
+        html += `<div class="section-title">Módulos</div><div class="modules">`;
+        for (const [num, mod] of Object.entries(MODULES)) {
+            const p = modProgress[num];
+            const isComplete = p.done >= p.total && p.total > 0;
+            html += `<div class="mod ${isComplete ? 'mod-complete' : ''}">
+                <div class="mod-header">
+                    <span class="mod-name">${num}. ${mod.name}</span>
+                    <span class="mod-count">${p.done}/${p.total}</span>
+                </div>
+                <div class="mod-bar-bg"><div class="mod-bar-fill" style="width:${p.pct}%"></div></div>
+            </div>`;
+        }
+        html += `</div>`;
+
+        // Test scores
+        const scores = data.testScores || {};
+        const scoreKeys = Object.keys(scores);
+        if (scoreKeys.length > 0) {
+            html += `<div class="scores"><div class="section-title">Notas de Tests</div><div class="scores-grid">`;
+            scoreKeys.sort().forEach(id => {
+                const s = scores[id];
+                const cls = s >= 9 ? 'score-high' : s >= 7 ? 'score-mid' : 'score-low';
+                // Format class ID nicely: m1-c01 → M1 C01
+                const label = id.replace(/^m(\d+)-c(\d+)/, 'M$1 C$2').replace(/^m(\d+)-bb/, 'M$1 Boss');
+                html += `<div class="score-item"><div>${label}</div><div class="score-val ${cls}">${s}/10</div></div>`;
+            });
+            html += `</div></div>`;
+        }
+
+        // Start date
+        if (data.startDate) {
+            html += `<div class="sync-info" style="margin-top:1rem;">Inicio del curso: ${new Date(data.startDate).toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric' })}</div>`;
+        }
+
+        html += `<button class="refresh-btn" onclick="loadProgress()">Actualizar</button>`;
+
+        document.getElementById('app').innerHTML = html;
+
+        // Load entregas async (after main render so page is fast)
+        renderEntregas();
+    }
+
+    async function renderEntregas() {
+        // Insert placeholder
+        const app = document.getElementById('app');
+        const refreshBtn = app.querySelector('.refresh-btn');
+        const entregasDiv = document.createElement('div');
+        entregasDiv.id = 'entregas-section';
+        entregasDiv.innerHTML = `<div class="section-title">📤 Entregas de Ejercicios</div><div class="entrega-empty">Cargando entregas...</div>`;
+        refreshBtn.parentNode.insertBefore(entregasDiv, refreshBtn);
+
+        try {
+            const entregas = await fetchEntregas();
+            let html = `<div class="section-title">📤 Entregas de Ejercicios</div>`;
+            if (entregas.length === 0) {
+                html += `<div class="entrega-empty">Aún no hay ejercicios entregados. ¡Ánimo! 💪</div>`;
+            } else {
+                html += `<div class="entregas">`;
+                for (const e of entregas) {
+                    const fechaStr = new Date(e.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    html += `<div class="entrega-card">`;
+                    html += `<div class="entrega-header">`;
+                    html += `<div class="entrega-title">${e.tipo}: ${e.title.replace(/^\[.*?\]\s*/, '')}</div>`;
+                    html += `<span class="entrega-badge ${e.estado}">${e.estado === 'aprobado' ? '✅ Aprobado' : e.estado === 'revisado' ? '📋 Revisado' : '⏳ Pendiente'}</span>`;
+                    html += `</div>`;
+                    html += `<div class="entrega-meta">${e.tipo} · <span>${e.clase.replace(/^m(\d+)-c(\d+)/, 'M$1 Clase $2').replace(/^m(\d+)-bb/, 'M$1 Boss Battle')}</span> · ${fechaStr}</div>`;
+                    if (e.feedback) {
+                        html += `<div class="entrega-feedback">`;
+                        if (e.feedback.resultado) html += `<strong>${e.feedback.resultado}</strong><br>`;
+                        if (e.feedback.freeText) {
+                            html += e.feedback.freeText.split('\n').join('<br>');
+                        } else {
+                            if (e.feedback.loBien) html += `${e.feedback.loBien.split('\n').join('<br>')}`;
+                            if (e.feedback.sugerencias) html += `<br><br><em style="color:#ffe600;">💡 Sugerencias:</em><br>${e.feedback.sugerencias.split('\n').join('<br>')}`;
+                        }
+                        html += `</div>`;
+                    }
+                    html += `</div>`;
+                }
+                html += `</div>`;
+            }
+            entregasDiv.innerHTML = html;
+        } catch(err) {
+            console.error('Error loading entregas:', err);
+            entregasDiv.innerHTML = `<div class="section-title">📤 Entregas de Ejercicios</div><div class="entrega-empty">No se pudieron cargar las entregas.</div>`;
+        }
+    }
+
+    async function loadProgress() {
+        const app = document.getElementById('app');
+        app.innerHTML = '<div class="loading"><div class="spinner"></div><p>Cargando progreso...</p></div>';
+        try {
+            const data = await fetchProgress();
+            if (!data.lastSync && (!data.completedClasses || data.completedClasses.length === 0)) {
+                app.innerHTML = '<div class="no-data"><p>Juan aún no ha empezado o la sincronización no está activada.</p><button class="refresh-btn" onclick="loadProgress()">Reintentar</button></div>';
+            } else {
+                render(data);
+            }
+        } catch (e) {
+            console.error(e);
+            app.innerHTML = '<div class="error"><p>No se pudo cargar el progreso.</p><p style="font-size:0.8rem;margin-top:0.5rem;">' + e.message + '</p><button class="refresh-btn" onclick="loadProgress()">Reintentar</button></div>';
+        }
+    }
+
+    loadProgress();
+    </script>
+</body>
+</html>
+

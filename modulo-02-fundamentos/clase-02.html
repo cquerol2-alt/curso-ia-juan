@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 02: Cómo Funcionan los LLMs — Módulo 2</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <a href="index.html">Módulo 2</a>
+            <span> > </span>
+            <strong>Clase 02</strong>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <h1>Clase 02: Cómo Funcionan los LLMs</h1>
+            <div class="subtitle">📅 Semana 3 — Martes | 🎬 25 min vídeo + 📖 40 min lectura + 💻 35 min práctica + 🧪 20 min test</div>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎬</span>
+                Vídeo de la lección
+            </h2>
+            <p>Mira este excelente vídeo de 3Blue1Brown que explica visualmente cómo funcionan los Large Language Models. Presta especial atención a la parte sobre tokens y atención.</p>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/zjkBMFhNj_g" allowfullscreen></iframe>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="info">
+                <strong>📌 Resumen del vídeo:</strong>
+                Este vídeo de 3Blue1Brown explica visualmente cómo los LLMs procesan texto. Verás cómo funcionan los tokens (la unidad básica), cómo el modelo "atiende" a diferentes palabras, y por qué la atención es el mecanismo clave detrás de la IA moderna.
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-02.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📖</span>
+                Resumen
+            </h2>
+
+            <h3>¿Qué es un LLM?</h3>
+            <p><strong>LLM = Large Language Model</strong> (Modelo de Lenguaje Grande). Es un modelo de deep learning entrenado con cantidades masivas de texto procedente de internet.</p>
+            <p>Ejemplos de LLMs populares:</p>
+            <ul>
+                <li><strong>GPT-4o</strong> (OpenAI) — hasta 128K tokens de contexto</li>
+                <li><strong>Claude 3.5 Sonnet</strong> (Anthropic) — hasta 200K tokens de contexto</li>
+                <li><strong>Gemini 2.0</strong> (Google) — multimodal (texto, imágenes, vídeo)</li>
+                <li><strong>Llama 3.1</strong> (Meta) — modelo de código abierto</li>
+                <li><strong>Grok</strong> (xAI) — últimas noticias en tiempo real</li>
+            </ul>
+
+            <div class="info">
+                <strong>Idea central:</strong> Los LLMs predicen la siguiente palabra, pero lo hacen tan bien que <strong>parecen entender</strong> el contexto, pueden responder preguntas, escribir código, resumir documentos, etc. En realidad, lo que hacen es predecir estadísticamente cuál es la palabra más probable dado todo el texto anterior.
+            </div>
+
+            <h3>Tokens: La Unidad Básica</h3>
+            <p>Los LLMs no leen letras ni palabras enteras. Trabajan con <strong>tokens</strong>: pequeños fragmentos de texto.</p>
+            <p><strong>Regla aproximada:</strong> 1 token ≈ 3/4 de una palabra en inglés. En español e idiomas con caracteres más largos, la ratio puede variar.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Ejemplos de tokenización</span>
+                <pre><code>Inglés:
+"Hello world" → ["Hello", " world"] → 2 tokens
+"Artificial Intelligence" → ["Artificial", " Intelligence"] → 2 tokens
+
+Español:
+"Hola mundo" → ["Hola", " mundo"] → 2 tokens
+"Inteligencia artificial" → ["Int", "elig", "encia", " artificial"] → 4 tokens
+(nota: depende del tokenizador, pero los idiomas más complejos generan más tokens)</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Pro tip:</strong> Los tokens son importantes porque:
+                <ul>
+                    <li><strong>Limite de contexto:</strong> Si un modelo tiene 128K tokens de contexto, solo puede "ver" 128K tokens a la vez</li>
+                    <li><strong>Precio:</strong> Las APIs cobran por tokens. OpenAI cobra ~$0.0025 por 1K tokens de entrada</li>
+                    <li><strong>Eficiencia:</strong> Más tokens = más cálculo = más lentitud</li>
+                </ul>
+            </div>
+
+            <p><strong>Tokenizadores comunes:</strong></p>
+            <ul>
+                <li><strong>tiktoken</strong> (OpenAI) — para GPT-3, GPT-4</li>
+                <li><strong>Sentencepiece</strong> (Google) — para BERT, T5</li>
+                <li><strong>BPE (Byte Pair Encoding)</strong> — algoritmo estándar</li>
+            </ul>
+
+            <h3>Ventana de Contexto (Context Window)</h3>
+            <p>La <strong>ventana de contexto</strong> es el número máximo de tokens que un modelo puede procesar a la vez. Es como la "memoria de trabajo" del modelo.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Tamaños de contexto actuales</span>
+                <pre><code>GPT-3.5 Turbo:     4K tokens   (~3K palabras)
+GPT-4 Turbo:      128K tokens (~96K palabras, ≈ 2-3 libros)
+Claude 3.5:       200K tokens (~150K palabras, ≈ 4-5 libros)
+Llama 3.1:        128K tokens
+Gemini 2.0 Pro:   ~1M tokens  (un millón de tokens, toda una enciclopedia)
+
+Para referencia:
+Una novela típica:     ~100K palabras = ~130K tokens
+Una película script:   ~15K palabras  = ~20K tokens
+Un email:              ~200 palabras  = ~300 tokens</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>Analogía de desarrollador:</strong> La ventana de contexto es como el heap memory de tu aplicación. Si pasas datos más grandes que el heap, el programa crashea (o tienes que truncar/fragmentar los datos).
+            </div>
+
+            <h3>Temperatura y Creatividad</h3>
+            <p>La <strong>temperatura</strong> es un parámetro que controla cuánta "creatividad" tiene el modelo. Va de 0.0 (determinístico) a 2.0 (muy creativo/aleatorio).</p>
+
+            <div class="code-block">
+                <span class="lang-label">Cómo cambia la temperatura</span>
+                <pre><code>Prompt: "Descríbeme un atardecer en una sola frase."
+
+Temperatura 0.0 (Determinístico):
+→ "El cielo se tiñe de naranja y rojo mientras el sol desciende en el horizonte."
+→ (siempre da la misma respuesta exacta)
+
+Temperatura 0.7 (Creativo pero coherente — valor por defecto):
+→ "El atardecer pinta el cielo de fuego, como si la tierra besara al sol."
+→ "El sol desaparece dejando un rastro de oro y púrpura en las nubes."
+→ (respuestas diferentes, pero siempre coherentes y sensatas)
+
+Temperatura 1.5 (Muy creativo/arriesgado):
+→ "El astro nocturno sussurra adiós en melodías de cristal fracturado."
+→ "Mil ojos de fuego cierran sus párpados en sincronía cósmica."
+→ (poético, pero puede perder coherencia, a veces es sublime, a veces extraño)</code></pre>
+            </div>
+
+            <p><strong>Cuándo usar cada temperatura:</strong></p>
+            <ul>
+                <li><strong>0.0-0.3:</strong> Respuestas precisas (soporte técnico, búsquedas de datos, corrección de código)</li>
+                <li><strong>0.7 (por defecto):</strong> Buena mezcla de creatividad y coherencia (escritura, ideación, conversación)</li>
+                <li><strong>1.0-1.5:</strong> Máxima creatividad (escritura creativa, brainstorming, poesía)</li>
+                <li><strong>1.5+:</strong> Experimental (úsalo solo si quieres resultados impredecibles)</li>
+            </ul>
+
+            <h3>Parámetros del Modelo: "7B", "70B", "405B"</h3>
+            <p>Los números que ves en nombres de modelos (7B, 70B, 405B) se refieren al número de <strong>parámetros</strong> del modelo.</p>
+
+            <p><strong>Parámetro</strong> = un "peso" ajustable en la red neuronal. Más parámetros = más información puede "recordar" = más capaz.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Tamaños de modelos</span>
+                <pre><code>Llama 2 7B:       7 mil millones de parámetros   → ~13 GB en disco
+Llama 2 70B:      70 mil millones de parámetros  → ~130 GB en disco
+Llama 3.1 405B:   405 mil millones de parámetros → ~800 GB en disco
+GPT-4:            ~1.7 BILLONES de parámetros?   (nunca confirmado)
+
+Comparación:
+7B es como un estudiante avanzado
+70B es como un profesor universitario
+405B+ es como una enciclopedia viviente</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>Trade-off crucial:</strong> Más parámetros = mejor rendimiento, pero:
+                <ul>
+                    <li>Cuesta más entrenar</li>
+                    <li>Ocupa más espacio</li>
+                    <li>Es más lento en inferencia (respuestas más lentas)</li>
+                    <li>Cuesta más en APIs (GPT-4 Turbo = 10x más caro que GPT-3.5)</li>
+                </ul>
+            </div>
+
+            <h3>Cómo "Piensa" un LLM: Atención (Attention)</h3>
+            <p><strong>Attention</strong> es el mecanismo que permite que cada token "mire" a los demás para entender el contexto. Es lo que hace que los Transformers (y por extensión, todos los LLMs modernos) sean tan potentes.</p>
+
+            <p><strong>Idea simple pero poderosa:</strong> Cuando el modelo lee una palabra, no solo piensa en esa palabra aislada. "Atiende" a todas las otras palabras de la frase para entender su significado.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Ejemplo: Atención en acción</span>
+                <pre><code>Frase: "El banco está cerca del río"
+
+La palabra "banco" atiende a:
+- "el" (determinante) → relevancia baja
+- "está" (verbo, ubicación) → relevancia ALTA
+- "cerca" (proximidad) → relevancia ALTA
+- "del" (preposición) → relevancia media
+- "río" (lugar natural) → relevancia ALTA
+
+Conclusión del modelo: "banco" = institución financiera cerca del agua
+                        (porque está cerca de "río", "está" ubicación)
+
+---
+
+Frase alternativa: "Fui al banco a sacar dinero"
+
+La palabra "banco" atiende a:
+- "Fui" (pasado) → relevancia baja
+- "al" (ir a un lugar) → relevancia ALTA
+- "sacar" (acción) → relevancia ALTA
+- "dinero" (objeto de la acción) → relevancia CRÍTICA
+
+Conclusión del modelo: "banco" = institución financiera
+                        (porque está asociado con "sacar dinero")</code></pre>
+            </div>
+
+            <div class="tip">
+                <strong>Analogía de desarrollador:</strong> La atención es como un sistema de "punteros inteligentes". Cada token tiene un puntero que apunta a otros tokens con diferentes "pesos" (importancias). El modelo aprende automáticamente estos pesos durante el entrenamiento.
+            </div>
+
+            <h3>Embeddings: Representar Palabras como Números</h3>
+            <p>Los LLMs no trabajan con texto directamente. Convierten cada palabra (token) en un <strong>vector numérico de alta dimensión</strong> llamado <strong>embedding</strong>.</p>
+
+            <p><strong>Propiedad mágica:</strong> Palabras con significados similares tienen vectores similares.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Ejemplo simplificado de embeddings</span>
+                <pre><code>En un espacio 3D (en realidad son cientos o miles de dimensiones):
+
+"rey"     ≈ [0.8,   0.6,  0.2]
+"reina"   ≈ [0.75,  0.65, 0.25]  (muy cercano a "rey")
+"hombre"  ≈ [0.7,   0.1,  0.3]
+"mujer"   ≈ [0.65,  0.15, 0.35]
+
+Distancia entre "rey" y "reina":     pequeña (palabras similares)
+Distancia entre "rey" y "tomate":    ENORME (completamente diferentes)
+
+Fórmula matemática:
+distancia = sqrt((0.8-0.75)² + (0.6-0.65)² + (0.2-0.25)²) ≈ 0.087 (pequeña)</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>Avance del curso:</strong> Los embeddings son la base de <strong>Retrieval-Augmented Generation (RAG)</strong>, que veremos en el Módulo 5. RAG es cómo conectamos LLMs a bases de datos de documentos propios.
+            </div>
+
+        </section>
+
+        <!-- Guided Practice Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">💻</span>
+                Práctica guiada
+            </h2>
+            <p>Estos ejercicios te harán entender mejor cómo funcionan los tokens, la temperatura y los costes reales de usar LLMs.</p>
+
+            <h3>Ejercicio 1: Tokenización en OpenAI</h3>
+            <p>Visita la <a href="https://platform.openai.com/tokenizer" target="_blank">herramienta de tokenización de OpenAI</a> (necesita login gratuito).</p>
+            <div class="reto-box">
+                <p><strong>Tarea:</strong> Tokeniza estas 5 frases en español y anota cuántos tokens tiene cada una:</p>
+                <ol>
+                    <li>"Hola, ¿cómo estás hoy?"</li>
+                    <li>"La inteligencia artificial es el futuro de la tecnología"</li>
+                    <li>"¿Puedes ayudarme a entender los transformers y cómo funcionan?"</li>
+                    <li>"El banco está cerca del río"</li>
+                    <li>"Procesamiento de lenguaje natural"</li>
+                </ol>
+                <p><strong>Luego:</strong> Copia las mismas frases al inglés y tokenízalas. ¿Cuál tiene más tokens: el español o el inglés? ¿Por qué crees?</p>
+                <p><strong>Pista:</strong> El inglés es más compacto porque sus palabras son generalmente más cortas.</p>
+            </div>
+
+            <h3>Ejercicio 2: Experimentar con Temperatura</h3>
+            <p>Usa ChatGPT, Claude, o Gemini (todos permiten variar la creatividad/temperatura).</p>
+            <div class="reto-box">
+                <p><strong>Tarea:</strong></p>
+                <ol>
+                    <li>Pide al modelo: <code>"Descríbeme un atardecer en una sola frase. Sé muy literal y específico."</code> (baja temperatura mental)</li>
+                    <li>Ahora pide: <code>"Descríbeme un atardecer de forma poética y muy creativa. Usa metáforas elaboradas."</code> (alta temperatura mental)</li>
+                    <li>Compara los resultados. ¿Cuál es más creativo? ¿Cuál es más preciso?</li>
+                </ol>
+                <p><strong>Reflexión:</strong> ¿En qué casos usarías baja temperatura? ¿Y alta?</p>
+            </div>
+
+            <h3>Ejercicio 3: Cálculo de Tokens y Costes</h3>
+            <p>Un libro típico tiene ~100,000 palabras.</p>
+            <div class="reto-box">
+                <p><strong>Tarea:</strong></p>
+                <ol>
+                    <li>Calcula: Si 1 palabra ≈ 1.3 tokens, ¿cuántos tokens tiene un libro de 100K palabras?
+                        <br><strong>Respuesta:</strong> 100,000 × 1.3 = 130,000 tokens</li>
+                    <li>¿Cabe ese libro en GPT-4o (128K tokens)? <strong>No, es demasiado grande por solo 2K tokens.</strong></li>
+                    <li>¿Cabe en Claude 3.5 (200K tokens)? <strong>Sí, con espacio de sobra.</strong></li>
+                    <li><strong>Bonus:</strong> Si OpenAI cobra $0.0025 por cada 1K tokens input, ¿cuánto cuesta procesar ese libro de 130K tokens?
+                        <br><strong>Cálculo:</strong> (130,000 / 1,000) × $0.0025 = 130 × $0.0025 = <strong>$0.325</strong> (32 céntimos)
+                        <br>¿Y si procesas 1000 libros? <strong>$325</strong></li>
+                </ol>
+            </div>
+
+        </section>
+
+        <!-- Challenge Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🧪</span>
+                Mini-reto del día
+            </h2>
+
+            <div class="reto-box">
+                <h3>🎯 Token Detective</h3>
+                <p><strong>Misión:</strong> Coge un correo electrónico real que hayas enviado recientemente (o escribe uno ficticio). Cópialo en la <a href="https://platform.openai.com/tokenizer" target="_blank">herramienta de tokenización de OpenAI</a>.</p>
+
+                <p><strong>Preguntas para responder:</strong></p>
+                <ol>
+                    <li>¿Cuántos tokens tiene tu email?</li>
+                    <li>Si GPT-4o cobra $0.0025 por 1K tokens input, ¿cuánto cuesta procesar ese email una vez?</li>
+                    <li>Si tu empresa recibe 1000 emails similares al día y quiere procesarlos con IA, ¿cuál es el coste diario? ¿Y mensual? (asumir 20 días laborales)</li>
+                    <li><strong>Bonus:</strong> ¿Cuál es el contexto window mínimo que necesitarías para procesar 10 emails a la vez?</li>
+                </ol>
+
+                <div class="tip">
+                    <strong>Insight empresarial:</strong> Este ejercicio te muestra por qué la optimización de prompts es crucial en producción. Reducir tokens en solo 10% puede ahorrar miles de dólares al año en empresas grandes.
+                </div>
+            </div>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Token Detective</h4>
+                <p style="color: var(--text-muted); font-size: 0.95em;">Pega tu análisis del email tokenizado: número de tokens, coste por email, coste diario (1000 emails), coste mensual (20 días) y contexto mínimo para procesar 10 emails a la vez.</p>
+                <textarea id="code-ejercicio-1" rows="10" placeholder="Ej:
+Email: 'Hola Juan, ...'
+Tokens: 87
+Coste por email: $0.00022
+Coste diario (1000 emails): $0.22
+Coste mensual (20 días): $4.40
+Contexto mínimo para 10 emails: ~870 tokens
+Bonus: ..."></textarea>
+                <label><input type="checkbox" required> He completado el análisis con cálculos reales</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales (dudas, qué te costó...)"></textarea>
+                    <button onclick="CourseProgress.submitExercise('m2-c02', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📝</span>
+                Test de conocimiento
+            </h2>
+            <p>Responde las siguientes 10 preguntas para verificar tu comprensión. Necesitas al menos 8 correctas para marcar esta clase como completada.</p>
+
+            <div class="quiz-container" id="quiz-container"></div>
+
+            <button class="btn btn-green" onclick="submitQuiz()">Enviar respuestas</button>
+            <div id="quizResult"></div>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <div class="clase-nav">
+            <a href="clase-01.html">← Clase 01</a>
+            <span> | </span>
+            <a href="clase-03.html">Clase 03 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        // Quiz data
+        const quizQuestions = [
+            {
+                question: "¿Qué predicen fundamentalmente los LLMs?",
+                options: [
+                    "El significado exacto de una frase",
+                    "La siguiente palabra más probable dado el texto anterior",
+                    "El sentimiento del texto",
+                    "La traducción correcta a otros idiomas"
+                ],
+                correct: 1  // La siguiente palabra más probable
+            },
+            {
+                question: "¿Qué es un token?",
+                options: [
+                    "Una moneda digital de criptomoneda",
+                    "La unidad básica de texto que procesa un LLM (típicamente 1 token ≈ 3/4 palabra)",
+                    "Una contraseña de API",
+                    "Un tipo de variable de programación"
+                ],
+                correct: 1  // La unidad básica de texto
+            },
+            {
+                question: "Si GPT-4o tiene una ventana de contexto de 128K tokens, ¿qué significa?",
+                options: [
+                    "Puede generar 128K palabras en una respuesta",
+                    "Puede 'recordar' procesar hasta 128K tokens en una conversación (máximo que puede 'ver')",
+                    "Tiene 128K parámetros en total",
+                    "Una consulta a GPT-4o cuesta 128K dólares"
+                ],
+                correct: 1  // Puede procesar hasta 128K tokens
+            },
+            {
+                question: "¿Qué ocurre cuando la temperatura es 0?",
+                options: [
+                    "El modelo no funciona",
+                    "Las respuestas son más deterministas, repetibles y precisas",
+                    "Las respuestas son más creativas y aleatorias",
+                    "El modelo es más rápido pero menos inteligente"
+                ],
+                correct: 1  // Determinista y repetible
+            },
+            {
+                question: "¿Qué significa que un modelo tiene '70B parámetros'?",
+                options: [
+                    "70 billones de bytes de almacenamiento",
+                    "70 mil millones de pesos (valores ajustables) en la red neuronal",
+                    "70 bases de datos diferentes",
+                    "70 billones de tokens de entrenamiento"
+                ],
+                correct: 1  // 70 mil millones de pesos
+            },
+            {
+                question: "¿Cuál es la función principal del mecanismo de Atención (Attention) en LLMs?",
+                options: [
+                    "Un sistema de alertas para errores",
+                    "Permite que cada token 'atienda' (mire) a otros tokens para entender el contexto",
+                    "Un tipo de caché de memoria RAM",
+                    "Un algoritmo para ordenar palabras alfabéticamente"
+                ],
+                correct: 1  // Permite que cada token atienda a otros
+            },
+            {
+                question: "¿Qué son los embeddings?",
+                options: [
+                    "Archivos incrustados en un programa",
+                    "Representaciones numéricas (vectores) de palabras en un espacio de alta dimensión",
+                    "Tipos especiales de tokens",
+                    "Parámetros almacenados en el modelo"
+                ],
+                correct: 1  // Representaciones numéricas
+            },
+            {
+                question: "¿Por qué es importante el número de tokens al usar APIs de LLMs?",
+                options: [
+                    "No importa, solo importa la calidad del prompt",
+                    "Porque afecta directamente al coste (se cobra por tokens) y al límite de contexto",
+                    "Porque determina la velocidad de internet",
+                    "Porque cambia automáticamente el idioma de respuesta"
+                ],
+                correct: 1  // Afecta coste y contexto
+            },
+            {
+                question: "En la frase 'El banco está cerca del río', ¿qué mecanismo ayuda al modelo a entender que 'banco' = institución financiera vs 'banco' = asiento?",
+                options: [
+                    "La tokenización",
+                    "La temperatura del modelo",
+                    "El mecanismo de Atención",
+                    "Los embeddings (aunque atención es más directo)"
+                ],
+                correct: 2  // Atención (aunque 3 también contribuye)
+            },
+            {
+                question: "¿Cuál de estos NO es un LLM?",
+                options: [
+                    "GPT-4",
+                    "Claude 3.5",
+                    "TensorFlow",
+                    "Llama 3.1"
+                ],
+                correct: 2  // TensorFlow es un framework, no un LLM
+            }
+        ];
+
+        // Render quiz
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            quizQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'quiz-question';
+                questionDiv.innerHTML = `
+                    <div class="quiz-question-text">${index + 1}. ${q.question}</div>
+                    <div class="quiz-options">
+                        ${q.options.map((option, optIndex) => `
+                            <label class="quiz-option">
+                                <input type="radio" name="q${index}" value="${optIndex}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        // Submit quiz
+        function submitQuiz() {
+            let correct = 0;
+            const answers = [];
+
+            for (let i = 0; i < quizQuestions.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+
+                if (!selected) {
+                    alert(`Por favor responde la pregunta ${i + 1}`);
+                    return;
+                }
+
+                const userAnswer = parseInt(selected.value);
+                answers.push(userAnswer);
+
+                if (userAnswer === quizQuestions[i].correct) {
+                    correct++;
+                }
+            }
+
+            // Show results
+            const resultDiv = document.getElementById('quizResult');
+            const percentage = (correct / quizQuestions.length) * 100;
+            const passed = correct >= 8;
+
+            resultDiv.innerHTML = `
+                <div class="quiz-result ${passed ? 'correct' : 'incorrect'}">
+                    ${passed ? '✅' : '❌'} ${correct} de ${quizQuestions.length} respuestas correctas (${percentage.toFixed(0)}%)
+                    ${passed ? '<br>¡Excelente! Has completado esta clase.' : '<br>Necesitas al menos 8 respuestas correctas. Intenta de nuevo.'}
+                </div>
+            `;
+
+            if (passed) {
+                // Mark class as completed
+                if (typeof CourseProgress !== 'undefined') {
+                    CourseProgress.initQuiz('quiz-container', quizQuestions, 'm2-c02');
+                }
+            }
+        }
+
+        // Initialize on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+renderQuiz();
+
+            // Check if already completed
+            if (typeof CourseProgress !== 'undefined') {
+                if (CourseProgress.isClassCompleted('m2-c02')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'score-display';
+                    badge.textContent = '✅ COMPLETADA';
+                    document.querySelector('header h1').parentElement.appendChild(badge);
+                }
+            }
+            });
+        } else {
+renderQuiz();
+
+            // Check if already completed
+            if (typeof CourseProgress !== 'undefined') {
+                if (CourseProgress.isClassCompleted('m2-c02')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'score-display';
+                    badge.textContent = '✅ COMPLETADA';
+                    document.querySelector('header h1').parentElement.appendChild(badge);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

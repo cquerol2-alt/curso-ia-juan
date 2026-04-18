@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 05: Docker — Empaqueta Tu App para el Mundo Real | Módulo 7</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <a href="index.html">Módulo 7</a>
+            <span> > </span>
+            <strong>Clase 05: Docker</strong>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <h1>Clase 05: Docker — Empaqueta Tu App para el Mundo Real</h1>
+            <div class="subtitle">📅 Semana 10 — Jueves | 🎬 30 min vídeo + 💻 50 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎬</span>
+                Vídeo de la lección
+            </h2>
+            <p>Mira este tutorial introductorio sobre Docker. Cubre los conceptos esenciales, cómo escribir un Dockerfile y cómo usar Docker Compose. Enfoque práctico, no teórico.</p>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/pTFZFxd4hOI" allowfullscreen></iframe>
+            </div>
+
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="info">
+                <strong>📌 Clave:</strong>
+                Enfócate en entender <strong>por qué</strong> usamos Docker (reproducibilidad), cómo se escribe un Dockerfile, y cómo ejecutar contenedores. No necesitas memorizar cada comando.
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📖</span>
+                Resumen: Los Conceptos que Necesitas
+            </h2>
+
+            <h3>Parte A: ¿Por Qué Docker?</h3>
+            <p><strong>"Works on my machine"</strong> es el problema más viejo de la programación.</p>
+            <ul>
+                <li>Tu app funciona perfecto en tu laptop (Python 3.11, PostgreSQL 15, Redis 7.0)</li>
+                <li>Se la pasas al equipo: "Necesito Python 3.10, pero tú tienes 3.9..."</li>
+                <li>Se la pasas a producción: diferente SO, diferentes librerías instaladas → <strong>CRASH</strong></li>
+            </ul>
+
+            <p><strong>Docker es como un contenedor de envío.</strong> Igual que un contenedor de carga funciona en cualquier barco, cualquier camión, cualquier tren, un contenedor Docker funciona en cualquier máquina, cualquier servidor, cualquier cloud.</p>
+
+            <div class="info" style="background: rgba(0, 230, 118, 0.1); border-left: 3px solid #00e676;">
+                <strong>Dato clave:</strong> El 90%+ de los job offers para "AI Engineer" o "ML Engineer" requieren experiencia con Docker. No es opcional; es tabla rasa en el mercado laboral.
+            </div>
+
+            <h3>Parte B: Conceptos Clave (Lo Justo para Ser Productivo)</h3>
+
+            <div class="code-block">
+                <span class="lang-label">Terminología Docker</span>
+                <pre><code><strong>IMAGE (Imagen)</strong>
+  └─ El blueprint, la receta. Un archivo inmutable que contiene:
+     - Sistema operativo (Alpine, Ubuntu, etc.)
+     - Runtime (Python, Node.js, etc.)
+     - Dependencias de tu app
+     - Tu código
+  └─ Se construye una sola vez con `docker build`
+  └─ Se puede copiar, compartir, reutilizar infinitas veces
+
+<strong>CONTAINER (Contenedor)</strong>
+  └─ Una instancia corriendo de la imagen. Como "el plato cocinado".
+  └─ Aislado: tu app no interfiere con otras apps en la misma máquina
+  └─ Ephemeral: muere cuando lo paras (`docker stop`)
+  └─ Puedes tener 10 contenedores corriendo de la misma imagen
+
+<strong>DOCKERFILE</strong>
+  └─ El archivo de instrucciones para construir la imagen
+  └─ Similar a un Makefile o package.json
+  └─ Línea por línea: descarga base image → copia archivos → instala deps
+
+<strong>DOCKER COMPOSE</strong>
+  └─ Orquesta múltiples contenedores
+  └─ Define: qué servicios necesitas (app, DB, cache)
+  └─ Un solo comando: `docker compose up` levanta todo
+
+<strong>REGISTRY (Docker Hub)</strong>
+  └─ GitHub pero para images de Docker
+  └─ Descargas images pre-hechas (python:3.11, nginx, postgres, etc.)
+  └─ Subes tus propias images (privadas o públicas)</code></pre>
+            </div>
+
+            <p><strong>Nota importante:</strong> NO profundizamos en internals de Docker (namespaces, cgroups, layers). Solo lo que necesitas para ser productivo: escribir un Dockerfile, ejecutar contenedores, usarlos en desarrollo y producción.</p>
+
+            <h3>Parte C: Tu Primer Dockerfile para Python/FastAPI</h3>
+
+            <p>Imagina que tienes una app FastAPI. Así se ve el Dockerfile:</p>
+
+            <div class="code-block">
+                <span class="lang-label">Dockerfile</span>
+                <pre><code># 1. BASE IMAGE: Usa Python 3.11 en una versión slim (más pequeña)
+FROM python:3.11-slim
+
+# 2. DIRECTORIO DE TRABAJO dentro del contenedor
+WORKDIR /app
+
+# 3. COPIA el archivo de dependencias PRIMERO (para cachear en capas)
+COPY requirements.txt .
+
+# 4. INSTALA las dependencias (sin cache local para ahorrar espacio)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 5. COPIA el resto del código
+COPY . .
+
+# 6. EXPONE el puerto 8000 (documentación, no vinculante)
+EXPOSE 8000
+
+# 7. COMANDO para ejecutar la app
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+            </div>
+
+            <p>¿Qué es cada línea?</p>
+            <ul>
+                <li><code>FROM</code>: Descarga la imagen base (Python 3.11 slim, ~150MB)</li>
+                <li><code>WORKDIR</code>: Crea /app y todas las siguientes operaciones ocurren ahí</li>
+                <li><code>COPY requirements.txt .</code>: Copia <code>requirements.txt</code> del host al contenedor</li>
+                <li><code>RUN pip install</code>: Ejecuta pip dentro del contenedor (instala numpy, fastapi, etc.)</li>
+                <li><code>COPY . .</code>: Copia el código restante (main.py, etc.)</li>
+                <li><code>EXPOSE 8000</code>: Documenta que la app escucha en puerto 8000</li>
+                <li><code>CMD</code>: Comando por defecto cuando arranca el contenedor</li>
+            </ul>
+
+            <p><strong>.dockerignore:</strong> Así como .gitignore, exluye archivos que NO necesita la imagen:</p>
+
+            <div class="code-block">
+                <span class="lang-label">.dockerignore</span>
+                <pre><code>venv/
+__pycache__/
+*.pyc
+.git
+.gitignore
+.env
+.DS_Store
+node_modules/
+dist/
+build/</code></pre>
+            </div>
+
+            <p><strong>Construir y ejecutar:</strong></p>
+
+            <div class="code-block">
+                <span class="lang-label">bash</span>
+                <pre><code># 1. Construir la imagen (se llama "mi-ai-app", versión "latest")
+docker build -t mi-ai-app .
+
+# 2. Ejecutar un contenedor basado en esa imagen
+#    -p 8000:8000 = mapea puerto 8000 del contenedor al 8000 del host
+#    --env-file .env = inyecta variables de entorno desde .env
+docker run -p 8000:8000 --env-file .env mi-ai-app
+
+# 3. En otra terminal, prueba la app
+curl http://localhost:8000/docs
+
+# 4. Ver qué contenedores están corriendo
+docker ps
+
+# 5. Parar el contenedor
+docker stop &lt;CONTAINER_ID&gt;</code></pre>
+            </div>
+
+            <h3>Parte D: Docker Compose — App + Base de Datos</h3>
+
+            <p>En la vida real, tu app no está sola. Necesita una BD, cache, etc. Para eso existe Docker Compose:</p>
+
+            <div class="code-block">
+                <span class="lang-label">docker-compose.yml</span>
+                <pre><code>version: '3.9'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      CHROMA_HOST: chroma
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - chroma
+      - redis
+    volumes:
+      - ./:/app  # Recargar código en vivo (desarrollo)
+
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  chroma_data:
+  redis_data:</code></pre>
+            </div>
+
+            <p><strong>¿Cómo se usa?</strong></p>
+
+            <div class="code-block">
+                <span class="lang-label">bash</span>
+                <pre><code># Levanta TODOS los servicios (app, chroma, redis) con un comando
+docker compose up
+
+# En otra terminal, compila app en modo desarrollo
+docker compose up app
+
+# Para todo
+docker compose down
+
+# Borra volúmenes (BD y datos)
+docker compose down -v</code></pre>
+            </div>
+
+            <h3>Parte E: Buenas Prácticas</h3>
+
+            <ul>
+                <li><strong>Multi-stage builds:</strong> Construye en una etapa, copia solo lo necesario a la etapa final (reduce tamaño de imagen)</li>
+                <li><strong>Usa imágenes -slim o -alpine:</strong> Bases pequeñas (50-150MB vs 800MB+)</li>
+                <li><strong>Nunca metas secretos en la imagen:</strong> Usa <code>--env-file .env</code> o Docker secrets</li>
+                <li><strong>Copia en el orden correcto:</strong> Dependencies antes de código (aprovecha el cacheo de capas)</li>
+                <li><strong>Health checks:</strong> Dile a Docker cómo verificar que la app está viva</li>
+            </ul>
+
+            <div class="code-block">
+                <span class="lang-label">Dockerfile (Multi-stage Build - Avanzado)</span>
+                <pre><code># Etapa 1: Construcción (más pesada)
+FROM python:3.11-slim AS builder
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# Etapa 2: Runtime (solo lo esencial)
+FROM python:3.11-slim
+WORKDIR /app
+COPY --from=builder /root/.local /root/.local
+COPY . .
+ENV PATH=/root/.local/bin:$PATH
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]</code></pre>
+            </div>
+        </section>
+
+        <!-- Practice Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">💻</span>
+                Ejercicios Prácticos
+            </h2>
+
+            <h3>Ejercicio 1: Dockeriza un FastAPI "Hola Mundo" (Code-Along, 20 min)</h3>
+            <p><strong>Objetivo:</strong> Escribe un Dockerfile, construye la imagen y ejecuta un contenedor.</p>
+
+            <div class="step">
+                <h4>Paso 1: Crea la app FastAPI</h4>
+                <div class="code-block">
+                    <span class="lang-label">main.py</span>
+                    <pre><code>from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI(title="Mi Primera App Dockerizada")
+
+class Mensaje(BaseModel):
+    texto: str
+
+@app.get("/")
+def root():
+    return {"mensaje": "Hola desde Docker!"}
+
+@app.post("/echo")
+def echo(msg: Mensaje):
+    return {"eco": msg.texto}</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <h4>Paso 2: Crea requirements.txt</h4>
+                <div class="code-block">
+                    <span class="lang-label">requirements.txt</span>
+                    <pre><code>fastapi==0.104.1
+uvicorn==0.24.0
+pydantic==2.5.0</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <h4>Paso 3: Escribe el Dockerfile</h4>
+                <div class="code-block">
+                    <span class="lang-label">Dockerfile</span>
+                    <pre><code>FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <h4>Paso 4: Construye y ejecuta</h4>
+                <div class="code-block">
+                    <span class="lang-label">bash</span>
+                    <pre><code># Construir
+docker build -t mi-primer-app .
+
+# Ejecutar
+docker run -p 8000:8000 mi-primer-app
+
+# En otra terminal, prueba
+curl http://localhost:8000
+# Respuesta: {"mensaje":"Hola desde Docker!"}
+
+curl -X POST http://localhost:8000/echo \
+  -H "Content-Type: application/json" \
+  -d '{"texto":"Esto funciona!"}'
+# Respuesta: {"eco":"Esto funciona!"}</code></pre>
+                </div>
+            </div>
+
+            <h3>Ejercicio 2: Mini-Challenge — Dockeriza Tu Chatbot (30 min)</h3>
+            <p><strong>Objetivo:</strong> Toma el chatbot del Module 3 Boss Battle, crea un Dockerfile y un docker-compose.yml con Redis.</p>
+
+            <p><strong>Pasos:</strong></p>
+            <ol>
+                <li>Crea una carpeta nueva: <code>chatbot-dockerizado/</code></li>
+                <li>Copia tu código del chatbot (chatbot.py o similar)</li>
+                <li>Crea un <code>main.py</code> que exponga el chatbot como API FastAPI:
+                    <div class="code-block">
+                        <span class="lang-label">main.py</span>
+                        <pre><code>from fastapi import FastAPI
+from chatbot import ChatBot
+
+app = FastAPI()
+bot = ChatBot()
+
+@app.post("/chat")
+def chat(user_message: str):
+    response = bot.responde(user_message)
+    return {"response": response}</code></pre>
+                    </div>
+                </li>
+                <li>Escribe el Dockerfile para el chatbot</li>
+                <li>Crea un docker-compose.yml que levante:
+                    <ul>
+                        <li>Tu app (puerto 8000)</li>
+                        <li>Redis (puerto 6379) para cachear respuestas</li>
+                    </ul>
+                </li>
+                <li>Ejecuta: <code>docker compose up</code></li>
+                <li>Prueba: <code>curl -X POST http://localhost:8000/chat?user_message="Hola"</code></li>
+            </ol>
+
+            <h3>Ejercicio 3: Reto Extra — Multi-Stage Build (Opcional, 15 min)</h3>
+            <p><strong>Objetivo:</strong> Optimiza tu Dockerfile con multi-stage y compara tamaños.</p>
+
+            <div class="code-block">
+                <span class="lang-label">bash</span>
+                <pre><code># Antes: Ver tamaño de imagen normal
+docker build -t chatbot:normal .
+docker images chatbot:normal
+# Ej: 800MB
+
+# Después: Reescribe con multi-stage
+# (Ver ejemplo en Parte E arriba)
+docker build -t chatbot:optimized .
+docker images chatbot:optimized
+# Ej: 350MB (casi 50% más pequeña)
+
+# ¿Cuánto ahorraste?</code></pre>
+            </div>
+
+            <div class="info" style="margin-top: 1.5em;">
+                <strong>💡 Consejo:</strong> En desarrollo, Docker es tu amigo. En producción, es obligatorio. Empieza a acostumbrarte ahora.
+            </div>
+        </section>
+
+        <!-- Exercise Submission Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">✅</span>
+                Entrega de ejercicios
+            </h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Docker containerization</h4>
+                <p>Crea un Dockerfile para una aplicación Next.js + Python backend con la configuración correcta.</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Dockerfile y docker-compose.yml — Pega tu código aquí..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Explicación de las capas y optimizaciones del Dockerfile..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c05', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Containerizar app full-stack</h4>
+                <p>Containeriza una aplicación full-stack completa (Frontend Next.js + Backend FastAPI + Database) usando Docker Compose.</p>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="docker-compose.yml con múltiples servicios — Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Prueba: startup de todos los servicios y comunicación entre ellos..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c05', 2, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🧪</span>
+                Test de Comprensión
+            </h2>
+
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div style="text-align: center; color: var(--text-muted); font-size: 0.9em;">
+                <p>Módulo 7 — Clase 05 | Curso IA para Juan Querol</p>
+                <p><a href="./index.html">← Volver al Módulo 7</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Quiz Script -->
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es el principal problema que Docker resuelve?",
+                options: [
+                    "Hace tu app más rápida",
+                    "Garantiza que funcione igual en cualquier máquina (desarrollo, testing, producción)",
+                    "Reduce el costo de servidores",
+                    "Reemplaza a Git"
+                ],
+                correct: 1,
+                explanation: "Docker asegura que tu app corra con exactamente las mismas dependencias en cualquier entorno."
+            },
+            {
+                question: "¿Cuál es la diferencia entre una Docker Image y un Container?",
+                options: [
+                    "Ninguna, son lo mismo con otro nombre",
+                    "Image es el blueprint/receta, Container es una instancia corriendo",
+                    "Image corre en el navegador, Container en el servidor",
+                    "Container es más seguro que Image"
+                ],
+                correct: 1,
+                explanation: "Image = plantilla inmutable. Container = copia corriendo. Un Container muere cuando lo paras."
+            },
+            {
+                question: "¿Qué comando construye una Docker Image?",
+                options: [
+                    "docker run -t myapp .",
+                    "docker build -t myapp .",
+                    "docker create myapp",
+                    "docker push myapp"
+                ],
+                correct: 1,
+                explanation: "docker build lee el Dockerfile y construye la imagen. -t asigna el nombre."
+            },
+            {
+                question: "En un Dockerfile, ¿por qué copiamos requirements.txt ANTES que el código?",
+                options: [
+                    "Por convención, no importa el orden",
+                    "Para aprovechar el cacheo de capas (si cambia code pero no deps, reutiliza la capa de pip install)",
+                    "Porque Python así lo require",
+                    "Para que sea más legible"
+                ],
+                correct: 1,
+                explanation: "Docker cachea capas. Si código y deps cambian juntos, es un desperdicio. Separarlos optimiza builds."
+            },
+            {
+                question: "¿Para qué usamos docker-compose.yml?",
+                options: [
+                    "Para definir y ejecutar múltiples contenedores juntos (app, DB, cache, etc.)",
+                    "Para publicar imágenes en Docker Hub",
+                    "Para reducir el tamaño de imágenes",
+                    "Para compilar código en C++"
+                ],
+                correct: 0,
+                explanation: "docker-compose levanta orquestación: qué servicios, puertos, volúmenes, variables de entorno."
+            },
+            {
+                question: "¿Dónde guardamos secretos (contraseñas, API keys) en Docker?",
+                options: [
+                    "Dentro del Dockerfile con RUN echo",
+                    "En el código Python directamente",
+                    "En archivos .env que se inyectan con --env-file, o en Docker Secrets (producción)",
+                    "No hace falta guardarlos, Docker es seguro por defecto"
+                ],
+                correct: 2,
+                explanation: "NUNCA metas secretos en la image. Usa variables de entorno inyectadas en runtime."
+            },
+            {
+                question: "¿Qué hace el comando docker run -p 8000:8000 myapp?",
+                options: [
+                    "Mapea puerto 8000 del contenedor al puerto 8000 del host (tu máquina)",
+                    "Abre el puerto 8000 a internet",
+                    "Crea dos copias de la app",
+                    "Pausa la app después de 8000 segundos"
+                ],
+                correct: 0,
+                explanation: "Primer 8000 = puerto del host, segundo 8000 = puerto del contenedor. Si fuera -p 3000:8000, host:3000 → contenedor:8000"
+            },
+            {
+                question: "¿Cuál es un beneficio clave de usar imágenes -slim o -alpine en lugar de imágenes base grandes?",
+                options: [
+                    "Son más seguras",
+                    "Reducen el tamaño de la imagen (50-150MB vs 800MB+), deploys más rápidos",
+                    "Incluyen más herramientas pre-instaladas",
+                    "No tienen beneficio, es solo una preferencia"
+                ],
+                correct: 1,
+                explanation: "Imágenes pequeñas = pulls más rápidos, deploys más rápidos, menos uso de almacenamiento."
+            }
+        ];
+
+        // Cargar el script de progreso
+        const script = document.createElement('script');
+        script.src = '../js/progress.js';
+        script.onload = function() {
+            if (typeof CourseProgress !== 'undefined') {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm7-c05');
+                if (typeof CourseProgress !== 'undefined') {
+                    CourseProgress.initSubmissionIndicators('m7-c05');
+                }
+            }
+        };
+        document.body.appendChild(script);
+    </script>
+</body>
+</html>

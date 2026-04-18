@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss Battle: Reconstruye tu Proyecto con AI Tools — Módulo 4</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a><span> > </span>
+            <a href="index.html">Módulo 4</a><span> > </span>
+            <strong>🎯 Boss Battle</strong>
+        </nav>
+
+        <header>
+            <h1>🎯 Boss Battle: Reconstruye tu Proyecto con AI Tools</h1>
+            <div class="subtitle">📅 Semana 5 — Viernes | 💻 2 horas de proyecto | 🏆 50 XP</div>
+        </header>
+
+        <!-- SECCIÓN 1: EL RETO -->
+        <section class="reto-box">
+            <h2>⚔️ El Reto</h2>
+            <p>
+                Has aprendido las 4 herramientas principales para codificar con IA: <strong>Claude Code, Cursor, GitHub Copilot</strong> y <strong>TDD con IA</strong>. Ahora es el momento de aplicar TODO ESTO a un proyecto real.
+            </p>
+            <p>
+                El objetivo: <strong>reconstruir un proyecto que ya hayas hecho</strong> (o crear uno nuevo) usando <strong>todas las herramientas y técnicas del módulo</strong>. El resultado debe ser:
+            </p>
+            <ul style="margin: 1em 0; padding-left: 2em;">
+                <li><strong>Funcional:</strong> la app debe funcionar correctamente</li>
+                <li><strong>Documentado:</strong> proceso de construcción con IA registrado</li>
+                <li><strong>Con comparativa de tiempos:</strong> "Sin IA habría tardado X, con IA tardé Y"</li>
+                <li><strong>En GitHub:</strong> repositorio público con código, README, y documentación</li>
+                <li><strong>Profesional:</strong> código limpio, bien organizado, y listo para portfolio</li>
+            </ul>
+            <p style="color: #ffeb3b; margin-top: 1.5em;">
+                <strong>⭐ Este proyecto va directo a tu CV y LinkedIn.</strong> Es una demostración de que puedes usar IA para acelerar desarrollo sin sacrificar calidad.
+            </p>
+        </section>
+
+        <!-- SECCIÓN 2: IDEA DEL PROYECTO -->
+        <section>
+            <h2>💡 Opciones de Proyecto</h2>
+            <p style="margin-bottom: 1.5em;">
+                Elige <strong>UNA de estas opciones</strong>. El proyecto debe ser <strong>completo pero simple</strong> — mejor una app pequeña bien hecha que una grande a medias.
+            </p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5em; margin-bottom: 1.5em;">
+                <!-- Opción 1 -->
+                <div class="card" style="border-left: 4px solid #00e676;">
+                    <h3>🌐 Red Social de Ideas (Recomendado)</h3>
+                    <p><strong>Tu proyecto original del DAW:</strong> reconstruirlo con IA desde cero.</p>
+                    <ul style="margin: 0.8em 0; padding-left: 1.5em; font-size: 0.95em;">
+                        <li>Usuarios pueden publicar "ideas" (título + descripción)</li>
+                        <li>Feed de ideas con scroll infinito</li>
+                        <li>Sistema de likes anónimo</li>
+                        <li>Filtros por categoría (opcional)</li>
+                    </ul>
+                    <p style="color: #ffeb3b; font-size: 0.9em; margin-top: 0.8em;">
+                        <strong>Por qué:</strong> Es tu proyecto, lo conoces bien, y es lo suficientemente simple para 2 horas.
+                    </p>
+                </div>
+
+                <!-- Opción 2 -->
+                <div class="card" style="border-left: 4px solid #00e676;">
+                    <h3>📝 Gestor de Tareas + Notas</h3>
+                    <p>Una app minimalista para organizar tareas diarias.</p>
+                    <ul style="margin: 0.8em 0; padding-left: 1.5em; font-size: 0.95em;">
+                        <li>Crear, editar, eliminar tareas</li>
+                        <li>Marcar como completadas</li>
+                        <li>Persistencia en localStorage</li>
+                        <li>Búsqueda y filtros básicos</li>
+                    </ul>
+                    <p style="color: var(--text-muted); font-size: 0.9em; margin-top: 0.8em;">
+                        Perfecto si prefieres algo sin backend.
+                    </p>
+                </div>
+
+                <!-- Opción 3 -->
+                <div class="card" style="border-left: 4px solid #00e676;">
+                    <h3>🛒 Mini E-commerce</h3>
+                    <p>Un carrito de compra funcional (sin pagos reales).</p>
+                    <ul style="margin: 0.8em 0; padding-left: 1.5em; font-size: 0.95em;">
+                        <li>Catálogo de 5-10 productos</li>
+                        <li>Agregar/quitar del carrito</li>
+                        <li>Cálculo de total y impuestos</li>
+                        <li>Simulación de checkout</li>
+                    </ul>
+                    <p style="color: var(--text-muted); font-size: 0.9em; margin-top: 0.8em;">
+                        Frontend puro con localStorage.
+                    </p>
+                </div>
+
+                <!-- Opción 4 -->
+                <div class="card" style="border-left: 4px solid #00e676;">
+                    <h3>🎬 Dashboard de Películas</h3>
+                    <p>Explora y guarda películas favoritas.</p>
+                    <ul style="margin: 0.8em 0; padding-left: 1.5em; font-size: 0.95em;">
+                        <li>Integración con API pública (OMDb o TMDb)</li>
+                        <li>Búsqueda de películas</li>
+                        <li>Lista de favoritos (localStorage)</li>
+                        <li>Detalles de película (rating, sinopsis, etc.)</li>
+                    </ul>
+                    <p style="color: var(--text-muted); font-size: 0.9em; margin-top: 0.8em;">
+                        Te enseña a integrar APIs externas con IA.
+                    </p>
+                </div>
+            </div>
+
+            <div class="tip">
+                <strong>Consejo:</strong> No intentes hacer algo demasiado complejo. Una app sencilla bien hecha con IA vale más que una app compleja a medias. Apunta a 2 horas máximo.
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: PLAN DE ATAQUE -->
+        <section>
+            <h2>📋 Plan de Ataque (Timeline de 2 horas)</h2>
+            <p style="margin-bottom: 1.5em;">
+                Sigue este cronograma. <strong>Cada paso usa una herramienta diferente.</strong>
+            </p>
+
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5em;">
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <th style="padding: 12px; text-align: left; border: 1px solid #00e676;">Paso</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #00e676;">Herramienta</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #00e676;">Tarea</th>
+                    <th style="padding: 12px; text-align: center; border: 1px solid #00e676;">Tiempo</th>
+                </tr>
+                <tr style="border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676; font-weight: bold;">1</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>Claude Code</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Planificación + especificación del proyecto</td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">20 min</td>
+                </tr>
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676; font-weight: bold;">2</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>Cursor Composer</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Generar estructura base + archivos principales</td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">30 min</td>
+                </tr>
+                <tr style="border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676; font-weight: bold;">3</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>GitHub Copilot</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Completar funcionalidades, lógica, estilos</td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">20 min</td>
+                </tr>
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676; font-weight: bold;">4</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>TDD + IA</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Tests con Cursor + validaciones</td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">15 min</td>
+                </tr>
+                <tr style="border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676; font-weight: bold;">5</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>Claude Code</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Refactoring + documentación + README</td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">20 min</td>
+                </tr>
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676; font-weight: bold;">6</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>Git + GitHub</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Push a GitHub, verificar que funciona en público</td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">15 min</td>
+                </tr>
+            </table>
+
+            <div class="tip" style="background: #1a3a1a; border-left: 4px solid #64dd17;">
+                <strong>⚡ Regla de oro:</strong> Si una herramienta no funciona bien para algo, <strong>cambia a otra.</strong> Parte del aprendizaje es saber cuándo usar cada una.
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: PASO A PASO DETALLADO -->
+        <section>
+            <h2>🔨 Paso a Paso Detallado</h2>
+
+            <!-- PASO 1 -->
+            <div class="card" style="background: #1a1a2e; margin-bottom: 1.5em;">
+                <h3 style="color: #00e676; margin-bottom: 1em;">✅ Paso 1: Planificación (20 min — Claude Code)</h3>
+                <p><strong>Objetivo:</strong> definir exactamente qué vas a construir.</p>
+                <div style="background: #0a0a0a; padding: 1em; margin: 1em 0; border-left: 3px solid #ffeb3b; font-family: monospace; font-size: 0.9em;">
+                    <strong>Prompt para Claude Code:</strong><br>
+                    "Voy a reconstruir [TU PROYECTO] con IA. Necesito:<br>
+                    1. Estructura de carpetas recomendada<br>
+                    2. Lista de librerías/dependencias<br>
+                    3. Descripción de 5-10 features principales<br>
+                    4. Plan paso a paso de desarrollo<br>
+                    5. Consideraciones de testing"
+                </div>
+                <p><strong>Entregable:</strong> Un plan de proyecto en texto que puedas seguir paso a paso.</p>
+            </div>
+
+            <!-- PASO 2 -->
+            <div class="card" style="background: #1a1a2e; margin-bottom: 1.5em;">
+                <h3 style="color: #00e676; margin-bottom: 1em;">✅ Paso 2: Estructura Base (30 min — Cursor Composer)</h3>
+                <p><strong>Objetivo:</strong> generar el esqueleto del proyecto.</p>
+                <div style="background: #0a0a0a; padding: 1em; margin: 1em 0; border-left: 3px solid #ffeb3b; font-family: monospace; font-size: 0.9em;">
+                    <strong>Cómo hacerlo:</strong><br>
+                    1. Abre Cursor<br>
+                    2. Crea una carpeta vacía para el proyecto<br>
+                    3. Abre Composer (Cmd+Shift+I en Mac, Ctrl+Shift+I en Windows)<br>
+                    4. Describe: "Crea la estructura de un [TU PROYECTO]. Incluye: [lista de features]"<br>
+                    5. Deja que Composer genere todos los archivos
+                </div>
+                <p><strong>Entregable:</strong> Carpeta con estructura HTML/CSS/JS (o Python) lista para editar.</p>
+            </div>
+
+            <!-- PASO 3 -->
+            <div class="card" style="background: #1a1a2e; margin-bottom: 1.5em;">
+                <h3 style="color: #00e676; margin-bottom: 1em;">✅ Paso 3: Completar Funcionalidades (20 min — GitHub Copilot)</h3>
+                <p><strong>Objetivo:</strong> llenar los huecos con lógica y estilos.</p>
+                <div style="background: #0a0a0a; padding: 1em; margin: 1em 0; border-left: 3px solid #ffeb3b; font-family: monospace; font-size: 0.9em;">
+                    <strong>Cómo hacerlo:</strong><br>
+                    1. Abre los archivos en VS Code (con Copilot activado)<br>
+                    2. Escribe el nombre de una función: <code>function addItem() {</code><br>
+                    3. Copilot sugerirá. Presiona Tab para aceptar<br>
+                    4. Usa Cmd+K (Mac) o Ctrl+K (Windows) para refactorizar<br>
+                    5. Completa todos los métodos principales
+                </div>
+                <p><strong>Entregable:</strong> App funcional pero sin tests (yet).</p>
+            </div>
+
+            <!-- PASO 4 -->
+            <div class="card" style="background: #1a1a2e; margin-bottom: 1.5em;">
+                <h3 style="color: #00e676; margin-bottom: 1em;">✅ Paso 4: Testing (15 min — TDD + Cursor)</h3>
+                <p><strong>Objetivo:</strong> asegurar que funciona correctamente.</p>
+                <div style="background: #0a0a0a; padding: 1em; margin: 1em 0; border-left: 3px solid #ffeb3b; font-family: monospace; font-size: 0.9em;">
+                    <strong>Cómo hacerlo:</strong><br>
+                    1. Crea archivo <code>test.js</code> o <code>test.py</code><br>
+                    2. Escribe en Cursor: "Genérame tests para la función addItem()"<br>
+                    3. Copila y ejecuta: <code>npm test</code> o <code>pytest</code><br>
+                    4. Arregla cualquier fallo
+                </div>
+                <p><strong>Entregable:</strong> Test suite pasando al 100%.</p>
+            </div>
+
+            <!-- PASO 5 -->
+            <div class="card" style="background: #1a1a2e; margin-bottom: 1.5em;">
+                <h3 style="color: #00e676; margin-bottom: 1em;">✅ Paso 5: Refactoring + Documentación (20 min — Claude Code)</h3>
+                <p><strong>Objetivo:</strong> código limpio y bien documentado.</p>
+                <div style="background: #0a0a0a; padding: 1em; margin: 1em 0; border-left: 3px solid #ffeb3b; font-family: monospace; font-size: 0.9em;">
+                    <strong>Cómo hacerlo:</strong><br>
+                    1. Abre el código en Claude Code<br>
+                    2. Pide: "Refactoriza esto para que sea más limpio"<br>
+                    3. Pide: "Añade comentarios y docstrings"<br>
+                    4. Pide: "Crea un README.md profesional"
+                </div>
+                <p><strong>Entregable:</strong> README.md + código limpio con comentarios.</p>
+            </div>
+
+            <!-- PASO 6 -->
+            <div class="card" style="background: #1a1a2e; margin-bottom: 1.5em;">
+                <h3 style="color: #00e676; margin-bottom: 1em;">✅ Paso 6: GitHub + Deploy (15 min)</h3>
+                <p><strong>Objetivo:</strong> código en público, funcional, con URL.</p>
+                <div style="background: #0a0a0a; padding: 1em; margin: 1em 0; border-left: 3px solid #ffeb3b; font-family: monospace; font-size: 0.9em;">
+                    <strong>Cómo hacerlo:</strong><br>
+                    1. <code>git init && git add . && git commit -m "Initial commit"</code><br>
+                    2. Crea repo en GitHub<br>
+                    3. Push: <code>git push origin main</code><br>
+                    4. Si es frontend puro: usa GitHub Pages<br>
+                    5. Si es backend: despliega en Render/Railway
+                </div>
+                <p><strong>Entregable:</strong> URL pública funcional en README.</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: RÚBRICA -->
+        <section>
+            <h2>📊 Rúbrica de Evaluación (50 XP base + 15 bonus)</h2>
+            <p style="margin-bottom: 1.5em;">
+                Cada criterio suma puntos. Total: <strong>65 XP máximo.</strong>
+            </p>
+
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <th style="padding: 12px; text-align: left; border: 1px solid #00e676;">Criterio</th>
+                    <th style="padding: 12px; text-align: center; border: 1px solid #00e676;">Puntos</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #00e676;">Descripción</th>
+                </tr>
+                <tr style="border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>Funcionalidad</strong></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;"><strong>20</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">App funciona correctamente. Todas las features principales trabajan sin errores.</td>
+                </tr>
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>Uso de 3+ herramientas</strong></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;"><strong>15</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Usó al menos 3 de: Claude Code, Cursor, Copilot, TDD. Documentado en README.</td>
+                </tr>
+                <tr style="border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>Documentación del proceso</strong></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;"><strong>10</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Registró qué herramienta usó para qué tarea. Ejemplo: "Cursor Composer para estructura".</td>
+                </tr>
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>Calidad del código</strong></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;"><strong>10</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Código limpio, bien organizado, con comentarios. Sin "código muerto" o cruft.</td>
+                </tr>
+                <tr style="border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>README profesional</strong></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;"><strong>5</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Descripción del proyecto, screenshot, setup, uso, tecnologías.</td>
+                </tr>
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>Comparativa de tiempos</strong></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;"><strong>5 (BONUS)</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Estimó: "Sin IA habría tardado X horas, con IA tardé Y horas".</td>
+                </tr>
+                <tr style="border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>Herramienta favorita + justificación</strong></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;"><strong>5 (BONUS)</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">"Mi favorita fue X porque...". Análisis crítico, no marketing.</td>
+                </tr>
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><strong>Tests implementados</strong></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;"><strong>5 (BONUS)</strong></td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Test suite con cobertura > 70%. Tests pasan al 100%.</td>
+                </tr>
+            </table>
+
+            <div style="margin-top: 2em; background: #0a0a0a; padding: 1em; border: 2px solid #ffeb3b;">
+                <p style="margin: 0; color: #ffeb3b;">
+                    <strong>Total Base:</strong> 50 XP<br>
+                    <strong>Bonus Máximo:</strong> 15 XP<br>
+                    <strong>Total Posible:</strong> 65 XP
+                </p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 6: ENTREGABLE -->
+        <section>
+            <h2>📦 Qué Entregar</h2>
+            <p style="margin-bottom: 1.5em;">
+                Envía un link a tu repositorio GitHub con:
+            </p>
+
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <th style="padding: 12px; text-align: left; border: 1px solid #00e676;">Fichero/Carpeta</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #00e676;">Obligatorio</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #00e676;">Contenido</th>
+                </tr>
+                <tr style="border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><code>README.md</code></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">✅</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Descripción, screenshot, setup, herramientas usadas, comparativa de tiempos, favorita.</td>
+                </tr>
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><code>src/ o app/</code></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">✅</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Código fuente del proyecto. Limpio y con comentarios.</td>
+                </tr>
+                <tr style="border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><code>tests/ o test.js</code></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">✅</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Test suite. Debe ser ejecutable.</td>
+                </tr>
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><code>package.json</code> o <code>requirements.txt</code></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">✅</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Dependencias del proyecto.</td>
+                </tr>
+                <tr style="border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><code>.gitignore</code></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">✅</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Excluir node_modules, __pycache__, .env, etc.</td>
+                </tr>
+                <tr style="background: #0a0a0a; border: 1px solid #00e676;">
+                    <td style="padding: 12px; border: 1px solid #00e676;"><code>URL pública</code></td>
+                    <td style="padding: 12px; text-align: center; border: 1px solid #00e676;">✅</td>
+                    <td style="padding: 12px; border: 1px solid #00e676;">Link en README donde la app funciona en vivo (GitHub Pages, Render, etc.)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- SECCIÓN 7: TIPS -->
+        <section>
+            <h2>💡 Tips Finales</h2>
+
+            <div class="card" style="border-left: 4px solid #64dd17; margin-bottom: 1em;">
+                <h4>🎯 Alcance realista</h4>
+                <p>No intentes hacer algo demasiado complejo. Una app sencilla bien hecha con IA vale más que una app compleja a medias. En 2 horas debes tener algo <strong>funcional y desplegado.</strong></p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #64dd17; margin-bottom: 1em;">
+                <h4>🔄 Cambiar de herramienta cuando sea necesario</h4>
+                <p>Si Cursor no genera bien HTML, usa Claude Code. Si Copilot no entiende tu lógica, pide ayuda a Cursor. <strong>Saber cuándo cambiar es clave.</strong></p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #64dd17; margin-bottom: 1em;">
+                <h4>📝 Commits frecuentes</h4>
+                <p><code>git commit -m "feat: agregar feature X"</code> después de cada paso importante. Facilita revisar tu trabajo y muestra buen flujo de trabajo.</p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #64dd17; margin-bottom: 1em;">
+                <h4>🧪 Tests desde el principio</h4>
+                <p>No dejes los tests para el final. Escribe un test, haz que IA complete la función, repite. Es más rápido y confías en el código.</p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #64dd17; margin-bottom: 1em;">
+                <h4>📱 Responsivo = bonus points</h4>
+                <p>Si tu app funciona en mobile tanto como en desktop, suma puntos mentales. La mayoría de usuarios están en mobile.</p>
+            </div>
+
+            <div class="card" style="border-left: 4px solid #64dd17;">
+                <h4>🌟 "Portfolio piece" mindset</h4>
+                <p><strong>Piensa en esto como algo que mostrarás a futuros clientes o empleadores.</strong> ¿Parecería profesional? ¿Funciona sin errores? ¿El código es legible? Si la respuesta es no a cualquiera, arréglalo antes de hacer push.</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 8: BONUS FEATURES -->
+        <section>
+            <h2>🌟 Bonus: Características Avanzadas</h2>
+            <p style="margin-bottom: 1.5em;">
+                Si terminas rápido y quieres más, implementa uno de estos:
+            </p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1em;">
+                <div class="card" style="border-left: 4px solid #64dd17;">
+                    <h4>🔐 Autenticación básica</h4>
+                    <p>Login/logout con localStorage. No es seguro, pero demuestra que entiendes sessions.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #64dd17;">
+                    <h4>💾 Base de datos</h4>
+                    <p>Cambia localStorage por una BD real: MongoDB, PostgreSQL, etc. Usa IA para la integración.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #64dd17;">
+                    <h4>⚡ Modo oscuro/claro</h4>
+                    <p>Toggle de tema con persistencia. Añade 10 líneas, ve cómo mejora UX.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #64dd17;">
+                    <h4>📊 Analytics básicas</h4>
+                    <p>Cuenta clics, vistas, acciones. Visualízalos en una tabla. Enseña el valor del data.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #64dd17;">
+                    <h4>🔍 Búsqueda avanzada</h4>
+                    <p>Filtros por múltiples criterios, ordenamiento, paginación.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #64dd17;">
+                    <h4>📧 Email o notificaciones</h4>
+                    <p>Integra SendGrid o Twilio. Demuestra que puedes usar APIs externas.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Entrega del Boss Battle -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega del Boss Battle</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="boss-battle">
+                <h4>🎯 Entregar Boss Battle: Proyecto Integrador M4</h4>
+                <input type="url" placeholder="URL de tu repositorio en GitHub" />
+                <input type="url" placeholder="URL de deploy (si aplica)" />
+                <textarea id="code-ejercicio-1" rows="15" placeholder="Pega aquí el código más importante de tu proyecto..."></textarea>
+                <textarea rows="4" placeholder="¿Qué fue lo más difícil? ¿Qué aprendiste?"></textarea>
+                <div style="margin-top:8px;">
+                    <button onclick="CourseProgress.submitExercise('m4-bb', 1, this)" class="btn btn-green btn-submit">Entregar Boss Battle 🎯</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 9: TEST -->
+        <section>
+            <h2>🧪 Test de Conocimiento</h2>
+            <p style="margin-bottom: 1.5em;">
+                10 preguntas sobre el módulo. Apunta a 8/10 para mostrar que dominas AI coding tools.
+            </p>
+            <div id="quiz-container" style="margin-top: 1.5em;"></div>
+        </section>
+
+        <!-- SECCIÓN 10: BADGE -->
+        <section style="text-align: center; margin-top: 2em; padding: 2em; background: #0a0a0a; border: 2px solid #ffeb3b;">
+            <h2 style="color: #ffeb3b; margin-bottom: 1em;">🏅 Badge Desbloqueado</h2>
+            <div style="font-size: 3em; margin: 1em 0;">🤖</div>
+            <h3 style="color: #00e676;">AI-Augmented Dev</h3>
+            <p>Completaste tu primer proyecto desde cero usando únicamente AI coding tools. Eres capaz de generar código profesional 3x más rápido que hace una semana.</p>
+        </section>
+
+        <!-- NAVEGACIÓN -->
+        <div class="clase-nav" style="margin-top: 2em; padding-top: 1.5em; border-top: 1px solid #00e676;">
+            <a href="clase-04.html">← Clase 04</a>
+            <span> | </span>
+            <a href="index.html">Índice del Módulo</a>
+            <span> | </span>
+            <a href="../index.html">Dashboard →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "¿Cuál es el propósito principal del Boss Battle?",
+                options: [
+                    "a) Aprender nuevos conceptos de programación",
+                    "b) Reconstruir un proyecto real usando todas las herramientas del módulo",
+                    "c) Escribir documentación técnica",
+                    "d) Practicar con ejercicios teóricos"
+                ],
+                correct: "b",
+                explanation: "El Boss Battle es un proyecto capstone donde aplicas TODO lo aprendido: Claude Code, Cursor, Copilot, TDD, etc."
+            },
+            {
+                id: 2,
+                question: "¿Cuándo deberías usar Claude Code en lugar de Cursor?",
+                options: [
+                    "a) Para escribir código JavaScript",
+                    "b) Para planificación, refactoring y documentación del proyecto",
+                    "c) Siempre, Cursor no sirve",
+                    "d) Solo para testing"
+                ],
+                correct: "b",
+                explanation: "Claude Code excels en alto nivel (arquitectura, refactoring, documentación). Cursor es mejor para generación línea-por-línea."
+            },
+            {
+                id: 3,
+                question: "¿Cuál es la mejor estrategia de testing con IA?",
+                options: [
+                    "a) Escribir tests después de terminar el código",
+                    "b) No escribir tests, confiar en la IA",
+                    "c) TDD: escribe tests primero, deja que IA complete la función",
+                    "d) Usar solo Copilot para testing"
+                ],
+                correct: "c",
+                explanation: "TDD con IA es el mejor: defines qué debe hacer (tests), IA lo implementa, repites. Más rápido y más seguro."
+            },
+            {
+                id: 4,
+                question: "Si Cursor Composer no genera bien la estructura, ¿qué deberías hacer?",
+                options: [
+                    "a) Aceptar lo que genera y seguir adelante",
+                    "b) Parar todo y usar solo manualmente",
+                    "c) Cambiar a Claude Code o editar manualmente lo que generó",
+                    "d) Culpar a la IA"
+                ],
+                correct: "c",
+                explanation: "Saber cuándo cambiar de herramienta es clave. Las herramientas son medios, no fines."
+            },
+            {
+                id: 5,
+                question: "¿Cuánto tiempo debería tomar el Boss Battle?",
+                options: [
+                    "a) 30 minutos",
+                    "b) 2 horas máximo",
+                    "c) 1 semana",
+                    "d) Depende del proyecto"
+                ],
+                correct: "b",
+                explanation: "El plan es 2 horas: planificación (20min) + Cursor (30min) + Copilot (20min) + tests (15min) + refactoring (20min) + deploy (15min)."
+            },
+            {
+                id: 6,
+                question: "¿Qué debería incluir el README.md?",
+                options: [
+                    "a) Solo el código",
+                    "b) Descripción, setup, screenshot, herramientas usadas, comparativa de tiempos",
+                    "c) Instrucciones de cómo limpiar el caché",
+                    "d) La biografía del desarrollador"
+                ],
+                correct: "b",
+                explanation: "El README vende tu proyecto. Debe mostrar QUÉ hace, CÓMO usarlo, y CÓMO lo construiste con IA."
+            },
+            {
+                id: 7,
+                question: "¿Cuál es el riesgo de usar IA para TODO sin revisar?",
+                options: [
+                    "a) Ninguno, la IA es perfecta",
+                    "b) Código con bugs, seguridad, y lógica rota que no funciona",
+                    "c) Solo pierde tiempo",
+                    "d) Solo afecta el rendimiento"
+                ],
+                correct: "b",
+                explanation: "IA acelera, pero NO reemplaza pensamiento crítico. Revisa siempre, entiende el código, arregla bugs."
+            },
+            {
+                id: 8,
+                question: "¿Qué significa 'comparativa de tiempos' en el Boss Battle?",
+                options: [
+                    "a) Medir cuánto tardó cada herramienta",
+                    "b) Estimar: 'Sin IA habría tardado X horas, con IA tardé Y horas'",
+                    "c) Cronometrar cada commit",
+                    "d) Comparar con otros desarrolladores"
+                ],
+                correct: "b",
+                explanation: "Demuestra el valor de IA: 'Con IA tardé 2 horas, sin IA habría sido 8 horas.' Eso vende."
+            },
+            {
+                id: 9,
+                question: "¿Cuándo es el momento CORRECTO para escribir tests?",
+                options: [
+                    "a) Nunca, son una pérdida de tiempo",
+                    "b) Después de terminar todo",
+                    "c) Desde el principio (TDD)",
+                    "d) Solo si hay bugs"
+                ],
+                correct: "c",
+                explanation: "TDD: tests primero. Define qué debe pasar, implementa para que pase. Más confianza, menos bugs."
+            },
+            {
+                id: 10,
+                question: "¿Por qué es importante pensar en 'portfolio piece' durante el desarrollo?",
+                options: [
+                    "a) Porque te volverá famoso",
+                    "b) Porque lo mostrarás a clientes/empleadores, deben ser profesionales",
+                    "c) Porque es una regla",
+                    "d) No importa la calidad"
+                ],
+                correct: "b",
+                explanation: "Este proyecto va a tu CV. Funcionalidad, código limpio, documentación, deploy: todo debe brillar."
+            }
+        ];
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm4-bb');
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm4-bb');
+        }
+
+        if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+            CourseProgress.initSubmissionIndicators('m4-bb');
+        }
+    </script>
+</body>
+</html>

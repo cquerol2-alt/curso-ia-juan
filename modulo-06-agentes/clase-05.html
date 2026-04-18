@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 05: Observability y Debugging de Agentes con LangSmith | Curso IA para Juan</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .breadcrumb { margin: 1.5em 0; font-size: 0.9em; color: var(--text-muted); }
+        .breadcrumb a { color: #00e676; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .header-meta { background: #1a1a2e; border-left: 4px solid #00e676; padding: 1em; margin: 1.5em 0; border-radius: 4px; font-size: 0.95em; }
+        .header-meta strong { color: #00e676; }
+        .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 2em 0; border-radius: 4px; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .section { margin: 2.5em 0; }
+        .section h2 { color: #00e676; border-bottom: 2px solid #00e676; padding-bottom: 0.5em; margin-bottom: 1.2em; font-size: 1.5em; }
+        .section h3 { color: #39ff14; margin-top: 1.5em; margin-bottom: 0.8em; font-size: 1.2em; }
+        .tip, .warning, .info, .code-block { margin: 1.5em 0; padding: 1.2em; border-radius: 4px; border-left: 4px solid; }
+        .tip { background: #0a3d0a; border-color: #00e676; color: #e8f5e9; }
+        .warning { background: #3d2a0a; border-color: #ffa500; color: #ffe0b2; }
+        .info { background: #0a2a3d; border-color: #00bfff; color: #b3e5fc; }
+        .code-block { background: #0d1117; border-color: #39ff14; color: #e1e4e8; font-family: 'Courier New', monospace; font-size: 0.9em; overflow-x: auto; }
+        .code-block code { display: block; white-space: pre-wrap; word-break: break-all; }
+        .exercise { background: #1a1a2e; border: 2px solid #00e676; padding: 1.5em; margin: 2em 0; border-radius: 4px; }
+        .exercise h4 { color: #00e676; margin-top: 0; }
+        .exercise p { margin: 0.8em 0; }
+        .table-responsive { overflow-x: auto; margin: 1.5em 0; }
+        table { width: 100%; border-collapse: collapse; background: #0d1117; }
+        th { background: rgba(0, 240, 255, 0.15); color: #fff; padding: 0.8em; text-align: left; border: 1px solid #00e676; }
+        td { padding: 0.8em; border: 1px solid var(--border-glow); }
+        tr:nth-child(even) { background: #1a1a2e; }
+        .btn { display: inline-block; background: rgba(0, 240, 255, 0.15); color: #00e676; padding: 0.6em 1.2em; border-radius: 4px; text-decoration: none; margin-top: 0.5em; border: 1px solid #00e676; transition: all 0.3s; }
+        .btn:hover { background: #00e676; color: #00f0ff; }
+        .quiz-section { background: #1a1a2e; padding: 2em; border-radius: 4px; margin: 2em 0; border: 2px solid #00e676; }
+        .quiz-section h3 { color: #00e676; margin-top: 0; }
+        footer { margin-top: 3em; padding-top: 2em; border-top: 2px solid #00e676; text-align: center; color: var(--text-muted); font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="../index.html">Dashboard</a> &gt; <a href="index.html">Módulo 6</a> &gt; Clase 05
+        </div>
+
+        <!-- Header -->
+        <h1 style="color: #00e676; margin-bottom: 0.5em;">📅 Semana 9 — Martes</h1>
+        <div class="header-meta">
+            <strong>🎬 30 min vídeo</strong> | <strong>💻 50 min práctica</strong> | <strong>🧪 15 min test</strong>
+        </div>
+
+        <h1 style="color: #39ff14;">Clase 05: Observability y Debugging de Agentes con LangSmith</h1>
+
+        <!-- Video Section -->
+        <div class="section">
+            <h2>Vídeo Explicativo</h2>
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/B3ic9ZemwqU" allowfullscreen></iframe>
+            </div>
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-06-c05.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </div>
+
+        <!-- Recap -->
+        <div class="section">
+            <div class="info">
+                <strong>🔗 Conexión con las clases anteriores:</strong> En <strong>M5 c07</strong> aprendiste a <em>medir</em> un RAG con Ragas. En <strong>M6 c01–c04</strong> has construido un agente que razona y llama herramientas. Pero cuando un agente de producción falla — o tarda 40 segundos — <strong>necesitas ver qué está pasando por dentro</strong>: qué herramientas llamó, con qué argumentos, en qué orden, cuántos tokens se comió cada paso. Aquí es donde entra <strong>observability</strong>.
+            </div>
+        </div>
+
+        <!-- Part A: Por qué observability es crítica -->
+        <div class="section">
+            <h2>Part A: Por qué un agente sin observability es una caja negra peligrosa</h2>
+
+            <p>
+                Un LLM normal es una función: entra prompt, sale texto. Si falla, relees el prompt y listo. Un <strong>agente</strong>, en cambio, ejecuta una <strong>trayectoria</strong>: piensa → llama herramienta A → lee resultado → piensa otra vez → llama herramienta B → …. Cuando algo va mal, tienes que reconstruir ese árbol de pasos. Sin herramientas, significa leer logs de texto plano a las 2 de la madrugada.
+            </p>
+
+            <div class="warning">
+                <strong>⚠️ Los tres fallos silenciosos de un agente:</strong>
+                <ol>
+                    <li><strong>Bucles infinitos</strong> — llama la misma herramienta una y otra vez con argumentos parecidos.</li>
+                    <li><strong>Herramientas equivocadas</strong> — usa <code>buscar_web</code> cuando debería usar <code>consultar_bbdd</code>, y acaba inventando la respuesta.</li>
+                    <li><strong>Tokens fugados</strong> — devuelve la respuesta correcta pero se ha comido 40.000 tokens porque ha re-leído 10 veces el mismo documento.</li>
+                </ol>
+                Ninguno de estos tres fallos aparece si solo miras la respuesta final. Sólo se ven con <em>tracing</em>.
+            </div>
+
+            <h3>Qué resuelve una herramienta de observability</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pregunta</th>
+                            <th>Sin observability</th>
+                            <th>Con LangSmith</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>¿Por qué tardó 42 s?</td>
+                            <td>"Ni idea, pega el log en un bloc de notas"</td>
+                            <td>Ves un waterfall: la llamada 3 tardó 28 s porque la API externa estaba lenta</td>
+                        </tr>
+                        <tr>
+                            <td>¿Cuánto cuesta una conversación típica?</td>
+                            <td>Calculas a mano sumando logs</td>
+                            <td>Panel con coste medio por run, p50/p95</td>
+                        </tr>
+                        <tr>
+                            <td>¿Qué herramienta falla más?</td>
+                            <td>Tendrías que parsear cientos de logs</td>
+                            <td>Tabla agregada con error rate por tool</td>
+                        </tr>
+                        <tr>
+                            <td>¿Mi prompt nuevo es mejor que el viejo?</td>
+                            <td>Pruebas manual en 5 ejemplos</td>
+                            <td>Dataset + experiment: corres los 50 casos automáticamente y comparas</td>
+                        </tr>
+                        <tr>
+                            <td>¿Mi agente se está degradando?</td>
+                            <td>Te enteras cuando un cliente se queja</td>
+                            <td>Alertas sobre drift de latencia, coste o tasa de error</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>
+                <strong>LangSmith</strong> (de los creadores de LangChain) es la herramienta más popular del ecosistema para esto. No requiere usar LangChain — funciona con cualquier código Python/TS, solo hay que envolver las funciones.
+            </p>
+        </div>
+
+        <!-- Part B: Conceptos -->
+        <div class="section">
+            <h2>Part B: LangSmith 101 — runs, traces y spans</h2>
+
+            <p>
+                Para usar LangSmith bien hay que entender 4 conceptos. Son los mismos que en cualquier sistema de observability moderno (Datadog, Honeycomb, Jaeger), solo que aplicados a LLMs y agentes.
+            </p>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Qué es</th>
+                            <th>Ejemplo en un agente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Project</strong></td>
+                            <td>Carpeta lógica donde se agrupan runs</td>
+                            <td>"agente-ria-qa-prod", "agente-ria-qa-dev"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Run</strong></td>
+                            <td>Una ejecución completa del agente (una conversación o una llamada)</td>
+                            <td>"Usuario pregunta: ¿cómo se monta una paella para 40?"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Trace</strong></td>
+                            <td>El árbol de pasos de un run, con timings y tokens</td>
+                            <td>LLM → tool_call(buscar_recetas) → LLM → tool_call(calcular_ingredientes) → LLM final</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Span</strong></td>
+                            <td>Cada nodo individual del trace (una llamada LLM, un tool call, una función)</td>
+                            <td>La llamada a <code>calcular_ingredientes(personas=40, receta="paella")</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>La analogía mental: un trace es un flamegraph</h3>
+            <p>
+                Si Juan ha tocado DevTools en el navegador, un trace de LangSmith es muy parecido a la pestaña <em>Performance</em>: una cascada horizontal donde cada barra es un paso, la longitud indica duración, y puedes expandir para ver detalles. En LangSmith cada barra es un span y al expandirlo ves el prompt exacto, la respuesta, los tokens y el coste.
+            </p>
+
+            <div class="tip">
+                <strong>💡 Regla práctica:</strong> el 80% del debugging de un agente se resuelve abriendo el trace y leyendo <strong>el primer span que falló</strong>. El otro 20% es entender por qué el LLM decidió llamar esa herramienta — y para eso miras el <em>prompt completo del span anterior</em>, no solo el output.
+            </div>
+        </div>
+
+        <!-- Part C: Setup -->
+        <div class="section">
+            <h2>Part C: Setup — tracing de un agente en 10 líneas</h2>
+
+            <p>
+                LangSmith tiene un plan gratuito generoso (5.000 traces/mes). El setup es casi cero: una variable de entorno y un decorador. Funciona con el SDK de Anthropic directamente, sin LangChain.
+            </p>
+
+            <h3>Paso 1: cuenta y API key</h3>
+            <ol>
+                <li>Ir a <a href="https://smith.langchain.com/" target="_blank" style="color: #00e676;">smith.langchain.com</a> y crear cuenta.</li>
+                <li>En <em>Settings → API Keys</em>, generar una key (<code>lsv2_pt_...</code>).</li>
+                <li>Guardarla en <code>.env</code> junto con la de Anthropic.</li>
+            </ol>
+
+            <h3>Paso 2: variables de entorno</h3>
+            <div class="code-block">
+                <code>LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=lsv2_pt_...
+LANGSMITH_PROJECT=agente-ria-qa-dev
+ANTHROPIC_API_KEY=sk-ant-...</code>
+            </div>
+
+            <h3>Paso 3: instrumentar el cliente</h3>
+            <div class="code-block">
+                <code>pip install langsmith anthropic python-dotenv</code>
+            </div>
+
+            <div class="code-block">
+                <code>from dotenv import load_dotenv
+from langsmith import traceable
+from langsmith.wrappers import wrap_anthropic
+from anthropic import Anthropic
+
+load_dotenv()
+
+# wrap_anthropic inyecta tracing automático en todas las llamadas
+client = wrap_anthropic(Anthropic())
+
+TOOLS = [
+    {
+        "name": "calcular_ingredientes",
+        "description": "Calcula cantidades para una receta según nº de comensales",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "receta": {"type": "string"},
+                "personas": {"type": "integer"}
+            },
+            "required": ["receta", "personas"]
+        }
+    }
+]
+
+def calcular_ingredientes(receta: str, personas: int) -> dict:
+    # stub de ejemplo
+    return {"arroz_g": personas * 100, "caldo_l": personas * 0.25}
+
+@traceable(name="agente_qa_ria")
+def ejecutar_agente(pregunta: str) -> str:
+    mensajes = [{"role": "user", "content": pregunta}]
+    for _ in range(10):  # max 10 pasos
+        resp = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=1024,
+            tools=TOOLS,
+            messages=mensajes,
+        )
+        if resp.stop_reason == "end_turn":
+            return resp.content[0].text
+        # el modelo pidió tool_use
+        tool_use = next(b for b in resp.content if b.type == "tool_use")
+        resultado = calcular_ingredientes(**tool_use.input)
+        mensajes.append({"role": "assistant", "content": resp.content})
+        mensajes.append({
+            "role": "user",
+            "content": [{
+                "type": "tool_result",
+                "tool_use_id": tool_use.id,
+                "content": str(resultado)
+            }]
+        })
+    return "(sin respuesta tras 10 pasos)"
+
+print(ejecutar_agente("Ingredientes de paella para 40 personas"))</code>
+            </div>
+
+            <p>
+                Con <code>@traceable</code> alrededor del entrypoint y <code>wrap_anthropic</code> alrededor del cliente, <strong>cada llamada al LLM y cada tool call aparece en LangSmith como un span hijo</strong>. No hay que añadir nada más.
+            </p>
+
+            <h3>Paso 4: abrir el trace</h3>
+            <p>
+                Al ejecutar el script, la consola imprime un enlace estilo <code>https://smith.langchain.com/o/.../r/abc-123</code>. Al pinchar verás:
+            </p>
+            <ul>
+                <li>Árbol completo de spans (el padre <code>agente_qa_ria</code> y sus hijos LLM + tool).</li>
+                <li>Input y output de cada span (el prompt exacto, no una versión truncada).</li>
+                <li>Tiempo por span (el waterfall).</li>
+                <li>Tokens in/out y <strong>coste estimado</strong> por span.</li>
+                <li>Metadatos: modelo, temperatura, stop_reason.</li>
+            </ul>
+
+            <div class="info">
+                <strong>ℹ️ Decoradores anidados.</strong> Si tienes funciones auxiliares (parsing, validación), decorarlas también con <code>@traceable</code> las hace aparecer como spans. Útil cuando un <em>parsing bug</em> está disfrazado de "el LLM da mala respuesta".
+            </div>
+        </div>
+
+        <!-- Part D: Debugging workflow -->
+        <div class="section">
+            <h2>Part D: Workflow de debugging cuando tu agente hace cosas raras</h2>
+
+            <p>
+                Hay una secuencia mental que sirve para 9 de cada 10 bugs. Vamos a aplicarla sobre un caso típico.
+            </p>
+
+            <div class="info">
+                <strong>🎬 Escenario:</strong> un cliente reporta que el agente de RIA respondió "no tengo información" a la pregunta "¿cuánto cuesta montar una paella para 40?". Tú sabes que la tool <code>calcular_ingredientes</code> sí sabe responder. ¿Qué falló?
+            </div>
+
+            <h3>Paso 1 — localizar el run</h3>
+            <p>
+                En LangSmith, filtras por <em>project = prod</em>, <em>date = hoy</em>, y buscas texto "paella para 40" en el input. Un click y tienes el trace abierto.
+            </p>
+
+            <h3>Paso 2 — mirar el waterfall</h3>
+            <p>
+                Si el trace tiene <strong>un único span LLM y ningún tool call</strong>, ya lo tienes: el modelo no decidió llamar la herramienta. El bug está en el prompt del sistema o en la descripción de la tool. <strong>No es bug del modelo</strong>.
+            </p>
+
+            <h3>Paso 3 — leer el prompt completo del span LLM</h3>
+            <p>
+                Abres el span, miras el input. Ahí ves que la <em>tool description</em> que tu código pasa es: "Calcula cantidades para una receta". Demasiado vago. El modelo no asoció "cuánto cuesta montar una paella" con "calcula cantidades". Cambias la descripción a "Calcula cantidades e ingredientes necesarios para preparar una receta (paella, arroces, etc.) según número de comensales" y reejecutas.
+            </p>
+
+            <h3>Paso 4 — usar "Compare runs"</h3>
+            <p>
+                Con el run viejo y el nuevo abiertos en pestañas distintas, LangSmith tiene botón <em>Compare</em>: te muestra side-by-side qué cambió. Si el nuevo llama la tool correctamente, el bug estaba en la descripción. Si sigue igual, hay algo más.
+            </p>
+
+            <h3>Paso 5 — guardar el caso como regresión</h3>
+            <p>
+                Cuando lo arreglas, <strong>añades ese input al dataset</strong> de LangSmith (botón <em>Add to dataset</em>). Así, la próxima vez que cambies el prompt, puedes correr ese dataset contra la versión nueva y verificar que "paella para 40" sigue funcionando. Esto es la bisagra entre observability y evals.
+            </p>
+
+            <div class="warning">
+                <strong>⚠️ Red flags en traces que son <em>siempre</em> bug:</strong>
+                <ul>
+                    <li>El mismo tool call repetido 3+ veces con inputs parecidos (loop).</li>
+                    <li>Span LLM con <code>stop_reason = "max_tokens"</code> (el output se cortó).</li>
+                    <li>Tool call con input <code>{}</code> vacío (el modelo no pudo extraer argumentos).</li>
+                    <li>Latencia &gt; 20 s en un solo span LLM (modelo o red, no tu código).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Part E: Datasets, experiments, alternatives -->
+        <div class="section">
+            <h2>Part E: De debugging a evals — datasets y experiments</h2>
+
+            <p>
+                LangSmith no es solo un visor de traces. Cuando acumulas runs reales puedes convertirlos en <strong>datasets</strong> y correr <strong>experiments</strong>: la evolución natural desde "arreglar un bug" hacia "medir si mi nueva versión es mejor".
+            </p>
+
+            <h3>Datasets: ejemplos que no quieres romper nunca</h3>
+            <ul>
+                <li>Creas un dataset "golden_qa_ria" con 30–50 inputs reales.</li>
+                <li>Para cada input anotas el output esperado o un criterio ("debe llamar la tool X").</li>
+                <li>Puedes añadir inputs desde cualquier trace con un click (<em>Add to dataset</em>).</li>
+            </ul>
+
+            <h3>Experiments: correr tu agente contra el dataset entero</h3>
+            <div class="code-block">
+                <code>from langsmith import Client
+from langsmith.evaluation import evaluate
+
+client = Client()
+
+def eval_llamo_tool_correcta(run, example):
+    tool_names = [s.name for s in run.outputs.get("tool_calls", [])]
+    esperado = example.outputs["tool_esperada"]
+    return {"key": "tool_correcta", "score": 1 if esperado in tool_names else 0}
+
+results = evaluate(
+    lambda inputs: {"answer": ejecutar_agente(inputs["pregunta"])},
+    data="golden_qa_ria",
+    evaluators=[eval_llamo_tool_correcta],
+    experiment_prefix="cambio-descripcion-tools",
+)</code>
+            </div>
+
+            <p>
+                Al acabar, en LangSmith verás una tabla comparativa: cada ejemplo, qué respondió el agente, qué score sacó. Si corres el mismo dataset contra <em>dos versiones</em> de tu código (v1 y v2), te da el diff: cuántos ejemplos mejoraron, cuántos empeoraron, cuáles son nuevos fallos.
+            </p>
+
+            <div class="tip">
+                <strong>💡 Enlace con M5 c07.</strong> Los evaluators aquí son igual que los de Ragas: funciones que reciben el output del agente y devuelven un score. La diferencia es que en RAG evaluabas la <em>respuesta</em> (faithfulness), aquí evalúas la <em>trayectoria</em> (¿llamó la tool correcta? ¿en cuántos pasos?).
+            </div>
+
+            <h3>Alternativas a LangSmith</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Herramienta</th>
+                            <th>Ecosistema</th>
+                            <th>Cuándo tiene sentido</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>LangSmith</strong></td>
+                            <td>LangChain / standalone</td>
+                            <td>Default razonable. Setup mínimo, UI muy pulida, plan free generoso.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Arize Phoenix</strong></td>
+                            <td>Open-source, OTel-compatible</td>
+                            <td>Si quieres self-hosted o ya usas OpenTelemetry en el resto del stack.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Weave (W&amp;B)</strong></td>
+                            <td>Weights &amp; Biases</td>
+                            <td>Si tu equipo ya vive en W&amp;B por ML tradicional.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Langfuse</strong></td>
+                            <td>Open-source, self-hostable</td>
+                            <td>Alternativa europea a LangSmith. Buen plan free cloud + opción on-prem.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info">
+                <strong>ℹ️ Recomendación para Juan.</strong> Empieza con LangSmith cloud — 5 minutos y estás tracing. Cuando hagas un proyecto donde no puedas mandar datos a servicios externos (datos sanitarios, legal, datos de clientes sensibles), te pasas a <strong>Langfuse self-hosted</strong> o <strong>Phoenix</strong>. La conceptualización (runs, traces, spans) es idéntica en las cuatro.
+            </div>
+        </div>
+
+        <!-- Exercises -->
+        <div class="section">
+            <h2>Ejercicios prácticos</h2>
+
+            <div class="exercise">
+                <h4>🛠 Ejercicio 1: Tu primer trace</h4>
+                <p><strong>Objetivo:</strong> tener un agente tuyo instrumentado y ver el trace en LangSmith.</p>
+                <ol>
+                    <li>Crea cuenta en <code>smith.langchain.com</code> y obtén API key.</li>
+                    <li>Añade <code>LANGSMITH_*</code> al <code>.env</code>.</li>
+                    <li>Copia el código de Part C, adáptalo con una tool tuya (puede ser la misma <code>calcular_ingredientes</code> u otra simple tipo <code>buscar_precio_mercadona</code>).</li>
+                    <li>Ejecuta con <strong>3 preguntas distintas</strong>:
+                        <ul>
+                            <li>Una que debería disparar la tool.</li>
+                            <li>Una que no necesita la tool (ej: "hola").</li>
+                            <li>Una ambigua.</li>
+                        </ul>
+                    </li>
+                    <li>Abre los 3 traces en LangSmith y anota en un doc:
+                        <ul>
+                            <li>¿Cuántos spans tiene cada uno?</li>
+                            <li>¿Cuál fue la latencia total?</li>
+                            <li>¿Tokens in/out y coste estimado?</li>
+                        </ul>
+                    </li>
+                </ol>
+                <p><strong>Entregable:</strong> capturas de los 3 traces + tabla con latencia/tokens/coste.</p>
+            </div>
+
+            <div class="exercise">
+                <h4>🔍 Ejercicio 2: Debugging guiado</h4>
+                <p><strong>Objetivo:</strong> usar el workflow de Part D para encontrar un bug real.</p>
+                <ol>
+                    <li>Parte de tu agente del ejercicio 1.</li>
+                    <li><strong>Sabotea</strong> la descripción de una tool: cámbiala por algo muy vago ("Hace una operación útil").</li>
+                    <li>Ejecuta 5 preguntas que <em>deberían</em> llamarla.</li>
+                    <li>En LangSmith:
+                        <ul>
+                            <li>¿Cuántas de las 5 el agente llamó la tool correcta?</li>
+                            <li>Abre un trace fallido y lee el span LLM: ¿por qué el modelo decidió no llamarla?</li>
+                        </ul>
+                    </li>
+                    <li>Corrige la descripción (versión buena). Re-ejecuta las 5 mismas preguntas.</li>
+                    <li>Usa <em>Compare runs</em> para ver el diff.</li>
+                </ol>
+                <p><strong>Entregable:</strong> captura de la comparación + 1 párrafo explicando qué cambió en el comportamiento del modelo.</p>
+            </div>
+
+            <div class="exercise">
+                <h4>📊 Ejercicio 3: Dataset y mini experiment</h4>
+                <p><strong>Objetivo:</strong> convertir runs reales en un eval reproducible.</p>
+                <ol>
+                    <li>En LangSmith, crea un dataset vacío llamado <code>agente-juan-v1</code>.</li>
+                    <li>Añade 5 inputs a mano (o desde traces anteriores con <em>Add to dataset</em>).</li>
+                    <li>Para cada uno anota en <em>Reference outputs</em> el tool esperado (ej: <code>{"tool_esperada": "calcular_ingredientes"}</code>).</li>
+                    <li>Escribe un <code>evaluator</code> que devuelva 1 si el agente llamó la tool esperada, 0 si no.</li>
+                    <li>Corre <code>evaluate()</code> con la versión buena del agente (del ejercicio 2).</li>
+                    <li>Cambia el modelo de <code>claude-sonnet-4-6</code> a <code>claude-haiku-4-5</code> y vuelve a correr como <em>experiment 2</em>.</li>
+                </ol>
+                <p><strong>Entregable:</strong> captura del panel de experiments comparando los dos modelos + 2 líneas sobre qué recomendarías a un cliente basándote en score vs coste.</p>
+            </div>
+        </div>
+
+        <!-- Resumen -->
+        <div class="section">
+            <h2>Resumen de la clase</h2>
+            <ul>
+                <li><strong>Un agente sin observability es una caja negra.</strong> Los 3 fallos que solo se ven trazando: bucles, tool equivocada, tokens fugados.</li>
+                <li><strong>Conceptos clave:</strong> project → run → trace → span. Idénticos a cualquier APM moderno, aplicados a LLMs.</li>
+                <li><strong>Setup LangSmith = 10 líneas:</strong> <code>wrap_anthropic()</code> en el cliente + <code>@traceable</code> en el entrypoint.</li>
+                <li><strong>Workflow de debugging:</strong> localizar run → leer waterfall → leer prompt exacto del span → comparar runs → guardar como regresión.</li>
+                <li><strong>Datasets + experiments</strong> cierran el bucle: runs reales → golden set → mides si cada cambio mejora o empeora.</li>
+                <li><strong>Alternativas</strong> si no puedes usar cloud: Langfuse (self-hosted), Phoenix (OTel), Weave (W&amp;B).</li>
+            </ul>
+        </div>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📤</span>
+                Entrega de ejercicios
+            </h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="trace">
+                <h4>📤 Entregar Ejercicio 1: Tu primer trace</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí el código de tu agente instrumentado (wrap_anthropic + @traceable)..."></textarea>
+                <textarea id="output-ejercicio-1" rows="5" placeholder="Pega los 3 enlaces de LangSmith (uno por trace) + tabla con latencia / tokens in-out / coste de cada uno..."></textarea>
+                <label><input type="checkbox" required> He visto los 3 traces en LangSmith y los datos cuadran</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales (qué tool elegiste, dudas...)"></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-c05', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="debug">
+                <h4>🔍 Entregar Ejercicio 2: Debugging guiado</h4>
+                <textarea id="code-ejercicio-2" rows="10" placeholder="Pega la descripción de tool saboteada y la descripción corregida..."></textarea>
+                <textarea id="output-ejercicio-2" rows="5" placeholder="Enlace a la Compare view de LangSmith + 1 párrafo explicando qué cambió en el comportamiento del modelo al corregir la descripción..."></textarea>
+                <label><input type="checkbox" required> He usado Compare runs para validar el fix</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-c05', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+
+            <div class="exercise-submit" id="submit-ejercicio-3" data-type="experiment">
+                <h4>📊 Entregar Ejercicio 3: Dataset y mini experiment</h4>
+                <textarea id="code-ejercicio-3" rows="12" placeholder="Pega el código del evaluator y la llamada a evaluate()..."></textarea>
+                <textarea id="output-ejercicio-3" rows="5" placeholder="Enlace al panel de experiments comparando Sonnet 4.6 vs Haiku 4.5 + 2 líneas: ¿qué recomendarías a un cliente basándote en score vs coste?"></textarea>
+                <label><input type="checkbox" required> He corrido los 2 experiments y tengo la comparación</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-3" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-c05', 3, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-3" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Quiz -->
+        <div class="section">
+            <h2>Test final</h2>
+            <div id="quiz-container"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p><a href="clase-04.html" style="color: #00e676;">&larr; Clase 04</a> | <a href="index.html" style="color: #00e676;">Índice Módulo 6</a> | <a href="clase-06-boss-battle.html" style="color: #00e676;">Boss Battle &rarr;</a></p>
+        </footer>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "¿Por qué un agente necesita observability que un LLM suelto no necesita?",
+                options: [
+                    "Porque consume más tokens",
+                    "Porque ejecuta una trayectoria con múltiples pasos y los fallos silenciosos (bucles, tool equivocada, tokens fugados) no se ven mirando solo la respuesta final",
+                    "Porque es más caro de entrenar",
+                    "Por cumplimiento RGPD"
+                ],
+                correct: 1,
+                explanation: "Un agente es una máquina de estados. Evaluar solo el output final esconde bucles, herramientas mal elegidas y consumo desproporcionado de tokens."
+            },
+            {
+                id: 2,
+                question: "En LangSmith, un <em>span</em> es…",
+                options: [
+                    "Un proyecto entero",
+                    "Una ejecución completa de tu agente",
+                    "Cada nodo individual de un trace (una llamada LLM, un tool call, una función)",
+                    "Un tipo de evaluator"
+                ],
+                correct: 2,
+                explanation: "Jerarquía: Project → Run → Trace → Span. El span es la unidad mínima, el equivalente a una barra en el flamegraph."
+            },
+            {
+                id: 3,
+                question: "¿Qué hace exactamente <code>wrap_anthropic(Anthropic())</code>?",
+                options: [
+                    "Acelera las llamadas al modelo",
+                    "Envuelve el cliente de Anthropic para que cada <code>messages.create</code> genere automáticamente un span en LangSmith",
+                    "Cachea las respuestas localmente",
+                    "Cambia el modelo a Haiku para abaratar"
+                ],
+                correct: 1,
+                explanation: "wrap_anthropic es un wrapper que intercepta las llamadas y emite tracing sin que tú tengas que instrumentar cada llamada a mano."
+            },
+            {
+                id: 4,
+                question: "Tu agente tarda 42 s en responder. Abres el trace y ves un único span LLM que dura 28 s. ¿Dónde buscas el problema?",
+                options: [
+                    "En tu código Python — seguro hay un <code>time.sleep</code>",
+                    "En la red / modelo: el LLM ha tardado 28 s en responder, el resto es overhead mínimo. Revisa tamaño del prompt, modelo elegido y estado de la API",
+                    "En la librería de LangSmith",
+                    "En el .env"
+                ],
+                correct: 1,
+                explanation: "Si un único span LLM se come 28 de los 42 s, el cuello de botella es la inferencia, no tu orquestación. El típico caso: prompt gigantesco o caída temporal de la API."
+            },
+            {
+                id: 5,
+                question: "Un cliente se queja de que el agente responde 'no lo sé' a una pregunta que debería usar la tool <code>calcular_ingredientes</code>. Abres el trace y ves 1 span LLM y 0 tool calls. ¿Primera hipótesis?",
+                options: [
+                    "El modelo está caído",
+                    "La descripción de la tool o el system prompt son demasiado vagos — el modelo no asoció la pregunta con esa herramienta",
+                    "Hay que subir la temperatura a 2.0",
+                    "Reescribir el agente en otro lenguaje"
+                ],
+                correct: 1,
+                explanation: "Cuando el agente no invoca una tool que debería, el bug casi nunca está en el modelo: está en cómo le describes la tool o en el system prompt. Es la palanca más barata y la primera que hay que tocar."
+            },
+            {
+                id: 6,
+                question: "¿Qué diferencia hay entre un <em>dataset</em> y un <em>experiment</em> en LangSmith?",
+                options: [
+                    "Son sinónimos",
+                    "El dataset son los traces en vivo; el experiment es el logo",
+                    "El dataset es la colección de inputs+outputs esperados (golden set). El experiment es una ejecución de tu agente contra ese dataset evaluada con una o más funciones de scoring",
+                    "El dataset es para entrenar; el experiment para hacer fine-tuning"
+                ],
+                correct: 2,
+                explanation: "Dataset = ejemplos que no quieres romper. Experiment = corrida del agente contra ese dataset + evaluadores. Correr dos experiments permite comparar versiones."
+            },
+            {
+                id: 7,
+                question: "Detectas un bug en producción. Lo arreglas. ¿Qué haces <em>además</em> de desplegar el fix?",
+                options: [
+                    "Cierras Jira y a otra cosa",
+                    "Añades el input del bug al dataset como caso de regresión, para que la próxima vez que cambies algo, ese caso se pruebe automáticamente",
+                    "Borras el trace viejo para que no confunda",
+                    "Subes la temperatura al modelo"
+                ],
+                correct: 1,
+                explanation: "Cada bug real descubierto en prod es un test gratis. Convertirlo en parte del golden set es lo que hace que tu agente no regresione al mismo fallo dentro de 3 semanas."
+            },
+            {
+                id: 8,
+                question: "Tu cliente no quiere mandar datos a servicios cloud externos (son datos sensibles). ¿Qué alternativa a LangSmith elegirías manteniendo una UX parecida?",
+                options: [
+                    "Ninguna — te toca hacerlo con print() y logs",
+                    "Langfuse self-hosted o Arize Phoenix, ambos open-source y on-prem, con conceptos equivalentes (runs/traces/spans)",
+                    "Excel",
+                    "Desactivar el tracing del todo"
+                ],
+                correct: 1,
+                explanation: "Langfuse y Phoenix son las dos alternativas self-hostable con el mismo modelo mental. Phoenix además habla OpenTelemetry, útil si el resto del stack ya usa OTel."
+            }
+        ];
+
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm6-c05');
+    </script>
+</body>
+</html>

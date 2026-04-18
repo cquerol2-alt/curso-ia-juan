@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: Portfolio Web Personal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a1a 0%, #0f0f2e 100%);
+            color: #e8e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(27, 94, 32, 0.2);
+            border: 2px solid #00f0ff;
+            color: #00f0ff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(27, 94, 32, 0.3);
+            transform: translateX(-4px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin: 20px 0 10px 0;
+            background: linear-gradient(45deg, #00f0ff, #4caf50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #a0a0b8;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .controls {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: 2px solid;
+            border-radius: 6px;
+            background: transparent;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .btn-expand {
+            border-color: #00f0ff;
+            color: #00f0ff;
+        }
+
+        .btn-expand:hover {
+            background: rgba(27, 94, 32, 0.2);
+            transform: scale(1.05);
+        }
+
+        .btn-collapse {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .btn-collapse:hover {
+            background: rgba(255, 107, 107, 0.15);
+            transform: scale(1.05);
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .branch {
+            background: rgba(27, 94, 32, 0.1);
+            border-left: 4px solid #00f0ff;
+            padding: 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .branch:hover {
+            background: rgba(27, 94, 32, 0.15);
+            transform: translateX(5px);
+        }
+
+        .branch-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #00f0ff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .branch-icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .toggle-icon {
+            font-size: 1em;
+            transition: transform 0.3s ease;
+            color: #00f0ff;
+        }
+
+        .branch.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .branch-content {
+            margin-left: 15px;
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .branch.collapsed .branch-content {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .sub-branch {
+            margin: 12px 0;
+            padding-left: 15px;
+            border-left: 2px solid rgba(27, 94, 32, 0.5);
+            color: #d0d0d8;
+        }
+
+        .sub-branch strong {
+            color: #4caf50;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .sub-branch ul {
+            margin-left: 20px;
+            font-size: 0.95em;
+            line-height: 1.7;
+        }
+
+        .sub-branch li {
+            margin-bottom: 6px;
+            color: #b0b0c0;
+        }
+
+        .highlight {
+            background: rgba(27, 94, 32, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #4caf50;
+            font-weight: 500;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px;
+            color: #707080;
+            border-top: 1px solid rgba(27, 94, 32, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .mindmap {
+                gap: 15px;
+            }
+
+            .controls {
+                gap: 10px;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="clase-05-boss-battle.html" class="back-link">← Volver a Clase 05</a>
+            <h1>📊 Mind Map: Portfolio Web Personal</h1>
+            <p class="subtitle">Construye tu escaparate profesional paso a paso</p>
+        </header>
+
+        <div class="controls">
+            <button class="btn btn-expand" onclick="expandAll()">Expandir Todo</button>
+            <button class="btn btn-collapse" onclick="collapseAll()">Contraer Todo</button>
+        </div>
+
+        <div class="mindmap" id="mindmap">
+            <!-- RAMA 1: PORTFOLIO WEB -->
+            <div class="branch" onclick="toggleBranch(this)">
+                <div class="branch-title">
+                    <span>
+                        <span class="branch-icon">🌐</span>
+                        Tu Portfolio Web
+                    </span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="sub-branch">
+                        <strong>¿Qué es?</strong>
+                        <ul>
+                            <li>Sitio web que exhibe tu trabajo, habilidades y experiencia</li>
+                            <li>Tu <span class="highlight">escaparate profesional</span> digital</li>
+                            <li>Primera impresión para empleadores y clientes</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>¿Por qué es importante?</strong>
+                        <ul>
+                            <li>Diferenciación: el 99% no tiene portfolio profesional</li>
+                            <li>Credibilidad: demuestras que sabes lo que haces</li>
+                            <li>Control: tuya la narrativa, no dependes de LinkedIn</li>
+                            <li>SEO: apareces en Google cuando te buscan</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>¿Cuándo empieza a funcionar?</strong>
+                        <ul>
+                            <li>Mientras estés estudiando: 1-2 proyectos de cursos</li>
+                            <li>Mientras trabajas: 3+ proyectos profesionales o personales</li>
+                            <li>Ideal: actualizar cada 3-6 meses con nuevo trabajo</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAMA 2: SECCIONES DEL PORTFOLIO -->
+            <div class="branch" onclick="toggleBranch(this)">
+                <div class="branch-title">
+                    <span>
+                        <span class="branch-icon">📄</span>
+                        Secciones Esenciales
+                    </span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="sub-branch">
+                        <strong>Hero (La Primera Impresión)</strong>
+                        <ul>
+                            <li>Nombre prominente y legible</li>
+                            <li>Foto/avatar profesional (fondo neutro)</li>
+                            <li>Título o tagline: "Full-Stack Developer" o "AI Engineer"</li>
+                            <li>Botón CTA: "Ver Proyectos" o "Contacta"</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Sobre Mí (La Historia)</strong>
+                        <ul>
+                            <li>2-3 párrafos máximo (la gente no lee)</li>
+                            <li>Quién eres, qué te apasiona, por qué programas</li>
+                            <li>Evitar: párrafos genéricos, humildad excesiva</li>
+                            <li>Conectar con: experiencia, logros pequeños, lo que buscas</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Proyectos (El Proof)</strong>
+                        <ul>
+                            <li>Mínimo 3, máximo 6-8 (orden: mejor primero)</li>
+                            <li>Cada proyecto necesita: screenshot, descripción, tech stack</li>
+                            <li>Links: Demo (accesible) + GitHub (código fuente)</li>
+                            <li>Brevedad: 1-2 líneas de descripción, no más</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Skills (El Stack)</strong>
+                        <ul>
+                            <li>Organizar por categorías: Frontend, Backend, DevOps, etc.</li>
+                            <li>No listar en párrafo aburrido: usar cards o barras</li>
+                            <li>Solo lo que REALMENTE sabes y usas</li>
+                            <li>Evitar: listar 50 tecnologías (espanta)</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Certificaciones (Validación)</strong>
+                        <ul>
+                            <li>Mostrar con logos/badges si es posible</li>
+                            <li>Nombre del curso, plataforma, año</li>
+                            <li>Solo las relevantes para tu objetivo</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Contacto (La Conversión)</strong>
+                        <ul>
+                            <li>Email, LinkedIn, GitHub, Twitter (si tienes)</li>
+                            <li>Hacer fácil el contacto: botón visible, no escondido</li>
+                            <li>Bonus: formulario de contacto simple</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAMA 3: OPCIONES TÉCNICAS -->
+            <div class="branch" onclick="toggleBranch(this)">
+                <div class="branch-title">
+                    <span>
+                        <span class="branch-icon">🛠️</span>
+                        Cómo Construirlo
+                    </span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="sub-branch">
+                        <strong>Opción 1: GitHub Pages + HTML/CSS/JS</strong>
+                        <ul>
+                            <li>✓ <span class="highlight">GRATIS</span> (mientras uses .github.io o custom domain)</li>
+                            <li>✓ Control total del código</li>
+                            <li>✓ Rápido: puedes subir en 1-2 horas</li>
+                            <li>⭐ RECOMENDADO si eres principiante</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Opción 2: Next.js + Vercel</strong>
+                        <ul>
+                            <li>✓ Más profesional y moderno</li>
+                            <li>✓ Rendimiento optimizado</li>
+                            <li>✓ Deploy automático desde GitHub</li>
+                            <li>⚠ Requiere más setup inicial</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Opción 3: Templates Prehechos</strong>
+                        <ul>
+                            <li>Hugo, Astro, templates gratuitos de GitHub</li>
+                            <li>✓ Rápido si solo personalizas</li>
+                            <li>⚠ Menos control, posible perder diferenciación</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Diseño: Dark Theme Recomendado</strong>
+                        <ul>
+                            <li>Fondo oscuro (#0d1117, #1a1a2e), texto claro</li>
+                            <li>Acento de color: verde, azul o morado</li>
+                            <li>Responsive: funciona en móvil, tablet, desktop</li>
+                            <li>Animaciones suaves: no abrumar al usuario</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAMA 4: VÍDEO DE PRESENTACIÓN -->
+            <div class="branch" onclick="toggleBranch(this)">
+                <div class="branch-title">
+                    <span>
+                        <span class="branch-icon">🎥</span>
+                        Vídeo de Presentación (2 min)
+                    </span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="sub-branch">
+                        <strong>¿Por qué incluir un vídeo?</strong>
+                        <ul>
+                            <li><span class="highlight">Humanización:</span> puts a face to the name</li>
+                            <li><span class="highlight">Comunicación:</span> demuestra que sabes expresarte</li>
+                            <li><span class="highlight">Diferenciación:</span> el 99% no lo hace</li>
+                            <li>Aumenta 30% probabilidad de ser contactado</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Estructura de 2 minutos</strong>
+                        <ul>
+                            <li><span class="highlight">0:00-0:20 (20s):</span> Quién eres, qué haces, título</li>
+                            <li><span class="highlight">0:20-0:50 (30s):</span> Tu stack técnico, tipos de proyectos</li>
+                            <li><span class="highlight">0:50-1:30 (40s):</span> Demo de tu mejor proyecto (screen recording)</li>
+                            <li><span class="highlight">1:30-2:00 (30s):</span> Qué buscas + cómo contactarte</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Tips Técnicos</strong>
+                        <ul>
+                            <li>Luz: frontal, sin sombras en la cara</li>
+                            <li>Fondo: pared blanca o blur de escritorio</li>
+                            <li>Micrófono: AirPods, headset, o micrófono USB (NO laptop)</li>
+                            <li>Ropa: casual-profesional (no camiseta, no traje)</li>
+                            <li>Editar con <span class="highlight">CapCut</span> (gratis, fácil)</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Dónde Subirlo</strong>
+                        <ul>
+                            <li>YouTube: Unlisted o Público (tu elección)</li>
+                            <li>Embeber en tu portfolio (iframe)</li>
+                            <li>Compartir en LinkedIn Featured (máxima visibilidad)</li>
+                            <li>Bonus: incluir en cada aplicación a ofertas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAMA 5: PROYECTOS A INCLUIR -->
+            <div class="branch" onclick="toggleBranch(this)">
+                <div class="branch-title">
+                    <span>
+                        <span class="branch-icon">🎯</span>
+                        Qué Proyectos Mostrar
+                    </span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="sub-branch">
+                        <strong>Criterios de Selección</strong>
+                        <ul>
+                            <li>✓ <span class="highlight">Completos:</span> versión production, no borradores</li>
+                            <li>✓ <span class="highlight">Accesibles:</span> demo en vivo, no solo GitHub</li>
+                            <li>✓ <span class="highlight">Tu trabajo:</span> código tuyo, no clones 1:1</li>
+                            <li>✓ <span class="highlight">Relevantes:</span> que demuestren tu stack target</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Tipos de Proyectos</strong>
+                        <ul>
+                            <li>De cursos: si son de buena calidad y los personalizaste</li>
+                            <li>Freelance: proyectos reales de clientes</li>
+                            <li>Personales: ideas propias (no siempre es mejor)</li>
+                            <li>Open source: contribuciones importantes a librerías</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Cómo Presentar Cada Proyecto</strong>
+                        <ul>
+                            <li>1. <span class="highlight">Título:</span> claro y específico</li>
+                            <li>2. <span class="highlight">Screenshot:</span> imagen de 300x200, mostrando features</li>
+                            <li>3. <span class="highlight">Descripción:</span> 1-2 líneas, qué problema resuelve</li>
+                            <li>4. <span class="highlight">Tech Stack:</span> React, Node, MongoDB, etc.</li>
+                            <li>5. <span class="highlight">Links:</span> Demo (live) + GitHub (código)</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Qué Evitar</strong>
+                        <ul>
+                            <li>❌ Proyectos incompletos o "en construcción"</li>
+                            <li>❌ Clones exactos de tutoriales (sin personalización)</li>
+                            <li>❌ 10+ proyectos (abrumar al visitante)</li>
+                            <li>❌ Proyectos de 5 años sin mantenimiento</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAMA 6: DESPLEGAMIENTO -->
+            <div class="branch" onclick="toggleBranch(this)">
+                <div class="branch-title">
+                    <span>
+                        <span class="branch-icon">🚀</span>
+                        Desplegar a Internet
+                    </span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="sub-branch">
+                        <strong>Paso 1: Crear Repo GitHub</strong>
+                        <ul>
+                            <li>Nombre: <span class="highlight">username.github.io</span></li>
+                            <li>Ejemplo: <span class="highlight">juanquerol.github.io</span></li>
+                            <li>Público (para que sea accesible)</li>
+                            <li>Clonar a local y agregar archivos HTML/CSS</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Paso 2: Push a GitHub</strong>
+                        <ul>
+                            <li>git add .</li>
+                            <li>git commit -m "Initial portfolio"</li>
+                            <li>git push origin main</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Paso 3: Esperar Deploy Automático</strong>
+                        <ul>
+                            <li>GitHub Pages se activa automáticamente</li>
+                            <li>Accesible en: <span class="highlight">https://username.github.io</span></li>
+                            <li>Tarda 1-5 minutos en estar online</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Paso 4: Dominio Custom (Opcional)</strong>
+                        <ul>
+                            <li>Comprar dominio: Namecheap, Google Domains, etc.</li>
+                            <li>Apuntar DNS a GitHub Pages</li>
+                            <li>Agregar CNAME file en repo</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAMA 7: MANTENIMIENTO Y ACTUALIZACIÓN -->
+            <div class="branch" onclick="toggleBranch(this)">
+                <div class="branch-title">
+                    <span>
+                        <span class="branch-icon">⚙️</span>
+                        Mantenimiento Continuo
+                    </span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="sub-branch">
+                        <strong>Actualizar Cada 3-6 Meses</strong>
+                        <ul>
+                            <li>Agregar nuevo proyecto terminado</li>
+                            <li>Actualizar skills si aprendiste algo nuevo</li>
+                            <li>Quitar proyectos viejos o mediocres</li>
+                            <li>Mejorar screenshots, descripciones</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Checklist de Mantenimiento</strong>
+                        <ul>
+                            <li>✓ Links de demo funcionan (no 404)</li>
+                            <li>✓ GitHub repos están públicos y con buen README</li>
+                            <li>✓ No hay typos o errores gramaticales</li>
+                            <li>✓ Responsive design: probar en móvil</li>
+                            <li>✓ Consola JavaScript sin errores</li>
+                        </ul>
+                    </div>
+
+                    <div class="sub-branch">
+                        <strong>Análisis y Mejora</strong>
+                        <ul>
+                            <li>Google Analytics: ¿Quién visita? ¿Cuánto tiempo pasan?</li>
+                            <li>Feedback: pedirle opinión a mentores, amigos</li>
+                            <li>A/B Testing: cambiar algo, medir impacto</li>
+                            <li>SEO: mejorar keywords, descripción meta</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            💡 Expande cada rama haciendo clic en el título para profundizar en los conceptos
+        </footer>
+    </div>
+
+    <script>
+        function toggleBranch(element) {
+            element.classList.toggle('collapsed');
+        }
+
+        function expandAll() {
+            document.querySelectorAll('.branch').forEach(branch => {
+                branch.classList.remove('collapsed');
+            });
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.branch').forEach(branch => {
+                branch.classList.add('collapsed');
+            });
+        }
+
+        // Inicialmente, contraer todas las ramas excepto la primera
+        document.addEventListener('DOMContentLoaded', () => {
+            const branches = document.querySelectorAll('.branch');
+            branches.forEach((branch, index) => {
+                if (index !== 0) {
+                    branch.classList.add('collapsed');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

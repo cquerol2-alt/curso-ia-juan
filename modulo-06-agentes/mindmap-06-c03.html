@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: CrewAI — Conceptos Clave</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 100%);
+            color: #00e676;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #00e676;
+            text-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #aaa;
+            font-size: 1.1em;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .branch {
+            background: rgba(27, 94, 32, 0.2);
+            border: 2px solid #00e676;
+            border-radius: 8px;
+            padding: 20px;
+            width: 280px;
+            min-height: 350px;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .branch:hover {
+            background: rgba(27, 94, 32, 0.4);
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .branch h2 {
+            color: #00f0ff;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            background: #00e676;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .branch-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .branch.expanded .branch-content {
+            max-height: 500px;
+        }
+
+        .node {
+            background: rgba(0, 230, 118, 0.1);
+            border-left: 3px solid #00e676;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        .node strong {
+            color: #00e676;
+        }
+
+        .node.sub-node {
+            margin-left: 15px;
+            border-left: 2px solid #00aa55;
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+
+        .toggle-btn {
+            width: 100%;
+            background: #00f0ff;
+            color: #00e676;
+            border: 1px solid #00e676;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95em;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: #00e676;
+            color: #00f0ff;
+        }
+
+        .legend {
+            background: rgba(27, 94, 32, 0.3);
+            border: 1px solid #00e676;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+            color: #ccc;
+        }
+
+        .legend h3 {
+            color: #00e676;
+            margin-bottom: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: #00f0ff;
+            color: #00e676;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            border: 1px solid #00e676;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #00e676;
+            color: #00f0ff;
+        }
+
+        @media (max-width: 768px) {
+            .mindmap {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .branch {
+                width: 100%;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="clase-03.html" class="back-btn">← Volver a Clase 03</a>
+
+        <div class="header">
+            <h1>🧠 Mind Map: CrewAI — Conceptos Clave</h1>
+            <p>Haz clic en cada rama para expandir/contraer contenido</p>
+        </div>
+
+        <div class="mindmap">
+            <!-- Rama 1: Qué es CrewAI -->
+            <div class="branch">
+                <h2>🎯 CrewAI</h2>
+                <div class="branch-content">
+                    <div class="node">
+                        <strong>Framework Python</strong> para construir sistemas multi-agente.
+                    </div>
+                    <div class="node">
+                        <strong>Orquestación:</strong> Coordina múltiples agentes que colaboran.
+                    </div>
+                    <div class="node">
+                        <strong>Ventaja vs 1 Agente:</strong> Especialización, delegación, mejor explicabilidad.
+                    </div>
+                    <div class="node">
+                        <strong>Casos de uso:</strong> Investigación, análisis, generación de contenido, automatización compleja.
+                    </div>
+                </div>
+                <button class="toggle-btn">Expandir</button>
+            </div>
+
+            <!-- Rama 2: Componentes Core -->
+            <div class="branch">
+                <h2>⚙️ Componentes Core</h2>
+                <div class="branch-content">
+                    <div class="node">
+                        <strong>Agent:</strong> Entidad autónoma especializada.
+                        <div class="node sub-node">Role, Goal, Backstory, Tools, Memory</div>
+                    </div>
+                    <div class="node">
+                        <strong>Task:</strong> Trabajo específico.
+                        <div class="node sub-node">Description, Expected Output, Agent, Tools</div>
+                    </div>
+                    <div class="node">
+                        <strong>Crew:</strong> Orquestador del equipo.
+                        <div class="node sub-node">Agents, Tasks, Process (Sequential/Hierarchical), Verbose</div>
+                    </div>
+                    <div class="node">
+                        <strong>Tools:</strong> Acciones que pueden usar.
+                        <div class="node sub-node">SerperDevTool, ScrapeWebsiteTool, FileReadTool, Custom Tools</div>
+                    </div>
+                </div>
+                <button class="toggle-btn">Expandir</button>
+            </div>
+
+            <!-- Rama 3: Agent Deep Dive -->
+            <div class="branch">
+                <h2>🤖 Agent Deep Dive</h2>
+                <div class="branch-content">
+                    <div class="node">
+                        <strong>Role:</strong> Su función en el equipo.
+                        <div class="node sub-node">ej: "Researcher", "Writer", "Analyst"</div>
+                    </div>
+                    <div class="node">
+                        <strong>Goal:</strong> Objetivo principal que persigue.
+                        <div class="node sub-node">Define qué es éxito para este agente</div>
+                    </div>
+                    <div class="node">
+                        <strong>Backstory:</strong> Contexto y personalidad.
+                        <div class="node sub-node">Influye en cómo actúa, toma decisiones, responde</div>
+                    </div>
+                    <div class="node">
+                        <strong>Tools:</strong> Herramientas disponibles.
+                        <div class="node sub-node">Búsqueda, web scraping, archivos, código, custom</div>
+                    </div>
+                    <div class="node">
+                        <strong>Memory:</strong> Acceso a contexto.
+                        <div class="node sub-node">Short-term (conversación actual), Long-term (persistente)</div>
+                    </div>
+                </div>
+                <button class="toggle-btn">Expandir</button>
+            </div>
+
+            <!-- Rama 4: Task Deep Dive -->
+            <div class="branch">
+                <h2>✅ Task Deep Dive</h2>
+                <div class="branch-content">
+                    <div class="node">
+                        <strong>Description:</strong> Qué debe hacer.
+                        <div class="node sub-node">Explícita, detallada, sin ambigüedad</div>
+                    </div>
+                    <div class="node">
+                        <strong>Expected Output:</strong> Formato esperado.
+                        <div class="node sub-node">Define estructura y contenido del resultado</div>
+                    </div>
+                    <div class="node">
+                        <strong>Agent:</strong> Quién ejecuta.
+                        <div class="node sub-node">Asignación específica a un agente del crew</div>
+                    </div>
+                    <div class="node">
+                        <strong>Tools:</strong> Herramientas para esta tarea.
+                        <div class="node sub-node">Subset de tools del agent si es necesario</div>
+                    </div>
+                    <div class="node">
+                        <strong>Orden:</strong> Secuencia en la ejecución.
+                        <div class="node sub-node">Cada task ve outputs de tasks anteriores</div>
+                    </div>
+                </div>
+                <button class="toggle-btn">Expandir</button>
+            </div>
+
+            <!-- Rama 5: Procesos -->
+            <div class="branch">
+                <h2>🔄 Procesos de Ejecución</h2>
+                <div class="branch-content">
+                    <div class="node">
+                        <strong>Sequential:</strong>
+                        <div class="node sub-node">
+                            Task1 → Task2 → Task3<br>
+                            Cada task espera a la anterior<br>
+                            Bueno para workflows lineales
+                        </div>
+                    </div>
+                    <div class="node">
+                        <strong>Hierarchical:</strong>
+                        <div class="node sub-node">
+                            Manager coordina agentes<br>
+                            Permite paralelización<br>
+                            Para equipos grandes y complejos
+                        </div>
+                    </div>
+                    <div class="node">
+                        <strong>Verbose Mode:</strong>
+                        <div class="node sub-node">
+                            Muestra logs detallados de cada paso<br>
+                            Ideal para debug y aprendizaje
+                        </div>
+                    </div>
+                </div>
+                <button class="toggle-btn">Expandir</button>
+            </div>
+
+            <!-- Rama 6: Herramientas -->
+            <div class="branch">
+                <h2>🛠️ Herramientas Disponibles</h2>
+                <div class="branch-content">
+                    <div class="node">
+                        <strong>SerperDevTool:</strong> Búsqueda en Google (requiere API key)
+                    </div>
+                    <div class="node">
+                        <strong>ScrapeWebsiteTool:</strong> Extraer contenido de páginas
+                    </div>
+                    <div class="node">
+                        <strong>FileReadTool:</strong> Leer archivos locales
+                    </div>
+                    <div class="node">
+                        <strong>FileWriteTool:</strong> Crear/escribir archivos
+                    </div>
+                    <div class="node">
+                        <strong>DirectoryReadTool:</strong> Listar directorios
+                    </div>
+                    <div class="node">
+                        <strong>CodeInterpreterTool:</strong> Ejecutar código Python
+                    </div>
+                    <div class="node">
+                        <strong>Custom Tools:</strong> Crear con @tool decorator
+                    </div>
+                </div>
+                <button class="toggle-btn">Expandir</button>
+            </div>
+
+            <!-- Rama 7: Memory -->
+            <div class="branch">
+                <h2>💾 Memory en CrewAI</h2>
+                <div class="branch-content">
+                    <div class="node">
+                        <strong>Short-term Memory:</strong>
+                        <div class="node sub-node">
+                            Contexto de conversación actual<br>
+                            Se borra al terminar sesión
+                        </div>
+                    </div>
+                    <div class="node">
+                        <strong>Long-term Memory:</strong>
+                        <div class="node sub-node">
+                            Información persistente entre sesiones<br>
+                            Requiere base de datos
+                        </div>
+                    </div>
+                    <div class="node">
+                        <strong>Entity Memory:</strong>
+                        <div class="node sub-node">
+                            Recuerda entidades específicas<br>
+                            Personas, empresas, conceptos clave
+                        </div>
+                    </div>
+                </div>
+                <button class="toggle-btn">Expandir</button>
+            </div>
+
+            <!-- Rama 8: Patrones Avanzados -->
+            <div class="branch">
+                <h2>🚀 Patrones Avanzados</h2>
+                <div class="branch-content">
+                    <div class="node">
+                        <strong>Delegación:</strong>
+                        <div class="node sub-node">
+                            Un agente pide ayuda a otro<br>
+                            Descomposición elegante de problemas
+                        </div>
+                    </div>
+                    <div class="node">
+                        <strong>Retroalimentación:</strong>
+                        <div class="node sub-node">
+                            Refinar outputs iterativamente<br>
+                            Quality control integrado
+                        </div>
+                    </div>
+                    <div class="node">
+                        <strong>Specialización:</strong>
+                        <div class="node sub-node">
+                            Cada agente = expertise específica<br>
+                            Better results que 1 agente genérico
+                        </div>
+                    </div>
+                    <div class="node">
+                        <strong>Callbacks:</strong>
+                        <div class="node sub-node">
+                            Hook en eventos del crew<br>
+                            Logging, monitoring, integración
+                        </div>
+                    </div>
+                </div>
+                <button class="toggle-btn">Expandir</button>
+            </div>
+        </div>
+
+        <!-- Leyenda -->
+        <div class="legend">
+            <h3>📖 Leyenda y Recursos Rápidos</h3>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #00e676;"></div>
+                <span><strong>Verde:</strong> Elementos principales de CrewAI</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgba(27, 94, 32, 0.4);"></div>
+                <span><strong>Fondo oscuro:</strong> Conceptos dentro de ramas</span>
+            </div>
+            <div class="legend-item">
+                <span style="font-style: italic;">💡 Cada rama es expandible. Haz clic para ver contenido completo.</span>
+            </div>
+            <hr style="border: none; border-top: 1px solid #00e676; margin: 15px 0;">
+            <p style="margin-top: 15px;">
+                <strong>Próximos pasos:</strong> Vuelve a Clase 03 y practica creando tu primer crew de 2 agentes (Researcher + Writer).
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle content en cada rama
+        document.querySelectorAll('.branch').forEach(branch => {
+            const btn = branch.querySelector('.toggle-btn');
+            btn.addEventListener('click', () => {
+                branch.classList.toggle('expanded');
+                btn.textContent = branch.classList.contains('expanded') ? 'Contraer' : 'Expandir';
+            });
+        });
+    </script>
+</body>
+</html>

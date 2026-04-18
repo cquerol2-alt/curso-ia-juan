@@ -1,0 +1,117 @@
+{
+  "lastSync": "2026-04-18T09:42:37.836Z",
+  "student": "Juan Querol León",
+  "xp": 200,
+  "level": 4,
+  "levelTitle": "Estudiante",
+  "badges": [
+    "first-blood",
+    "lucky-strike",
+    "perfect-score",
+    "first-submit",
+    "python-initiate"
+  ],
+  "completedClasses": [
+    "m1-c02",
+    "m1-c01",
+    "m1-c03",
+    "m1-c04",
+    "m1-c05",
+    "m1-c06",
+    "m1-c07",
+    "m1-c08",
+    "m1-c09",
+    "m1-bb"
+  ],
+  "testScores": {
+    "m1-c01": 10,
+    "m1-c02": 9,
+    "m1-c03": 8,
+    "m1-c04": 10,
+    "m1-c05": 9,
+    "m1-c06": 10,
+    "m1-c07": 10,
+    "m1-c08": 8,
+    "m1-c09": 9
+  },
+  "streak": 5,
+  "lastStudyDate": "2026-04-18",
+  "startDate": "2026-04-07",
+  "totalRewardsEarned": 7,
+  "highestCombo": 0,
+  "skillProfile": {
+    "Python": {
+      "mastery": 97,
+      "completed": 10,
+      "total": 10,
+      "avgScore": 9.2,
+      "icon": "🐍",
+      "color": "#39ff14"
+    },
+    "IA / LLMs": {
+      "mastery": 0,
+      "completed": 0,
+      "total": 5,
+      "avgScore": null,
+      "icon": "🧠",
+      "color": "#00f0ff"
+    },
+    "APIs": {
+      "mastery": 0,
+      "completed": 0,
+      "total": 7,
+      "avgScore": null,
+      "icon": "🔌",
+      "color": "#ff00e5"
+    },
+    "AI Tools": {
+      "mastery": 0,
+      "completed": 0,
+      "total": 5,
+      "avgScore": null,
+      "icon": "🤖",
+      "color": "#ffe600"
+    },
+    "RAG": {
+      "mastery": 0,
+      "completed": 0,
+      "total": 10,
+      "avgScore": null,
+      "icon": "🧙",
+      "color": "#ff6b00"
+    },
+    "Agentes": {
+      "mastery": 0,
+      "completed": 0,
+      "total": 6,
+      "avgScore": null,
+      "icon": "🏗️",
+      "color": "#00ff88"
+    },
+    "Full-Stack": {
+      "mastery": 0,
+      "completed": 0,
+      "total": 7,
+      "avgScore": null,
+      "icon": "🚀",
+      "color": "#ff4488"
+    },
+    "Portfolio": {
+      "mastery": 0,
+      "completed": 0,
+      "total": 10,
+      "avgScore": null,
+      "icon": "💼",
+      "color": "#aa88ff"
+    }
+  }
+}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 01: README Profesional y Demos en Vídeo — Módulo 8</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <a href="index.html">Módulo 8</a>
+            <span> > </span>
+            <strong>Clase 01</strong>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <h1>Clase 01: README Profesional y Demos en Vídeo</h1>
+            <div class="subtitle">📅 Semana 8 — Lunes | 🎬 25 min vídeo + 💻 60 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎬</span>
+                Vídeo de la lección
+            </h2>
+            <p>Mira este tutorial sobre cómo escribir un README profesional que impresione a recruiters. Cubriremos estructura, badges, demos y mejores prácticas.</p>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/E6NO0rgFub4" allowfullscreen></iframe>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="info">
+                <strong>📌 Mind Map interactivo:</strong> Sigue los conceptos principales con una visualización interactiva en español.
+                <a href="mindmap-m8c01.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📖</span>
+                Resumen de conceptos
+            </h2>
+
+            <h3>¿Por qué un README profesional es tu carta de presentación?</h3>
+            <p>Cuando un recruiter o empresa abre tu repositorio, lo primero que ven es el README. Ese primer impacto decide si van a dedicar 10 minutos a explorar tu código o van a pasar al siguiente candidato.</p>
+
+            <div class="info">
+                <strong>Realidad:</strong>
+                <ul>
+                    <li><strong>Es lo primero que ven.</strong> Un recruiter abre tu repo, cae el README, y en 10 segundos decide si sigue leyendo.</li>
+                    <li><strong>Un buen README puede ser la diferencia entre una entrevista y el olvido.</strong> Comunica profesionalidad, organización, comunicación clara.</li>
+                    <li><strong>Demuestra habilidades blandas.</strong> Los recruiters valoran la capacidad de explicar ideas complejas de forma clara.</li>
+                </ul>
+            </div>
+
+            <h3>Anatomía de un README de 10/10</h3>
+            <p>Un README profesional tiene estos componentes en este orden:</p>
+
+            <div class="code-block">
+                <span class="lang-label">Estructura básica de un README profesional</span>
+                <pre><code># Nombre del Proyecto
+
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+## Descripción
+
+Una o dos frases claras sobre qué hace tu proyecto, por qué existe y qué problema resuelve.
+
+## Screenshots/GIF
+
+[Captura o GIF animado del proyecto en acción]
+
+## Tech Stack
+
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.95-green)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
+
+## Instalación
+
+```bash
+# Clone el repositorio
+git clone https://github.com/tu-usuario/proyecto.git
+cd proyecto
+
+# Crea un entorno virtual
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+
+# Instala dependencias
+pip install -r requirements.txt
+
+# Configura variables de entorno
+cp .env.example .env
+```
+
+## Uso
+
+```python
+# Ejemplo de uso
+from proyecto import main
+
+resultado = main("parámetro")
+print(resultado)
+```
+
+## Cómo funciona (Arquitectura)
+
+```
+┌─────────────────────────────────────────┐
+│      Frontend (React)                   │
+└──────────────┬──────────────────────────┘
+               │ HTTP
+┌──────────────▼──────────────────────────┐
+│      API (FastAPI)                      │
+└──────────────┬──────────────────────────┘
+               │ SQL
+┌──────────────▼──────────────────────────┐
+│      Base de datos (PostgreSQL)         │
+└─────────────────────────────────────────┘
+```
+
+## Qué aprendí
+
+Durante este proyecto:
+- Implementé un sistema de autenticación con JWT
+- Optimicé queries SQL con índices (mejoré en 40%)
+- Aprendí a escalar una API con caching Redis
+- Practiqué testing unitario e integración
+
+## Licencia
+
+MIT License — ve el archivo [LICENSE](./LICENSE) para detalles.
+
+## Contacto
+
+📧 tu@email.com | 💼 [LinkedIn](link) | 🐙 [GitHub](link)</code></pre>
+            </div>
+
+            <h3>Componentes clave desglosados</h3>
+
+            <div class="warning">
+                <strong>🎯 Título + Badges de estado:</strong> Dale vida con badges visuales. El usuario ve de un vistazo: ¿funciona? ¿está actualizado? ¿es código serio?
+                <br><br>
+                <strong>Herramienta:</strong> Usa <a href="https://shields.io" target="_blank">shields.io</a> para generar badges personalizados.
+            </div>
+
+            <div class="tip">
+                <strong>Descripción clara en 2-3 frases:</strong> Responde tres preguntas:
+                <ol>
+                    <li>¿Qué hace?</li>
+                    <li>¿Por qué existe?</li>
+                    <li>¿Qué problema resuelve?</li>
+                </ol>
+                Evita jerga. Escribe para un recruiter sin experiencia en tu stack.
+            </div>
+
+            <div class="info">
+                <strong>📸 Screenshot o GIF animado:</strong> Una imagen vale más que mil líneas. Muestra la app funcionando.
+                <br><br>
+                <strong>Herramientas:</strong>
+                <ul>
+                    <li><a href="https://carbon.now.sh" target="_blank">carbon.now.sh</a> — Captura bonitas de código</li>
+                    <li><a href="https://gifcap.dev" target="_blank">gifcap.dev</a> — Crea GIFs de demos sin instalar nada</li>
+                    <li><a href="https://www.loom.com" target="_blank">Loom</a> — Grabaciones rápidas de pantalla</li>
+                </ul>
+            </div>
+
+            <div class="tip">
+                <strong>Tech Stack con badges:</strong> Visualiza claramente qué tecnologías usaste. Los recruiters escanean esto en segundos.
+            </div>
+
+            <div class="info">
+                <strong>🔧 Instalación paso a paso:</strong> Un recruiter debe poder hacer clone + run en 5 minutos sin fricciones. Si se atasca en la instalación, abandona.
+            </div>
+
+            <div class="tip">
+                <strong>Sección "Qué aprendí":</strong> Esto es oro. Los recruiters ADORAN ver reflexión. Muestra que no solo escribiste código, sino que aprendiste.
+            </div>
+
+            <h3>Demos en vídeo: por qué y cómo</h3>
+
+            <p>Un vídeo de 60 segundos muestra más que 1000 líneas de README.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Formato típico de demo (60 segundos)</span>
+                <pre><code>00:00 - 00:30 — Contexto + problema
+  "Construí un chatbot que..."
+  "El problema era que..."
+
+00:30 - 00:50 — Demo en vivo
+  Graba tu app funcionando. 20 segundos.
+  Muestra las features principales.
+
+00:50 - 01:00 — Cierre
+  "Stack: Python + FastAPI"
+  "Código en GitHub: [link]"
+  "Contacto: [email]"</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>🎬 Herramientas para grabar:</strong>
+                <ul>
+                    <li><strong>OBS Studio</strong> (gratis, potente) — Control total de lo que grabes</li>
+                    <li><strong>Loom</strong> (plan gratuito) — Rápido, cloud, sin instalación</li>
+                    <li><strong>gifcap.dev</strong> — Crea GIFs interactivos (mejor que vídeos a veces)</li>
+                </ul>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ Tips de grabación:</strong>
+                <ul>
+                    <li>Aumenta el tamaño de fuente de tu IDE a 18-20pt (visible en pantalla pequeña)</li>
+                    <li>Apaga notificaciones (Slack, email, mensajes)</li>
+                    <li>Abre Firefox/Chrome con zoom 125% para que se vea bien</li>
+                    <li>Graba a 1080p mínimo</li>
+                    <li>Súbelo a YouTube como "No listado" (privado pero con enlace) y embebe en README</li>
+                </ul>
+            </div>
+
+            <h3>Tabla comparativa de README</h3>
+
+            <table style="width: 100%; border-collapse: collapse; margin: 1.5em 0;">
+                <thead>
+                    <tr style="background-color: rgba(0, 240, 255, 0.15); color: white;">
+                        <th style="padding: 12px; border: 1px solid var(--border-glow); text-align: left;">Elemento</th>
+                        <th style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Básico ❌</th>
+                        <th style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Bueno ✓</th>
+                        <th style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Profesional ⭐</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Título</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Falta o muy corto</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">"Proyecto XYZ"</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Título + badges de estado</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Descripción</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Falta o confusa</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">1-2 frases básicas</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">2-3 frases claras + problema que resuelve</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Visual (screenshot/GIF)</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Ninguno</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">1 screenshot estático</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">GIF animado + vídeo demo enlazado</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Tech Stack</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Falta o texto plano</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Lista de tecnologías</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Badges visuales con versiones</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Instalación</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Incompleta o confusa</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Pasos básicos con código</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Paso a paso completo + troubleshooting</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Uso</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Falta</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Ejemplos básicos</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Múltiples ejemplos + casos de uso</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Arquitectura</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Falta</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Descripción de carpetas</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Diagrama ASCII + explicación clara</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Qué aprendí</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Falta</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Mención breve</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Sección reflexiva con 3-5 lecciones clave</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Demo en vídeo</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Ninguno</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Enlace a vídeo en YouTube</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow); text-align: center;">Vídeo embebido + pulido (60s) + GIF</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+        <!-- Guided Practice Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">💻</span>
+                Práctica guiada
+            </h2>
+            <p>Vamos a mejorar el README del proyecto #1 (Chatbot del módulo 3) paso a paso. Sigue cada sección en orden.</p>
+
+            <h3>Paso 1: Reescribe el README con estructura profesional</h3>
+            <p>Copia esta plantilla y personalízala con los detalles de tu chatbot:</p>
+
+            <div class="code-block">
+                <span class="lang-label">README.md mejorado para el Chatbot</span>
+                <pre><code># 🤖 AI Chatbot — Conversaciones Naturales con Python
+
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![Python Version](https://img.shields.io/badge/python-3.11-blue)
+![Status](https://img.shields.io/badge/status-completed-success)
+
+## Descripción
+
+Un chatbot inteligente basado en Python que usa procesamiento de lenguaje natural (NLP) para mantener conversaciones contextuales. El sistema aprende patrones de respuesta y puede responder preguntas sobre temas variados usando una base de datos de entrenamiento.
+
+**Problema que resuelve:** Automatizar respuestas de soporte técnico inicial sin intervención humana.
+
+## Demo
+
+[Captura animada o GIF aquí]
+
+## Tech Stack
+
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![NLTK](https://img.shields.io/badge/NLTK-3.8-green)
+![JSON](https://img.shields.io/badge/JSON-database-lightgrey)
+
+## Instalación
+
+```bash
+# 1. Clone el repo
+git clone https://github.com/tu-usuario/chatbot.git
+cd chatbot
+
+# 2. Crea un entorno virtual
+python -m venv venv
+
+# 3. Activa el entorno
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+
+# 4. Instala dependencias
+pip install -r requirements.txt
+```
+
+## Uso
+
+```python
+from chatbot import Chatbot
+
+# Crea la instancia del chatbot
+bot = Chatbot(training_file='intents.json')
+
+# Entrena el modelo
+bot.train()
+
+# Realiza una pregunta
+respuesta = bot.chat("¿Cuál es tu nombre?")
+print(respuesta)  # Output: Soy un asistente de IA
+```
+
+## Arquitectura
+
+```
+chatbot/
+├── main.py                    # Punto de entrada
+├── chatbot.py                 # Lógica del chatbot
+├── intents.json               # Base de datos de entrenamientos
+├── requirements.txt
+└── utils/
+    ├── nlp_processor.py      # Procesamiento NLP
+    └── response_generator.py  # Generador de respuestas
+```
+
+El chatbot sigue este flujo:
+
+1. **Input:** Usuario escribe un mensaje
+2. **Tokenización:** Divide el texto en palabras
+3. **Vectorización:** Convierte palabras a números
+4. **Búsqueda:** Encuentra la respuesta más similar en la BD
+5. **Output:** Devuelve respuesta personalizada
+
+## Qué aprendí
+
+- **Tokenización y vectorización:** Cómo convertir texto a números para que máquinas puedan procesarlo
+- **Similitud coseno:** Algoritmo para encontrar respuestas similares en la base de datos
+- **Manejo de JSON:** Estructuración de datos de entrenamiento
+- **Testing:** Validación de respuestas en diferentes casos de uso
+
+## Mejoras futuras
+
+- [ ] Integrar con API de LLM (GPT, Claude)
+- [ ] Agregar persistencia de contexto entre sesiones
+- [ ] Dashboard web para entrenar el modelo sin código
+- [ ] Soporte para múltiples idiomas
+
+## Licencia
+
+MIT — Libre para usar y modificar
+
+## Contacto
+
+📧 tu@email.com | 🐙 [GitHub](tu-repo) | 💼 [LinkedIn](tu-linkedin)</code></pre>
+            </div>
+
+            <h3>Paso 2: Añade badges con shields.io</h3>
+            <p>Ve a <a href="https://shields.io" target="_blank">shields.io</a> y crea badges personalizados para tu proyecto. Ejemplos:</p>
+
+            <div class="code-block">
+                <span class="lang-label">URLs de shields.io</span>
+                <pre><code># Badges personalizados
+![Custom Badge](https://img.shields.io/badge/label-message-color)
+
+# Ejemplos útiles:
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Status](https://img.shields.io/badge/status-active-success)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Python](https://img.shields.io/badge/python-3.11-blue)</code></pre>
+            </div>
+
+            <h3>Paso 3: Graba un GIF demo con gifcap.dev</h3>
+
+            <div class="info">
+                <strong>Instrucciones para grabar un GIF con gifcap.dev:</strong>
+                <ol>
+                    <li>Ve a <a href="https://gifcap.dev" target="_blank">gifcap.dev</a></li>
+                    <li>Haz clic en "Start recording"</li>
+                    <li>Selecciona tu pantalla o ventana del chatbot</li>
+                    <li>Interactúa con tu app durante 10-15 segundos (conversa con el bot, muestra respuestas)</li>
+                    <li>Haz clic en "Stop recording"</li>
+                    <li>Descarga el GIF</li>
+                    <li>Sube el GIF a tu repositorio en una carpeta `/assets` o `/docs`</li>
+                    <li>Embebe en README: `![Demo GIF](./assets/demo.gif)`</li>
+                </ol>
+            </div>
+
+            <h3>Paso 4: Añade sección "Qué aprendí"</h3>
+            <p>Esta sección es crucial. Muestra reflexión y crecimiento:</p>
+
+            <div class="code-block">
+                <span class="lang-label">Sección "Qué aprendí" de ejemplo</span>
+                <pre><code>## Qué aprendí
+
+**NLP fundamentals:** Descubrí que procesar lenguaje natural es mucho más que búsqueda de strings.
+La tokenización, stemming y vectorización son conceptos clave.
+
+**Similitud coseno:** Aprendí a usar cosine similarity para comparar vectores de palabras.
+Esto permite encontrar respuestas "similares" incluso si no son exactamente iguales.
+
+**Structured data:** Trabajar con JSON para almacenar intenciones y respuestas fue revelador.
+Un buen formato de datos hace el código mucho más legible y mantenible.
+
+**Testing importance:** Sin testing, nunca habría encontrado bugs sutiles en el procesamiento
+de palabras vacías (stopwords) y acentos.</code></pre>
+            </div>
+
+            <h3>Paso 5: Haz push de los cambios</h3>
+
+            <div class="code-block">
+                <span class="lang-label">Git commands</span>
+                <pre><code>git add README.md assets/
+git commit -m "docs: README profesional con badges, GIF demo y reflexión de aprendizaje"
+git push origin main</code></pre>
+            </div>
+
+        </section>
+
+        <!-- Challenge Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🧪</span>
+                Mini-reto del día
+            </h2>
+
+            <div class="reto-box">
+                <h3>🎯 Mejora los READMEs de Proyecto #2 y #3</h3>
+                <p>Aplica las mismas mejoras que hiciste al Proyecto #1 a los otros dos proyectos:</p>
+
+                <p><strong>Proyecto #2: RAG (Retrieval-Augmented Generation) del Módulo 5</strong></p>
+                <ul>
+                    <li>Escribe un README profesional que explique qué es RAG y por qué es útil</li>
+                    <li>Añade badges de tech stack (Python, vector DB, LLM API)</li>
+                    <li>Graba un GIF de la demo (búsqueda de documentos + respuesta)</li>
+                    <li>Añade sección "Qué aprendí" sobre embeddings y búsqueda vectorial</li>
+                </ul>
+
+                <p><strong>Proyecto #3: Full-Stack del Módulo 6</strong></p>
+                <ul>
+                    <li>Estructura el README con secciones para Frontend, Backend, Base de datos</li>
+                    <li>Incluye diagrama de arquitectura ASCII</li>
+                    <li>Graba vídeo de 60 segundos: flow de usuario de inicio a fin</li>
+                    <li>Refleja sobre desafíos full-stack (sincronización, estado, etc.)</li>
+                </ul>
+
+                <p><strong>Checklist de entrega:</strong></p>
+                <ul>
+                    <li>✅ README con título + badges</li>
+                    <li>✅ Descripción clara (2-3 frases)</li>
+                    <li>✅ Screenshots o GIF animado</li>
+                    <li>✅ Tech stack visible</li>
+                    <li>✅ Instalación paso a paso (sin fricciones)</li>
+                    <li>✅ Arquitectura / diagrama</li>
+                    <li>✅ Sección "Qué aprendí" con reflexión genuina</li>
+                    <li>✅ Contacto + enlace a GitHub</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Exercise Submission Section -->
+        <section class="card submission-section" data-class-id="m8-c01">
+            <h2 class="section-title">
+                <span class="section-icon">📤</span>
+                Envío de ejercicios
+            </h2>
+            <p>Envía el código fuente, links a demostraciones o descripciones de tus ejercicios completados.</p>
+
+            <!-- Exercise 1: Type A (Code-along) -->
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: README profesional con badges y demos</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí el contenido de tu README mejorado, o un enlace a tu repositorio con el README actualizado. Incluye: Título + badges, descripción, screenshots/GIF, tech stack, instalación, arquitectura, qué aprendí, contacto."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m8-c01', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <!-- Exercise 2: Type B (Mini-reto) -->
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>📤 Entregar práctica: README de alto impacto para proyecto AI</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí el README profesional para tu proyecto de IA más impactante. Debe incluir: descripción clara del problema, tech stack detallado, instalación sin fricciones, demo en vídeo o GIF, arquitectura, y reflexión sobre qué aprendiste de usar IA en el proyecto."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m8-c01', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📝</span>
+                Test de conocimiento
+            </h2>
+            <p>Responde las siguientes 10 preguntas para verificar tu comprensión sobre READMEs profesionales y demos. Necesitas al menos 8 correctas para marcar esta clase como completada.</p>
+
+            <div class="quiz-container" id="quiz-container"></div>
+
+            <button class="btn btn-green" onclick="submitQuiz()">Enviar respuestas</button>
+            <div id="quizResult"></div>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <div class="clase-nav">
+            <a href="index.html">← Módulo 8</a>
+            <span> | </span>
+            <a href="clase-02.html">Clase 02 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        // Quiz data
+        const quizQuestions = [
+            {
+                question: "¿Cuál es el primer elemento que debería tener un README profesional?",
+                options: [
+                    "Una sección larga de instalación",
+                    "Título + badges de estado",
+                    "Código de ejemplo",
+                    "Información de licencia"
+                ],
+                correct: 1  // Título + badges
+            },
+            {
+                question: "¿Cuántas frases debe tener una descripción clara de un proyecto?",
+                options: ["1 frase", "2-3 frases", "5-10 frases", "Una descripción detallada sin límite"],
+                correct: 1  // 2-3 frases
+            },
+            {
+                question: "¿Cuál es el propósito principal de incluir un GIF o screenshot en el README?",
+                options: [
+                    "Decoración visual",
+                    "Mostrar de inmediato cómo funciona el proyecto",
+                    "Hacer más largo el README",
+                    "Demostrar habilidades de diseño"
+                ],
+                correct: 1  // Mostrar cómo funciona
+            },
+            {
+                question: "¿Qué herramienta recomendamos para crear GIFs de demostraciones?",
+                options: ["Photoshop", "gifcap.dev", "Paint", "Excel"],
+                correct: 1  // gifcap.dev
+            },
+            {
+                question: "¿Dónde se generan badges visuales de tecnologías?",
+                options: ["En Photoshop", "shields.io", "En GitHub automáticamente", "En Figma"],
+                correct: 1  // shields.io
+            },
+            {
+                question: "¿Qué debe incluir obligatoriamente la sección de instalación?",
+                options: [
+                    "Solo descargar el ZIP",
+                    "Pasos claros y código ejecutable (sin fricciones)",
+                    "Un video tutorial externo",
+                    "Solo instrucciones en texto"
+                ],
+                correct: 1  // Pasos claros
+            },
+            {
+                question: "¿Cuál es el tiempo recomendado para una demo en vídeo?",
+                options: ["2-3 minutos", "10 minutos", "60 segundos", "5 minutos"],
+                correct: 2  // 60 segundos
+            },
+            {
+                question: "¿Qué es lo más importante de la sección 'Qué aprendí'?",
+                options: [
+                    "Listar todas las líneas de código escritas",
+                    "Mostrar reflexión genuina sobre los conceptos aprendidos",
+                    "Criticar otros proyectos",
+                    "Pedir retroalimentación"
+                ],
+                correct: 1  // Reflexión genuina
+            },
+            {
+                question: "¿A quién está dirigido principalmente un README profesional?",
+                options: [
+                    "Solo a tus amigos",
+                    "A otros programadores en tu equipo",
+                    "A recruiters, empleadores y otros desarrolladores",
+                    "Al código en sí"
+                ],
+                correct: 2  // Recruiters, empleadores, desarrolladores
+            },
+            {
+                question: "¿Cuál de estos componentes NO debería faltar en un README de 10/10?",
+                options: [
+                    "Una sección de crítica social",
+                    "Un diagrama de arquitectura o flujo",
+                    "Tu foto de perfil",
+                    "Información sobre tus hobbies"
+                ],
+                correct: 1  // Diagrama de arquitectura
+            }
+        ];
+
+        // Render quiz
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            quizQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'quiz-question';
+                questionDiv.innerHTML = `
+                    <div class="quiz-question-text">${index + 1}. ${q.question}</div>
+                    <div class="quiz-options">
+                        ${q.options.map((option, optIndex) => `
+                            <label class="quiz-option">
+                                <input type="radio" name="q${index}" value="${optIndex}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        // Submit quiz
+        function submitQuiz() {
+            let correct = 0;
+            const answers = [];
+
+            for (let i = 0; i < quizQuestions.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+
+                if (!selected) {
+                    alert(`Por favor responde la pregunta ${i + 1}`);
+                    return;
+                }
+
+                const userAnswer = parseInt(selected.value);
+                answers.push(userAnswer);
+
+                if (userAnswer === quizQuestions[i].correct) {
+                    correct++;
+                }
+            }
+
+            // Show results
+            const resultDiv = document.getElementById('quizResult');
+            const percentage = (correct / quizQuestions.length) * 100;
+            const passed = correct >= 8;
+
+            resultDiv.innerHTML = `
+                <div class="quiz-result ${passed ? 'correct' : 'incorrect'}">
+                    ${passed ? '✅' : '❌'} ${correct} de ${quizQuestions.length} respuestas correctas (${percentage.toFixed(0)}%)
+                    ${passed ? '<br>¡Excelente! Has completado esta clase.' : '<br>Necesitas al menos 8 respuestas correctas. Intenta de nuevo.'}
+                </div>
+            `;
+
+            if (passed) {
+                // Mark class as completed
+                if (typeof CourseProgress !== 'undefined') {
+                    CourseProgress.initQuiz('quiz-container', quizQuestions, 'm8-c01');
+                }
+            }
+        }
+
+        // Initialize on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+renderQuiz();
+
+            // Check if already completed
+            if (typeof CourseProgress !== 'undefined') {
+                if (CourseProgress.isClassCompleted('m8-c01')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'score-display';
+                    badge.textContent = '✅ COMPLETADA';
+                    document.querySelector('header h1').parentElement.appendChild(badge);
+                }
+            }
+            });
+        } else {
+renderQuiz();
+
+            // Check if already completed
+            if (typeof CourseProgress !== 'undefined') {
+                if (CourseProgress.isClassCompleted('m8-c01')) {
+                    const badge = document.createElement('span');
+                    badge.className = 'score-display';
+                    badge.textContent = '✅ COMPLETADA';
+                    document.querySelector('header h1').parentElement.appendChild(badge);
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: Vercel AI SDK — Clase 02</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #00e676;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
+        }
+
+        .header p {
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .mindmap-wrapper {
+            background: rgba(30, 30, 50, 0.8);
+            border-radius: 12px;
+            padding: 30px;
+            border: 2px solid #00e676;
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.2);
+        }
+
+        .mindmap-node {
+            margin: 20px 0;
+        }
+
+        .node-title {
+            background: linear-gradient(135deg, #00e676 0%, #00c853 100%);
+            color: #1a1a2e;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .node-title:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+        }
+
+        .toggle-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .node-content {
+            display: none;
+            margin-left: 30px;
+            margin-top: 10px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid #00e676;
+            border-radius: 6px;
+        }
+
+        .node-content.expanded {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sub-node {
+            margin: 12px 0;
+            padding: 10px 15px;
+            background: rgba(0, 230, 118, 0.1);
+            border-left: 3px solid #00e676;
+            border-radius: 4px;
+            line-height: 1.6;
+        }
+
+        .sub-node strong {
+            color: #00e676;
+        }
+
+        .code-snippet {
+            background: rgba(30, 30, 50, 0.9);
+            border: 1px solid #00e676;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #00e676;
+            overflow-x: auto;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+
+        .breadcrumb a {
+            color: #00e676;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #a0a0a0;
+            font-size: 0.9em;
+        }
+
+        .info-box {
+            background: rgba(0, 230, 118, 0.1);
+            border-left: 4px solid #00e676;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            color: #d0d0d0;
+        }
+
+        .info-box strong {
+            color: #00e676;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .mindmap-wrapper {
+                padding: 20px;
+            }
+
+            .node-content {
+                margin-left: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="../index.html">Dashboard</a> >
+            <a href="index.html">Módulo 7</a> >
+            <a href="clase-02.html">Clase 02</a> >
+            <strong>Mind Map</strong>
+        </div>
+
+        <div class="header">
+            <h1>🧠 Vercel AI SDK</h1>
+            <p>Streaming de respuestas en React</p>
+        </div>
+
+        <div class="mindmap-wrapper">
+            <!-- 1. Qué es Vercel AI SDK -->
+            <div class="mindmap-node">
+                <div class="node-title" onclick="toggleNode(this)">
+                    <span class="toggle-icon">▶</span>
+                    ¿Qué es Vercel AI SDK?
+                </div>
+                <div class="node-content">
+                    <div class="sub-node">
+                        <strong>Definición:</strong> Toolkit TypeScript para construir aplicaciones de IA con múltiples LLMs
+                    </div>
+                    <div class="sub-node">
+                        <strong>Características principales:</strong>
+                        <ul style="margin-top: 8px; margin-left: 20px;">
+                            <li>Interfaz unificada para OpenAI, Anthropic, Google, Ollama</li>
+                            <li>Streaming nativo de respuestas</li>
+                            <li>Hooks React listos (useChat, useCompletion)</li>
+                            <li>Integración perfecta con Next.js</li>
+                            <li>TypeScript first</li>
+                        </ul>
+                    </div>
+                    <div class="sub-node">
+                        <strong>¿Por qué usarlo?</strong> No reinventes la rueda — manejo de streams, estado de mensajes, errores... ya está optimizado.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Streaming vs Sin Streaming -->
+            <div class="mindmap-node">
+                <div class="node-title" onclick="toggleNode(this)">
+                    <span class="toggle-icon">▶</span>
+                    Streaming vs Respuesta Completa
+                </div>
+                <div class="node-content">
+                    <div class="sub-node">
+                        <strong>Sin Streaming (Mala UX):</strong>
+                        <div class="code-snippet">Usuario envía → LLM procesa (lag) → Respuesta completa de golpe → UI actualiza</div>
+                        Sensación: "¿Está colgado?"
+                    </div>
+                    <div class="sub-node">
+                        <strong>Con Streaming (Buena UX):</strong>
+                        <div class="code-snippet">Usuario envía → Chunks llegan en tiempo real → UI se actualiza mientras llegan → Sensación de fluidez</div>
+                        Ejemplo: ChatGPT, Copilot
+                    </div>
+                    <div class="sub-node">
+                        <strong>Ventajas:</strong> Mejor percepción de velocidad, mejor engagement, user experience como ChatGPT
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Arquitectura del Flujo -->
+            <div class="mindmap-node">
+                <div class="node-title" onclick="toggleNode(this)">
+                    <span class="toggle-icon">▶</span>
+                    Arquitectura: Flujo Completo
+                </div>
+                <div class="node-content">
+                    <div class="sub-node">
+                        <strong>1. Cliente (React):</strong> useChat Hook
+                        <ul style="margin-top: 8px; margin-left: 20px;">
+                            <li>Gestiona input, mensajes, estado loading</li>
+                            <li>Envía POST /api/chat</li>
+                            <li>Recibe chunks SSE</li>
+                            <li>Actualiza UI automáticamente</li>
+                        </ul>
+                    </div>
+                    <div class="sub-node">
+                        <strong>2. Servidor (Next.js):</strong> API Route
+                        <ul style="margin-top: 8px; margin-left: 20px;">
+                            <li>Recibe { messages } del cliente</li>
+                            <li>Llama a streamText()</li>
+                            <li>Convierte a SSE con .toDataStreamResponse()</li>
+                            <li>Envía chunks al cliente</li>
+                        </ul>
+                    </div>
+                    <div class="sub-node">
+                        <strong>3. LLM (OpenAI, Anthropic...):</strong> Genera respuesta token por token
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Funciones Core -->
+            <div class="mindmap-node">
+                <div class="node-title" onclick="toggleNode(this)">
+                    <span class="toggle-icon">▶</span>
+                    Funciones Core del AI SDK
+                </div>
+                <div class="node-content">
+                    <div class="sub-node">
+                        <strong>streamText() — En el servidor</strong>
+                        <div class="code-snippet">
+model: openai('gpt-4o-mini')<br>
+messages: [...],<br>
+system: 'Eres un asistente...',<br>
+temperature: 0.7<br>
+→ Retorna stream → .toDataStreamResponse()
+                        </div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>generateText() — En el servidor</strong>
+                        <div class="code-snippet">
+const { text } = await generateText({...})<br>
+→ Respuesta COMPLETA de golpe (no streaming)
+                        </div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>useChat() — En el cliente (React)</strong>
+                        <div class="code-snippet">
+const { messages, input, handleInputChange,<br>
+  handleSubmit, isLoading } = useChat({<br>
+  api: '/api/chat'<br>
+})<br>
+→ Gestiona TODO automáticamente
+                        </div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>useCompletion() — En el cliente</strong>
+                        <div class="code-snippet">
+Similar a useChat() pero SIN historial<br>
+→ Para autocompletado, sugerencias
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Proveedores Soportados -->
+            <div class="mindmap-node">
+                <div class="node-title" onclick="toggleNode(this)">
+                    <span class="toggle-icon">▶</span>
+                    Proveedores Soportados
+                </div>
+                <div class="node-content">
+                    <div class="sub-node">
+                        <strong>OpenAI:</strong>
+                        <div class="code-snippet">
+import { openai } from '@ai-sdk/openai';<br>
+model: openai('gpt-4o-mini')
+                        </div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>Anthropic (Claude):</strong>
+                        <div class="code-snippet">
+import { anthropic } from '@ai-sdk/anthropic';<br>
+model: anthropic('claude-sonnet-4-6')
+                        </div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>Google (Gemini):</strong>
+                        <div class="code-snippet">
+import { google } from '@ai-sdk/google';<br>
+model: google('gemini-2.0-flash')
+                        </div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>Ollama (Local):</strong>
+                        <div class="code-snippet">
+import { ollama } from 'ollama-ai-sdk';<br>
+model: ollama('llama2')
+                        </div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>Cambiar proveedor es trivial:</strong> Solo reemplaza la importación y la línea del modelo
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. useChat Hook en Profundidad -->
+            <div class="mindmap-node">
+                <div class="node-title" onclick="toggleNode(this)">
+                    <span class="toggle-icon">▶</span>
+                    useChat Hook: Qué gestiona automáticamente
+                </div>
+                <div class="node-content">
+                    <div class="sub-node">
+                        <strong>Estado de Mensajes:</strong> Array completo de user + assistant, persistido en componente
+                    </div>
+                    <div class="sub-node">
+                        <strong>Loading States:</strong> isLoading boolean para deshabilitar botones/inputs
+                    </div>
+                    <div class="sub-node">
+                        <strong>Streaming:</strong> Recibe chunks SSE y actualiza messages[].content en tiempo real
+                    </div>
+                    <div class="sub-node">
+                        <strong>Error Handling:</strong> Campo error para mostrar problemas de conexión/API
+                    </div>
+                    <div class="sub-node">
+                        <strong>Input Management:</strong> handleInputChange actualiza el estado del input
+                    </div>
+                    <div class="sub-node">
+                        <strong>Sin useChat, tendrías que:</strong>
+                        <ul style="margin-top: 8px; margin-left: 20px;">
+                            <li>Mantener estado de mensajes (useState)</li>
+                            <li>Parsear SSE manualmente (EventSource)</li>
+                            <li>Actualizar UI con cada chunk</li>
+                            <li>Manejar errores de conexión</li>
+                            <li>100+ líneas de boilerplate</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Parámetros Importantes -->
+            <div class="mindmap-node">
+                <div class="node-title" onclick="toggleNode(this)">
+                    <span class="toggle-icon">▶</span>
+                    Parámetros Clave en streamText()
+                </div>
+                <div class="node-content">
+                    <div class="sub-node">
+                        <strong>system:</strong> Define el rol y comportamiento del asistente
+                        <div class="code-snippet">
+system: 'Eres un profesor de Python. Explica con ejemplos.'
+                        </div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>temperature (0-1):</strong> Controla la creatividad
+                        <ul style="margin-top: 8px; margin-left: 20px;">
+                            <li>0 = Determinista (siempre misma respuesta)</li>
+                            <li>0.7 = Equilibrio (por defecto)</li>
+                            <li>1 = Muy creativo (aleatorio)</li>
+                        </ul>
+                    </div>
+                    <div class="sub-node">
+                        <strong>maxTokens:</strong> Limita la longitud máxima de respuesta
+                        <div class="code-snippet">
+maxTokens: 500  // ≈ 1250 palabras
+                        </div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>messages:</strong> Array de { role: 'user'|'assistant', content: string }
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. Setup Rápido -->
+            <div class="mindmap-node">
+                <div class="node-title" onclick="toggleNode(this)">
+                    <span class="toggle-icon">▶</span>
+                    Setup en 5 Pasos
+                </div>
+                <div class="node-content">
+                    <div class="sub-node">
+                        <strong>1. Instalar:</strong>
+                        <div class="code-snippet">npm install ai @ai-sdk/openai</div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>2. Variables de entorno (.env.local):</strong>
+                        <div class="code-snippet">OPENAI_API_KEY=sk-proj-xxxxx</div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>3. API Route (app/api/chat/route.ts):</strong>
+                        <div class="code-snippet">
+POST request → streamText() → .toDataStreamResponse()
+                        </div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>4. React Component ('use client'):</strong>
+                        <div class="code-snippet">
+const { ... } = useChat({ api: '/api/chat' })
+                        </div>
+                    </div>
+                    <div class="sub-node">
+                        <strong>5. Renderizar mensajes y formulario:</strong> Listo para chattear
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. Casos de Uso -->
+            <div class="mindmap-node">
+                <div class="node-title" onclick="toggleNode(this)">
+                    <span class="toggle-icon">▶</span>
+                    Casos de Uso Comunes
+                </div>
+                <div class="node-content">
+                    <div class="sub-node">
+                        <strong>Chatbot de Soporte:</strong> Agente que responde preguntas en tiempo real con system prompt específico
+                    </div>
+                    <div class="sub-node">
+                        <strong>Asistente Personal:</strong> Toma notas, resume, proporciona ideas basadas en conversación
+                    </div>
+                    <div class="sub-node">
+                        <strong>Generador de Contenido:</strong> Blog, redes sociales, emails (useCompletion)
+                    </div>
+                    <div class="sub-node">
+                        <strong>Tutor Interactivo:</strong> Sistema prompt como "profesor de Python" o "entrenador"
+                    </div>
+                    <div class="sub-node">
+                        <strong>Análisis de Documentos:</strong> Context en mensajes, análisis basado en chunks
+                    </div>
+                    <div class="sub-node">
+                        <strong>Juegos conversacionales:</strong> Role-playing, aventuras de texto con IA
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10. Errores Comunes -->
+            <div class="mindmap-node">
+                <div class="node-title" onclick="toggleNode(this)">
+                    <span class="toggle-icon">▶</span>
+                    Errores Comunes y Soluciones
+                </div>
+                <div class="node-content">
+                    <div class="sub-node">
+                        <strong>❌ useChat en componente SIN 'use client':</strong> Error de hidratación → Solución: Añade 'use client' al principio
+                    </div>
+                    <div class="sub-node">
+                        <strong>❌ API Key en código frontend:</strong> Inseguro, expone credenciales → Solución: Variables de entorno en .env.local
+                    </div>
+                    <div class="sub-node">
+                        <strong>❌ No manejar isLoading:</strong> Usuario puede clickear enviar 10 veces → Solución: disabled={isLoading}
+                    </div>
+                    <div class="sub-node">
+                        <strong>❌ Olvidar .toDataStreamResponse():</strong> No hace streaming → Solución: Siempre usa esto en la API Route
+                    </div>
+                    <div class="sub-node">
+                        <strong>❌ Temperature fuera de rango:</strong> Valores > 1 dan error → Solución: Usa 0-1
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>💡 Tip:</strong> Este mind map es interactivo. Haz clic en los títulos para expandir/contraer cada sección. Vuelve a la clase para el código práctico completo.
+        </div>
+
+        <div class="footer">
+            <p>Curso IA para Juan — Módulo 7, Clase 02 | Mind Map Interactivo</p>
+            <p style="margin-top: 10px;"><a href="clase-02.html" style="color: #00e676;">← Volver a la clase</a></p>
+        </div>
+    </div>
+
+    <script>
+        function toggleNode(element) {
+            const content = element.nextElementSibling;
+            const icon = element.querySelector('.toggle-icon');
+
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                icon.textContent = '▶';
+            } else {
+                content.classList.add('expanded');
+                icon.textContent = '▼';
+            }
+        }
+
+        // Expandir primeros 3 nodos por defecto
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstThreeNodes = document.querySelectorAll('.node-title');
+            for (let i = 0; i < Math.min(3, firstThreeNodes.length); i++) {
+                toggleNode(firstThreeNodes[i]);
+            }
+        });
+    </script>
+</body>
+</html>

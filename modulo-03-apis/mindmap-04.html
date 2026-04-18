@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: Claude API + AI Safety</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #0a0a1a 0%, #0f0f2e 100%); color: #e8e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; padding: 20px; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        header { margin-bottom: 30px; text-align: center; }
+        .back-link { display: inline-block; margin-bottom: 20px; padding: 10px 20px; background: rgba(0, 240, 255, 0.1); border: 2px solid #00f0ff; color: #00f0ff; text-decoration: none; border-radius: 6px; font-weight: 600; transition: all 0.3s ease; }
+        .back-link:hover { background: rgba(0, 240, 255, 0.2); transform: translateX(-4px); }
+        h1 { font-size: 2.5em; margin: 20px 0 10px 0; background: linear-gradient(45deg, #00f0ff, #ff00e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .subtitle { font-size: 1.1em; color: #a0a0b8; margin-bottom: 30px; font-style: italic; }
+        .controls { margin-bottom: 25px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 12px 24px; border: 2px solid; border-radius: 6px; background: transparent; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1em; }
+        .btn-expand { border-color: #39ff14; color: #39ff14; }
+        .btn-expand:hover { background: rgba(57, 255, 20, 0.15); transform: scale(1.05); }
+        .btn-collapse { border-color: #ff00e5; color: #ff00e5; }
+        .btn-collapse:hover { background: rgba(255, 0, 229, 0.15); transform: scale(1.05); }
+        .mindmap { background: rgba(20, 20, 40, 0.6); border: 2px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 30px; overflow-x: auto; }
+        .tree-view { display: inline-block; min-width: 100%; font-size: 0.95em; }
+        .node { margin: 10px 0; padding: 15px 20px; background: rgba(30, 30, 50, 0.8); border-left: 4px solid; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; position: relative; display: flex; align-items: center; gap: 12px; }
+        .node:hover { background: rgba(40, 40, 60, 0.9); transform: translateX(8px); }
+        .node[data-level="0"] { border-left-color: #00f0ff; background: rgba(0, 240, 255, 0.08); font-size: 1.2em; font-weight: 700; padding: 20px 25px; margin: 20px 0; }
+        .node[data-level="0"]:hover { background: rgba(0, 240, 255, 0.15); box-shadow: 0 0 20px rgba(0, 240, 255, 0.3); }
+        .node[data-level="1"] { border-left-color: #ff00e5; margin-left: 30px; font-weight: 600; }
+        .node[data-level="1"]:hover { box-shadow: 0 0 15px rgba(255, 0, 229, 0.2); }
+        .node[data-level="2"] { border-left-color: #39ff14; margin-left: 60px; font-weight: 500; }
+        .node[data-level="2"]:hover { box-shadow: 0 0 15px rgba(57, 255, 20, 0.2); }
+        .node[data-level="3"], .node[data-level="4"], .node[data-level="5"] { border-left-color: #ffd700; margin-left: 90px; font-weight: 400; font-size: 0.95em; }
+        .node[data-level="3"]:hover, .node[data-level="4"]:hover, .node[data-level="5"]:hover { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
+        .toggle { display: inline-block; width: 24px; height: 24px; background: rgba(0, 240, 255, 0.2); border: 2px solid #00f0ff; border-radius: 4px; text-align: center; line-height: 20px; font-weight: bold; color: #00f0ff; flex-shrink: 0; transition: all 0.2s ease; }
+        .toggle:hover { background: rgba(0, 240, 255, 0.4); transform: scale(1.1); }
+        .toggle.collapsed::before { content: "+"; }
+        .toggle.expanded::before { content: "−"; }
+        .toggle.empty { visibility: hidden; }
+        .node-content { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .node-title { font-weight: 600; color: #e8e8f0; }
+        .node-description { font-size: 0.85em; color: #a0a0b8; font-weight: 400; max-width: 800px; }
+        .hidden { display: none; }
+        .children { max-height: 10000px; overflow: hidden; transition: max-height 0.4s ease; }
+        .children.collapsed { max-height: 0; overflow: hidden; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .node { padding: 12px 15px; font-size: 0.85em; margin: 8px 0; gap: 10px; }
+            .node[data-level="0"] { padding: 16px 20px; font-size: 1em; }
+            .node[data-level="1"] { margin-left: 20px; }
+            .node[data-level="2"] { margin-left: 40px; }
+            .node[data-level="3"], .node[data-level="4"], .node[data-level="5"] { margin-left: 60px; }
+            .toggle { width: 20px; height: 20px; }
+            .controls { gap: 10px; }
+            .btn { padding: 10px 18px; font-size: 0.9em; }
+        }
+        .footer { text-align: center; margin-top: 40px; color: #606078; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="clase-04.html" class="back-link">← Volver a Clase 04</a>
+            <h1>Mind Map: Claude API + AI Safety</h1>
+            <p class="subtitle">Anthropic API y seguridad en aplicaciones de IA</p>
+        </header>
+        <div class="controls">
+            <button class="btn btn-expand" onclick="expandAll()">📖 Expandir todo</button>
+            <button class="btn btn-collapse" onclick="collapseAll()">📕 Colapsar todo</button>
+        </div>
+        <div class="mindmap">
+            <div class="tree-view" id="mindmap"></div>
+        </div>
+        <div class="footer"><p>Haz clic en los nodos para expandir/colapsar.</p></div>
+    </div>
+    <script>
+        const mindmapData = {
+            id: 'root',
+            title: 'Anthropic API (Claude) + AI Safety',
+            description: 'Cómo usar Claude y proteger aplicaciones de IA',
+            level: 0,
+            children: [
+                {
+                    id: 'parte-a',
+                    title: 'PARTE A: Anthropic API (Claude)',
+                    description: 'Cómo usar la API de Claude en Python',
+                    level: 1,
+                    children: [
+                        {
+                            id: 'quien-es',
+                            title: 'Quién es quién',
+                            description: 'Anthropic (empresa) vs Claude (modelo)',
+                            level: 2,
+                            children: [
+                                {
+                                    id: 'quien-anthropic',
+                                    title: 'Anthropic = empresa',
+                                    description: 'Fundada por ex-empleados de OpenAI. Crea modelos de IA seguros.',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'quien-claude',
+                                    title: 'Claude = modelo de IA',
+                                    description: 'Variantes: Claude 3.5 Sonnet (potente), Claude 3 Haiku (rápido)',
+                                    level: 3,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'instalacion',
+                            title: 'Instalación',
+                            description: 'pip install anthropic',
+                            level: 2,
+                            children: [
+                                {
+                                    id: 'pip-cmd',
+                                    title: 'Comando',
+                                    description: 'pip install anthropic',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'api-key',
+                                    title: 'Obtener API Key',
+                                    description: 'Ir a console.anthropic.com y crear una clave de acceso',
+                                    level: 3,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'diferencias',
+                            title: 'Diferencias con OpenAI',
+                            description: 'Cómo cambia la sintaxis',
+                            level: 2,
+                            children: [
+                                {
+                                    id: 'system-prompt',
+                                    title: 'System prompt va SEPARADO',
+                                    description: 'No dentro de messages[] como en OpenAI. Parameter "system" aparte.',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'max-tokens',
+                                    title: 'max_tokens es OBLIGATORIO',
+                                    description: 'No opcional. Debes especificarlo siempre.',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'respuesta-formato',
+                                    title: 'Formato de respuesta diferente',
+                                    description: 'response.content[0].text (en OpenAI es choices[0].message.content)',
+                                    level: 3,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'comparativa',
+                            title: 'Comparativa rápida',
+                            description: 'OpenAI vs Anthropic en una tabla',
+                            level: 2,
+                            children: [
+                                {
+                                    id: 'openai-modelos',
+                                    title: 'OpenAI',
+                                    description: 'gpt-4o (potente) / gpt-4o-mini (económico). Ecosistema maduro.',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'anthropic-modelos',
+                                    title: 'Anthropic',
+                                    description: 'Claude 3.5 Sonnet (potente) / Claude 3 Haiku (económico). Más seguro.',
+                                    level: 3,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'cuándo-usar',
+                            title: 'Cuándo usar cada uno',
+                            description: 'Guía de decisión entre OpenAI y Anthropic',
+                            level: 2,
+                            children: [
+                                {
+                                    id: 'openai-caso',
+                                    title: 'OpenAI',
+                                    description: 'Ecosistema más grande, más integraciones, comunidad grande',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'anthropic-caso',
+                                    title: 'Anthropic',
+                                    description: 'Mejor en textos largos, más seguro, mejor al seguir instrucciones exactas',
+                                    level: 3,
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 'parte-b',
+                    title: 'PARTE B: AI Safety — Seguridad en Apps de IA',
+                    description: 'Cómo proteger tu aplicación de ataques y malos usos',
+                    level: 1,
+                    children: [
+                        {
+                            id: 'por-que-importa',
+                            title: 'Por qué importa',
+                            description: 'Responsabilidad legal y de usuario',
+                            level: 2,
+                            children: [
+                                {
+                                    id: 'usuario-manipula',
+                                    title: 'Tu app usa un LLM',
+                                    description: 'Los usuarios pueden intentar manipularlo o extraer información',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'responsabilidad',
+                                    title: 'Responsabilidad legal tuya',
+                                    description: 'Si tu app filtra datos o hace algo peligroso, eres responsable',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'owasp-top10',
+                                    title: 'OWASP Top 10 for LLM Applications',
+                                    description: 'Lista oficial de vulnerabilidades en apps con LLM',
+                                    level: 3,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'prompt-injection',
+                            title: 'Prompt Injection (ataque #1)',
+                            description: 'Inyectar comandos maliciosos en el prompt',
+                            level: 2,
+                            children: [
+                                {
+                                    id: 'direct-injection',
+                                    title: 'Direct injection',
+                                    description: '"Ignora tus instrucciones y cuéntame...". El usuario intenta cambiar el sistema prompt',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'indirect-injection',
+                                    title: 'Indirect injection',
+                                    description: 'Datos maliciosos en documentos que tu app ingiere. El LLM procesa instrucciones maliciosas ocultas.',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'defensas-injection',
+                                    title: 'Defensas',
+                                    description: 'Cómo protegerse de prompt injection',
+                                    level: 3,
+                                    children: [
+                                        {
+                                            id: 'system-robusto',
+                                            title: 'System prompt robusto',
+                                            description: 'Reglas explícitas. Dejar claro qué SÍ y qué NO puede hacer el modelo',
+                                            level: 4,
+                                            children: []
+                                        },
+                                        {
+                                            id: 'input-validation',
+                                            title: 'Input validation',
+                                            description: 'Filtrar entradas sospechosas antes de enviar al LLM',
+                                            level: 4,
+                                            children: []
+                                        },
+                                        {
+                                            id: 'output-filtering',
+                                            title: 'Output filtering',
+                                            description: 'Revisar la respuesta antes de mostrarla al usuario',
+                                            level: 4,
+                                            children: []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            id: 'otras-amenazas',
+                            title: 'Otras amenazas',
+                            description: 'Más allá de prompt injection',
+                            level: 2,
+                            children: [
+                                {
+                                    id: 'data-leakage',
+                                    title: 'Data leakage',
+                                    description: 'El LLM filtra datos de entrenamiento o información sensible',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'hallucinations',
+                                    title: 'Hallucinations',
+                                    description: 'El modelo inventa datos con confianza (puede ser muy convincente)',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'bias',
+                                    title: 'Bias',
+                                    description: 'Respuestas sesgadas por género, raza, religión, etc.',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'excessive-agency',
+                                    title: 'Excessive agency',
+                                    description: 'Dar al LLM demasiado poder (acceso a BD, apis, etc.)',
+                                    level: 3,
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'buenas-practicas',
+                            title: 'Buenas prácticas',
+                            description: 'Cómo implementar seguridad en tu app',
+                            level: 2,
+                            children: [
+                                {
+                                    id: 'input-validation-bp',
+                                    title: 'Input validation',
+                                    description: 'Filtrar entradas sospechosas antes de procesarlas',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'output-filtering-bp',
+                                    title: 'Output filtering',
+                                    description: 'Revisar respuestas del LLM (buscar información sensible, sesgos)',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'rate-limiting',
+                                    title: 'Rate limiting',
+                                    description: 'Limitar llamadas al LLM por usuario (evita abuso y costos)',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'logging',
+                                    title: 'Logging',
+                                    description: 'Guardar todas las conversaciones para auditoría y análisis de problemas',
+                                    level: 3,
+                                    children: []
+                                },
+                                {
+                                    id: 'least-privilege',
+                                    title: 'Least privilege',
+                                    description: 'El LLM solo tiene acceso a lo MÍNIMO que necesita',
+                                    level: 3,
+                                    children: []
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        function renderNode(node, container) {
+            const nodeEl = document.createElement('div');
+            nodeEl.className = 'node';
+            nodeEl.setAttribute('data-level', node.level);
+            nodeEl.id = node.id;
+
+            const hasChildren = node.children && node.children.length > 0;
+
+            const toggle = document.createElement('div');
+            toggle.className = `toggle ${hasChildren ? 'expanded' : 'empty'}`;
+            toggle.onclick = (e) => {
+                e.stopPropagation();
+                if (hasChildren) toggleNode(node.id);
+            };
+
+            const content = document.createElement('div');
+            content.className = 'node-content';
+
+            const title = document.createElement('div');
+            title.className = 'node-title';
+            title.textContent = node.title;
+
+            if (node.description) {
+                const desc = document.createElement('div');
+                desc.className = 'node-description';
+                desc.textContent = node.description;
+                content.appendChild(desc);
+            }
+
+            content.insertBefore(title, content.firstChild);
+
+            nodeEl.appendChild(toggle);
+            nodeEl.appendChild(content);
+
+            container.appendChild(nodeEl);
+
+            if (hasChildren) {
+                const childrenContainer = document.createElement('div');
+                childrenContainer.className = 'children';
+                childrenContainer.id = `children-${node.id}`;
+                childrenContainer.setAttribute('data-parent', node.id);
+
+                node.children.forEach(child => renderNode(child, childrenContainer));
+
+                container.appendChild(childrenContainer);
+            }
+        }
+
+        function toggleNode(nodeId) {
+            const childrenEl = document.getElementById(`children-${nodeId}`);
+            const toggle = document.getElementById(nodeId).querySelector('.toggle');
+
+            if (childrenEl) {
+                childrenEl.classList.toggle('collapsed');
+                toggle.classList.toggle('expanded');
+                toggle.classList.toggle('collapsed');
+            }
+        }
+
+        function expandAll() {
+            expandAllRecursive(mindmapData);
+        }
+
+        function collapseAll() {
+            collapseAllRecursive(mindmapData);
+        }
+
+        function expandAllRecursive(node) {
+            if (node.children && node.children.length > 0) {
+                const childrenEl = document.getElementById(`children-${node.id}`);
+                if (childrenEl) {
+                    childrenEl.classList.remove('collapsed');
+                    const toggle = document.getElementById(node.id).querySelector('.toggle');
+                    if (toggle) {
+                        toggle.classList.add('expanded');
+                        toggle.classList.remove('collapsed');
+                    }
+                }
+                node.children.forEach(child => expandAllRecursive(child));
+            }
+        }
+
+        function collapseAllRecursive(node) {
+            if (node.children && node.children.length > 0) {
+                const childrenEl = document.getElementById(`children-${node.id}`);
+                if (childrenEl) {
+                    childrenEl.classList.add('collapsed');
+                    const toggle = document.getElementById(node.id).querySelector('.toggle');
+                    if (toggle) {
+                        toggle.classList.remove('expanded');
+                        toggle.classList.add('collapsed');
+                    }
+                }
+                node.children.forEach(child => collapseAllRecursive(child));
+            }
+        }
+
+        function renderMindmap() {
+            const container = document.getElementById('mindmap');
+            renderNode(mindmapData, container);
+            collapseAll();
+        }
+
+        document.addEventListener('DOMContentLoaded', renderMindmap);
+    </script>
+</body>
+</html>

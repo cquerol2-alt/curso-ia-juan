@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 06: Cuándo RAG sí gana — Módulo 5</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> &gt; </span>
+            <a href="index.html">Módulo 5</a>
+            <span> &gt; </span>
+            <strong>Clase 06</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 06: Cuándo RAG sí gana — benchmarks de las 3 arquitecturas</h1>
+            <div class="subtitle">📅 Semana 7 — Lunes | 🎬 20 min vídeo + 💻 70 min benchmark + 🧪 15 min test</div>
+        </header>
+
+        <section class="card" style="border-left: 4px solid #00f0ff;">
+            <h2 class="section-title"><span class="section-icon">🎯</span> Qué vas a construir hoy</h2>
+            <p>Un <strong>benchmark real</strong> con 10 preguntas ejecutadas sobre los <em>mismos apuntes</em>, usando <strong>las 3 arquitecturas</strong> del módulo: context stuffing (clase 02), agentic search (clase 03) y RAG clásico (clase 05). Medirás <strong>coste, latencia y calidad</strong>. Al final tendrás una tabla con datos propios para decidir qué usar en cada situación — la habilidad más valiosa del módulo.</p>
+            <div class="info" style="margin-top: 12px;">
+                <strong>🧭 Filosofía:</strong> esta clase no te enseña ninguna librería nueva. Te enseña <em>a elegir</em>. Muchos ingenieros eligen RAG por costumbre; tú lo elegirás con datos.
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>📹 Vídeo principal (20 min)</h2>
+            <div class="video-wrapper">
+                <iframe width="100%" height="450" src="https://www.youtube.com/embed/0nA5QG3087g" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <a href="https://www.youtube.com/watch?v=0nA5QG3087g" target="_blank" class="btn" style="background:#ff0000;">▶ Ver en YouTube ↗</a>
+                <p style="font-size:.85em; color:#b0b0cc; margin-top:6px;">Si el reproductor sale en blanco, usa este botón.</p>
+            </div>
+            <div class="warning" style="margin-top: 12px;">
+                <strong>⚠️ Aviso v2:</strong> el vídeo usa ejemplos con LangChain. El código canónico está abajo con Anthropic SDK directo. Mira el vídeo por los conceptos (coste vs calidad vs latencia), no por la implementación.
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📖</span> Cuándo gana cada arquitectura (resumen teórico)</h2>
+            <table>
+                <thead>
+                    <tr><th>Arquitectura</th><th>Gana cuando</th><th>Pierde cuando</th><th>Coste típico por query</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Context stuffing</strong></td>
+                        <td>Corpus estable &lt;150K tokens, pocas queries al día, calidad máxima</td>
+                        <td>Corpus enorme o cambia mucho; muchos usuarios</td>
+                        <td>$0.05 - $0.30 (mayoría cacheado)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Agentic search</strong></td>
+                        <td>Info dispersa en muchos sitios (web, docs, APIs), query ambigua que necesita exploración</td>
+                        <td>Latencia crítica, coste estricto</td>
+                        <td>$0.08 - $0.50 (varias vueltas)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RAG clásico</strong></td>
+                        <td>Corpus grande pero bien estructurado, muchas queries simultáneas, coste bajo</td>
+                        <td>Preguntas que requieren razonamiento cruzado entre muchas secciones</td>
+                        <td>$0.01 - $0.05 (muy barato)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="tip" style="margin-top: 12px;">
+                La sabiduría convencional dice "siempre RAG". Esto está obsoleto. Con ventanas de 200K-1M tokens y <strong>prompt caching</strong>, stuffing ha vuelto a ser competitivo — y a veces mejor.
+            </div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ff00e5;">
+            <h2 class="section-title"><span class="section-icon">💻</span> Práctica: tu benchmark (70 min)</h2>
+            <p>Usamos los mismos apuntes de clases 02-05. Preparamos 10 preguntas con "verdad conocida" (tú sabes la respuesta correcta) y medimos 3 dimensiones para cada arquitectura.</p>
+
+            <h3>Paso 1 · Dataset de evaluación</h3>
+            <div class="code-block">
+                <span class="lang-label">Python — benchmark_dataset.py</span>
+<pre><code># 10 preguntas sobre tus apuntes con respuesta esperada
+DATASET = [
+    {
+        "pregunta": "¿Qué modelo de embeddings recomienda el curso?",
+        "esperada": "text-embedding-3-small",
+    },
+    {
+        "pregunta": "¿Cuál es el stop_reason cuando Claude decide llamar una tool?",
+        "esperada": "tool_use",
+    },
+    # ... 8 más — hazlas tú sobre tus apuntes
+]</code></pre>
+            </div>
+
+            <h3>Paso 2 · Cada arquitectura como función</h3>
+            <div class="code-block">
+                <span class="lang-label">Python — architectures.py</span>
+<pre><code>import time
+from anthropic import Anthropic
+client = Anthropic()
+MODEL = "claude-sonnet-4-6"
+
+# --- STUFFING (clase 02) ---
+APUNTES_COMPLETOS = open("apuntes_concat.txt").read()  # tu corpus en un solo string
+
+def arq_stuffing(pregunta: str) -&gt; dict:
+    t0 = time.time()
+    resp = client.messages.create(
+        model=MODEL, max_tokens=512,
+        system=[{
+            "type": "text",
+            "text": "Eres un asistente que responde usando SOLO los apuntes dados.\n\n" + APUNTES_COMPLETOS,
+            "cache_control": {"type": "ephemeral"}
+        }],
+        messages=[{"role": "user", "content": pregunta}],
+    )
+    return {
+        "respuesta": resp.content[0].text,
+        "ms": int((time.time() - t0) * 1000),
+        "input_tokens": resp.usage.input_tokens,
+        "cached": resp.usage.cache_read_input_tokens,
+        "output_tokens": resp.usage.output_tokens,
+    }
+
+# --- AGENTIC SEARCH (clase 03) ---
+from mi_agent import run_agent  # el agente con tools de clase 03
+
+def arq_agentic(pregunta: str) -&gt; dict:
+    t0 = time.time()
+    respuesta, usage = run_agent(pregunta, return_usage=True)
+    return {
+        "respuesta": respuesta,
+        "ms": int((time.time() - t0) * 1000),
+        **usage,
+    }
+
+# --- RAG CLÁSICO (clase 05) ---
+from mi_rag import answer as rag_answer
+
+def arq_rag(pregunta: str) -&gt; dict:
+    t0 = time.time()
+    respuesta = rag_answer(pregunta)
+    return {"respuesta": respuesta, "ms": int((time.time() - t0) * 1000)}</code></pre>
+            </div>
+
+            <h3>Paso 3 · Lanzar benchmark y calcular coste</h3>
+            <div class="code-block">
+                <span class="lang-label">Python — run_benchmark.py</span>
+<pre><code>PRICES = {  # USD por 1M tokens, Claude Sonnet 4.6
+    "input": 3.00,
+    "cached_read": 0.30,   # 10× más barato
+    "cache_write": 3.75,   # 1.25× el input
+    "output": 15.00,
+}
+
+def coste_usd(result: dict) -&gt; float:
+    non_cached = result.get("input_tokens", 0) - result.get("cached", 0)
+    return (
+        non_cached * PRICES["input"] +
+        result.get("cached", 0) * PRICES["cached_read"] +
+        result.get("output_tokens", 0) * PRICES["output"]
+    ) / 1_000_000
+
+resultados = []
+for item in DATASET:
+    for arq_name, arq_fn in [("stuffing", arq_stuffing), ("agentic", arq_agentic), ("rag", arq_rag)]:
+        r = arq_fn(item["pregunta"])
+        resultados.append({
+            "arq": arq_name,
+            "pregunta": item["pregunta"],
+            "respuesta": r["respuesta"],
+            "esperada": item["esperada"],
+            "ms": r["ms"],
+            "coste": coste_usd(r),
+        })
+
+import csv
+with open("benchmark.csv", "w", encoding="utf-8", newline="") as f:
+    w = csv.DictWriter(f, fieldnames=resultados[0].keys())
+    w.writeheader(); w.writerows(resultados)</code></pre>
+            </div>
+
+            <h3>Paso 4 · Evaluar calidad (LLM-as-judge ligero)</h3>
+            <div class="code-block">
+                <span class="lang-label">Python — judge.py</span>
+<pre><code>JUDGE_PROMPT = """Eres juez imparcial. Evalúa si la respuesta del modelo es correcta comparada con la respuesta esperada.
+Devuelve JSON: {"correct": true/false, "razon": "..."}
+
+Pregunta: {q}
+Respuesta esperada: {exp}
+Respuesta del modelo: {ans}"""
+
+def juzgar(q, esp, ans) -&gt; dict:
+    import json
+    resp = client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=256,
+        messages=[{"role": "user", "content": JUDGE_PROMPT.format(q=q, exp=esp, ans=ans)}],
+    )
+    return json.loads(resp.content[0].text)
+
+# Aplicar juez a cada fila y añadir columna "correct"</code></pre>
+            </div>
+
+            <h3>Paso 5 · Tabla resumen</h3>
+            <div class="code-block">
+                <span class="lang-label">Python — summary.py</span>
+<pre><code>import pandas as pd
+df = pd.read_csv("benchmark_judged.csv")
+
+resumen = df.groupby("arq").agg(
+    accuracy=("correct", "mean"),
+    coste_medio=("coste", "mean"),
+    latencia_ms=("ms", "median"),
+).round(3)
+print(resumen)
+
+# Ejemplo de salida real:
+#            accuracy  coste_medio  latencia_ms
+# agentic        0.80        0.152         8400
+# rag            0.60        0.012         1200
+# stuffing       0.90        0.089         3100</code></pre>
+            </div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ffe600;">
+            <h2 class="section-title"><span class="section-icon">📊</span> Cómo leer los resultados</h2>
+            <ul>
+                <li><strong>Stuffing</strong> suele ganar en <em>accuracy</em> (ve todo el contexto de golpe) pero con latencia media.</li>
+                <li><strong>RAG</strong> suele ser imbatible en coste y latencia, pero pierde accuracy en preguntas cross-seccionales.</li>
+                <li><strong>Agentic</strong> suele quedar en medio: buena accuracy, latencia peor, coste peor — pero brilla cuando necesitas razonamiento dinámico.</li>
+            </ul>
+            <p>El número final no te dice "la mejor". Te dice <em>para tu caso</em> y <em>para tu corpus</em>, cuál balance de coste/latencia/calidad prefieres. Esa es la decisión que justificarás en el ejercicio 2.</p>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">🧪</span> Quiz</h2>
+            <div id="quiz-container"></div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #39ff14;">
+            <h2 class="section-title"><span class="section-icon">📝</span> Ejercicios entregables</h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h3>Ejercicio 1 (A) — Benchmark stuffing vs agentic vs RAG</h3>
+                <p>Ejecuta el benchmark sobre los mismos 10-15 prompts para las 3 arquitecturas. Entrega el CSV final con columnas <code>arq, pregunta, respuesta, correct, coste, ms</code>.</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="# Código + primeras 10 filas del CSV en comentario"></textarea>
+                <label><input type="checkbox" required> Mi benchmark corre sin errores</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c06', 1, this)">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h3>Ejercicio 2 (B) — Tabla de decisión justificada</h3>
+                <p>Con los datos reales de tu benchmark, escribe una tabla de decisión: <strong>"para el caso X elegiría Y porque ..."</strong>. Mínimo 4 casos distintos (ej: demo a un cliente, producción con 1000 queries/día, búsqueda en toda la web, etc.). Explica cada elección con los números que obtuviste.</p>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="# Tabla markdown con 4+ casos y justificación basada en tus datos"></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="¿Qué conclusión te sorprendió?"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c06', 2, this)">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <div class="nav-buttons">
+            <a href="clase-05.html" class="btn btn-secondary">← Clase 05</a>
+            <a href="index.html" class="btn btn-secondary">📚 Módulo 5</a>
+            <a href="clase-07.html" class="btn">Clase 07 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuándo suele ganar context stuffing sobre RAG?",
+                options: [
+                    "Siempre, con cualquier corpus",
+                    "Cuando el corpus cabe en la ventana (~150K tokens) y la cacheas",
+                    "Cuando no tienes internet",
+                    "Solo con GPT-4"
+                ],
+                correct: 1,
+                explanation: "Stuffing gana cuando cabe todo en el contexto y puedes cachearlo. Con 200K tokens y prompt caching, el coste marginal por query baja mucho."
+            },
+            {
+                question: "¿Qué mide la métrica 'accuracy' en tu benchmark?",
+                options: [
+                    "Cuántos tokens consume cada respuesta",
+                    "El porcentaje de respuestas juzgadas correctas respecto a la respuesta esperada",
+                    "La latencia",
+                    "La temperatura del modelo"
+                ],
+                correct: 1,
+                explanation: "Accuracy = correctas / total. Con LLM-as-judge, un modelo juez binariza cada respuesta."
+            },
+            {
+                question: "Normalmente ¿cuál arquitectura es la MÁS barata por query?",
+                options: [
+                    "Stuffing sin cache",
+                    "Agentic con 5 vueltas",
+                    "RAG clásico (pasa solo 3 chunks al LLM)",
+                    "Todas cuestan lo mismo"
+                ],
+                correct: 2,
+                explanation: "RAG mete muy pocos tokens al prompt final (solo top-N chunks). Agentic mete tokens en cada vuelta. Stuffing sin cache mete el corpus entero cada vez."
+            },
+            {
+                question: "¿Qué ventaja clave tiene agentic search frente a RAG fijo?",
+                options: [
+                    "Es más barato",
+                    "El modelo decide dinámicamente qué buscar, incluyendo queries refinadas iterativamente",
+                    "Funciona sin API",
+                    "Solo necesita 1 tool"
+                ],
+                correct: 1,
+                explanation: "Agentic busca, lee resultados, refina, vuelve a buscar. RAG clásico hace UNA retrieval y ya."
+            },
+            {
+                question: "En tu benchmark la median latency de stuffing es 3.1s y la de RAG 1.2s. ¿Qué eliges para una app con 10k queries/hora?",
+                options: [
+                    "Stuffing, la latencia no importa",
+                    "RAG, la latencia baja y el coste importan a escala",
+                    "Depende, pero probablemente RAG salvo que stuffing dé mucha más accuracy",
+                    "Las 3 a la vez"
+                ],
+                correct: 2,
+                explanation: "A escala la latencia y el coste dominan. RAG suele ser la elección por defecto, excepto si pierdes mucha accuracy (ej: 60% vs 90%)."
+            },
+            {
+                question: "¿Qué es un LLM-as-judge?",
+                options: [
+                    "Un LLM que condena a los humanos",
+                    "Usar un LLM para evaluar si otra respuesta es correcta comparada con una esperada",
+                    "Un juez humano disfrazado",
+                    "Un tipo de reranker"
+                ],
+                correct: 1,
+                explanation: "LLM-as-judge es la técnica de usar un modelo (más pequeño y barato, como Haiku) para puntuar respuestas. Dispara la ergonomía de evals."
+            },
+            {
+                question: "¿Por qué medimos los 3 ejes (accuracy, coste, latencia) en vez de solo accuracy?",
+                options: [
+                    "Para gastar más tiempo",
+                    "Porque en producción las 3 dimensiones importan: una respuesta perfecta que cuesta $1 y tarda 30s no sirve",
+                    "Solo importa accuracy",
+                    "Por requisito de Anthropic"
+                ],
+                correct: 1,
+                explanation: "Producción ≠ benchmark académico. Accuracy, coste y latencia se negocian entre sí."
+            },
+            {
+                question: "Si tu benchmark muestra agentic gana en accuracy pero pierde en latencia, ¿cuándo SÍ conviene?",
+                options: [
+                    "Nunca",
+                    "Siempre",
+                    "En búsquedas donde la query es ambigua y vale la pena esperar 8s por mejor respuesta (research, due diligence)",
+                    "En chat en tiempo real"
+                ],
+                correct: 2,
+                explanation: "Agentic brilla cuando la query necesita exploración y el usuario tolera latencia. Research, consulting, due diligence."
+            },
+            {
+                question: "¿Qué error común tiene el benchmark si solo pruebas 2-3 preguntas?",
+                options: [
+                    "Que Claude se enfada",
+                    "Que los resultados son ruido: 1 de 3 correctas = 33% no es representativo",
+                    "Que el CSV sale mal",
+                    "Nada, es suficiente"
+                ],
+                correct: 1,
+                explanation: "Necesitas al menos 10-20 preguntas para que las diferencias entre arquitecturas tengan significado. Tamaño de muestra básico."
+            },
+            {
+                question: "Tras tu benchmark eliges RAG para una app de soporte con 1M mensajes/mes. ¿Qué argumento usas en una reunión?",
+                options: [
+                    "Es lo que usa todo el mundo",
+                    "Con 1M queries, RAG a $0.012 = $12K vs stuffing a $0.089 = $89K por mes. Accuracy solo baja un 5%. ROI claro",
+                    "Me lo dijo ChatGPT",
+                    "El jefe lo pidió"
+                ],
+                correct: 1,
+                explanation: "Exactamente este tipo de argumento con datos propios es lo que te hace senior. Traes tu propio benchmark a la decisión."
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm5-c06');
+        });
+    </script>
+</body>
+</html>

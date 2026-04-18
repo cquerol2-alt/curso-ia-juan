@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 04: LangGraph — Agentes con Estado y Flujos Complejos — Módulo 6</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <a href="index.html">Módulo 6</a>
+            <span> > </span>
+            <strong>Clase 04</strong>
+        </nav>
+
+        <!-- Header -->
+        <header class="course-header">
+            <h1>Clase 04: LangGraph — Agentes con Estado y Flujos Complejos</h1>
+            <div class="subtitle">📅 Semana 8 — Jueves | ⏱️ 45 minutos</div>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎬</span>
+                Vídeo de la lección
+            </h2>
+            <p>Mira los primeros 45 minutos del vídeo completo. Este tramo cubre los fundamentos de LangGraph: cómo construir grafos de estado, definir nodos y aristas condicionales para crear agentes más robustos.</p>
+
+            <div class="warning">
+                <strong>📌 Nota importante:</strong> Este vídeo tiene 3+ horas de duración. Para hoy, <strong>ve desde el inicio (00:00) hasta 45:00</strong>. Cubre todo lo que necesitas sobre LangGraph fundamentals.
+            </div>
+
+            <div class="warning" style="margin-top: 12px; border-left: 3px solid #ffe600;">
+                <strong>⚠️ Contexto v2:</strong> LangGraph es útil conocerlo (state machines, grafos, checkpointing), pero la filosofía canónica del curso es <strong>Anthropic SDK directo con agentic loops y tool use</strong> (clases 01 y 02). Mira esta clase como "qué abstracciones ofrecen los frameworks grandes" y quédate con los patrones (estado compartido, nodos, bifurcaciones condicionales). Para proyectos reales de Juan: empieza siempre por Anthropic SDK directo; solo usa LangGraph si el flujo es muy complejo y no escala a mano.
+            </div>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/jGg_1h0qzaM" allowfullscreen></iframe>
+            </div>
+
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-06-c04.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+
+            <div class="info">
+                <strong>Recurso adicional gratuito:</strong> <a href="https://academy.langchain.com/courses/intro-to-langgraph" target="_blank">LangChain Academy — Intro to LangGraph</a> (curso oficial y 100% gratis)
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📖</span>
+                Resumen de conceptos
+            </h2>
+
+            <h3>¿Qué es LangGraph?</h3>
+            <p>LangGraph es un framework de LangChain que permite construir agentes con <strong>grafos de estado</strong>. A diferencia de agentes simples, LangGraph te da control total sobre:</p>
+            <ul>
+                <li>El flujo de ejecución (qué nodo se ejecuta después de cuál)</li>
+                <li>El estado compartido entre pasos</li>
+                <li>Las decisiones condicionales del agente</li>
+                <li>La posibilidad de pausar y reanudar (checkpointing)</li>
+            </ul>
+
+            <h3>Conceptos Clave</h3>
+
+            <div class="info-box" style="background: rgba(0, 240, 255, 0.08); border-left: 3px solid var(--neon-cyan); padding: 1em; border-radius: 8px; margin: 1em 0;">
+                <strong>State (Estado):</strong> Un <code>TypedDict</code> que define la estructura de datos compartida entre nodos. Por ejemplo, qué información mantiene el agente mientras trabaja.
+                <div class="code-block" style="margin-top: 0.8em;">
+                    <span class="lang-label">Python</span>
+                    <pre><code>from typing import TypedDict
+
+class AgentState(TypedDict):
+    input: str                    # La pregunta del usuario
+    messages: list                # Historial de mensajes
+    next: str                     # Qué nodo ejecutar siguiente</code></pre>
+                </div>
+            </div>
+
+            <div class="info-box" style="background: rgba(255, 0, 229, 0.08); border-left: 3px solid var(--neon-magenta); padding: 1em; border-radius: 8px; margin: 1em 0;">
+                <strong>Nodes (Nodos):</strong> Funciones Python que reciben el estado, lo procesan, y retornan un estado actualizado. Son los "pasos" del grafo.
+                <div class="code-block" style="margin-top: 0.8em;">
+                    <span class="lang-label">Python</span>
+                    <pre><code>def process_node(state: AgentState) -> AgentState:
+    # Recibe estado, lo procesa
+    messages = state["messages"]
+    # ... lógica del agente ...
+
+    # Retorna estado actualizado
+    return {"messages": messages, "next": "siguiente_nodo"}</code></pre>
+                </div>
+            </div>
+
+            <div class="info-box" style="background: rgba(57, 255, 20, 0.08); border-left: 3px solid var(--neon-green); padding: 1em; border-radius: 8px; margin: 1em 0;">
+                <strong>Edges (Aristas):</strong> Conexiones entre nodos que definen el flujo. Las aristas pueden ser simples (A → B siempre) o condicionales (si X, entonces A → B; si no, A → C).
+            </div>
+
+            <h3>El Grafo como Flujo de Trabajo</h3>
+            <p>Un grafo típico de LangGraph funciona así:</p>
+            <ol>
+                <li><strong>Nodo de entrada:</strong> Recibe la pregunta del usuario</li>
+                <li><strong>Nodo de proceso:</strong> El agente analiza la pregunta y decide qué hacer</li>
+                <li><strong>Decisión condicional:</strong> ¿Necesito herramientas o puedo responder directamente?</li>
+                <li><strong>Nodos de acción:</strong> Si necesita herramientas, las ejecuta</li>
+                <li><strong>Bucle o salida:</strong> ¿Necesito más información? Si sí, repite. Si no, retorna la respuesta.</li>
+            </ol>
+
+            <h3>StateGraph: Definiendo el Grafo</h3>
+            <p>En LangGraph defines el grafo con <code>StateGraph</code>, donde especificas el estado, los nodos y las aristas:</p>
+
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+                <pre><code>from langgraph.graph import StateGraph
+
+# 1. Crear el grafo
+workflow = StateGraph(AgentState)
+
+# 2. Añadir nodos
+workflow.add_node("analyze", analyze_node)
+workflow.add_node("search", search_node)
+workflow.add_node("respond", respond_node)
+
+# 3. Añadir aristas (conexiones)
+workflow.add_edge("START", "analyze")           # Inicio → analyze
+workflow.add_conditional_edges(                 # Decisión
+    "analyze",
+    decide_action,                              # Función que decide
+    {
+        "search": "search",                     # Si busca, va a search
+        "respond": "respond"                    # Si responde, va a respond
+    }
+)
+workflow.add_edge("search", "respond")          # search → respond
+
+# 4. Compilar
+graph = workflow.compile()</code></pre>
+            </div>
+
+            <h3>Conditional Edges: El Agente Decide</h3>
+            <p>Las aristas condicionales permiten que el agente tome decisiones. Una función retorna el siguiente nodo basado en el estado actual:</p>
+
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+                <pre><code>def decide_action(state: AgentState) -> str:
+    """Retorna el siguiente nodo según el estado"""
+    # Analizar el mensaje del agente
+    last_message = state["messages"][-1]
+
+    if "búsqueda" in last_message.content:
+        return "search"
+    else:
+        return "respond"</code></pre>
+            </div>
+
+            <h3>Checkpointing: Guardar Estado para Reanudar</h3>
+            <p>LangGraph soporta checkpointing, que permite pausar un grafo, guardar su estado, y reanudarlo después. Útil para agentes de larga duración.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+                <pre><code>from langgraph.checkpoint.memory import MemorySaver
+
+# Crear grafo con checkpointing
+checkpointer = MemorySaver()
+graph = workflow.compile(checkpointer=checkpointer)
+
+# Ejecutar y guardar checkpoint
+result = graph.invoke(
+    initial_input,
+    config={"configurable": {"thread_id": "user_123"}}
+)</code></pre>
+            </div>
+
+            <h3>Human-in-the-Loop: Pausar para Aprobación</h3>
+            <p>Puedes pausar el grafo en ciertos puntos para que un humano apruebe acciones antes de continuar:</p>
+
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+                <pre><code>from langgraph.types import interrupt
+
+def action_node(state: AgentState) -> AgentState:
+    action = {"tool": "search", "query": "..."}
+
+    # Pausar y esperar aprobación humana
+    interrupt(action)  # Usuario aprueba o rechaza
+
+    # Continuar si aprobó
+    return state</code></pre>
+            </div>
+
+            <h3>LangGraph vs CrewAI: Comparación Rápida</h3>
+            <table style="width: 100%; margin: 1em 0;">
+                <tr style="background: rgba(0, 240, 255, 0.1);">
+                    <th>Aspecto</th>
+                    <th>LangGraph</th>
+                    <th>CrewAI</th>
+                </tr>
+                <tr>
+                    <td><strong>Enfoque</strong></td>
+                    <td>Control total del grafo de estado</td>
+                    <td>Equipos de agentes con roles específicos</td>
+                </tr>
+                <tr>
+                    <td><strong>Curva de aprendizaje</strong></td>
+                    <td>Media (necesitas diseñar el grafo)</td>
+                    <td>Baja (más abstracta, menos control)</td>
+                </tr>
+                <tr>
+                    <td><strong>Flexibilidad</strong></td>
+                    <td>Muy alta (defines cada aspecto)</td>
+                    <td>Media (templated, menos customizable)</td>
+                </tr>
+                <tr>
+                    <td><strong>Mejor para</strong></td>
+                    <td>Flujos complejos, custom, research agents</td>
+                    <td>Tareas estructuradas, múltiples agentes</td>
+                </tr>
+                <tr>
+                    <td><strong>Human-in-the-loop</strong></td>
+                    <td>Soporte nativo (interrupts)</td>
+                    <td>Soporte limitado</td>
+                </tr>
+            </table>
+
+            <h3>Patrón ReAct: Reason + Act en Loop</h3>
+            <p>ReAct (Reasoning + Acting) es un patrón común en LangGraph donde el agente:</p>
+            <ol>
+                <li><strong>Reason:</strong> Piensa qué acción tomar</li>
+                <li><strong>Act:</strong> Ejecuta una herramienta</li>
+                <li><strong>Observe:</strong> Ve el resultado</li>
+                <li><strong>Loop:</strong> Repite hasta tener respuesta final</li>
+            </ol>
+
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+                <pre><code># El grafo ReAct
+# START → think → decide_action → (tool_1 | tool_2 | respond)
+#                                      ↓
+#                                  observe (loop back to think)
+
+def should_continue(state: AgentState) -> str:
+    """Decide si continuar el loop o terminar"""
+    if state["final_answer"]:
+        return "respond"
+    else:
+        return "think"  # Continuar razonando</code></pre>
+            </div>
+        </section>
+
+        <!-- Guided Practice Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">💻</span>
+                Práctica guiada
+            </h2>
+            <p>Sigue estos pasos para construir tu primer agente con LangGraph. Escribe el código en un archivo <code>langgraph_demo.py</code>.</p>
+
+            <h3>Step 1: Instalar dependencias</h3>
+            <div class="code-block">
+                <span class="lang-label">Bash</span>
+                <pre><code>pip install langgraph langchain-openai langchain-core</code></pre>
+            </div>
+
+            <h3>Step 2: Grafo simple con 2 nodos</h3>
+            <p>Crea un grafo que tenga un nodo inicial y uno de respuesta:</p>
+
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+                <pre><code>from typing import TypedDict
+from langgraph.graph import StateGraph, START, END
+
+# 1. Definir el estado
+class SimpleState(TypedDict):
+    input: str
+    output: str
+
+# 2. Definir nodos (funciones)
+def process_node(state: SimpleState) -> SimpleState:
+    # Procesar input
+    output = f"Procesado: {state['input'].upper()}"
+    return {"input": state["input"], "output": output}
+
+# 3. Construir el grafo
+workflow = StateGraph(SimpleState)
+workflow.add_node("process", process_node)
+workflow.add_edge(START, "process")
+workflow.add_edge("process", END)
+
+# 4. Compilar y ejecutar
+graph = workflow.compile()
+
+result = graph.invoke({"input": "hola mundo"})
+print(result)  # {'input': 'hola mundo', 'output': 'Procesado: HOLA MUNDO'}</code></pre>
+            </div>
+
+            <h3>Step 3: Añadir enrutamiento condicional</h3>
+            <p>Ahora el agente decide si buscar información o responder directamente:</p>
+
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+                <pre><code>from typing import TypedDict, Literal
+from langgraph.graph import StateGraph, START, END
+
+class AgentState(TypedDict):
+    question: str
+    needs_search: bool
+    search_result: str
+    final_answer: str
+
+def analyze_node(state: AgentState) -> AgentState:
+    """Analiza la pregunta y decide si buscar"""
+    question = state["question"]
+
+    # Simple heuristic: si tiene "qué es" o "cuál es", busca
+    needs_search = "qué es" in question.lower() or "cuál es" in question.lower()
+
+    return {
+        **state,
+        "needs_search": needs_search,
+        "final_answer": ""
+    }
+
+def search_node(state: AgentState) -> AgentState:
+    """Simula una búsqueda web"""
+    search_result = f"Resultado de búsqueda para: {state['question']}"
+    return {**state, "search_result": search_result}
+
+def respond_node(state: AgentState) -> AgentState:
+    """Genera la respuesta final"""
+    if state["needs_search"]:
+        answer = f"Basándome en: {state['search_result']}"
+    else:
+        answer = f"Sé que: {state['question']}"
+
+    return {**state, "final_answer": answer}
+
+def decide_action(state: AgentState) -> Literal["search", "respond"]:
+    """Enrutamiento condicional"""
+    if state["needs_search"]:
+        return "search"
+    else:
+        return "respond"
+
+# Construir
+workflow = StateGraph(AgentState)
+workflow.add_node("analyze", analyze_node)
+workflow.add_node("search", search_node)
+workflow.add_node("respond", respond_node)
+
+workflow.add_edge(START, "analyze")
+workflow.add_conditional_edges(
+    "analyze",
+    decide_action,
+    {"search": "search", "respond": "respond"}
+)
+workflow.add_edge("search", "respond")
+workflow.add_edge("respond", END)
+
+graph = workflow.compile()
+
+# Test
+result = graph.invoke({"question": "¿Qué es LangGraph?"})
+print(result["final_answer"])
+# Output: Basándome en: Resultado de búsqueda para: ¿Qué es LangGraph?</code></pre>
+            </div>
+
+            <h3>Step 4: Agente ReAct completo con herramientas</h3>
+            <p>Ahora un agente completo que puede usar múltiples herramientas en loop:</p>
+
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+                <pre><code>from typing import TypedDict, Literal, Any
+from langgraph.graph import StateGraph, START, END
+from langchain_openai import ChatOpenAI
+
+# 1. Definir estado
+class ReactState(TypedDict):
+    question: str
+    messages: list
+    tools_used: list
+    final_answer: str
+
+# 2. Herramientas simuladas
+def search_tool(query: str) -> str:
+    return f"Resultado web para '{query}': información relevante aquí"
+
+def math_tool(expression: str) -> str:
+    try:
+        result = eval(expression)
+        return f"Resultado: {result}"
+    except:
+        return "Error en el cálculo"
+
+# 3. Nodo Think: El agente decide qué hacer
+def think_node(state: ReactState) -> ReactState:
+    llm = ChatOpenAI(model="gpt-4o-mini")
+
+    # Prompt: decide qué herramienta usar o si responder
+    system = """Eres un asistente. Decide:
+    1. search(query) - buscar en web
+    2. math(expression) - calcular
+    3. answer(text) - responder directamente
+    Responde SOLO con: search(...), math(...) o answer(...)"""
+
+    prompt = f"Pregunta: {state['question']}"
+
+    # En implementación real, parsearias la respuesta del LLM
+    # Para demo, decision simple:
+    if "cuánto es" in state["question"].lower():
+        decision = "math(2+2)"
+    else:
+        decision = f"search({state['question'][:20]})"
+
+    return {**state, "messages": [*state["messages"], decision]}
+
+# 4. Nodo de herramientas
+def execute_tool(state: ReactState) -> ReactState:
+    last_action = state["messages"][-1]
+
+    if "search(" in last_action:
+        query = last_action.split("(")[1].split(")")[0]
+        result = search_tool(query)
+    elif "math(" in last_action:
+        expr = last_action.split("(")[1].split(")")[0]
+        result = math_tool(expr)
+    else:
+        result = "Sin acción"
+
+    return {
+        **state,
+        "messages": [*state["messages"], result],
+        "tools_used": [*state["tools_used"], last_action]
+    }
+
+# 5. Nodo de respuesta final
+def answer_node(state: ReactState) -> ReactState:
+    # Combinar toda la información para responder
+    final = f"Respuesta a '{state['question']}': {state['messages'][-1]}"
+    return {**state, "final_answer": final}
+
+# 6. Función de decisión: ¿continuar loop o responder?
+def should_continue(state: ReactState) -> Literal["tool", "answer"]:
+    # Simple: máximo 3 herramientas
+    if len(state["tools_used"]) >= 3:
+        return "answer"
+
+    last_message = state["messages"][-1]
+    if "answer(" in last_message:
+        return "answer"
+    else:
+        return "tool"
+
+# 7. Compilar grafo
+workflow = StateGraph(ReactState)
+workflow.add_node("think", think_node)
+workflow.add_node("tool", execute_tool)
+workflow.add_node("answer", answer_node)
+
+workflow.add_edge(START, "think")
+workflow.add_conditional_edges(
+    "think",
+    should_continue,
+    {"tool": "tool", "answer": "answer"}
+)
+workflow.add_edge("tool", "think")  # Loop back
+workflow.add_edge("answer", END)
+
+graph = workflow.compile()
+
+# Test
+result = graph.invoke({
+    "question": "¿Cuánto es 10 + 5?",
+    "messages": [],
+    "tools_used": [],
+    "final_answer": ""
+})
+
+print(result["final_answer"])</code></pre>
+            </div>
+        </section>
+
+        <!-- Challenge Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎯</span>
+                Mini-reto del día
+            </h2>
+
+            <div class="reto-box">
+                <h3>🔍 Research Agent con Decisión Automática</h3>
+                <p>Construye un agente que automáticamente decide si necesita buscar información o puede responder directamente:</p>
+
+                <p><strong>Requerimientos:</strong></p>
+                <ul>
+                    <li>3 nodos: <code>classify</code>, <code>search</code>, <code>answer</code></li>
+                    <li>El nodo <code>classify</code> analiza la pregunta y decide: ¿es una pregunta de conocimiento general (responde) o de información actual (busca)?</li>
+                    <li>Si busca, simula una búsqueda web</li>
+                    <li>Si responde, genera una respuesta basada en lo que sabe</li>
+                    <li>El flujo debe ser: START → classify → (search OR answer) → END</li>
+                </ul>
+
+                <p><strong>Ejemplos de preguntas:</strong></p>
+                <ul>
+                    <li>"¿Quién ganó el último Mundial?" → buscar (información actual)</li>
+                    <li>"¿Cuál es la capital de España?" → responder (conocimiento general)</li>
+                    <li>"¿Qué es Python?" → responder</li>
+                    <li>"¿Cuáles son las últimas noticias de tecnología?" → buscar</li>
+                </ul>
+
+                <p><strong>Bonus:</strong> Añade checkpointing para poder pausar y reanudar el grafo.</p>
+            </div>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📤</span>
+                Entrega de ejercicios
+            </h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: LangGraph con StateGraph</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-1" rows="4" placeholder="Explicación de los estados y transiciones..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-c04', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>🎯 Entregar reto: Research Agent con LangGraph</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Prueba del agente (resultado final)..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-c04', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📝</span>
+                Test de conocimiento
+            </h2>
+            <p>Responde las siguientes 10 preguntas para verificar tu comprensión. Necesitas al menos 8 correctas para marcar esta clase como completada.</p>
+
+            <div class="quiz-container" id="quiz-container"></div>
+
+            <button class="btn btn-green" onclick="submitQuiz()">Enviar respuestas</button>
+            <div id="quizResult"></div>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <div class="clase-nav">
+            <a href="clase-03.html">← Clase 03</a>
+            <span> | </span>
+            <a href="clase-05.html">Clase 05 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        // Quiz data
+        const quizQuestions = [
+            {
+                question: "¿Cuál es el propósito principal de LangGraph?",
+                options: [
+                    "Reemplazar completamente LangChain",
+                    "Permitir construir agentes con grafos de estado y control total del flujo",
+                    "Crear chatbots simples sin herramientas",
+                    "Automatizar búsquedas web"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué es un State en LangGraph?",
+                options: [
+                    "Un registro de auditoría de las acciones del agente",
+                    "Un TypedDict que define la estructura de datos compartida entre nodos",
+                    "Una copia del modelo de lenguaje en memoria",
+                    "Un archivo de configuración del grafo"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es la diferencia entre edges simples y conditional edges?",
+                options: [
+                    "Los edges simples son más seguros; los condicionales son más rápidos",
+                    "Los edges simples conectan nodos siempre; los condicionales solo si se cumple una condición",
+                    "Los edges condicionales solo funcionan con herramientas externas",
+                    "No hay diferencia real, son lo mismo"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué es checkpointing en LangGraph?",
+                options: [
+                    "Validar que el grafo no tiene ciclos infinitos",
+                    "Guardar el estado del grafo para pausar y reanudar después",
+                    "Comprobar que todos los nodos tienen nombres únicos",
+                    "Encriptar la información del agente"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es el patrón ReAct?",
+                options: [
+                    "React - un framework de JavaScript para agentes IA",
+                    "Reasoning + Acting en loop: el agente razona, actúa, observa, y repite",
+                    "Un método para entrenar modelos de lenguaje",
+                    "Una forma de evitar que los agentes cometan errores"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué retorna una función de conditional edge?",
+                options: [
+                    "Un booleano (True/False)",
+                    "El estado actualizado",
+                    "El nombre del siguiente nodo a ejecutar",
+                    "Una lista de posibles nodos"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Cuál es la ventaja de human-in-the-loop en LangGraph?",
+                options: [
+                    "Hace el código más corto",
+                    "Permite pausar el agente para que un humano apruebe acciones críticas",
+                    "Reduce el consumo de tokens en la API",
+                    "Previene todos los errores posibles"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cómo defines el estado inicial en un grafo de LangGraph?",
+                options: [
+                    "Con la palabra clave 'initial'",
+                    "Dentro de los parámetros de StateGraph",
+                    "Pasando un diccionario al método invoke()",
+                    "Automáticamente desde la base de datos"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Cuándo usarías CrewAI en lugar de LangGraph?",
+                options: [
+                    "Cuando necesites control total del grafo",
+                    "Cuando requieras human-in-the-loop",
+                    "Cuando prefieras un enfoque más abstracto con equipos de agentes",
+                    "Siempre: CrewAI es superior"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Qué hace el método compile() en un grafo de LangGraph?",
+                options: [
+                    "Valida la sintaxis del código Python",
+                    "Convierte el grafo en una estructura ejecutable lista para invocar",
+                    "Compila el código a bytecode",
+                    "Crea una versión optimizada para ejecución en GPU"
+                ],
+                correct: 1
+            }
+        ];
+
+        // Render quiz
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            quizQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'quiz-question';
+                questionDiv.innerHTML = `
+                    <div class="quiz-question-text"><strong>${index + 1}.</strong> ${q.question}</div>
+                    <div class="quiz-options">
+                        ${q.options.map((option, optIndex) => `
+                            <label class="quiz-option" style="display: block; padding: 0.6em 1em; margin: 0.3em 0; border-radius: 6px; cursor: pointer; transition: background 0.3s;">
+                                <input type="radio" name="q${index}" value="${optIndex}" style="margin-right: 0.6em;">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+        }
+
+        // Submit quiz
+        function submitQuiz() {
+            let correct = 0;
+            const answers = [];
+
+            for (let i = 0; i < quizQuestions.length; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+
+                if (!selected) {
+                    alert(`Por favor responde la pregunta ${i + 1}`);
+                    return;
+                }
+
+                const userAnswer = parseInt(selected.value);
+                answers.push(userAnswer);
+
+                if (userAnswer === quizQuestions[i].correct) {
+                    correct++;
+                }
+            }
+
+            // Show results
+            const resultDiv = document.getElementById('quizResult');
+            const percentage = (correct / quizQuestions.length) * 100;
+            const passed = correct >= 8;
+
+            resultDiv.innerHTML = `
+                <div class="score-display show ${passed ? 'score-pass' : 'score-fail'}" style="text-align: center; padding: 1.5em; border-radius: 12px; margin-top: 1em;">
+                    <div class="score-number">${correct}/10</div>
+                    ${passed ? '✅ ¡Excelente! Has completado esta clase.' : '❌ Necesitas al menos 8 respuestas correctas. Intenta de nuevo.'}
+                    <div style="margin-top: 0.5em; font-size: 0.9em; color: var(--text-muted);">${percentage.toFixed(0)}% de precisión</div>
+                </div>
+            `;
+
+            if (passed) {
+                // Mark class as completed
+                if (typeof CourseProgress !== 'undefined') {
+                    CourseProgress.initQuiz('quiz-container', quizQuestions, 'm6-c04');
+                }
+            }
+        }
+
+        // Initialize on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                renderQuiz();
+                if (typeof CourseProgress !== 'undefined') {
+                    CourseProgress.initSubmissionIndicators('m6-c04');
+                }
+
+            // Check if already completed
+            if (typeof CourseProgress !== 'undefined') {
+                if (CourseProgress.isClassCompleted('m6-c04')) {
+                    const badge = document.createElement('div');
+                    badge.style.cssText = 'text-align: center; margin-top: 1em; padding: 1em; background: rgba(57, 255, 20, 0.1); border: 1px solid var(--neon-green); border-radius: 12px; color: var(--neon-green); font-weight: 600;';
+                    badge.textContent = '✅ COMPLETADA';
+                    document.querySelector('header').appendChild(badge);
+                }
+            }
+            });
+        } else {
+            renderQuiz();
+            if (typeof CourseProgress !== 'undefined') {
+                CourseProgress.initSubmissionIndicators('m6-c04');
+            }
+
+            // Check if already completed
+            if (typeof CourseProgress !== 'undefined') {
+                if (CourseProgress.isClassCompleted('m6-c04')) {
+                    const badge = document.createElement('div');
+                    badge.style.cssText = 'text-align: center; margin-top: 1em; padding: 1em; background: rgba(57, 255, 20, 0.1); border: 1px solid var(--neon-green); border-radius: 12px; color: var(--neon-green); font-weight: 600;';
+                    badge.textContent = '✅ COMPLETADA';
+                    document.querySelector('header').appendChild(badge);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

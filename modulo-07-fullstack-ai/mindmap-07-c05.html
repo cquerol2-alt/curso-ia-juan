@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map - Full-Stack AI App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a1a;
+            color: #e0e0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ffe600;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            background: linear-gradient(90deg, #00f0ff, #ff00e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .back-link {
+            background: #ff00e5;
+            color: #0a0a1a;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            background: #00f0ff;
+            transform: translateY(-2px);
+        }
+
+        .mindmap-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        svg {
+            filter: drop-shadow(0 0 20px rgba(255, 0, 229, 0.3));
+            max-width: 100%;
+            height: auto;
+        }
+
+        .node-group {
+            cursor: pointer;
+        }
+
+        .node-group:hover circle {
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .central-circle {
+            fill: url(#centralGradient);
+            stroke: #00f0ff;
+            stroke-width: 3;
+        }
+
+        .branch-circle {
+            fill: rgba(255, 0, 229, 0.15);
+            stroke: #ff00e5;
+            stroke-width: 2;
+            transition: all 0.3s ease;
+        }
+
+        .branch-circle:hover {
+            fill: rgba(255, 0, 229, 0.3);
+            stroke-width: 3;
+        }
+
+        .sub-circle {
+            fill: rgba(57, 255, 20, 0.1);
+            stroke: #39ff14;
+            stroke-width: 1.5;
+            transition: all 0.3s ease;
+        }
+
+        .sub-circle:hover {
+            fill: rgba(57, 255, 20, 0.25);
+            stroke-width: 2;
+        }
+
+        .connection-line {
+            stroke: #ffe600;
+            stroke-width: 2;
+            fill: none;
+            opacity: 0.7;
+        }
+
+        .sub-line {
+            stroke: #39ff14;
+            stroke-width: 1.5;
+            fill: none;
+            opacity: 0.5;
+        }
+
+        text {
+            font-size: 14px;
+            font-weight: 500;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: none;
+        }
+
+        .central-text {
+            font-size: 16px;
+            font-weight: bold;
+            fill: #0a0a1a;
+        }
+
+        .branch-text {
+            font-size: 12px;
+            fill: #e0e0ff;
+        }
+
+        .sub-text {
+            font-size: 10px;
+            fill: #e0e0ff;
+        }
+
+        .toggle-indicator {
+            font-size: 16px;
+            font-weight: bold;
+            fill: #ff00e5;
+            pointer-events: none;
+        }
+
+        .sub-toggle-indicator {
+            font-size: 12px;
+            font-weight: bold;
+            fill: #39ff14;
+            pointer-events: none;
+        }
+
+        .hidden-group {
+            display: none;
+        }
+
+        .info-box {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(255, 0, 229, 0.1);
+            border-left: 3px solid #ffe600;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .info-box strong {
+            color: #00f0ff;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 20px;
+            }
+
+            text {
+                font-size: 12px;
+            }
+
+            .branch-text {
+                font-size: 10px;
+            }
+
+            .sub-text {
+                font-size: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Full-Stack AI App — Mind Map Interactivo</h1>
+        <a href="clase-05.html" class="back-link">← Volver a Clase 05</a>
+    </div>
+
+    <div class="mindmap-container">
+        <svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="centralGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#00f0ff;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#ff00e5;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+
+            <!-- CENTRAL NODE -->
+            <g class="node-group" id="central-node">
+                <circle class="central-circle" cx="500" cy="350" r="50" />
+                <text class="central-text" x="500" y="350" width="80">Full-Stack<tspan x="500" dy="18">AI App</tspan></text>
+            </g>
+
+            <!-- ===================== BRANCH 1: FRONTEND ===================== -->
+            <!-- Connection line to Frontend -->
+            <line class="connection-line" x1="550" y1="320" x2="650" y2="200" />
+
+            <!-- Frontend branch circle -->
+            <g class="node-group" id="branch-frontend" data-branch="frontend">
+                <circle class="branch-circle" cx="680" cy="170" r="35" />
+                <text class="branch-text" x="680" y="165">Frontend</text>
+                <text class="toggle-indicator" x="680" y="185">+</text>
+            </g>
+
+            <!-- Frontend sub-items (hidden by default) -->
+            <g class="sub-group hidden-group" id="frontend-subs" data-parent="frontend">
+                <!-- Next.js App Router -->
+                <line class="sub-line" x1="680" y1="135" x2="620" y2="80" />
+                <g class="node-group" id="frontend-sub-1">
+                    <circle class="sub-circle" cx="600" cy="60" r="22" />
+                    <text class="sub-text" x="600" y="62">Next.js</text>
+                </g>
+
+                <!-- useChat hook -->
+                <line class="sub-line" x1="690" y1="135" x2="750" y2="80" />
+                <g class="node-group" id="frontend-sub-2">
+                    <circle class="sub-circle" cx="770" cy="60" r="22" />
+                    <text class="sub-text" x="770" y="62">useChat</text>
+                </g>
+
+                <!-- Tailwind UI -->
+                <line class="sub-line" x1="700" y1="135" x2="780" y2="100" />
+                <g class="node-group" id="frontend-sub-3">
+                    <circle class="sub-circle" cx="800" cy="90" r="22" />
+                    <text class="sub-text" x="800" y="92">Tailwind</text>
+                </g>
+
+                <!-- Responsive -->
+                <line class="sub-line" x1="680" y1="205" x2="660" y2="270" />
+                <g class="node-group" id="frontend-sub-4">
+                    <circle class="sub-circle" cx="650" cy="290" r="22" />
+                    <text class="sub-text" x="650" y="292">Responsive</text>
+                </g>
+
+                <!-- Dark mode -->
+                <line class="sub-line" x1="690" y1="205" x2="740" y2="280" />
+                <g class="node-group" id="frontend-sub-5">
+                    <circle class="sub-circle" cx="760" cy="300" r="22" />
+                    <text class="sub-text" x="760" y="302">Dark Mode</text>
+                </g>
+            </g>
+
+            <!-- ===================== BRANCH 2: BACKEND ===================== -->
+            <!-- Connection line to Backend -->
+            <line class="connection-line" x1="550" y1="320" x2="850" y2="250" />
+
+            <!-- Backend branch circle -->
+            <g class="node-group" id="branch-backend" data-branch="backend">
+                <circle class="branch-circle" cx="870" cy="220" r="35" />
+                <text class="branch-text" x="870" y="215">Backend</text>
+                <text class="toggle-indicator" x="870" y="235">+</text>
+            </g>
+
+            <!-- Backend sub-items (hidden by default) -->
+            <g class="sub-group hidden-group" id="backend-subs" data-parent="backend">
+                <!-- API Routes -->
+                <line class="sub-line" x1="850" y1="185" x2="820" y2="120" />
+                <g class="node-group" id="backend-sub-1">
+                    <circle class="sub-circle" cx="810" cy="100" r="22" />
+                    <text class="sub-text" x="810" y="102">API Routes</text>
+                </g>
+
+                <!-- streamText -->
+                <line class="sub-line" x1="870" y1="185" x2="900" y2="120" />
+                <g class="node-group" id="backend-sub-2">
+                    <circle class="sub-circle" cx="920" cy="100" r="22" />
+                    <text class="sub-text" x="920" y="102">streamText</text>
+                </g>
+
+                <!-- Rate limiting -->
+                <line class="sub-line" x1="885" y1="185" x2="940" y2="130" />
+                <g class="node-group" id="backend-sub-3">
+                    <circle class="sub-circle" cx="960" cy="110" r="22" />
+                    <text class="sub-text" x="960" y="112">Rate limit</text>
+                </g>
+
+                <!-- Auth middleware -->
+                <line class="sub-line" x1="875" y1="255" x2="880" y2="320" />
+                <g class="node-group" id="backend-sub-4">
+                    <circle class="sub-circle" cx="880" cy="340" r="22" />
+                    <text class="sub-text" x="880" y="342">Auth MW</text>
+                </g>
+            </g>
+
+            <!-- ===================== BRANCH 3: IA/LLM ===================== -->
+            <!-- Connection line to IA/LLM -->
+            <line class="connection-line" x1="550" y1="380" x2="850" y2="450" />
+
+            <!-- IA/LLM branch circle -->
+            <g class="node-group" id="branch-ia" data-branch="ia">
+                <circle class="branch-circle" cx="870" cy="480" r="35" />
+                <text class="branch-text" x="870" y="475">IA/LLM</text>
+                <text class="toggle-indicator" x="870" y="495">+</text>
+            </g>
+
+            <!-- IA/LLM sub-items (hidden by default) -->
+            <g class="sub-group hidden-group" id="ia-subs" data-parent="ia">
+                <!-- OpenAI API -->
+                <line class="sub-line" x1="850" y1="515" x2="820" y2="580" />
+                <g class="node-group" id="ia-sub-1">
+                    <circle class="sub-circle" cx="810" cy="600" r="22" />
+                    <text class="sub-text" x="810" y="602">OpenAI API</text>
+                </g>
+
+                <!-- System prompt -->
+                <line class="sub-line" x1="870" y1="515" x2="900" y2="580" />
+                <g class="node-group" id="ia-sub-2">
+                    <circle class="sub-circle" cx="920" cy="600" r="22" />
+                    <text class="sub-text" x="920" y="602">Sys Prompt</text>
+                </g>
+
+                <!-- Temperature -->
+                <line class="sub-line" x1="885" y1="515" x2="940" y2="570" />
+                <g class="node-group" id="ia-sub-3">
+                    <circle class="sub-circle" cx="960" cy="590" r="22" />
+                    <text class="sub-text" x="960" y="592">Temperature</text>
+                </g>
+
+                <!-- Streaming SSE -->
+                <line class="sub-line" x1="875" y1="445" x2="880" y2="380" />
+                <g class="node-group" id="ia-sub-4">
+                    <circle class="sub-circle" cx="880" cy="360" r="22" />
+                    <text class="sub-text" x="880" y="362">Streaming</text>
+                </g>
+            </g>
+
+            <!-- ===================== BRANCH 4: AUTH ===================== -->
+            <!-- Connection line to Auth -->
+            <line class="connection-line" x1="520" y1="400" x2="350" y2="480" />
+
+            <!-- Auth branch circle -->
+            <g class="node-group" id="branch-auth" data-branch="auth">
+                <circle class="branch-circle" cx="320" cy="510" r="35" />
+                <text class="branch-text" x="320" y="505">Auth</text>
+                <text class="toggle-indicator" x="320" y="525">+</text>
+            </g>
+
+            <!-- Auth sub-items (hidden by default) -->
+            <g class="sub-group hidden-group" id="auth-subs" data-parent="auth">
+                <!-- Auth.js -->
+                <line class="sub-line" x1="300" y1="545" x2="240" y2="600" />
+                <g class="node-group" id="auth-sub-1">
+                    <circle class="sub-circle" cx="220" cy="620" r="22" />
+                    <text class="sub-text" x="220" y="622">Auth.js</text>
+                </g>
+
+                <!-- OAuth providers -->
+                <line class="sub-line" x1="320" y1="545" x2="320" y2="610" />
+                <g class="node-group" id="auth-sub-2">
+                    <circle class="sub-circle" cx="320" cy="630" r="22" />
+                    <text class="sub-text" x="320" y="632">OAuth</text>
+                </g>
+
+                <!-- Sessions -->
+                <line class="sub-line" x1="340" y1="545" x2="400" y2="600" />
+                <g class="node-group" id="auth-sub-3">
+                    <circle class="sub-circle" cx="420" cy="620" r="22" />
+                    <text class="sub-text" x="420" y="622">Sessions</text>
+                </g>
+
+                <!-- Protección rutas -->
+                <line class="sub-line" x1="315" y1="475" x2="280" y2="400" />
+                <g class="node-group" id="auth-sub-4">
+                    <circle class="sub-circle" cx="270" cy="380" r="22" />
+                    <text class="sub-text" x="270" y="382">Rutas</text>
+                </g>
+            </g>
+
+            <!-- ===================== BRANCH 5: DEPLOY ===================== -->
+            <!-- Connection line to Deploy -->
+            <line class="connection-line" x1="480" y1="400" x2="200" y2="280" />
+
+            <!-- Deploy branch circle -->
+            <g class="node-group" id="branch-deploy" data-branch="deploy">
+                <circle class="branch-circle" cx="170" cy="250" r="35" />
+                <text class="branch-text" x="170" y="245">Deploy</text>
+                <text class="toggle-indicator" x="170" y="265">+</text>
+            </g>
+
+            <!-- Deploy sub-items (hidden by default) -->
+            <g class="sub-group hidden-group" id="deploy-subs" data-parent="deploy">
+                <!-- Vercel -->
+                <line class="sub-line" x1="150" y1="215" x2="100" y2="140" />
+                <g class="node-group" id="deploy-sub-1">
+                    <circle class="sub-circle" cx="80" cy="120" r="22" />
+                    <text class="sub-text" x="80" y="122">Vercel</text>
+                </g>
+
+                <!-- Variables entorno -->
+                <line class="sub-line" x1="170" y1="215" x2="170" y2="140" />
+                <g class="node-group" id="deploy-sub-2">
+                    <circle class="sub-circle" cx="170" cy="120" r="22" />
+                    <text class="sub-text" x="170" y="122">Env vars</text>
+                </g>
+
+                <!-- Edge Functions -->
+                <line class="sub-line" x1="190" y1="215" x2="240" y2="140" />
+                <g class="node-group" id="deploy-sub-3">
+                    <circle class="sub-circle" cx="260" cy="120" r="22" />
+                    <text class="sub-text" x="260" y="122">Edge Fn</text>
+                </g>
+
+                <!-- Monitorización -->
+                <line class="sub-line" x1="175" y1="285" x2="170" y2="360" />
+                <g class="node-group" id="deploy-sub-4">
+                    <circle class="sub-circle" cx="170" cy="380" r="22" />
+                    <text class="sub-text" x="170" y="382">Monitor</text>
+                </g>
+            </g>
+        </svg>
+    </div>
+
+    <div class="info-box">
+        <strong>💡 Clic en cualquier nodo</strong> para expandir/contraer sus detalles. El mind map cubre todos los componentes esenciales de una aplicación full-stack con IA.
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener todos los grupos de nodos con data-branch
+            const branchNodes = document.querySelectorAll('[data-branch]');
+
+            branchNodes.forEach(node => {
+                node.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const branchId = this.getAttribute('data-branch');
+                    const subsGroup = document.getElementById(branchId + '-subs');
+                    const indicator = this.querySelector('.toggle-indicator');
+
+                    if (subsGroup) {
+                        subsGroup.classList.toggle('hidden-group');
+                        indicator.textContent = subsGroup.classList.contains('hidden-group') ? '+' : '−';
+                    }
+                });
+            });
+
+            // Opcional: cerrar todos los sub-grupos al cargar
+            const allSubs = document.querySelectorAll('.sub-group');
+            allSubs.forEach(sub => {
+                sub.classList.add('hidden-group');
+            });
+        });
+    </script>
+</body>
+</html>

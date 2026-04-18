@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map — Deploy: Sube tu App RAG a Render</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0a0a1a;color:#e8e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+        .topbar{padding:12px 20px;background:linear-gradient(90deg,#00f0ff,#0a6e5c);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+        .topbar a{color:#fff;text-decoration:none;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;font-size:.85em;transition:.3s}
+        .topbar a:hover{background:rgba(255,255,255,.3)}
+        .topbar h1{font-size:1.1em;color:#fff;text-align:center;flex:1;margin:0 12px}
+        .map{max-width:900px;margin:30px auto;padding:0 16px}
+        .center{text-align:center;margin-bottom:32px}
+        .center .pill{display:inline-block;background:linear-gradient(135deg,#00f0ff,#ff00e5);padding:16px 32px;border-radius:60px;font-size:1.4em;font-weight:800;color:#0a0a1a;box-shadow:0 0 30px rgba(0,240,255,.3)}
+        .center .sub{color:#8888aa;margin-top:8px;font-size:.95em}
+        .branch{margin-bottom:16px;border:1px solid rgba(0,240,255,.15);border-radius:12px;overflow:hidden;transition:.3s}
+        .branch:hover{border-color:rgba(0,240,255,.4);box-shadow:0 0 15px rgba(0,240,255,.08)}
+        .branch-head{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;background:#12122a;user-select:none;transition:.2s}
+        .branch-head:hover{background:#1a1a3e}
+        .branch-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2em;flex-shrink:0}
+        .b1 .branch-icon{background:rgba(0,240,255,.15);border:2px solid #00f0ff}
+        .b2 .branch-icon{background:rgba(255,0,229,.15);border:2px solid #ff00e5}
+        .b3 .branch-icon{background:rgba(57,255,20,.15);border:2px solid #39ff14}
+        .b4 .branch-icon{background:rgba(255,230,0,.15);border:2px solid #ffe600}
+        .b5 .branch-icon{background:rgba(255,107,0,.15);border:2px solid #ff6b00}
+        .branch-title{flex:1;font-weight:700;font-size:1.05em}
+        .b1 .branch-title{color:#00f0ff}
+        .b2 .branch-title{color:#ff00e5}
+        .b3 .branch-title{color:#39ff14}
+        .b4 .branch-title{color:#ffe600}
+        .b5 .branch-title{color:#ff6b00}
+        .toggle{color:#8888aa;font-size:1.4em;transition:transform .3s}
+        .branch.open .toggle{transform:rotate(45deg)}
+        .branch-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+        .branch.open .branch-body{max-height:600px}
+        .sub-list{padding:8px 20px 16px 72px;display:flex;flex-direction:column;gap:8px}
+        .sub-item{padding:10px 16px;background:#1a1a2e;border-radius:8px;border-left:3px solid;font-size:.93em;line-height:1.5}
+        .b1 .sub-item{border-color:#00f0ff}
+        .b2 .sub-item{border-color:#ff00e5}
+        .b3 .sub-item{border-color:#39ff14}
+        .b4 .sub-item{border-color:#ffe600}
+        .b5 .sub-item{border-color:#ff6b00}
+        .sub-item strong{color:#fff}
+        .sub-item code{background:#12122a;padding:2px 6px;border-radius:4px;font-size:.88em;color:#39ff14;font-family:'Fira Code',monospace}
+        @media(max-width:600px){.topbar h1{font-size:.9em}.center .pill{font-size:1.1em;padding:12px 24px}.sub-list{padding-left:52px}}
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="clase-08.html">← Volver a la clase</a>
+        <h1>Mind Map — Clase 08</h1>
+        <div style="width:80px"></div>
+    </div>
+
+    <div class="map">
+        <div class="center">
+            <div class="pill">Deploy: Sube tu App RAG a Render</div>
+            <p class="sub">Comparte tu proyecto con el mundo en minutos</p>
+        </div>
+
+        <!-- Rama 1 -->
+        <div class="branch b1">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🌍</div>
+                <div class="branch-title">¿Por qué hacer deploy?</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Compartir tu proyecto con el mundo</strong> — amigos, potenciales empleadores, clientes</div>
+                    <div class="sub-item">Imprescindible para portfolio — demuestra que puedes llevar proyectos hasta producción</div>
+                    <div class="sub-item">Demuestra habilidades completas end-to-end — no solo código, sino también infraestructura</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 2 -->
+        <div class="branch b2">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">📦</div>
+                <div class="branch-title">Preparar el proyecto</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><code>requirements.txt</code> — lista todas las dependencias (pip freeze o manual)</div>
+                    <div class="sub-item"><code>.env</code> — guarda API keys (NUNCA en el código hardcodeado)</div>
+                    <div class="sub-item"><code>.gitignore</code> — excluye .env, __pycache__, .venv para que no suban al repo</div>
+                    <div class="sub-item"><code>README.md</code> — instrucciones claras de cómo ejecutar localmente</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 3 -->
+        <div class="branch b3">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">⚡</div>
+                <div class="branch-title">Opciones gratuitas</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Streamlit Community Cloud:</strong> el más fácil para Streamlit, gratuito, integración GitHub directa</div>
+                    <div class="sub-item"><strong>Render:</strong> gratis pero se duerme tras 15 min sin uso, los primeros deployments son rápidos</div>
+                    <div class="sub-item"><strong>Hugging Face Spaces:</strong> bueno para demos de IA, entorno amigable, muchos templates</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 4 -->
+        <div class="branch b4">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🚀</div>
+                <div class="branch-title">Deploy en Render paso a paso</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>1. Crear repo en GitHub</strong> y subir código completo</div>
+                    <div class="sub-item"><strong>2. Crear cuenta en render.com</strong> (gratis)</div>
+                    <div class="sub-item"><strong>3. New Web Service</strong> → conectar tu repo de GitHub</div>
+                    <div class="sub-item"><strong>4. Configurar:</strong> Python 3, comando <code>pip install -r requirements.txt</code>, agregar variables de entorno (API keys como secretos)</div>
+                    <div class="sub-item"><strong>5. Deploy</strong> — Render construye y ejecuta tu app</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 5 -->
+        <div class="branch b5">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🔧</div>
+                <div class="branch-title">Problemas comunes</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>"Module not found":</strong> dependencia que falta en requirements.txt → agrégala y redeploy</div>
+                    <div class="sub-item"><strong>API key no funciona:</strong> revisar que las variables de entorno estén configuradas en Render dashboard</div>
+                    <div class="sub-item"><strong>App crashea:</strong> revisar logs en Render dashboard, suelen dar pistas claras</div>
+                    <div class="sub-item"><strong>Problemas de memoria:</strong> ChromaDB en disco puede dar problemas en free tier, considera usar en-memory o Pinecone</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
