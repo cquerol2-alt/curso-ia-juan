@@ -1,5 +1,5 @@
 {
-  "lastSync": "2026-04-18T09:42:37.836Z",
+  "lastSync": "2026-04-20T09:20:09.950Z",
   "student": "Juan Querol León",
   "xp": 200,
   "level": 4,
@@ -72,12 +72,12 @@
       "icon": "🤖",
       "color": "#ffe600"
     },
-    "RAG": {
+    "Context & RAG": {
       "mastery": 0,
       "completed": 0,
       "total": 10,
       "avgScore": null,
-      "icon": "🧙",
+      "icon": "🧩",
       "color": "#ff6b00"
     },
     "Agentes": {
@@ -106,12 +106,3 @@
     }
   }
 }
-
-
-
-
-
-
-
-
-
