@@ -354,10 +354,7 @@ Bonus: ..."></textarea>
             </h2>
             <p>Responde las siguientes 10 preguntas para verificar tu comprensión. Necesitas al menos 8 correctas para marcar esta clase como completada.</p>
 
-            <div class="quiz-container" id="quiz-container"></div>
-
-            <button class="btn btn-green" onclick="submitQuiz()">Enviar respuestas</button>
-            <div id="quizResult"></div>
+            <div id="quiz-container"></div>
         </section>
 
         <!-- Bottom Navigation -->
@@ -474,97 +471,13 @@ Bonus: ..."></textarea>
             }
         ];
 
-        // Render quiz
-        function renderQuiz() {
-            const container = document.getElementById('quiz-container');
-            container.innerHTML = '';
-
-            quizQuestions.forEach((q, index) => {
-                const questionDiv = document.createElement('div');
-                questionDiv.className = 'quiz-question';
-                questionDiv.innerHTML = `
-                    <div class="quiz-question-text">${index + 1}. ${q.question}</div>
-                    <div class="quiz-options">
-                        ${q.options.map((option, optIndex) => `
-                            <label class="quiz-option">
-                                <input type="radio" name="q${index}" value="${optIndex}">
-                                ${option}
-                            </label>
-                        `).join('')}
-                    </div>
-                `;
-                container.appendChild(questionDiv);
-            });
-        }
-
-        // Submit quiz
-        function submitQuiz() {
-            let correct = 0;
-            const answers = [];
-
-            for (let i = 0; i < quizQuestions.length; i++) {
-                const selected = document.querySelector(`input[name="q${i}"]:checked`);
-
-                if (!selected) {
-                    alert(`Por favor responde la pregunta ${i + 1}`);
-                    return;
-                }
-
-                const userAnswer = parseInt(selected.value);
-                answers.push(userAnswer);
-
-                if (userAnswer === quizQuestions[i].correct) {
-                    correct++;
-                }
-            }
-
-            // Show results
-            const resultDiv = document.getElementById('quizResult');
-            const percentage = (correct / quizQuestions.length) * 100;
-            const passed = correct >= 8;
-
-            resultDiv.innerHTML = `
-                <div class="quiz-result ${passed ? 'correct' : 'incorrect'}">
-                    ${passed ? '✅' : '❌'} ${correct} de ${quizQuestions.length} respuestas correctas (${percentage.toFixed(0)}%)
-                    ${passed ? '<br>¡Excelente! Has completado esta clase.' : '<br>Necesitas al menos 8 respuestas correctas. Intenta de nuevo.'}
-                </div>
-            `;
-
-            if (passed) {
-                // Mark class as completed
-                if (typeof CourseProgress !== 'undefined') {
-                    CourseProgress.initQuiz('quiz-container', quizQuestions, 'm2-c02');
-                }
-            }
-        }
-
-        // Initialize on load
+        // Initialize quiz (único sistema: CourseProgress)
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', function() {
-renderQuiz();
-
-            // Check if already completed
-            if (typeof CourseProgress !== 'undefined') {
-                if (CourseProgress.isClassCompleted('m2-c02')) {
-                    const badge = document.createElement('span');
-                    badge.className = 'score-display';
-                    badge.textContent = '✅ COMPLETADA';
-                    document.querySelector('header h1').parentElement.appendChild(badge);
-                }
-            }
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm2-c02');
             });
         } else {
-renderQuiz();
-
-            // Check if already completed
-            if (typeof CourseProgress !== 'undefined') {
-                if (CourseProgress.isClassCompleted('m2-c02')) {
-                    const badge = document.createElement('span');
-                    badge.className = 'score-display';
-                    badge.textContent = '✅ COMPLETADA';
-                    document.querySelector('header h1').parentElement.appendChild(badge);
-                }
-            }
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm2-c02');
         }
     </script>
 </body>
