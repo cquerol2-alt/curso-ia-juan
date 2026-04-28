@@ -486,79 +486,57 @@
         'first-submit': { name: 'Primera Entrega', icon: '📤' },
     };
 
+    // Las entregas viven en el repo como ficheros markdown en entregas/{classId}/ej{N}.md
+    // El frontmatter YAML lleva el estado y la sección "## Feedback" lleva el comentario
+    // de la revisión automática. Toda la lógica de fetch+parseo está centralizada en
+    // CourseProgress.fetchEntregas(); aquí sólo adaptamos el shape para el render.
     async function fetchEntregas() {
-        const url = `https://api.github.com/repos/${GITHUB_REPO}/issues?state=all&labels=entrega&per_page=30&t=${Date.now()}`;
-        const res = await fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
-        if (!res.ok) return [];
-        const issues = await res.json();
-        // For each issue, fetch first comment (review) if closed
-        const entregas = [];
-        for (const issue of issues) {
-            const labels = (issue.labels || []).map(l => l.name);
-            const tipo = labels.includes('mini-reto') ? 'Mini-Reto' : labels.includes('code-along') ? 'Práctica Guiada' : labels.includes('boss-battle') ? 'Boss Battle' : 'Ejercicio';
-            let estado = 'pendiente';
-            if (labels.includes('aprobado')) estado = 'aprobado';
-            else if (issue.state === 'closed') estado = 'revisado';
-
-            // Extract module/class from labels like m1, m1-c07
-            const claseLabel = labels.find(l => /^m\d+-c\d+$/.test(l) || /^m\d+-bb$/.test(l));
-            const modLabel = labels.find(l => /^m\d+$/.test(l));
-
+        if (!window.CourseProgress || typeof CourseProgress.fetchEntregas !== 'function') return [];
+        const raw = await CourseProgress.fetchEntregas();
+        return raw.map(e => {
             let feedback = null;
-            if (issue.comments > 0) {
-                try {
-                    const cUrl = `https://api.github.com/repos/${GITHUB_REPO}/issues/${issue.number}/comments?per_page=1`;
-                    const cRes = await fetch(cUrl, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
-                    if (cRes.ok) {
-                        const comments = await cRes.json();
-                        if (comments.length > 0) {
-                            const body = comments[0].body || '';
-                            const resultMatch = body.match(/\*\*Resultado:\s*(.+?)\*\*/);
-                            const bienMatch = body.match(/### Lo que está bien\n([\s\S]*?)(?=\n### |$)/);
-                            const sugerMatch = body.match(/### Sugerencias para mejorar\n([\s\S]*?)(?=\n### |$)/);
-
-                            if (bienMatch || sugerMatch) {
-                                // Structured review format
-                                feedback = {
-                                    resultado: resultMatch ? resultMatch[1].trim() : (estado === 'aprobado' ? '✅ APROBADO' : ''),
-                                    loBien: bienMatch ? bienMatch[1].trim().replace(/^- /gm, '• ') : '',
-                                    sugerencias: sugerMatch ? sugerMatch[1].trim().replace(/^- /gm, '• ') : '',
-                                    freeText: '',
-                                };
-                            } else {
-                                // Free-form review — clean up markdown and show body
-                                let cleanBody = body
-                                    .replace(/^## .*\n?/gm, '')           // remove ## headers
-                                    .replace(/\*\*(.+?)\*\*/g, '$1')      // bold → plain
-                                    .replace(/^\d+\.\s*/gm, '• ')         // numbered lists → bullets
-                                    .replace(/^- /gm, '• ')               // dash lists → bullets
-                                    .trim();
-                                // Show full comment without truncation
-                                feedback = {
-                                    resultado: estado === 'aprobado' ? '✅ APROBADO' : '',
-                                    loBien: '',
-                                    sugerencias: '',
-                                    freeText: cleanBody,
-                                };
-                            }
-                        }
-                    }
-                } catch(e) { /* silently ignore */ }
+            const body = (e.feedback || '').trim();
+            if (body) {
+                const resultMatch = body.match(/\*\*Resultado:\s*(.+?)\*\*/);
+                const bienMatch = body.match(/###\s*Lo que está bien\s*\n([\s\S]*?)(?=\n###\s|$)/);
+                const sugerMatch = body.match(/###\s*Sugerencias para mejorar\s*\n([\s\S]*?)(?=\n###\s|$)/);
+                const arreglarMatch = body.match(/###\s*Qué hay que arreglar\s*\n([\s\S]*?)(?=\n###\s|$)/);
+                const pistasMatch = body.match(/###\s*Pistas\s*\n([\s\S]*?)(?=\n###\s|$)/);
+                if (bienMatch || sugerMatch || arreglarMatch || pistasMatch) {
+                    feedback = {
+                        resultado: resultMatch ? resultMatch[1].trim() : (e.status === 'aprobado' ? '✅ APROBADO' : '🔄 NECESITA CORRECCIÓN'),
+                        loBien: bienMatch ? bienMatch[1].trim().replace(/^- /gm, '• ') : (arreglarMatch ? arreglarMatch[1].trim().replace(/^- /gm, '• ') : ''),
+                        sugerencias: sugerMatch ? sugerMatch[1].trim().replace(/^- /gm, '• ') : (pistasMatch ? pistasMatch[1].trim().replace(/^- /gm, '• ') : ''),
+                        freeText: '',
+                    };
+                } else {
+                    const clean = body
+                        .replace(/^##\s.*\n?/gm, '')
+                        .replace(/\*\*(.+?)\*\*/g, '$1')
+                        .replace(/^\d+\.\s*/gm, '• ')
+                        .replace(/^-\s/gm, '• ')
+                        .trim();
+                    feedback = {
+                        resultado: e.status === 'aprobado' ? '✅ APROBADO' : (e.status === 'revisado' ? '🔄 NECESITA CORRECCIÓN' : ''),
+                        loBien: '',
+                        sugerencias: '',
+                        freeText: clean,
+                    };
+                }
             }
-
-            entregas.push({
-                number: issue.number,
-                title: issue.title,
-                tipo,
-                estado,
-                clase: claseLabel || '',
-                modulo: modLabel || '',
-                fecha: issue.created_at,
-                url: issue.html_url,
+            const modMatch = (e.classId || '').match(/^(m\d+)/);
+            return {
+                number: null,
+                title: `[${e.typeName}] ${e.title}`,
+                tipo: e.typeName,
+                estado: e.status,
+                clase: e.classId || '',
+                modulo: modMatch ? modMatch[1] : '',
+                fecha: e.fecha,
+                url: e.url,
                 feedback,
-            });
-        }
-        return entregas;
+            };
+        });
     }
 
     async function fetchProgress() {
