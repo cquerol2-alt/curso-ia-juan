@@ -234,12 +234,45 @@
         </section>
 
         <!-- Feedback Section -->
+        <!-- Diagnóstico de entregas: visible si hay intentos registrados (incluye fallos).
+             Se rellena desde renderSubmissionAttempts() leyendo localStorage o progress-data.json. -->
+        <section id="submission-attempts-section" class="submission-attempts-section" style="display:none;">
+            <h2 class="section-title">🛠️ Últimos intentos de entrega</h2>
+        </section>
+
         <section id="feedback-section" style="display:none;">
             <h2 class="section-title">💬 Feedback de ejercicios</h2>
             <div id="feedback-list"></div>
         </section>
 
         <style>
+            .submission-attempts-section { margin-top: 1.5rem; }
+            .attempts-warning {
+                background: rgba(255,82,82,0.10);
+                border: 2px solid rgba(255,82,82,0.55);
+                border-radius: 10px;
+                padding: 0.8rem 1rem;
+                color: #ff7575;
+                font-weight: 600;
+                margin-bottom: 0.8rem;
+            }
+            .attempts-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 0.78rem;
+                background: var(--bg-card);
+                border-radius: 10px;
+                overflow: hidden;
+            }
+            .attempts-table th, .attempts-table td {
+                padding: 0.45rem 0.7rem;
+                text-align: left;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+            .attempts-table th { background: rgba(0,240,255,0.06); font-weight: 600; color: var(--neon-cyan); }
+            .attempts-table tr.attempt-fail td { color: #ff8a8a; }
+            .attempts-table tr.attempt-ok td { color: var(--text-secondary); }
+            .attempts-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem; }
             #feedback-section { margin-top: 1.5rem; }
             .feedback-card {
                 background: var(--bg-card);
@@ -398,77 +431,63 @@
                 }
             }
 
-            // --- Feedback Section: fetch entregas from GitHub ---
+            // --- Feedback Section: lee entregas/{classId}/ej{N}.md vía CourseProgress.fetchEntregas() ---
+            // Toda la lógica de listado + parsing de frontmatter está centralizada
+            // en CourseProgress.fetchEntregas(). Aquí sólo formateamos el feedback.
             fetchAndRenderFeedback();
+            renderSubmissionAttempts();
 
             async function fetchAndRenderFeedback() {
-                const REPO = 'cquerol2-alt/curso-ia-juan';
+                if (!window.CourseProgress || typeof CourseProgress.fetchEntregas !== 'function') return;
                 try {
-                    const url = `https://api.github.com/repos/${REPO}/issues?state=all&labels=entrega&per_page=30&t=${Date.now()}`;
-                    const res = await fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
-                    if (!res.ok) return;
-                    const issues = await res.json();
-
-                    const entregas = [];
-                    for (const issue of issues) {
-                        const labels = (issue.labels || []).map(l => l.name);
-                        const tipo = labels.includes('mini-reto') ? 'Mini-Reto' : labels.includes('code-along') ? 'Práctica Guiada' : labels.includes('boss-battle') ? 'Boss Battle' : 'Ejercicio';
-                        let estado = 'pendiente';
-                        if (labels.includes('aprobado')) estado = 'aprobado';
-                        else if (issue.state === 'closed') estado = 'revisado';
-
-                        const claseLabel = labels.find(l => /^m\d+-c\d+$/.test(l) || /^m\d+-bb$/.test(l));
-
+                    const raw = await CourseProgress.fetchEntregas();
+                    const entregas = raw.map(e => {
+                        const body = (e.feedback || '').trim();
                         let feedback = null;
-                        if (issue.comments > 0) {
-                            try {
-                                const cUrl = `https://api.github.com/repos/${REPO}/issues/${issue.number}/comments?per_page=1`;
-                                const cRes = await fetch(cUrl, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
-                                if (cRes.ok) {
-                                    const comments = await cRes.json();
-                                    if (comments.length > 0) {
-                                        const body = comments[0].body || '';
-                                        const resultMatch = body.match(/\*\*Resultado:\s*(.+?)\*\*/);
-                                        const bienMatch = body.match(/### Lo que está bien\n([\s\S]*?)(?=\n### |$)/);
-                                        const sugerMatch = body.match(/### Sugerencias para mejorar\n([\s\S]*?)(?=\n### |$)/);
-
-                                        if (bienMatch || sugerMatch) {
-                                            feedback = {
-                                                resultado: resultMatch ? resultMatch[1].trim() : (estado === 'aprobado' ? '✅ APROBADO' : ''),
-                                                loBien: bienMatch ? bienMatch[1].trim().replace(/^- /gm, '• ') : '',
-                                                sugerencias: sugerMatch ? sugerMatch[1].trim().replace(/^- /gm, '• ') : '',
-                                                freeText: '',
-                                            };
-                                        } else {
-                                            let cleanBody = body
-                                                .replace(/^## .*\n?/gm, '')
-                                                .replace(/\*\*(.+?)\*\*/g, '$1')
-                                                .replace(/^\d+\.\s*/gm, '• ')
-                                                .replace(/^- /gm, '• ')
-                                                .trim();
-                                            feedback = {
-                                                resultado: estado === 'aprobado' ? '✅ APROBADO' : '',
-                                                loBien: '',
-                                                sugerencias: '',
-                                                freeText: cleanBody,
-                                            };
-                                        }
-                                    }
-                                }
-                            } catch(e) { /* ignore */ }
+                        if (body) {
+                            const resultMatch = body.match(/\*\*Resultado:\s*(.+?)\*\*/);
+                            const bienMatch = body.match(/###\s*Lo que está bien\s*\n([\s\S]*?)(?=\n###\s|$)/);
+                            const sugerMatch = body.match(/###\s*Sugerencias para mejorar\s*\n([\s\S]*?)(?=\n###\s|$)/);
+                            const arreglarMatch = body.match(/###\s*Qué hay que arreglar\s*\n([\s\S]*?)(?=\n###\s|$)/);
+                            const pistasMatch = body.match(/###\s*Pistas\s*\n([\s\S]*?)(?=\n###\s|$)/);
+                            if (bienMatch || sugerMatch || arreglarMatch || pistasMatch) {
+                                feedback = {
+                                    resultado: resultMatch ? resultMatch[1].trim() : (e.status === 'aprobado' ? '✅ APROBADO' : '🔄 NECESITA CORRECCIÓN'),
+                                    loBien: bienMatch ? bienMatch[1].trim().replace(/^- /gm, '• ') : (arreglarMatch ? arreglarMatch[1].trim().replace(/^- /gm, '• ') : ''),
+                                    sugerencias: sugerMatch ? sugerMatch[1].trim().replace(/^- /gm, '• ') : (pistasMatch ? pistasMatch[1].trim().replace(/^- /gm, '• ') : ''),
+                                    freeText: '',
+                                };
+                            } else {
+                                const clean = body
+                                    .replace(/^##\s.*\n?/gm, '')
+                                    .replace(/\*\*(.+?)\*\*/g, '$1')
+                                    .replace(/^\d+\.\s*/gm, '• ')
+                                    .replace(/^-\s/gm, '• ')
+                                    .trim();
+                                feedback = {
+                                    resultado: e.status === 'aprobado' ? '✅ APROBADO' : (e.status === 'revisado' ? '🔄 NECESITA CORRECCIÓN' : ''),
+                                    loBien: '', sugerencias: '', freeText: clean,
+                                };
+                            }
                         }
+                        return {
+                            title: `[${e.typeName}] ${e.title}`,
+                            tipo: e.typeName,
+                            estado: e.status,
+                            clase: e.classId || '',
+                            fecha: e.fecha,
+                            url: e.url,
+                            feedback,
+                        };
+                    });
 
-                        entregas.push({ title: issue.title, tipo, estado, clase: claseLabel || '', fecha: issue.created_at, url: issue.html_url, feedback });
-                    }
-
-                    // Only show if there are entries with feedback
                     const withFeedback = entregas.filter(e => e.feedback);
                     if (withFeedback.length === 0) return;
 
                     document.getElementById('feedback-section').style.display = '';
                     let html = '';
                     for (const e of entregas) {
-                        const fechaStr = new Date(e.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                        const fechaStr = e.fecha ? new Date(e.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
                         const badgeClass = e.estado;
                         const badgeText = e.estado === 'aprobado' ? '✅ Aprobado' : e.estado === 'revisado' ? '📋 Revisado' : '⏳ Pendiente';
                         html += `<div class="feedback-card">`;
@@ -494,6 +513,47 @@
                 } catch(err) {
                     console.warn('Could not fetch feedback:', err);
                 }
+            }
+
+            // --- Diagnóstico: últimos intentos de entrega (incluye fallos) ---
+            // Visible sin necesidad de F12. Lee de localStorage o progress-data.json remoto.
+            async function renderSubmissionAttempts() {
+                const container = document.getElementById('submission-attempts-section');
+                if (!container) return;
+                let attempts = [];
+                try {
+                    if (window.CourseProgress && typeof CourseProgress.getSubmissionAttempts === 'function') {
+                        attempts = CourseProgress.getSubmissionAttempts();
+                    }
+                    if (!attempts.length) {
+                        const r = await fetch(`progress-data.json?t=${Date.now()}`, { cache: 'no-store' });
+                        if (r.ok) {
+                            const j = await r.json();
+                            attempts = Array.isArray(j.submissionAttempts) ? j.submissionAttempts : [];
+                        }
+                    }
+                } catch (e) {}
+                if (!attempts.length) return;
+
+                const failed = attempts.filter(a => !a.ok);
+                const ok = attempts.filter(a => a.ok);
+                const lastN = attempts.slice(0, 10);
+                let html = '';
+                if (failed.length) {
+                    html += `<div class="attempts-warning">⚠️ ${failed.length} intento(s) de entrega fallaron. Último fallo: ${new Date(failed[0].ts).toLocaleString('es-ES')} — ${failed[0].code}${failed[0].http ? ' (HTTP ' + failed[0].http + ')' : ''}</div>`;
+                }
+                html += `<table class="attempts-table"><thead><tr><th>Cuándo</th><th>Clase</th><th>Ej</th><th>Resultado</th><th>HTTP</th><th>Mensaje</th></tr></thead><tbody>`;
+                for (const a of lastN) {
+                    const when = a.ts ? new Date(a.ts).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+                    const okIcon = a.ok ? '✅' : '❌';
+                    const cls = a.ok ? 'attempt-ok' : 'attempt-fail';
+                    const msg = (a.msg || '').replace(/[<>]/g, c => c === '<' ? '&lt;' : '&gt;').slice(0, 120);
+                    html += `<tr class="${cls}"><td>${when}</td><td>${a.classId || ''}</td><td>${a.ex || ''}</td><td>${okIcon} ${a.code || ''}</td><td>${a.http || ''}</td><td>${msg}</td></tr>`;
+                }
+                html += `</tbody></table>`;
+                html += `<div class="attempts-meta">Total: ${attempts.length} intento(s) — ${ok.length} OK, ${failed.length} fallo(s)</div>`;
+                container.innerHTML = html;
+                container.style.display = '';
             }
 
             // Pending Tools — show for modules Juan has visited
