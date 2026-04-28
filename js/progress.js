@@ -203,8 +203,13 @@ const CourseProgress = (() => {
       rewardsLog: [],          // [{date, tier, text, icon}]
       totalRewardsEarned: 0,
       highestCombo: 0,
+      // Histórico de intentos de entrega (éxitos y fallos) para diagnóstico sin F12.
+      // { ts, classId, ex, ok, http, code, msg, issue, codeLen }
+      submissionAttempts: [],
     };
   }
+
+  const MAX_SUBMISSION_ATTEMPTS = 50;
 
   // --- Persistencia ---
   function load() {
@@ -665,6 +670,8 @@ const CourseProgress = (() => {
       totalRewardsEarned: state.totalRewardsEarned || 0,
       highestCombo: state.highestCombo || 0,
       skillProfile: getSkillProfile(),
+      // Intentos de entrega para diagnóstico (más reciente primero, max 50)
+      submissionAttempts: Array.isArray(state.submissionAttempts) ? state.submissionAttempts.slice(0, MAX_SUBMISSION_ATTEMPTS) : [],
     };
 
     try {
@@ -809,6 +816,21 @@ const CourseProgress = (() => {
 
     // highestCombo: el mayor
     merged.highestCombo = Math.max(local.highestCombo || 0, remote.highestCombo || 0);
+
+    // submissionAttempts: unión deduplicada por ts+classId+ex, max MAX_SUBMISSION_ATTEMPTS
+    const localAtt = Array.isArray(local.submissionAttempts) ? local.submissionAttempts : [];
+    const remoteAtt = Array.isArray(remote.submissionAttempts) ? remote.submissionAttempts : [];
+    const seenAttKeys = new Set();
+    const allAttempts = [];
+    for (const a of [...localAtt, ...remoteAtt]) {
+      if (!a || !a.ts) continue;
+      const key = `${a.ts}|${a.classId || ''}|${a.ex || ''}`;
+      if (seenAttKeys.has(key)) continue;
+      seenAttKeys.add(key);
+      allAttempts.push(a);
+    }
+    allAttempts.sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
+    merged.submissionAttempts = allAttempts.slice(0, MAX_SUBMISSION_ATTEMPTS);
 
     // Recalcular level y levelTitle desde XP fusionada
     const levelInfo = getLevelInfo(merged.xp);
@@ -1332,12 +1354,15 @@ const CourseProgress = (() => {
     } catch (e) { return {}; }
   }
 
-  function saveSubmission(classId, exerciseNum, issueNum, url) {
+  // Persiste una entrega tras un PUT exitoso a /contents/entregas/{classId}/ej{N}.md
+  // Ya no usamos Issues. Guardamos filePath + sha + url.
+  function saveSubmission(classId, exerciseNum, info) {
     const subs = getSubmissions();
     if (!subs[classId]) subs[classId] = {};
     subs[classId][exerciseNum] = {
-      issueNum,
-      url,
+      filePath: info.filePath || '',
+      url: info.url || '',
+      sha: info.sha || '',
       date: new Date().toISOString(),
       status: 'pendiente',
     };
@@ -1396,84 +1421,157 @@ const CourseProgress = (() => {
   }
 
   // --- Mostrar estado en formulario ---
+  // Tipos: success | warning | error | error-persistent | info
+  // - error-persistent: caja con borde rojo, no desaparece sola, muy visible.
   function _showSubmitStatus(exerciseNum, html, type) {
     const el = document.getElementById(`submit-status-ejercicio-${exerciseNum}`);
     if (!el) return;
-    const colors = { success: '#00e676', warning: '#ffa726', error: '#ff5252' };
+    const colors = { success: '#00e676', warning: '#ffa726', error: '#ff5252', 'error-persistent': '#ff5252', info: '#64b5f6' };
     el.style.color = colors[type] || '#b0b0cc';
     el.innerHTML = html;
+
+    if (type === 'error-persistent') {
+      el.style.cssText += 'display:block;padding:12px 14px;margin-top:10px;border:2px solid #ff5252;border-radius:8px;background:rgba(255,82,82,0.08);font-size:0.95em;line-height:1.45;font-weight:500;';
+    } else {
+      el.style.padding = '';
+      el.style.border = '';
+      el.style.background = '';
+      el.style.fontWeight = '';
+    }
   }
 
-  // --- Enviar ejercicio como GitHub Issue ---
+  // Marca el textarea con borde de aviso (visualmente claro qué ejercicio falló).
+  function _flagTextarea(exerciseNum, color) {
+    const ta = document.getElementById(`code-ejercicio-${exerciseNum}`);
+    if (!ta) return;
+    if (color) {
+      ta.style.borderColor = color;
+      ta.style.boxShadow = `0 0 0 2px ${color}33`;
+    } else {
+      ta.style.borderColor = '';
+      ta.style.boxShadow = '';
+    }
+  }
+
+  // --- Registro persistente de intentos de entrega ---
+  // Cada intento (ok o fallo) se guarda en state.submissionAttempts y se sincroniza
+  // a GitHub vía progress-data.json. Si falla, fuerza sync inmediato para que
+  // el error quede registrado aunque Juan cierre la pestaña sin ver el mensaje.
+  function recordSubmissionAttempt(attempt) {
+    try {
+      const state = load();
+      if (!Array.isArray(state.submissionAttempts)) state.submissionAttempts = [];
+      const entry = {
+        ts: new Date().toISOString(),
+        classId: attempt.classId || '',
+        ex: attempt.ex || 1,
+        ok: !!attempt.ok,
+        http: attempt.http || null,
+        code: attempt.code || '',
+        msg: (attempt.msg || '').slice(0, 500),
+        issue: attempt.issue || null,
+        codeLen: typeof attempt.codeLen === 'number' ? attempt.codeLen : null,
+      };
+      state.submissionAttempts.unshift(entry);
+      if (state.submissionAttempts.length > MAX_SUBMISSION_ATTEMPTS) {
+        state.submissionAttempts = state.submissionAttempts.slice(0, MAX_SUBMISSION_ATTEMPTS);
+      }
+      save(state);
+      if (!entry.ok) {
+        if (_syncTimeout) { clearTimeout(_syncTimeout); _syncTimeout = null; }
+        syncToGitHub().catch((e) => console.warn('[Entrega] sync inmediato falló:', e));
+      }
+    } catch (e) {
+      console.warn('[Entrega] No se pudo registrar intento:', e);
+    }
+  }
+
+  // --- Enviar ejercicio como fichero en entregas/{classId}/ej{N}.md ---
   async function submitExercise(classId, exerciseNum, buttonEl) {
+    const LOG = '[Entrega]';
+    console.log(`${LOG} ▶ Inicio submitExercise`, { classId, exerciseNum });
+    _flagTextarea(exerciseNum, null);
+
     const token = localStorage.getItem(SYNC_TOKEN_KEY);
     if (!token) {
-      _showSubmitStatus(exerciseNum, '⚠️ Configura la sincronización en el dashboard primero.', 'warning');
+      console.error(`${LOG} No hay token PAT en localStorage (clave "${SYNC_TOKEN_KEY}").`);
+      _showSubmitStatus(exerciseNum,
+        '⚠️ <b>Sin token de GitHub.</b> Vuelve al dashboard y configura tu PAT antes de entregar.',
+        'error-persistent');
+      _flagTextarea(exerciseNum, '#ffa726');
+      recordSubmissionAttempt({ classId, ex: exerciseNum, ok: false, code: 'no-token', msg: 'Sin token PAT' });
       return;
     }
 
-    // Recoger datos del formulario
-    const container = buttonEl.closest('.exercise-submit');
-    const dataType = container ? container.dataset.type : 'mini-reto';
+    let container, dataType;
+    let code = '', notes = '', repoUrl = '', deployUrl = '', reflection = '';
+    try {
+      container = buttonEl.closest('.exercise-submit');
+      if (!container) throw new Error('No encuentro el contenedor .exercise-submit');
+      dataType = container.dataset.type || 'mini-reto';
+      console.log(`${LOG} dataType=${dataType}`);
 
-    let code = '';
-    let notes = '';
-    let repoUrl = '';
-    let deployUrl = '';
-    let reflection = '';
+      if (dataType === 'boss-battle') {
+        const inputs = container.querySelectorAll('input[type="url"]');
+        repoUrl = inputs[0] ? inputs[0].value.trim() : '';
+        deployUrl = inputs[1] ? inputs[1].value.trim() : '';
+        const textareas = container.querySelectorAll('textarea');
+        code = textareas[0] ? textareas[0].value.trim() : '';
+        reflection = textareas[1] ? textareas[1].value.trim() : '';
+      } else {
+        const codeEl = document.getElementById(`code-ejercicio-${exerciseNum}`);
+        const notesEl = document.getElementById(`notes-ejercicio-${exerciseNum}`);
+        code = codeEl ? codeEl.value.trim() : '';
+        notes = notesEl ? notesEl.value.trim() : '';
 
-    if (dataType === 'boss-battle') {
-      const inputs = container.querySelectorAll('input[type="url"]');
-      repoUrl = inputs[0] ? inputs[0].value.trim() : '';
-      deployUrl = inputs[1] ? inputs[1].value.trim() : '';
-      const textareas = container.querySelectorAll('textarea');
-      code = textareas[0] ? textareas[0].value.trim() : '';
-      reflection = textareas[1] ? textareas[1].value.trim() : '';
-    } else {
-      const codeEl = document.getElementById(`code-ejercicio-${exerciseNum}`);
-      const notesEl = document.getElementById(`notes-ejercicio-${exerciseNum}`);
-      code = codeEl ? codeEl.value.trim() : '';
-      notes = notesEl ? notesEl.value.trim() : '';
+        if (dataType === 'code-along') {
+          const check = container.querySelector('input[type="checkbox"]');
+          if (check && !check.checked) {
+            console.warn(`${LOG} Checkbox sin marcar`);
+            _showSubmitStatus(exerciseNum, '⚠️ Confirma que te funciona antes de entregar.', 'warning');
+            return;
+          }
+        }
 
-      // Checkbox para code-along
-      if (dataType === 'code-along') {
-        const check = container.querySelector('input[type="checkbox"]');
-        if (check && !check.checked) {
-          _showSubmitStatus(exerciseNum, '⚠️ Confirma que te funciona antes de entregar.', 'warning');
-          return;
+        const outputEl = document.getElementById(`output-ejercicio-${exerciseNum}`);
+        if (outputEl) {
+          const output = outputEl.value.trim();
+          if (output) notes = `**Output:**\n\`\`\`\n${output}\n\`\`\`\n\n${notes}`;
         }
       }
-
-      // Output para mini-reto
-      const outputEl = document.getElementById(`output-ejercicio-${exerciseNum}`);
-      if (outputEl) {
-        const output = outputEl.value.trim();
-        if (output) notes = `**Output:**\n\`\`\`\n${output}\n\`\`\`\n\n${notes}`;
-      }
+    } catch (e) {
+      console.error(`${LOG} Error leyendo formulario:`, e);
+      _showSubmitStatus(exerciseNum,
+        `❌ <b>Error interno al leer el formulario:</b> ${e.message}.<br>Avisa a Cristina.`,
+        'error-persistent');
+      recordSubmissionAttempt({ classId, ex: exerciseNum, ok: false, code: 'form-error', msg: String(e && e.message || e) });
+      return;
     }
 
-    // Validación mínima
+    console.log(`${LOG} Datos: codeLen=${code.length}, repoUrl=${repoUrl ? 'sí' : 'no'}`);
+
     if (!code && !repoUrl) {
       _showSubmitStatus(exerciseNum, '⚠️ Pega tu código antes de entregar.', 'warning');
+      _flagTextarea(exerciseNum, '#ffa726');
+      recordSubmissionAttempt({ classId, ex: exerciseNum, ok: false, code: 'empty', msg: 'Sin código', codeLen: 0 });
       return;
     }
     if (code.length < 50 && !repoUrl) {
-      _showSubmitStatus(exerciseNum, '⚠️ El código parece muy corto (mín. 50 caracteres).', 'warning');
+      _showSubmitStatus(exerciseNum, `⚠️ El código parece muy corto (${code.length}/50 chars mín.).`, 'warning');
+      _flagTextarea(exerciseNum, '#ffa726');
+      recordSubmissionAttempt({ classId, ex: exerciseNum, ok: false, code: 'short', msg: `${code.length} chars`, codeLen: code.length });
       return;
     }
 
-    // Deshabilitar botón
     const originalText = buttonEl.textContent;
     buttonEl.textContent = 'Enviando...';
     buttonEl.disabled = true;
 
-    // Parsear classId
     const [modPart, classPart] = classId.split('-');
     const moduleNum = modPart.replace('m', '');
     const classNum = classPart.replace('c', '');
     const moduleName = MODULES[moduleNum] ? MODULES[moduleNum].name : `Módulo ${moduleNum}`;
 
-    // Leer tipo y título del catálogo
     const exList = EXERCISES[classId] || [];
     const exInfo = exList.find(e => e.num === exerciseNum) || {};
     const typeLabels = { A: 'code-along', B: 'mini-reto', C: 'reto-extra', D: 'boss-battle' };
@@ -1481,79 +1579,167 @@ const CourseProgress = (() => {
     const exType = exInfo.type || 'B';
     const exTitle = exInfo.title || `Ejercicio ${exerciseNum}`;
 
-    const title = `[${typeNames[exType]}] M${moduleNum} C${classNum} — ${exTitle}`;
+    const filePath = `entregas/${classId}/ej${exerciseNum}.md`;
+    const submittedAtIso = new Date().toISOString();
 
-    // Construir body del Issue
+    const fmLines = [
+      '---',
+      `classId: ${classId}`,
+      `exerciseNum: ${exerciseNum}`,
+      `type: ${exType}`,
+      `typeLabel: ${typeLabels[exType]}`,
+      `typeName: "${typeNames[exType]}"`,
+      `title: ${JSON.stringify(exTitle)}`,
+      `moduleNum: ${moduleNum}`,
+      `moduleName: ${JSON.stringify(moduleName)}`,
+      `classNum: "${classNum}"`,
+      `submittedAt: "${submittedAtIso}"`,
+      `status: pendiente`,
+      `xpAwarded: 0`,
+      `repoUrl: ${JSON.stringify(repoUrl || '')}`,
+      `deployUrl: ${JSON.stringify(deployUrl || '')}`,
+      `codeLen: ${code.length}`,
+      `reviewedAt: null`,
+      '---',
+      '',
+    ];
     const bodyParts = [
-      `## ${typeNames[exType]}: ${exTitle}`,
-      ``,
+      `# ${typeNames[exType]} — M${moduleNum} C${classNum}: ${exTitle}`,
+      '',
       `| Campo | Valor |`,
       `|-------|-------|`,
       `| **Módulo** | ${moduleNum} — ${moduleName} |`,
       `| **Clase** | ${classNum} |`,
       `| **Tipo** | ${typeNames[exType]} |`,
       `| **Ejercicio** | ${exerciseNum} |`,
-      `| **Fecha** | ${new Date().toLocaleDateString('es-ES')} ${new Date().toLocaleTimeString('es-ES')} |`,
+      `| **Entregado** | ${new Date().toLocaleDateString('es-ES')} ${new Date().toLocaleTimeString('es-ES')} |`,
     ];
-
     if (repoUrl) bodyParts.push(`| **Repo** | ${repoUrl} |`);
     if (deployUrl) bodyParts.push(`| **Deploy** | ${deployUrl} |`);
 
-    bodyParts.push(``, `### Código`, ``, '```python', code, '```');
+    bodyParts.push('', '## Código', '', '```python', code || '(sin código)', '```');
+    if (reflection) bodyParts.push('', '## Reflexión de Juan', '', reflection);
+    if (notes)      bodyParts.push('', '## Notas de Juan', '', notes);
 
-    if (reflection) bodyParts.push(``, `### Reflexión de Juan`, ``, reflection);
-    if (notes) bodyParts.push(``, `### Notas de Juan`, ``, notes);
+    bodyParts.push('', '---', '', '## Feedback', '', '_Pendiente de revisión automática._');
 
-    bodyParts.push(``, `---`, `*Enviado desde el curso IA para Desarrolladores Web*`);
+    const fileMarkdown = fmLines.join('\n') + bodyParts.join('\n') + '\n';
+    const contentB64 = btoa(unescape(encodeURIComponent(fileMarkdown)));
 
-    const body = bodyParts.join('\n');
-    const labels = ['entrega', typeLabels[exType], `m${moduleNum}`, classId, 'pendiente'];
+    let priorSha = null;
+    try {
+      const getRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}?ref=main&t=${Date.now()}`,
+        { headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
+      );
+      if (getRes.ok) {
+        priorSha = (await getRes.json()).sha;
+        console.log(`${LOG} Existente, sobrescribiendo (sha=${priorSha.slice(0,7)})`);
+      }
+    } catch (_) {}
+
+    const commitMsg = priorSha
+      ? `entrega: ${classId} ej${exerciseNum} (re-entrega)`
+      : `entrega: ${classId} ej${exerciseNum} — ${exTitle}`.slice(0, 100);
+
+    const putBody = { message: commitMsg, content: contentB64, branch: 'main' };
+    if (priorSha) putBody.sha = priorSha;
 
     try {
-      const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/issues`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title, body, labels }),
-      });
+      console.log(`${LOG} PUT ${filePath} (${fileMarkdown.length} chars)`);
+      const res = await fetch(
+        `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json',
+          },
+          body: JSON.stringify(putBody),
+        }
+      );
 
-      if (!res.ok) throw new Error(`GitHub API ${res.status}`);
-      const issue = await res.json();
+      if (!res.ok) {
+        let bodyTxt = '';
+        try { bodyTxt = await res.text(); } catch (_) {}
+        console.error(`${LOG} GitHub API ${res.status} ${res.statusText}`, bodyTxt);
 
-      // Guardar en localStorage
-      saveSubmission(classId, exerciseNum, issue.number, issue.html_url);
+        let msg = '';
+        let codeKey = `http-${res.status}`;
+        if (res.status === 401) {
+          codeKey = 'http-401';
+          msg = '❌ <b>Token de GitHub caducado o inválido (401).</b><br>Vuelve al dashboard, regenera tu PAT en <a href="https://github.com/settings/tokens" target="_blank" style="color:#64b5f6">github.com/settings/tokens</a> con permiso <code>repo</code> y vuelve a sincronizar.';
+        } else if (res.status === 403) {
+          if (/rate limit/i.test(bodyTxt)) {
+            codeKey = 'http-403-rate';
+            msg = '❌ <b>Rate limit de GitHub (403).</b><br>Espera 1 hora y vuelve a intentar.';
+          } else {
+            codeKey = 'http-403-perm';
+            msg = '❌ <b>Permiso denegado (403).</b><br>Tu token no tiene permiso para escribir en el repo. Regenera el PAT con scope <code>repo</code>.';
+          }
+        } else if (res.status === 409) {
+          codeKey = 'http-409';
+          msg = '❌ <b>Conflicto al guardar (409).</b><br>El fichero cambió entretanto. Refresca la página y vuelve a entregar.';
+        } else if (res.status === 422) {
+          codeKey = 'http-422';
+          msg = `❌ <b>Datos inválidos (422):</b> ${bodyTxt}.<br>Avisa a Cristina.`;
+        } else {
+          msg = `❌ <b>Error de GitHub ${res.status}:</b> ${bodyTxt || res.statusText}`;
+        }
+        _showSubmitStatus(exerciseNum, msg, 'error-persistent');
+        _flagTextarea(exerciseNum, '#ff5252');
+        recordSubmissionAttempt({
+          classId, ex: exerciseNum, ok: false, http: res.status,
+          code: codeKey, msg: bodyTxt.slice(0, 300) || res.statusText, codeLen: code.length,
+        });
+        return;
+      }
 
-      // XP por entrega
+      const result = await res.json();
+      const fileHtmlUrl = (result.content && result.content.html_url) || `https://github.com/${GITHUB_REPO}/blob/main/${filePath}`;
+      const fileSha = (result.content && result.content.sha) || '';
+      console.log(`${LOG} ✓ Fichero entregado: ${fileHtmlUrl}`);
+
+      saveSubmission(classId, exerciseNum, { filePath, url: fileHtmlUrl, sha: fileSha });
+
       const xpOnSubmit = EXERCISE_XP[exType] ? EXERCISE_XP[exType].onSubmit : 0;
       if (xpOnSubmit > 0) {
         const state = load();
         state.xp += xpOnSubmit;
-        // Badge primera entrega
-        if (!state.badges.includes('first-submit')) {
-          state.badges.push('first-submit');
-        }
+        if (!state.badges.includes('first-submit')) state.badges.push('first-submit');
         save(state);
       }
 
       _showSubmitStatus(exerciseNum,
-        `✅ Entregado — <a href="${issue.html_url}" target="_blank" style="color:#00e676;">Ver en GitHub #${issue.number}</a>` +
+        `✅ Entregado — <a href="${fileHtmlUrl}" target="_blank" style="color:#00e676;">Ver en GitHub</a>` +
         (xpOnSubmit > 0 ? ` (+${xpOnSubmit} XP)` : ''),
         'success');
 
-      // Actualizar UI del formulario
-      _markFormAsSubmitted(container, issue.html_url, issue.number, 'pendiente');
+      _markFormAsSubmitted(container, fileHtmlUrl, null, 'pendiente');
+
+      recordSubmissionAttempt({
+        classId, ex: exerciseNum, ok: true, http: res.status,
+        code: 'ok', msg: filePath, issue: fileHtmlUrl, codeLen: code.length,
+      });
 
     } catch (err) {
-      _showSubmitStatus(exerciseNum, `❌ Error al entregar: ${err.message}`, 'error');
+      console.error(`${LOG} Excepción:`, err);
+      _showSubmitStatus(exerciseNum,
+        `❌ <b>Error inesperado:</b> ${err.message}.<br>Comprueba tu conexión y reintenta.`,
+        'error-persistent');
+      _flagTextarea(exerciseNum, '#ff5252');
+      recordSubmissionAttempt({
+        classId, ex: exerciseNum, ok: false, http: null,
+        code: 'exception', msg: String(err && err.message || err), codeLen: code.length,
+      });
     } finally {
       buttonEl.textContent = originalText;
       buttonEl.disabled = false;
     }
   }
 
-  function _markFormAsSubmitted(container, url, issueNum, status) {
+  function _markFormAsSubmitted(container, url, _legacy, status) {
     if (!container) return;
     const textareas = container.querySelectorAll('textarea');
     const inputs = container.querySelectorAll('input');
@@ -1573,121 +1759,152 @@ const CourseProgress = (() => {
       const statusEl = document.getElementById(`submit-status-ejercicio-${exNum}`);
       if (!statusEl) continue;
 
+      const url = data.url || (data.filePath ? `https://github.com/${GITHUB_REPO}/blob/main/${data.filePath}` : '#');
+      const linkLabel = 'Ver en GitHub';
+
       if (data.status === 'aprobado') {
-        statusEl.innerHTML = `🏆 Aprobado — <a href="${data.url}" target="_blank" style="color:#00e676;">Ver en GitHub #${data.issueNum}</a>`;
+        statusEl.innerHTML = `🏆 Aprobado — <a href="${url}" target="_blank" style="color:#00e676;">${linkLabel}</a>`;
         statusEl.style.color = '#00e676';
       } else if (data.status === 'revisado') {
-        statusEl.innerHTML = `💬 Tienes feedback — <a href="${data.url}" target="_blank" style="color:#bb86fc;">Ver en GitHub #${data.issueNum}</a>`;
+        statusEl.innerHTML = `💬 Tienes feedback — <a href="${url}" target="_blank" style="color:#bb86fc;">${linkLabel}</a>`;
         statusEl.style.color = '#bb86fc';
       } else {
-        statusEl.innerHTML = `✅ Entregado — <a href="${data.url}" target="_blank" style="color:#00e676;">Ver en GitHub #${data.issueNum}</a>`;
+        statusEl.innerHTML = `✅ Entregado — <a href="${url}" target="_blank" style="color:#00e676;">${linkLabel}</a>`;
         statusEl.style.color = '#00e676';
       }
 
-      // Deshabilitar formulario si ya entregó
       const container = statusEl.closest('.exercise-submit');
-      if (container) _markFormAsSubmitted(container, data.url, data.issueNum, data.status);
+      if (container) _markFormAsSubmitted(container, url, null, data.status);
     }
   }
 
-  // --- Sync de estados desde GitHub Issues ---
+  // --- Parser sencillo de frontmatter YAML (clave: valor por línea) ---
+  // Tolerante a CRLF (Windows) y espacios extra. Soporta strings con/sin comillas, números, null.
+  function _parseFrontmatter(md) {
+    if (typeof md !== 'string') return {};
+    const text = md.replace(/\r\n/g, '\n');
+    const m = text.match(/^---\s*\n([\s\S]*?)\n---/);
+    if (!m) return {};
+    const out = {};
+    const lines = m[1].split('\n');
+    for (const ln of lines) {
+      const trimmed = ln.replace(/\s+$/, '');
+      const kv = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*):\s*(.*)$/);
+      if (!kv) continue;
+      let v = kv[2].trim();
+      if (v === 'null' || v === '') { out[kv[1]] = null; continue; }
+      if (/^"(.*)"$/.test(v) || /^'(.*)'$/.test(v)) { out[kv[1]] = v.slice(1, -1); continue; }
+      if (/^-?\d+(\.\d+)?$/.test(v)) { out[kv[1]] = Number(v); continue; }
+      out[kv[1]] = v;
+    }
+    return out;
+  }
+
+  // --- Sync de estados leyendo el frontmatter de cada fichero pendiente ---
   const SYNC_STATUS_KEY = 'curso-ia-juan-last-status-sync';
-  const SYNC_STATUS_THROTTLE = 5 * 60 * 1000; // 5 min
+  const SYNC_STATUS_THROTTLE = 5 * 60 * 1000;
 
   async function syncSubmissionStatuses() {
     const token = localStorage.getItem(SYNC_TOKEN_KEY);
     if (!token) return;
-
-    // Throttle
     try {
       const lastSync = parseInt(localStorage.getItem(SYNC_STATUS_KEY) || '0', 10);
       if (Date.now() - lastSync < SYNC_STATUS_THROTTLE) return;
-    } catch (e) { /* continue */ }
+    } catch (e) {}
 
     const submissions = getSubmissions();
-    const pendingIssues = [];
-
+    const pending = [];
     for (const [classId, exercises] of Object.entries(submissions)) {
       for (const [exNum, data] of Object.entries(exercises)) {
-        if (data.status !== 'aprobado') {
-          pendingIssues.push({ classId, exNum, issueNum: data.issueNum });
+        if (data.status !== 'aprobado' && data.filePath) {
+          pending.push({ classId, exNum, filePath: data.filePath });
         }
       }
     }
+    if (pending.length === 0) return;
 
-    if (pendingIssues.length === 0) return;
-
-    for (const item of pendingIssues) {
+    for (const item of pending) {
       try {
         const res = await fetch(
-          `https://api.github.com/repos/${GITHUB_REPO}/issues/${item.issueNum}`,
-          { headers: { 'Authorization': `Bearer ${token}` } }
+          `https://api.github.com/repos/${GITHUB_REPO}/contents/${item.filePath}?ref=main&t=${Date.now()}`,
+          { headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
         );
         if (!res.ok) continue;
-        const issue = await res.json();
-
-        const labels = issue.labels.map(l => l.name);
-        let newStatus = 'pendiente';
-        if (labels.includes('aprobado')) newStatus = 'aprobado';
-        else if (labels.includes('revisado') || issue.comments > 0) newStatus = 'revisado';
-
+        const file = await res.json();
+        const md = decodeURIComponent(escape(atob(file.content || '')));
+        const fm = _parseFrontmatter(md);
+        const newStatus = (fm.status === 'aprobado' || fm.status === 'revisado') ? fm.status : 'pendiente';
         updateSubmissionStatus(item.classId, item.exNum, newStatus);
-      } catch (e) { /* skip this issue */ }
+      } catch (e) {}
     }
-
-    try { localStorage.setItem(SYNC_STATUS_KEY, String(Date.now())); } catch (e) { /* ignore */ }
+    try { localStorage.setItem(SYNC_STATUS_KEY, String(Date.now())); } catch (e) {}
   }
 
-  // --- Pull submissions from GitHub Issues (rebuild localStorage from remote) ---
+  // --- Pull submissions desde el directorio entregas/ del repo ---
   async function pullSubmissionsFromGitHub() {
-    // Fetch all issues with label 'entrega' (no auth needed for public repos)
     try {
-      const url = `https://api.github.com/repos/${GITHUB_REPO}/issues?state=all&labels=entrega&per_page=50&t=${Date.now()}`;
-      const res = await fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
-      if (!res.ok) return false;
-      const issues = await res.json();
-      if (issues.length === 0) return false;
+      const listRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_REPO}/contents/entregas?ref=main&t=${Date.now()}`,
+        { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+      );
+      if (!listRes.ok) return false;
+      const classDirs = await listRes.json();
+      if (!Array.isArray(classDirs)) return false;
 
       const subs = getSubmissions();
       let changed = false;
 
-      for (const issue of issues) {
-        const labels = (issue.labels || []).map(l => l.name);
+      for (const dir of classDirs) {
+        if (dir.type !== 'dir') continue;
+        const classId = dir.name;
 
-        // Extract classId from labels (e.g., m1-c07)
-        const claseLabel = labels.find(l => /^m\d+-c\d+$/.test(l) || /^m\d+-bb$/.test(l));
-        if (!claseLabel) continue;
+        const fRes = await fetch(
+          `https://api.github.com/repos/${GITHUB_REPO}/contents/${dir.path}?ref=main&t=${Date.now()}`,
+          { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+        );
+        if (!fRes.ok) continue;
+        const files = await fRes.json();
+        if (!Array.isArray(files)) continue;
 
-        // Determine exercise number from issue title or default to 1
-        let exNum = 1;
-        const exMatch = issue.title.match(/Ejercicio\s+(\d+)/i);
-        if (exMatch) exNum = parseInt(exMatch[1], 10);
+        for (const f of files) {
+          if (f.type !== 'file' || !/^ej(\d+)\.md$/i.test(f.name)) continue;
+          const exNum = parseInt(f.name.match(/^ej(\d+)\.md$/i)[1], 10);
 
-        // Determine status
-        let status = 'pendiente';
-        if (labels.includes('aprobado')) status = 'aprobado';
-        else if (labels.includes('revisado') || issue.comments > 0) status = 'revisado';
+          let status = 'pendiente';
+          try {
+            const cRes = await fetch(
+              `https://api.github.com/repos/${GITHUB_REPO}/contents/${f.path}?ref=main&t=${Date.now()}`,
+              { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+            );
+            if (cRes.ok) {
+              const fjson = await cRes.json();
+              const md = decodeURIComponent(escape(atob(fjson.content || '')));
+              const fm = _parseFrontmatter(md);
+              if (fm.status === 'aprobado' || fm.status === 'revisado') status = fm.status;
+            }
+          } catch (_) {}
 
-        // Only update if not already tracked or status improved
-        if (!subs[claseLabel]) subs[claseLabel] = {};
-        const existing = subs[claseLabel][exNum];
-        if (!existing || _statusRank(status) > _statusRank(existing.status)) {
-          subs[claseLabel][exNum] = {
-            issueNum: issue.number,
-            url: issue.html_url,
-            date: issue.created_at,
-            status,
-          };
-          changed = true;
+          if (!subs[classId]) subs[classId] = {};
+          const existing = subs[classId][exNum];
+          if (!existing || _statusRank(status) > _statusRank(existing.status) || existing.filePath !== f.path) {
+            subs[classId][exNum] = {
+              filePath: f.path,
+              url: f.html_url,
+              sha: f.sha,
+              date: existing ? existing.date : new Date().toISOString(),
+              status,
+            };
+            changed = true;
+          }
         }
       }
 
       if (changed) {
-        try { localStorage.setItem(SUBMISSIONS_KEY, JSON.stringify(subs)); } catch (e) { /* ignore */ }
+        try { localStorage.setItem(SUBMISSIONS_KEY, JSON.stringify(subs)); } catch (e) {}
       }
       return changed;
     } catch (e) {
-      console.warn('Error pulling submissions from GitHub:', e);
+      console.warn('Error pulling submissions:', e);
       return false;
     }
   }
@@ -1697,6 +1914,80 @@ const CourseProgress = (() => {
     if (s === 'revisado') return 2;
     return 1;
   }
+
+  // --- Helper público: leer todas las entregas del repo con su feedback ---
+  // Devuelve array { classId, ex, type, typeName, title, status, fecha, url, feedback, ... }
+  // Para consumo desde index.html y progreso.html.
+  async function fetchEntregas() {
+    const out = [];
+    try {
+      const listRes = await fetch(
+        `https://api.github.com/repos/${GITHUB_REPO}/contents/entregas?ref=main&t=${Date.now()}`,
+        { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+      );
+      if (!listRes.ok) return out;
+      const classDirs = await listRes.json();
+      if (!Array.isArray(classDirs)) return out;
+
+      for (const dir of classDirs) {
+        if (dir.type !== 'dir') continue;
+        const classId = dir.name;
+        const fRes = await fetch(
+          `https://api.github.com/repos/${GITHUB_REPO}/contents/${dir.path}?ref=main&t=${Date.now()}`,
+          { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+        );
+        if (!fRes.ok) continue;
+        const files = await fRes.json();
+        if (!Array.isArray(files)) continue;
+
+        for (const f of files) {
+          if (f.type !== 'file' || !/^ej(\d+)\.md$/i.test(f.name)) continue;
+          const ex = parseInt(f.name.match(/^ej(\d+)\.md$/i)[1], 10);
+
+          let md = '';
+          try {
+            const cRes = await fetch(
+              `https://api.github.com/repos/${GITHUB_REPO}/contents/${f.path}?ref=main&t=${Date.now()}`,
+              { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+            );
+            if (cRes.ok) {
+              const fjson = await cRes.json();
+              md = decodeURIComponent(escape(atob(fjson.content || '')));
+            }
+          } catch (_) {}
+
+          const fm = _parseFrontmatter(md);
+          let feedback = '';
+          const fbMatch = md.match(/##\s*Feedback\s*\n([\s\S]*?)(?:\n---|\n##\s|$)/i);
+          if (fbMatch) {
+            const raw = fbMatch[1].trim();
+            if (raw && !/^_Pendiente de revisión automática\._?/.test(raw)) feedback = raw;
+          }
+
+          out.push({
+            classId: fm.classId || classId,
+            ex,
+            type: fm.type || 'B',
+            typeName: fm.typeName || 'Mini-Reto',
+            title: fm.title || `Ejercicio ${ex}`,
+            status: (fm.status === 'aprobado' || fm.status === 'revisado') ? fm.status : 'pendiente',
+            fecha: fm.submittedAt || null,
+            reviewedAt: fm.reviewedAt || null,
+            url: f.html_url,
+            repoUrl: fm.repoUrl || '',
+            deployUrl: fm.deployUrl || '',
+            xpAwarded: fm.xpAwarded || 0,
+            feedback,
+          });
+        }
+      }
+      out.sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+    } catch (e) {
+      console.warn('Error fetching entregas:', e);
+    }
+    return out;
+  }
+
 
   // --- API pública ---
   return {
@@ -1728,6 +2019,12 @@ const CourseProgress = (() => {
     syncSubmissionStatuses,
     pullSubmissionsFromGitHub,
     initSubmissionIndicators,
+    fetchEntregas,
+    getSubmissionAttempts: () => {
+      const s = load();
+      return Array.isArray(s.submissionAttempts) ? s.submissionAttempts.slice() : [];
+    },
+    recordSubmissionAttempt,
     BADGES,
     MODULES,
     EXERCISES,
@@ -1742,7 +2039,7 @@ document.addEventListener('DOMContentLoaded', () => CourseProgress.checkSyncSetu
 
 // Cross-tab sync: si otra pestaña actualiza localStorage, recargar estado
 window.addEventListener('storage', (e) => {
-  if (e.key === 'juan-curso-ia-progress' && e.newValue) {
+  if (e.key === 'curso-ia-juan-progress' && e.newValue) {
     // Actualizar UI si hay elementos de progreso visibles
     const levelEl = document.querySelector('.level-badge');
     const xpEl = document.querySelector('.xp-display');
