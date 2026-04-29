@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: Técnicas de Coding con IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .mindmap-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            color: #39ff14;
+            font-size: 2.2rem;
+            text-shadow: 0 0 10px #39ff14;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: #00f0ff;
+            font-size: 0.95rem;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        .branch {
+            flex: 0 1 calc(50% - 0.75rem);
+            max-width: 420px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.05) 0%, rgba(255, 0, 229, 0.05) 100%);
+            border: 2px solid #00f0ff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .branch::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .branch:hover::before {
+            left: 100%;
+        }
+
+        .branch:hover {
+            border-color: #39ff14;
+            box-shadow: 0 0 25px rgba(57, 255, 20, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .branch-title {
+            color: #39ff14;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 0 0 8px #39ff14;
+        }
+
+        .branch-icon {
+            font-size: 1.5rem;
+        }
+
+        .branch-toggle {
+            color: #00f0ff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: inline-block;
+            margin-left: auto;
+        }
+
+        .branch.collapsed .branch-toggle {
+            transform: rotate(-90deg);
+        }
+
+        .nodes {
+            display: grid;
+            gap: 0.75rem;
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .branch.collapsed .nodes {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .node {
+            background: rgba(57, 255, 20, 0.08);
+            border-left: 3px solid #ff00e5;
+            padding: 0.85rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            transition: all 0.2s ease;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .node:hover {
+            background: rgba(57, 255, 20, 0.15);
+            border-left-color: #00f0ff;
+            transform: translateX(5px);
+        }
+
+        .node strong {
+            color: #ff00e5;
+        }
+
+        .node em {
+            color: #00f0ff;
+            font-style: italic;
+        }
+
+        .code-snippet {
+            background: rgba(10, 10, 26, 0.8);
+            border-left: 3px solid #39ff14;
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #39ff14;
+            margin-top: 0.5rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-snippet strong {
+            color: #ff00e5;
+        }
+
+        /* Root node style */
+        .root-node {
+            grid-column: 1 / -1;
+            text-align: center;
+            background: linear-gradient(135deg, #00f0ff 0%, #004d40 100%);
+            border: 3px solid #39ff14;
+            padding: 2rem 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.4);
+        }
+
+        .root-node h2 {
+            color: #39ff14;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px #39ff14;
+            margin-bottom: 0.5rem;
+        }
+
+        .root-node p {
+            color: #00f0ff;
+            font-size: 0.95rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mindmap {
+                flex-direction: column;
+            }
+
+            .branch {
+                flex: 0 1 100%;
+                max-width: 100%;
+            }
+
+            header h1 {
+                font-size: 1.6rem;
+            }
+
+            body {
+                padding: 1rem;
+            }
+        }
+
+        /* Scrollbar style */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #00f0ff, #ff00e5);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #39ff14, #00f0ff);
+        }
+
+        .branch-description {
+            color: #00f0ff;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .sub-title {
+            color: #ff00e5;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="mindmap-container">
+        <header>
+            <h1>🧠 Técnicas de Coding con IA</h1>
+            <p>Mind Map interactivo — Explora conceptos clave de TDD, Prompts, Refactoring y Debugging</p>
+        </header>
+
+        <div class="mindmap">
+            <!-- ROOT NODE -->
+            <div class="root-node">
+                <h2>Técnicas de Coding con IA</h2>
+                <p>Domina TDD, Refactoring, Debugging y Code Review con Copilot y Claude</p>
+            </div>
+
+            <!-- RAMA 1: TDD CON IA -->
+            <div class="branch">
+                <div class="branch-title">
+                    <span class="branch-icon">🔴🟢</span>
+                    TDD con IA
+                    <span class="branch-toggle">▼</span>
+                </div>
+                <div class="branch-description">Test-Driven Development para generación de código</div>
+                <div class="nodes">
+                    <div class="node">
+                        <strong>Ciclo Red-Green-Refactor:</strong>
+                        <p style="margin-top: 0.3rem;">1. <em>RED:</em> Escribes un test que falla (la función no existe)</p>
+                        <p>2. <em>GREEN:</em> Generas el código mínimo para que pase</p>
+                        <p>3. <em>REFACTOR:</em> Mejoras manteniendo los tests en verde</p>
+                    </div>
+                    <div class="node">
+                        <strong>Por qué TDD + IA es poderoso:</strong>
+                        <p style="margin-top: 0.3rem;">• El test <em>es la especificación</em></p>
+                        <p>• La IA sabe exactamente qué construir</p>
+                        <p>• Menos refactoring manual después</p>
+                        <p>• Confianza: todos los tests pasan = funciona</p>
+                    </div>
+                    <div class="node">
+                        <strong>Ejemplo Python:</strong>
+                        <div class="code-snippet"># RED: Test que falla
+def test_is_palindrome():
+    assert is_palindrome("aba") == True
+    assert is_palindrome("abc") == False
+
+# GREEN: Copilot/Cursor completa
+def is_palindrome(s):
+    return s == s[::-1]
+
+# REFACTOR: Optimizar
+# Cmd+K: "Mejora esto"</div>
+                    </div>
+                    <div class="node">
+                        <strong>Ventajas:</strong>
+                        <p style="margin-top: 0.3rem;">✓ Menos bugs (validados por tests)</p>
+                        <p>✓ Documentación viva (tests = casos de uso)</p>
+                        <p>✓ Refactoring seguro (tests te avisan si rompiste algo)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAMA 2: PROMPTS EN COMENTARIOS -->
+            <div class="branch">
+                <div class="branch-title">
+                    <span class="branch-icon">💬</span>
+                    Prompts en Comentarios
+                    <span class="branch-toggle">▼</span>
+                </div>
+                <div class="branch-description">Escribe comentarios efectivos antes del código</div>
+                <div class="nodes">
+                    <div class="node">
+                        <strong>Regla de Oro:</strong>
+                        <p style="margin-top: 0.3rem;">Comenta <em>ANTES</em> del código. Cuanto más específico, mejor la sugerencia.</p>
+                    </div>
+                    <div class="node">
+                        <strong>Elementos clave:</strong>
+                        <p style="margin-top: 0.3rem;">• <strong>Input/Output:</strong> qué recibe y qué devuelve</p>
+                        <p>• <strong>Tipos:</strong> use type hints (Python, TypeScript)</p>
+                        <p>• <strong>Edge cases:</strong> vacío, null, negativos, duplicados</p>
+                        <p>• <strong>Contexto:</strong> performance crítica, seguridad, etc.</p>
+                    </div>
+                    <div class="node">
+                        <strong>Ejemplo 1:</strong>
+                        <div class="code-snippet">// Función que recibe array de objetos {nombre, edad}
+// Devuelve mayores de 18 ordenados por nombre
+// Si no hay resultados, devuelve array vacío
+
+def get_adults(people):</div>
+                    </div>
+                    <div class="node">
+                        <strong>Ejemplo 2:</strong>
+                        <div class="code-snippet">// Normaliza números de teléfono a formato +34
+// Entrada: mix de formatos (+34 123, 123456789, etc.)
+// Salida: array de strings en formato +34XXXXXXXXX
+// Ignora números inválidos sin error
+
+def normalize_phones(numbers):</div>
+                    </div>
+                    <div class="node">
+                        <strong>Ejemplo 3:</strong>
+                        <div class="code-snippet">// PERFORMANCE CRÍTICA: debe procesar 1M registros en < 100ms
+// Preferir arrays sobre objetos, evitar loops anidados
+// Resultado: lista de IDs sin duplicados, ordenada
+
+def filter_unique_ids(records):</div>
+                    </div>
+                    <div class="node">
+                        <strong>Tips:</strong>
+                        <p style="margin-top: 0.3rem;">✓ Sé específico, no vago</p>
+                        <p>✓ Menciona tecnología (Python, JavaScript, SQL, etc.)</p>
+                        <p>✓ Si es crítico (seguridad/performance), avisa</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAMA 3: REFACTORING CON IA -->
+            <div class="branch">
+                <div class="branch-title">
+                    <span class="branch-icon">🔨</span>
+                    Refactoring con IA
+                    <span class="branch-toggle">▼</span>
+                </div>
+                <div class="branch-description">Mejora código automáticamente con Copilot</div>
+                <div class="nodes">
+                    <div class="node">
+                        <strong>Flujo estándar:</strong>
+                        <p style="margin-top: 0.3rem;">1. Selecciona código</p>
+                        <p>2. Presiona <em>Cmd+K</em> (Mac) o <em>Ctrl+K</em> (Windows)</p>
+                        <p>3. Escribe qué quieres: "Refactoriza para legibilidad"</p>
+                        <p>4. Aplica cambios ✓</p>
+                    </div>
+                    <div class="node">
+                        <strong>Patrones comunes:</strong>
+                        <p style="margin-top: 0.3rem;"><strong>Extract Function:</strong> separa lógica en funciones</p>
+                        <p><strong>Simplify Conditionals:</strong> if/if/if → switch/guard clauses</p>
+                        <p><strong>Add Error Handling:</strong> null checks, try/catch</p>
+                        <p><strong>Performance:</strong> O(n²) → O(n)</p>
+                    </div>
+                    <div class="node">
+                        <strong>Comandos especiales:</strong>
+                        <p style="margin-top: 0.3rem;"><em>/fix</em> — Copilot detecta y arregla bugs</p>
+                        <p><em>/doc</em> — Genera docstrings y comentarios</p>
+                        <p><em>/test</em> — Genera tests unitarios</p>
+                    </div>
+                    <div class="node">
+                        <strong>Ejemplo:</strong>
+                        <div class="code-snippet">// Antes (desordenado)
+if (x > 0) {
+  if (y > 0) {
+    if (z > 0) { /* hacer algo */ }
+  }
+}
+
+// Cmd+K: "Simplifica anidación"
+// Después (limpio)
+if (x <= 0 || y <= 0 || z <= 0) return;
+// hacer algo</div>
+                    </div>
+                    <div class="node">
+                        <strong>Ventajas:</strong>
+                        <p style="margin-top: 0.3rem;">✓ Mantiene tests en verde</p>
+                        <p>✓ Aplica patrones automáticamente</p>
+                        <p>✓ Educa (ves cómo debería hacerse)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAMA 4: DEBUGGING CON IA -->
+            <div class="branch">
+                <div class="branch-title">
+                    <span class="branch-icon">🐛</span>
+                    Debugging con IA
+                    <span class="branch-toggle">▼</span>
+                </div>
+                <div class="branch-description">Encuentra y arregla bugs rápidamente</div>
+                <div class="nodes">
+                    <div class="node">
+                        <strong>Flujo estándar:</strong>
+                        <p style="margin-top: 0.3rem;">1. Copia el mensaje de error <em>completo</em></p>
+                        <p>2. Pégalo en Chat (Copilot, Claude, etc.)</p>
+                        <p>3. Pregunta: "¿Qué está mal y cómo lo arreglo?"</p>
+                        <p>4. La IA explica + solución</p>
+                    </div>
+                    <div class="node">
+                        <strong>Con contexto (mejor):</strong>
+                        <div class="code-snippet">"Aquí está el código:
+[código]
+
+Aquí el error:
+[error message]
+
+¿Qué está mal?"</div>
+                    </div>
+                    <div class="node">
+                        <strong>Variantes:</strong>
+                        <p style="margin-top: 0.3rem;"><em>@terminal</em> — Copilot analiza errores de terminal</p>
+                        <p><em>@workspace</em> — Copilot lee tu contexto de proyecto</p>
+                        <p><em>Error profundo:</em> "Tengo un loop infinito. ¿Dónde está?"</p>
+                    </div>
+                    <div class="node">
+                        <strong>Ejemplo:</strong>
+                        <div class="code-snippet">Error: TypeError undefined is not a function
+at processData (file.js:45)
+
+// Chat: "Pego error + código → IA:"
+// "En línea 45 llamas a .map() en 'data', pero
+// data no es un array. Verifica que sea array."</div>
+                    </div>
+                    <div class="node">
+                        <strong>Tips:</strong>
+                        <p style="margin-top: 0.3rem;">✓ Copia el <em>error completo</em> (no resumen)</p>
+                        <p>✓ Incluye dónde y cuándo ocurre</p>
+                        <p>✓ Muestra el código relevante</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAMA 5: CODE REVIEW CON IA -->
+            <div class="branch">
+                <div class="branch-title">
+                    <span class="branch-icon">👀</span>
+                    Code Review con IA
+                    <span class="branch-toggle">▼</span>
+                </div>
+                <div class="branch-description">Revisa código antes de hacer commit</div>
+                <div class="nodes">
+                    <div class="node">
+                        <strong>Self-Review automático:</strong>
+                        <p style="margin-top: 0.3rem;">1. Selecciona tu código</p>
+                        <p>2. Abre Chat de IA</p>
+                        <p>3. Pide análisis estructura:</p>
+                        <div class="code-snippet">"Revisa este código para:
+• Seguridad (inyecciones, validaciones)
+• Rendimiento (loops, queries, O(n))
+• Legibilidad (nombres, estructura)
+• Mantenibilidad (edge cases, errores)"</div>
+                    </div>
+                    <div class="node">
+                        <strong>Elementos a revisar:</strong>
+                        <p style="margin-top: 0.3rem;"><strong>Seguridad:</strong> validar inputs, SQL injection, XSS</p>
+                        <p><strong>Performance:</strong> loops anidados, queries N+1</p>
+                        <p><strong>Legibilidad:</strong> nombres claros, funciones pequeñas</p>
+                        <p><strong>Mantenibilidad:</strong> DRY, SOLID, patrones</p>
+                    </div>
+                    <div class="node">
+                        <strong>Flujo:</strong>
+                        <p style="margin-top: 0.3rem;">1. Code review antes de push</p>
+                        <p>2. IA te da problemas detectados</p>
+                        <p>3. Arreglas con Cmd+K</p>
+                        <p>4. Haces commit limpio ✓</p>
+                    </div>
+                    <div class="node">
+                        <strong>Ejemplo:</strong>
+                        <div class="code-snippet">// IA detecta:
+❌ "Loop O(n²) en línea 23"
+❌ "No validas input en getUserData()"
+❌ "Variable i no es descriptiva"
+
+// Arreglas:
+✓ Optimizas con índice/hash
+✓ Añades validación
+✓ Renombras a itemIndex</div>
+                    </div>
+                    <div class="node">
+                        <strong>Ventajas:</strong>
+                        <p style="margin-top: 0.3rem;">✓ Encuentra bugs <em>antes</em> de PR</p>
+                        <p>✓ Educativo (aprendes mejores prácticas)</p>
+                        <p>✓ PRs más limpios = reviews más rápidos</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAMA 6: ARCHIVOS DE CONTEXTO -->
+            <div class="branch">
+                <div class="branch-title">
+                    <span class="branch-icon">📄</span>
+                    Archivos de Contexto
+                    <span class="branch-toggle">▼</span>
+                </div>
+                <div class="branch-description">Enseña a la IA sobre tu proyecto</div>
+                <div class="nodes">
+                    <div class="node">
+                        <strong>¿Qué son?</strong>
+                        <p style="margin-top: 0.3rem;">Archivos que dan <em>contexto</em> a agentes IA:</p>
+                        <p>• <strong>.cursorrules</strong> → Cursor IDE</p>
+                        <p>• <strong>CLAUDE.md</strong> → Claude Code</p>
+                        <p>• <strong>AGENTS.md</strong> → Estándar genérico (nuevo)</p>
+                    </div>
+                    <div class="node">
+                        <strong>Contenido típico:</strong>
+                        <p style="margin-top: 0.3rem;"><strong>Convenciones:</strong> snake_case, camelCase, tipos</p>
+                        <p><strong>Stack:</strong> Python 3.11, FastAPI, PostgreSQL</p>
+                        <p><strong>Estructura:</strong> src/, tests/, docs/</p>
+                        <p><strong>Estándares:</strong> tests antes de commit, type hints, docstrings</p>
+                    </div>
+                    <div class="node">
+                        <strong>Ejemplo AGENTS.md:</strong>
+                        <div class="code-snippet"># AGENTS.md - Contexto del Proyecto
+
+## Convenciones
+- Variables: snake_case
+- Funciones: camelCase
+- Clases: PascalCase
+- Max 80 caracteres/línea
+
+## Stack
+- Python 3.11
+- FastAPI, SQLAlchemy
+- PostgreSQL
+
+## Estándares
+- Type hints obligatorio
+- Docstrings para públicas
+- Tests antes de commit
+- No subir .env</div>
+                    </div>
+                    <div class="node">
+                        <strong>Ventajas:</strong>
+                        <p style="margin-top: 0.3rem;">✓ La IA sigue tus convenciones automáticamente</p>
+                        <p>✓ Código consistente en todo el equipo</p>
+                        <p>✓ Menos ajustes manuales después</p>
+                        <p>✓ Documentación viva de estándares</p>
+                    </div>
+                    <div class="node">
+                        <strong>Dónde ponerlo:</strong>
+                        <p style="margin-top: 0.3rem;">Raíz del proyecto. La IA lo lee automáticamente.</p>
+                        <p style="margin-top: 0.5rem;"><em>proyecto/</em></p>
+                        <p><em>├── AGENTS.md</em></p>
+                        <p><em>├── src/</em></p>
+                        <p><em>└── tests/</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle branches on click
+        document.querySelectorAll('.branch').forEach(branch => {
+            branch.addEventListener('click', function(e) {
+                if (e.target.closest('.branch-toggle')) {
+                    this.classList.toggle('collapsed');
+                }
+            });
+        });
+
+        // Expand all branches by default (except on mobile)
+        if (window.innerWidth > 768) {
+            // Start expanded
+        } else {
+            // Start collapsed on mobile
+            document.querySelectorAll('.branch').forEach(branch => {
+                branch.classList.add('collapsed');
+            });
+        }
+    </script>
+</body>
+</html>

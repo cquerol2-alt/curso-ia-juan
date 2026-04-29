@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 02 - Cómo Leer Ofertas y Adaptar tu CV para ATS</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header style="background: linear-gradient(135deg, #00e676 0%, #00d89a 100%); color: #0a0a1a; padding: 2em 0;">
+            <h1>Módulo 9: Búsqueda Activa de Empleo</h1>
+            <h2>Clase 02: Cómo Leer Ofertas de Empleo y Adaptar tu CV para ATS</h2>
+            <p style="font-size: 0.95em; opacity: 0.9;">AI Developer • Madrid • Profundiza en estrategia de candidatura</p>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Learning Objectives -->
+            <section class="section">
+                <h3>Objetivos de esta clase</h3>
+                <ul style="line-height: 1.8;">
+                    <li>Entender qué buscan las empresas en una oferta (requisitos vs deseables)</li>
+                    <li>Identificar red flags en ofertas de empleo</li>
+                    <li>Dominar el ATS: cómo los robots filtran CVs</li>
+                    <li>Crear un CV optimizado que pasen los filtros automáticos</li>
+                    <li>Adaptar tu CV a cada oferta de forma inteligente</li>
+                </ul>
+            </section>
+
+            <!-- Video Section -->
+            <section class="section">
+                <h3>Vídeo: Guía Completa para Conseguir Trabajo de Programador</h3>
+                <div class="video-wrapper">
+                    <iframe width="100%" height="480" src="https://www.youtube.com/embed/sCIBdm_Tzdk"
+                            title="La Guía Completa para Conseguir Trabajo de Programador" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                </div>
+                <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                    <strong>💡 Vídeo de Victor Robles.</strong> Cubre portfolio, CV, LinkedIn y entrevistas. Presta atención especial a la parte de CV y cómo estructurarlo para que te llamen.
+                </div>
+            </section>
+
+            <!-- Theory Section 1: Reading Job Offers -->
+            <section class="section">
+                <h3>1. Cómo Leer Ofertas de Empleo de IA como un Pro</h3>
+                <div class="info">
+                    <strong>Principio clave:</strong> No todos los requisitos son iguales. Los recruiters lo saben.
+                </div>
+                <div class="subsection">
+                    <h4>Requisitos "Imprescindibles" vs "Deseables"</h4>
+                    <ul style="line-height: 1.8;">
+                        <li><strong>Imprescindibles:</strong> Hard requirements. Si no los cumples, descartarán tu CV antes de leerlo.</li>
+                        <li><strong>Deseables:</strong> Nice-to-haves. Son negociables. El 70% de candidatos no los cumple.</li>
+                        <li><strong>Estrategia:</strong> Si cumples el 60-70% de requisitos totales, <em>aplica sí o sí</em>.</li>
+                    </ul>
+                </div>
+                <div class="subsection">
+                    <h4>Ejemplos Reales de Ofertas IA en España</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin: 1em 0;">
+                        <tr style="background: #00e676; color: white;">
+                            <th style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15); text-align: left;">Campo</th>
+                            <th style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15); text-align: left;">Imprescindible</th>
+                            <th style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15); text-align: left;">Deseable</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);"><strong>Stack técnico</strong></td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Python, LLMs</td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">LangChain, RAG, Claude API</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);"><strong>Experiencia</strong></td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Proyectos AI / 1-2 años</td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Producción, +3 años</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);"><strong>Backend</strong></td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">FastAPI o Flask</td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">AWS, Docker, k8s</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);"><strong>Soft skills</strong></td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Trabajo en equipo</td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Liderazgo, mentoría</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="subsection">
+                    <h4>Red Flags: Señales de Alerta en Ofertas</h4>
+                    <div style="background: rgba(255, 0, 80, 0.08); border-left: 4px solid #ff0050; padding: 1em; margin: 1em 0; border-radius: 4px;">
+                        <ul style="line-height: 1.8; margin: 0;">
+                            <li><strong>"Buscamos rockstar/ninja/unicornio"</strong> → Vagas. No saben qué buscan exactamente.</li>
+                            <li><strong>Sin rango salarial visible</strong> → Riesgo: "salario a negociar" = salario bajo.</li>
+                            <li><strong>"5 años de experiencia en React"</strong> (React tiene 9 años) → No saben de tech.</li>
+                            <li><strong>"Disponibilidad inmediata"</strong> → Presión. Normal para cualquier empleo.</li>
+                            <li><strong>Muchos requisitos = junior</strong> → Si piden 20 cosas para un junior, es desorden organizacional.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h4>Señales Positivas en Ofertas</h4>
+                    <div style="background: rgba(57, 255, 20, 0.08); border-left: 4px solid #00e676; padding: 1em; margin: 1em 0; border-radius: 4px;">
+                        <ul style="line-height: 1.8; margin: 0;">
+                            <li><strong>Rango salarial transparente</strong> → Empresa seria, sin sorpresas.</li>
+                            <li><strong>Stack tech bien definido</strong> → Saben qué necesitan.</li>
+                            <li><strong>Descripción del equipo</strong> → Quiénes son tus compañeros, cultura.</li>
+                            <li><strong>"Nos importa el aprendizaje continuo"</strong> → Invierten en desarrollo.</li>
+                            <li><strong>Empresa con producto</strong> → No es agencia. Valor a largo plazo.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Theory Section 2: ATS -->
+            <section class="section">
+                <h3>2. Qué es un ATS y Por Qué Tu CV Puede Ser Rechazado Automáticamente</h3>
+                <div class="subsection">
+                    <h4>ATS: Applicant Tracking System</h4>
+                    <p>Software que automáticamente filtra, clasifican y almacenan candidaturas. Funciona así:</p>
+                    <ol style="line-height: 1.9;">
+                        <li><strong>Parseo:</strong> El ATS lee tu CV y extrae datos (nombre, email, skills, experiencia).</li>
+                        <li><strong>Scoring:</strong> Compara tus keywords con los requisitos de la oferta.</li>
+                        <li><strong>Ranking:</strong> Te coloca en una lista (top candidate, medium, low, rejected).</li>
+                        <li><strong>Filtrado:</strong> Solo los top candidates llegan a un reclutador humano.</li>
+                    </ol>
+                </div>
+                <div class="subsection">
+                    <h4>La Estadística Brutal</h4>
+                    <div style="background: #e3f2fd; border-left: 4px solid #1976d2; padding: 1em; margin: 1em 0; border-radius: 4px; text-align: center;">
+                        <p style="font-size: 1.1em; margin: 0;"><strong>75% de CVs se descartan ANTES de que un humano los lea.</strong></p>
+                        <p style="margin: 0.5em 0 0 0; font-size: 0.9em; opacity: 0.8;">Fuente: ResumeGo, 2024. Solo los que pasan el filtro del ATS llegan a reclutador.</p>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h4>ATS Más Usados en España</h4>
+                    <ul style="line-height: 1.8;">
+                        <li><strong>Workday:</strong> Grandes corporativas (Banco Santander, BBVA, Telefónica).</li>
+                        <li><strong>Greenhouse:</strong> Tech startups, empresas modernas.</li>
+                        <li><strong>Lever:</strong> SaaS companies, tech-forward.</li>
+                        <li><strong>TeamTailor:</strong> Agencias y consultoras.</li>
+                        <li><strong>LinkedIn Recruiter:</strong> Cada vez más usado por sencillez.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Theory Section 3: ATS-Friendly CV -->
+            <section class="section">
+                <h3>3. Cómo Crear un CV a Prueba de ATS</h3>
+                <div class="subsection">
+                    <h4>Reglas de Oro: Formato</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin: 1em 0;">
+                        <tr style="background: #00e676; color: white;">
+                            <th style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15); text-align: left;">❌ NO HAGAS</th>
+                            <th style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15); text-align: left;">✅ SÍ HAZLO</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Gráficos, imágenes, logos</td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Texto puro, iconos simples si acaso</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Columnas complejas, tablas</td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Estructura lineal, una columna</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Fuentes raras (Comic Sans, etc.)</td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Arial, Calibri, Times New Roman</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Formato de imagen (PNG, JPG)</td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">PDF o DOCX</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Títulos custom ("Mi carrera")</td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Secciones estándar: Experiencia, Formación, Habilidades</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Más de 2 páginas</td>
+                            <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Máximo 1-2 páginas</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="subsection">
+                    <h4>Estructura Estándar de Secciones</h4>
+                    <div style="background: #1a1a3e; padding: 1em; border-radius: 4px; line-height: 1.8;">
+                        <p><strong>[HEADER]</strong> Nombre, email, teléfono, GitHub URL, LinkedIn, portfolio URL</p>
+                        <p><strong>[RESUMEN PROFESIONAL]</strong> 2-3 frases. Ej: "Desarrollador junior en Python e IA. Especializado en LLMs y RAG."</p>
+                        <p><strong>[HABILIDADES TÉCNICAS]</strong> Lista de skills. Agrupa por categoría si es necesario.</p>
+                        <p><strong>[EXPERIENCIA / PROYECTOS]</strong> En orden cronológico inverso. Incluir descripción, tech stack, logros.</p>
+                        <p><strong>[FORMACIÓN]</strong> Educación formal, cursos, bootcamps.</p>
+                        <p><strong>[CERTIFICACIONES]</strong> Si tienes (Google AI Essentials, etc.)</p>
+                        <p><strong>[IDIOMAS]</strong> Nivel de dominio.</p>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h4>Keywords: Los Que Busca el ATS</h4>
+                    <p><strong>Para AI Developer/Engineer en España:</strong></p>
+                    <div style="background: rgba(255, 107, 0, 0.08); padding: 1em; border-radius: 4px; margin: 1em 0;">
+                        <p style="margin: 0; line-height: 1.6;"><strong>AI/ML:</strong> Python, LLMs, Large Language Models, RAG, Retrieval-Augmented Generation, LangChain, OpenAI API, Claude API, Machine Learning, NLP, Natural Language Processing, embeddings, vector databases, fine-tuning, prompt engineering</p>
+                        <p style="margin: 0.8em 0 0 0; line-height: 1.6;"><strong>Backend:</strong> FastAPI, Flask, REST API, async, SQLAlchemy</p>
+                        <p style="margin: 0.8em 0 0 0; line-height: 1.6;"><strong>Frontend:</strong> React, Next.js, JavaScript/TypeScript, HTML, CSS</p>
+                        <p style="margin: 0.8em 0 0 0; line-height: 1.6;"><strong>DevOps:</strong> Docker, Git, GitHub, CI/CD, Linux</p>
+                        <p style="margin: 0.8em 0 0 0; line-height: 1.6;"><strong>Soft Skills (en texto natural):</strong> trabajo en equipo, comunicación, aprendizaje continuo, resolución de problemas</p>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h4>Herramienta: Jobscan.co</h4>
+                    <p><strong>¿Cómo funciona?</strong> Subes tu CV y la descripción de la oferta. Jobscan compara y te da un score (0-100) de compatibilidad ATS.</p>
+                    <ul style="line-height: 1.8;">
+                        <li>Score > 80%: Excelente. Pasarás el filtro.</li>
+                        <li>Score 60-80%: Bueno. Probablemente pases.</li>
+                        <li>Score < 60%: Bajo. Reescribe el CV.</li>
+                    </ul>
+                    <p><strong>Consejo:</strong> Usa Jobscan.co ANTES de enviar. Es gratis el escaneo básico.</p>
+                </div>
+            </section>
+
+            <!-- Theory Section 4: Juan's CV Structure -->
+            <section class="section">
+                <h3>4. Estructura del CV de Juan (Ejemplo Concreto)</h3>
+                <div class="subsection">
+                    <h4>Template de CV para AI Developer Junior</h4>
+                    <div style="background: #1a1a2e; border: 1px solid rgba(0, 240, 255, 0.15); padding: 1.5em; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.9em; line-height: 1.6;">
+                        <p style="margin-bottom: 0.5em;"><strong>JUAN QUEROL LEÓN</strong></p>
+                        <p style="margin: 0 0 1em 0; font-size: 0.85em;">📧 juan@email.com | 📱 +34 6XX XXX XXX | 🔗 github.com/juanquerol | 💼 linkedin.com/in/juanquerol | 🌐 juanquerol.dev</p>
+                        <hr style="border: none; border-top: 1px solid rgba(0, 240, 255, 0.15); margin: 1em 0;">
+                        <p style="margin-bottom: 0.5em;"><strong>RESUMEN PROFESIONAL</strong></p>
+                        <p style="margin: 0 0 1em 0;">Desarrollador Python especializado en IA y Large Language Models. Experiencia en RAG, LangChain y APIs de OpenAI/Claude. Apasionado por aplicar IA en problemas reales. Aprendizaje continuo y trabajo colaborativo.</p>
+                        <p style="margin-bottom: 0.5em;"><strong>HABILIDADES TÉCNICAS</strong></p>
+                        <p style="margin: 0 0 1em 0;"><strong>Lenguajes:</strong> Python, JavaScript/TypeScript, SQL | <strong>IA/ML:</strong> LLMs, RAG, LangChain, OpenAI API, Claude API, prompt engineering | <strong>Backend:</strong> FastAPI, Flask, REST API | <strong>Frontend:</strong> React, Next.js | <strong>DevOps:</strong> Docker, Git, GitHub, CI/CD | <strong>Bases de datos:</strong> PostgreSQL, vector databases</p>
+                        <p style="margin-bottom: 0.5em;"><strong>PROYECTOS DESTACADOS</strong></p>
+                        <p style="margin: 0 0 0.5em 0;"><strong>RAG Q&A Chatbot</strong> | Python, LangChain, OpenAI API, FastAPI, React | github.com/juanquerol/rag-chatbot<br/>
+                        Chatbot que responde preguntas sobre documentos PDF usando Retrieval-Augmented Generation. Interfaz web en React, backend en FastAPI, búsqueda vectorial con Pinecone.</p>
+                        <p style="margin: 0 0 0.5em 0;"><strong>AI Image Generator</strong> | Python, Flask, Replicate API, Next.js | github.com/juanquerol/ai-image-gen<br/>
+                        App web para generar imágenes con prompts. Backend en Flask, frontend en Next.js, integración con modelos de Replicate.</p>
+                        <p style="margin: 0 0 1em 0;"><strong>Text Summarizer with Claude</strong> | Python, Claude API, FastAPI | github.com/juanquerol/summarizer<br/>
+                        CLI y API para resumir textos largos usando Claude. Incluye batching, rate limiting y caché.</p>
+                        <p style="margin-bottom: 0.5em;"><strong>FORMACIÓN</strong></p>
+                        <p style="margin: 0 0 1em 0;">Google AI Essentials (Google, 2024) | Elements of AI (University of Helsinki, 2024) | Python para IA (Udemy, 2024)</p>
+                        <p style="margin-bottom: 0.5em;"><strong>CERTIFICACIONES</strong></p>
+                        <p style="margin: 0 0 1em 0;">Google AI Essentials Badge | DeepLearning.AI Short Courses (LangChain, Prompt Engineering)</p>
+                        <p style="margin-bottom: 0.5em;"><strong>IDIOMAS</strong></p>
+                        <p style="margin: 0;">Español (nativo) | Inglés (B1-B2)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Theory Section 5: Customization -->
+            <section class="section">
+                <h3>5. Personalizar el CV para CADA Oferta</h3>
+                <div class="subsection">
+                    <h4>Proceso de Adaptación (15 minutos por oferta)</h4>
+                    <ol style="line-height: 1.9;">
+                        <li><strong>Lee la oferta completa.</strong> Extrae las 10 keywords principales en una nota.</li>
+                        <li><strong>Ajusta el resumen profesional.</strong> Si piden "RAG expert", cambia tu resumen: "Especializado en RAG y LangChain" (antes era genérico).</li>
+                        <li><strong>Reordena habilidades.</strong> Pon las skills que piden primero. Si destacan "Docker", lo primero en DevOps.</li>
+                        <li><strong>Adapta proyectos.</strong> Destaca el proyecto que más encaja con la oferta. Si buscan LLMs, habla del Chatbot RAG primero.</li>
+                        <li><strong>Lenguaje:</strong> Usa palabras de la oferta. Si dicen "escalable", menciona en un proyecto: "Arquitectura escalable con FastAPI".</li>
+                        <li><strong>Jobscan.co:</strong> Antes de enviar, verifica que score es > 70%.</li>
+                    </ol>
+                </div>
+                <div class="subsection">
+                    <h4>Ejemplo: Mismo CV, 2 Versiones Adaptadas</h4>
+                    <div style="background: #1a1a3e; padding: 1em; border-radius: 4px; margin: 1em 0;">
+                        <p><strong>Oferta A: "AI Developer, enfoque LLMs y RAG"</strong></p>
+                        <p style="margin: 0.5em 0;">Resumen: "Desarrollador Python especializado en Large Language Models y RAG. Experiencia con LangChain, OpenAI API y Claude API. Enfoque en retrieval-augmented generation para aplicaciones enterprise."</p>
+                    </div>
+                    <div style="background: #1a1a3e; padding: 1em; border-radius: 4px; margin: 1em 0;">
+                        <p><strong>Oferta B: "Python Developer, backend y APIs"</strong></p>
+                        <p style="margin: 0.5em 0;">Resumen: "Desarrollador Python con experiencia en backend escalable y APIs REST. Especializado en FastAPI y Flask. Experiencia con ML, integración de LLMs y arquitectura de microservicios."</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Practice Section -->
+            <section class="section">
+                <h3>🔨 Práctica: Los 5 Pasos Clave</h3>
+                <div class="subsection">
+                    <h4>Paso 1: Analizar 5 Ofertas Reales (30 minutos)</h4>
+                    <p>Busca en LinkedIn, InfoJobs o GetManfred 5 ofertas de "AI Developer" o "Desarrollador Python" en España (Madrid, Barcelona, Valencia). Guarda el enlace de cada una.</p>
+                    <div style="background: #fff9c4; padding: 1em; border-radius: 4px; margin: 1em 0;">
+                        <p style="margin: 0;"><strong>📋 Tabla a rellenar:</strong></p>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 0.5em; font-size: 0.9em;">
+                            <tr style="background: #00e676; color: #0a0a1a;">
+                                <th style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15); text-align: left;">Oferta</th>
+                                <th style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15); text-align: left;">10 Keywords Principales</th>
+                                <th style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15); text-align: left;">Red Flags (si hay)</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);">1. [Empresa]</td>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);">[Python, FastAPI, Docker, ...]</td>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);">[Ninguno / Sin salario / ...]</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);">2.</td>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);"></td>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);">3.</td>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);"></td>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);">4.</td>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);"></td>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);"></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);">5.</td>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);"></td>
+                                <td style="padding: 0.5em; border: 1px solid rgba(0, 240, 255, 0.15);"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h4>Paso 2: Crear CV Base de Juan (30 minutos)</h4>
+                    <p>Siguiendo la estructura del punto 4, crea el CV genérico de Juan en Word o Google Docs. No lo personalices aún, será la versión "base" reutilizable.</p>
+                    <div style="background: rgba(57, 255, 20, 0.08); padding: 1em; border-radius: 4px; margin: 1em 0;">
+                        <p style="margin: 0;"><strong>✅ Checklist:</strong></p>
+                        <ul style="margin: 0; padding-left: 1.2em;">
+                            <li>Header con nombre, email, GitHub, LinkedIn, portfolio</li>
+                            <li>Resumen profesional genérico (2-3 frases)</li>
+                            <li>Habilidades técnicas organizadas por categoría</li>
+                            <li>3 proyectos destacados con descripción y tech stack</li>
+                            <li>Formación y certificaciones</li>
+                            <li>Idiomas</li>
+                            <li>Sin gráficos, sin columnas, sin tablas complejas</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h4>Paso 3: Adaptar CV a UNA Oferta Real (20 minutos)</h4>
+                    <p>Copia el CV base. Elige una de las 5 ofertas. Personaliza:</p>
+                    <ul style="line-height: 1.8;">
+                        <li>Resumen profesional (menciona keywords de la oferta)</li>
+                        <li>Reordena habilidades (primero las que piden)</li>
+                        <li>Reordena proyectos (primero el que encaja mejor)</li>
+                        <li>Usa lenguaje de la oferta (copy-paste cuidadoso de palabras clave)</li>
+                    </ul>
+                    <p style="margin-top: 1em;"><strong>Guarda como:</strong> "CV_Juan_Querol_Adaptado_[NombreEmpresa].docx"</p>
+                </div>
+                <div class="subsection">
+                    <h4>Paso 4: Verificar con Jobscan.co (10 minutos)</h4>
+                    <p>Sube tu CV adaptado y la descripción de la oferta a Jobscan.co. Objetivo: score > 70%.</p>
+                    <div style="background: rgba(255, 0, 229, 0.08); padding: 1em; border-radius: 4px; margin: 1em 0;">
+                        <p style="margin: 0;"><strong>Si score < 70%:</strong> Añade los keywords que te falten. Prioridad: hard skills de la oferta.</p>
+                        <p style="margin: 0.5em 0 0 0;"><strong>Si score > 80%:</strong> Perfecto. Listo para enviar.</p>
+                    </div>
+                </div>
+                <div class="subsection">
+                    <h4>Paso 5: Challenge - Crear 2 Versiones del CV (1 hora)</h4>
+                    <p>Crea dos versiones finales del CV de Juan, completamente adaptadas a tipos de oferta diferentes:</p>
+                    <ul style="line-height: 1.9;">
+                        <li><strong>Versión A: "AI Developer"</strong> (enfoque: LLMs, RAG, APIs de IA, prompt engineering)
+                            <br/>Guarda como: CV_Juan_Querol_AI_Developer.docx</li>
+                        <li><strong>Versión B: "Desarrollador Python con IA"</strong> (enfoque: backend, FastAPI, arquitectura, escalabilidad)
+                            <br/>Guarda como: CV_Juan_Querol_Python_Developer.docx</li>
+                    </ul>
+                    <p style="margin-top: 1em;">Ambas versiones deben pasar Jobscan.co con score > 75%.</p>
+                </div>
+            </section>
+
+            <!-- Submission Section -->
+            <section class="section submission-section" data-class-id="m9-c02">
+                <h3 style="color: #00e676;">📤 Envío de ejercicios</h3>
+                <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                    <h4>📤 Entregar práctica: Análisis de 5 ofertas y keywords</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95em;">Busca 5 ofertas reales en LinkedIn/InfoJobs/GetManfred. Para cada una, extrae los 10 keywords principales y red flags. Completa la tabla del Paso 1.</p>
+                    <textarea id="code-ejercicio-1" placeholder="Comparte: 1) Enlaces de las 5 ofertas, 2) Keywords principales para cada una, 3) Red flags identificadas en cada oferta" rows="8"></textarea>
+                    <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                    <div class="submit-row">
+                        <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                        <button onclick="CourseProgress.submitExercise('m9-c02', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                    </div>
+                    <div id="submit-status-ejercicio-1" class="submit-status"></div>
+                </div>
+                <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                    <h4>📤 Entregar práctica: 2 Versiones del CV adaptadas</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95em;">Crea CV base + 2 versiones adaptadas (Versión A: AI Developer, Versión B: Python Developer). Ambas deben pasar Jobscan.co con score > 75%.</p>
+                    <textarea id="code-ejercicio-2" placeholder="Comparte: 1) CV_Base.docx, 2) CV_AI_Developer.docx, 3) CV_Python_Developer.docx, 4) Screenshots de Jobscan.co con scores > 75% para ambas versiones" rows="8"></textarea>
+                    <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                    <div class="submit-row">
+                        <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                        <button onclick="CourseProgress.submitExercise('m9-c02', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                    </div>
+                    <div id="submit-status-ejercicio-2" class="submit-status"></div>
+                </div>
+            </section>
+
+            <!-- Quiz Section -->
+            <section class="section" id="quiz-container">
+                <h3>📝 Quiz: Prueba tu Conocimiento</h3>
+                <p style="color: var(--text-muted); margin: 1em 0;">Responde 8 de 10 preguntas correctas para pasar. ¡Adelante!</p>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="nav" style="margin-top: 2em; padding-top: 1em; border-top: 1px solid rgba(0, 240, 255, 0.15);">
+                <a href="clase-01.html" class="btn" style="background: #00e676;">← Clase 01</a>
+                <span style="flex: 1;"></span>
+                <a href="clase-03.html" class="btn" style="background: #00e676;">Clase 03 →</a>
+            </nav>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/progress.js"></script>
+    <script>
+
+        const quizQuestions = [
+            {
+                question: "¿Cuál es el porcentaje mínimo de requisitos que necesitas cumplir para aplicar a una oferta de IA?",
+                options: [
+                    "100% de todos los requisitos",
+                    "60-70% de los requisitos",
+                    "40% aproximadamente",
+                    "Depende del número de horas de trabajo"
+                ],
+                correct: 1,
+                explanation: "Los recruiters saben que no existe el candidato perfecto. Si cumples 60-70%, aplica sí o sí."
+            },
+            {
+                question: "¿Cuál es una red flag típica en ofertas de empleo?",
+                options: [
+                    "Rango salarial transparente",
+                    "Stack tech bien definido",
+                    "Buscamos rockstar/ninja/unicornio",
+                    "Descripción detallada del equipo"
+                ],
+                correct: 2,
+                explanation: "Las palabras vagas como 'rockstar' indican que la empresa no sabe qué busca exactamente."
+            },
+            {
+                question: "¿Qué significan las siglas ATS?",
+                options: [
+                    "Advanced Technical Skills",
+                    "Applicant Tracking System",
+                    "Automated Testing Suite",
+                    "Advanced Technology Support"
+                ],
+                correct: 1,
+                explanation: "ATS = Applicant Tracking System. Es el software que automáticamente filtra CVs."
+            },
+            {
+                question: "¿Qué porcentaje de CVs se descartan ANTES de que un humano los lea?",
+                options: [
+                    "25%",
+                    "50%",
+                    "75%",
+                    "90%"
+                ],
+                correct: 2,
+                explanation: "El 75% de CVs se filtran automáticamente por el ATS. Solo pasan el top 25%."
+            },
+            {
+                question: "¿Cuál es el formato MEJOR para un CV a prueba de ATS?",
+                options: [
+                    "Imagen PNG con diseño bonito",
+                    "PDF o DOCX con estructura lineal y sin gráficos",
+                    "HTML personalizado",
+                    "Google Slides compartido"
+                ],
+                correct: 1,
+                explanation: "PDF o DOCX con texto limpio, sin gráficos ni columnas complejas. Los ATS no leen imágenes."
+            },
+            {
+                question: "¿Cuál NO es un ATS usado en España?",
+                options: [
+                    "Workday",
+                    "Greenhouse",
+                    "Microsoft Teams",
+                    "Lever"
+                ],
+                correct: 2,
+                explanation: "Microsoft Teams es una herramienta de comunicación, no un ATS. Los reales son Workday, Greenhouse, Lever, TeamTailor."
+            },
+            {
+                question: "¿Cuál es el mejor score de Jobscan.co para pasar el filtro ATS?",
+                options: [
+                    "> 30%",
+                    "> 50%",
+                    "> 70%",
+                    "> 90%"
+                ],
+                correct: 2,
+                explanation: "Score > 70% es bueno. > 80% es excelente. < 60% es riesgo alto de ser rechazado."
+            },
+            {
+                question: "¿Qué estrategia es mejor para adaptar el CV a cada oferta?",
+                options: [
+                    "Enviar el mismo CV a todas las ofertas",
+                    "Cambiar solo el nombre y email",
+                    "Personalizar resumen, skills y proyectos según la oferta",
+                    "Reescribir el CV desde cero cada vez"
+                ],
+                correct: 2,
+                explanation: "Personaliza: resumen profesional, orden de skills, proyectos destacados. Usa keywords de la oferta."
+            },
+            {
+                question: "¿Cuál es un título estándar de sección en un CV que el ATS reconoce bien?",
+                options: [
+                    "Mi carrera increíble",
+                    "Lo que he hecho",
+                    "Experiencia",
+                    "Mis logros"
+                ],
+                correct: 2,
+                explanation: "Los ATS buscan títulos estándar: Experiencia, Formación, Habilidades, etc. Evita títulos custom."
+            },
+            {
+                question: "¿Qué hace que una oferta sea 'seria' y confiable?",
+                options: [
+                    "Pide disponibilidad inmediata",
+                    "No especifica rango salarial",
+                    "Tiene una descripción vaga del equipo",
+                    "Rango salarial transparente y stack tech bien definido"
+                ],
+                correct: 3,
+                explanation: "Empresas serias: transparencia salarial, tech clara, descripción del equipo. Inversión en aprendizaje."
+            }
+        ];
+
+        // Inicializar quiz
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+if (window.CourseProgress) {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm9-c02');
+            }
+            });
+        } else {
+if (window.CourseProgress) {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm9-c02');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map — RAG clásico: chunk → embed → retrieve → rerank</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0a0a1a;color:#e8e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+        .topbar{padding:12px 20px;background:linear-gradient(90deg,#00f0ff,#0a6e5c);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+        .topbar a{color:#fff;text-decoration:none;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;font-size:.85em;transition:.3s}
+        .topbar a:hover{background:rgba(255,255,255,.3)}
+        .topbar h1{font-size:1.1em;color:#fff;text-align:center;flex:1;margin:0 12px}
+        .map{max-width:900px;margin:30px auto;padding:0 16px}
+        .center{text-align:center;margin-bottom:32px}
+        .center .pill{display:inline-block;background:linear-gradient(135deg,#00f0ff,#ff00e5);padding:16px 32px;border-radius:60px;font-size:1.4em;font-weight:800;color:#0a0a1a;box-shadow:0 0 30px rgba(0,240,255,.3)}
+        .center .sub{color:#8888aa;margin-top:8px;font-size:.95em}
+        .branch{margin-bottom:16px;border:1px solid rgba(0,240,255,.15);border-radius:12px;overflow:hidden;transition:.3s}
+        .branch:hover{border-color:rgba(0,240,255,.4);box-shadow:0 0 15px rgba(0,240,255,.08)}
+        .branch-head{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;background:#12122a;user-select:none;transition:.2s}
+        .branch-head:hover{background:#1a1a3e}
+        .branch-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2em;flex-shrink:0}
+        .b1 .branch-icon{background:rgba(0,240,255,.15);border:2px solid #00f0ff}
+        .b2 .branch-icon{background:rgba(255,0,229,.15);border:2px solid #ff00e5}
+        .b3 .branch-icon{background:rgba(57,255,20,.15);border:2px solid #39ff14}
+        .b4 .branch-icon{background:rgba(255,230,0,.15);border:2px solid #ffe600}
+        .b5 .branch-icon{background:rgba(255,107,0,.15);border:2px solid #ff6b00}
+        .branch-title{flex:1;font-weight:700;font-size:1.05em}
+        .b1 .branch-title{color:#00f0ff}
+        .b2 .branch-title{color:#ff00e5}
+        .b3 .branch-title{color:#39ff14}
+        .b4 .branch-title{color:#ffe600}
+        .b5 .branch-title{color:#ff6b00}
+        .toggle{color:#8888aa;font-size:1.4em;transition:transform .3s}
+        .branch.open .toggle{transform:rotate(45deg)}
+        .branch-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+        .branch.open .branch-body{max-height:700px}
+        .sub-list{padding:8px 20px 16px 72px;display:flex;flex-direction:column;gap:8px}
+        .sub-item{padding:10px 16px;background:#1a1a2e;border-radius:8px;border-left:3px solid;font-size:.93em;line-height:1.5}
+        .b1 .sub-item{border-color:#00f0ff}
+        .b2 .sub-item{border-color:#ff00e5}
+        .b3 .sub-item{border-color:#39ff14}
+        .b4 .sub-item{border-color:#ffe600}
+        .b5 .sub-item{border-color:#ff6b00}
+        .sub-item strong{color:#fff}
+        .sub-item code{background:#12122a;padding:2px 6px;border-radius:4px;font-size:.88em;color:#39ff14;font-family:'Fira Code',monospace}
+        @media(max-width:600px){.topbar h1{font-size:.9em}.center .pill{font-size:1.1em;padding:12px 24px}.sub-list{padding-left:52px}}
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="clase-05.html">← Volver a la clase</a>
+        <h1>Mind Map — Clase 05</h1>
+        <div style="width:80px"></div>
+    </div>
+
+    <div class="map">
+        <div class="center">
+            <div class="pill">RAG clásico: los 4 pasos</div>
+            <p class="sub">chunk → embed → retrieve → rerank (sin LangChain, Anthropic SDK directo)</p>
+        </div>
+
+        <!-- Rama 1 -->
+        <div class="branch b1">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">✂️</div>
+                <div class="branch-title">Paso 1 — Chunking</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Qué hace:</strong> parte tu corpus (PDFs, apuntes) en trozos de ~400-1600 caracteres con solape (overlap).</div>
+                    <div class="sub-item"><strong>Por qué importa:</strong> muy corto pierde contexto, muy largo mete ruido. Probar varios tamaños en tu corpus es el ejercicio real.</div>
+                    <div class="sub-item"><strong>Tamaños típicos:</strong> <code>chunk_size=800</code>, <code>overlap=120</code>. Para texto técnico prueba 400 o 1600 y compara.</div>
+                    <div class="sub-item"><strong>Cómo partir:</strong> por párrafos y luego longitud, nunca cortando palabras a la mitad.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 2 -->
+        <div class="branch b2">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🧬</div>
+                <div class="branch-title">Paso 2 — Embeddings</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Modelo:</strong> <code>text-embedding-3-small</code> de OpenAI — 1536 dimensiones, barato, muy bueno para ES/EN.</div>
+                    <div class="sub-item"><strong>Qué es un embedding:</strong> vector numérico que representa el significado del chunk. Chunks con significado parecido → vectores cercanos.</div>
+                    <div class="sub-item"><strong>Almacenamiento:</strong> ChromaDB con <code>PersistentClient</code> y <code>hnsw:space=cosine</code>.</div>
+                    <div class="sub-item"><strong>Regla de oro:</strong> la pregunta se embebe con el <em>mismo</em> modelo que los chunks. Si cambias de modelo, reindexa todo.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 3 -->
+        <div class="branch b3">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🔍</div>
+                <div class="branch-title">Paso 3 — Retrieve</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Input:</strong> pregunta del usuario → embedding con el mismo modelo.</div>
+                    <div class="sub-item"><strong>Query:</strong> <code>collection.query(query_embeddings=[...], n_results=K)</code> — ChromaDB devuelve los K chunks más cercanos por coseno.</div>
+                    <div class="sub-item"><strong>K grande = recall alto:</strong> coge K=20 para no perder contexto relevante. El rerank de abajo filtra después.</div>
+                    <div class="sub-item"><strong>Salida:</strong> lista de chunks con texto + metadata (fuente, página, ids).</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 4 -->
+        <div class="branch b4">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🎯</div>
+                <div class="branch-title">Paso 4 — Rerank</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Por qué hace falta:</strong> la similitud coseno es barata pero no entiende la pregunta. Rerank mira pregunta + chunk juntos y decide relevancia real.</div>
+                    <div class="sub-item"><strong>Opción 1 (LLM-as-reranker):</strong> pasar top-K a <code>claude-haiku-4-5-20251001</code> pidiendo "puntúa de 0-10 qué tan relevante es este chunk para la pregunta". Rápido y barato.</div>
+                    <div class="sub-item"><strong>Opción 2 (cross-encoder):</strong> modelo específico tipo Cohere Rerank o BGE-reranker. Mejor calidad, un poco más de latencia.</div>
+                    <div class="sub-item"><strong>Salida:</strong> top-N (N=3) chunks ordenados por relevancia real. Esos son los que van al prompt final.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 5 -->
+        <div class="branch b5">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">📝</div>
+                <div class="branch-title">Respuesta final con Anthropic SDK</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Montar el prompt:</strong> incluir los top-N chunks como contexto + la pregunta del usuario. Nada de cadenas LangChain.</div>
+                    <div class="sub-item"><strong>Llamada:</strong> <code>client.messages.create(model="claude-sonnet-4-6", messages=[...])</code>. Contexto en el system prompt o en el primer user message.</div>
+                    <div class="sub-item"><strong>System prompt clave:</strong> "Responde SOLO con la información del contexto. Si no está, di 'No tengo esa información'".</div>
+                    <div class="sub-item"><strong>Citas:</strong> pide al modelo que cite las fuentes con <code>[1]</code>, <code>[2]</code>... y devuelve también los chunks usados en el response para que el usuario los vea.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

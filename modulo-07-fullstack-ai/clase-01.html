@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 01: Arquitectura de una AI App — Módulo 7</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <a href="index.html">Módulo 7</a>
+            <span> > </span>
+            <strong>Clase 01</strong>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <h1>Clase 01: Arquitectura de una AI App — Frontend + Backend + LLM</h1>
+            <div class="subtitle">📅 Semana 9 — Lunes | ⏱️ 45 minutos</div>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎬</span>
+                Vídeo de la lección
+            </h2>
+            <p>En este vídeo aprenderás cómo arquitectar una aplicación completa de IA: desde la interfaz de usuario (frontend) hasta el backend que conecta con un LLM. Veremos patrones reales de producción.</p>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/PtETUYa3i2Q" allowfullscreen></iframe>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-07-c01.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📚</span>
+                Resumen de conceptos
+            </h2>
+
+            <h3>¿Qué es una AI App Full-Stack?</h3>
+            <p>Una aplicación de IA completa ("full-stack") integra tres capas fundamentales:</p>
+            <ul>
+                <li><strong>Frontend:</strong> La interfaz de usuario (React, Vue, etc.). Recibe input del usuario.</li>
+                <li><strong>Backend/API:</strong> El servidor que valida, procesa y orquesta (Next.js, Flask, Express, etc.).</li>
+                <li><strong>LLM Provider:</strong> El modelo de IA externo (OpenAI, Anthropic, etc.) o local.</li>
+            </ul>
+
+            <div class="info">
+                <strong>Flujo básico:</strong> Usuario escribe → Frontend envía al Backend → Backend llama al LLM → LLM responde → Backend procesa → Frontend muestra resultado.
+            </div>
+
+            <h3>Arquitectura típica: Frontend → Backend → LLM</h3>
+            <p>El patrón más común en producción es una arquitectura de tres capas:</p>
+
+            <div class="code-block">
+                <span class="lang-label">Arquitectura</span>
+                <pre><code>┌─────────────────────────────────────────┐
+│         FRONTEND (React)                 │
+│  - Input del usuario                     │
+│  - Mostrar respuestas                    │
+│  - Manejo de estado/UX                   │
+└──────────────────────────┬───────────────┘
+                           │ HTTP/API
+                           │ POST /api/chat
+                           │
+┌──────────────────────────▼───────────────┐
+│         BACKEND (Next.js/Express)        │
+│  - Validar input                         │
+│  - Rate limiting & seguridad             │
+│  - Gestionar tokens/API keys (NO en     │
+│    frontend)                             │
+│  - Logs y auditoría                      │
+└──────────────────────────┬───────────────┘
+                           │
+                           │ SDK/API
+                           │
+┌──────────────────────────▼───────────────┐
+│    LLM Provider (OpenAI/Claude/etc)      │
+│  - Procesar prompt                       │
+│  - Generar respuesta                     │
+│  - Contar tokens                         │
+└─────────────────────────────────────────┘</code></pre>
+            </div>
+
+            <h3>Separación de responsabilidades: ¿Por qué el LLM va en el backend?</h3>
+            <p>Las API keys (tokens de autenticación) NUNCA deben estar en el frontend. Razones:</p>
+            <ul>
+                <li><strong>Seguridad:</strong> Una API key en el navegador es visible para cualquiera (inspector de Chrome).</li>
+                <li><strong>Control de costos:</strong> Sin backend, cualquiera podría abusar de tu API y vaciar tu presupuesto.</li>
+                <li><strong>Rate limiting:</strong> El backend controla cuántas llamadas por usuario, por hora, etc.</li>
+                <li><strong>Logs y auditoría:</strong> Necesitas saber quién hizo qué y cuándo para cumplir normativa.</li>
+                <li><strong>Validación:</strong> El backend valida inputs antes de enviar al LLM (evita prompts inyectados).</li>
+            </ul>
+
+            <div class="tip">
+                <strong>Regla de oro:</strong> API keys siempre en variables de entorno del servidor. Frontend solo conoce la URL del API endpoint.
+            </div>
+
+            <h3>Next.js como framework ideal para AI Full-Stack</h3>
+            <p>Next.js es perfecto para apps de IA porque:</p>
+            <ul>
+                <li><strong>React + API Routes:</strong> Frontend y backend en el mismo repositorio.</li>
+                <li><strong>Serverless:</strong> Las API routes se despliegan como funciones sin servidor (escalable).</li>
+                <li><strong>SSR/SSG:</strong> Server-side rendering para mejor SEO y performance.</li>
+                <li><strong>TypeScript integrado:</strong> Tipado fuerte (evita bugs).</li>
+                <li><strong>Vercel:</strong> Deploy automático, variables de entorno seguras, logs.</li>
+            </ul>
+
+            <div class="info">
+                <strong>Alternativas:</strong> Flask (Python ligero) + Render, Express (Node.js) + Railway, Django (Python robusto) + PythonAnywhere.
+            </div>
+
+            <h3>Comparativa de stacks para IA Apps</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Stack</th>
+                        <th>Frontend</th>
+                        <th>Backend</th>
+                        <th>Deploy</th>
+                        <th>Ideal para</th>
+                        <th>Dificultad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Next.js + Vercel</strong></td>
+                        <td>React (TypeScript)</td>
+                        <td>API Routes (Node.js)</td>
+                        <td>Vercel (automático)</td>
+                        <td>Startups, MVP rápido</td>
+                        <td>⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Flask + Render</strong></td>
+                        <td>HTML/CSS/JS vanilla</td>
+                        <td>Flask (Python)</td>
+                        <td>Render (manual)</td>
+                        <td>Prototipado ágil</td>
+                        <td>⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Express + Railway</strong></td>
+                        <td>React/Vue</td>
+                        <td>Express (Node.js)</td>
+                        <td>Railway (git)</td>
+                        <td>Full-stack Node.js</td>
+                        <td>⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Django + PythonAnywhere</strong></td>
+                        <td>Django Templates</td>
+                        <td>Django ORM (Python)</td>
+                        <td>PythonAnywhere</td>
+                        <td>Grandes apps, BD</td>
+                        <td>⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Streamlit</strong></td>
+                        <td>Python nativo</td>
+                        <td>Python nativo</td>
+                        <td>Streamlit Cloud</td>
+                        <td>Dashboards de datos</td>
+                        <td>⭐</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info">
+                <strong>Recomendación para este curso:</strong> Usaremos Next.js + Vercel porque es el más moderno, tiene la curva de aprendizaje más suave y el deployment es instantáneo.
+            </div>
+        </section>
+
+        <!-- Guided Practice Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">⚙️</span>
+                Práctica guiada
+            </h2>
+            <p>Vamos a construir paso a paso una AI app mínima pero funcional. Seguiremos una arquitectura real de producción.</p>
+
+            <h3>Paso 1: Crear un proyecto Next.js</h3>
+            <p>Ejecuta en tu terminal:</p>
+
+            <div class="code-block">
+                <span class="lang-label">bash</span>
+                <pre><code>npx create-next-app@latest mi-app-ia \
+  --typescript \
+  --tailwind \
+  --eslint \
+  --app \
+  --no-src-dir
+
+cd mi-app-ia</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>Flags usados:</strong>
+                <ul>
+                    <li><code>--typescript:</code> Tipado fuerte (evita bugs)</li>
+                    <li><code>--tailwind:</code> CSS framework (estilos rápido)</li>
+                    <li><code>--eslint:</code> Linter (código limpio)</li>
+                    <li><code>--app:</code> Usa App Router (más moderno)</li>
+                    <li><code>--no-src-dir:</code> Estructura raíz más limpia</li>
+                </ul>
+            </div>
+
+            <h3>Paso 2: Crear API route que llama a OpenAI</h3>
+            <p>Crea el archivo <code>app/api/chat/route.ts</code> (Next.js API Route):</p>
+
+            <div class="code-block">
+                <span class="lang-label">TypeScript</span>
+                <pre><code>// app/api/chat/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(request: NextRequest) {
+  try {
+    // 1. Leer el mensaje del usuario desde el request
+    const { message } = await request.json();
+
+    if (!message || message.trim() === '') {
+      return NextResponse.json(
+        { error: 'El mensaje no puede estar vacío' },
+        { status: 400 }
+      );
+    }
+
+    // 2. Validación básica
+    if (message.length > 1000) {
+      return NextResponse.json(
+        { error: 'El mensaje es demasiado largo (máx 1000 caracteres)' },
+        { status: 400 }
+      );
+    }
+
+    // 3. Obtener API key del backend (nunca del frontend)
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'API key no configurada en el servidor' },
+        { status: 500 }
+      );
+    }
+
+    // 4. Llamar a OpenAI API
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'user',
+            content: message,
+          },
+        ],
+        max_tokens: 500,
+        temperature: 0.7,
+      }),
+    });
+
+    // 5. Procesar respuesta de OpenAI
+    if (!response.ok) {
+      const error = await response.json();
+      return NextResponse.json(
+        { error: `Error de OpenAI: ${error.error.message}` },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    const reply = data.choices[0].message.content;
+
+    // 6. Devolver respuesta al frontend
+    return NextResponse.json({
+      success: true,
+      reply,
+      model: data.model,
+      usage: data.usage,
+    });
+
+  } catch (error) {
+    console.error('Error en API /chat:', error);
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 }
+    );
+  }
+}</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>¿Qué pasa aquí?</strong>
+                <ol>
+                    <li>El frontend envía un JSON: <code>{ "message": "Hola IA" }</code></li>
+                    <li>El backend valida el mensaje</li>
+                    <li>El backend obtiene la API key de la variable de entorno (NO del código)</li>
+                    <li>El backend llama a OpenAI con el mensaje</li>
+                    <li>El backend procesa la respuesta y la devuelve al frontend</li>
+                </ol>
+            </div>
+
+            <h3>Paso 3: Crear componente React que llama al API</h3>
+            <p>Crea <code>app/components/ChatBox.tsx</code>:</p>
+
+            <div class="code-block">
+                <span class="lang-label">TypeScript</span>
+                <pre><code>// app/components/ChatBox.tsx
+'use client';
+
+import { useState } from 'react';
+
+interface Message {
+  id: string;
+  text: string;
+  sender: 'user' | 'ai';
+}
+
+export default function ChatBox() {
+  const [messages, setMessages] = useState&lt;Message[]&gt;([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  // Función para enviar mensaje
+  const handleSendMessage = async (e: React.FormEvent) =&gt; {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    // 1. Agregar mensaje del usuario al UI
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: input,
+      sender: 'user',
+    };
+    setMessages((prev) =&gt; [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
+    setError('');
+
+    try {
+      // 2. Llamar al API route del backend
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Error desconocido');
+      }
+
+      const data = await response.json();
+
+      // 3. Agregar respuesta de la IA al UI
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: data.reply,
+        sender: 'ai',
+      };
+      setMessages((prev) =&gt; [...prev, aiMessage]);
+
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al conectar con la IA');
+      console.error('Error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    &lt;div className="chat-container"&gt;
+      &lt;div className="messages"&gt;
+        {messages.map((msg) =&gt; (
+          &lt;div key={msg.id} className={`message ${msg.sender}`}&gt;
+            &lt;p&gt;{msg.text}&lt;/p&gt;
+          &lt;/div&gt;
+        ))}
+        {isLoading &amp;&amp; &lt;div className="message ai loading"&gt;Pensando...&lt;/div&gt;}
+        {error &amp;&amp; &lt;div className="message error"&gt;{error}&lt;/div&gt;}
+      &lt;/div&gt;
+
+      &lt;form onSubmit={handleSendMessage} className="input-form"&gt;
+        &lt;input
+          type="text"
+          value={input}
+          onChange={(e) =&gt; setInput(e.target.value)}
+          placeholder="Escribe tu pregunta..."
+          disabled={isLoading}
+        /&gt;
+        &lt;button type="submit" disabled={isLoading}&gt;
+          {isLoading ? 'Enviando...' : 'Enviar'}
+        &lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>Conceptos clave:</strong>
+                <ul>
+                    <li><code>'use client':</code> Este componente es interactivo (debe ejecutarse en el navegador)</li>
+                    <li><code>useState:</code> Gestiona el estado (mensajes, input, loading)</li>
+                    <li><code>fetch('/api/chat'):</code> Llamada al backend (NO a OpenAI directamente)</li>
+                    <li>El usuario nunca ve la API key de OpenAI</li>
+                </ul>
+            </div>
+
+            <h3>Paso 4: Renderizar el componente en la página principal</h3>
+            <p>Modifica <code>app/page.tsx</code>:</p>
+
+            <div class="code-block">
+                <span class="lang-label">TypeScript</span>
+                <pre><code>// app/page.tsx
+import ChatBox from './components/ChatBox';
+
+export default function Home() {
+  return (
+    &lt;main className="min-h-screen bg-gray-100 p-8"&gt;
+      &lt;div className="max-w-2xl mx-auto"&gt;
+        &lt;h1 className="text-4xl font-bold mb-2 text-gray-800"&gt;
+          Mi Primera AI App
+        &lt;/h1&gt;
+        &lt;p className="text-gray-600 mb-6"&gt;
+          Charla con una IA. El mensaje se procesa en el backend por razones de seguridad.
+        &lt;/p&gt;
+        &lt;ChatBox /&gt;
+      &lt;/div&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+            </div>
+
+            <h3>Paso 5: Configurar variables de entorno</h3>
+            <p>Crea un archivo <code>.env.local</code> en la raíz del proyecto:</p>
+
+            <div class="code-block">
+                <span class="lang-label">bash</span>
+                <pre><code># .env.local
+OPENAI_API_KEY=sk-tu-api-key-aqui</code></pre>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ IMPORTANTE:</strong>
+                <ul>
+                    <li>NUNCA commits <code>.env.local</code> a Git. Está en <code>.gitignore</code> por defecto.</li>
+                    <li>En desarrollo local, crea una API key en <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>.</li>
+                    <li>En producción (Vercel), configura las variables en el dashboard de Vercel (Settings → Environment Variables).</li>
+                </ul>
+            </div>
+
+            <h3>Paso 6: Testear end-to-end</h3>
+
+            <div class="code-block">
+                <span class="lang-label">bash</span>
+                <pre><code># 1. Instalar dependencias (si no las has instalado)
+npm install
+
+# 2. Ejecutar servidor de desarrollo
+npm run dev
+
+# 3. Abre http://localhost:3000 en tu navegador
+# 4. Escribe un mensaje y dale a "Enviar"
+# 5. Deberías ver la respuesta de OpenAI en pocos segundos</code></pre>
+            </div>
+
+            <div class="info">
+                <strong>¿Qué está pasando?</strong>
+                <ol>
+                    <li>Escribes "Hola" en el input del frontend</li>
+                    <li>React envía un POST a <code>/api/chat</code> con JSON <code>{ "message": "Hola" }</code></li>
+                    <li>El backend recibe el request, valida, obtiene la API key</li>
+                    <li>El backend llama a OpenAI API con tu mensaje</li>
+                    <li>OpenAI procesa y responde (tarda 1-3 segundos típicamente)</li>
+                    <li>El backend devuelve la respuesta al frontend como JSON</li>
+                    <li>React actualiza el UI y muestra la respuesta</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Challenge Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎯</span>
+                Mini-reto del día
+            </h2>
+
+            <div class="reto-box">
+                <h3>Construye una AI App Simple</h3>
+                <p>Sigue los pasos 1-6 de la práctica guiada y crea una app funcional que:</p>
+                <ul>
+                    <li>Tenga un input para escribir mensajes</li>
+                    <li>Envíe el mensaje al backend (no directamente a OpenAI)</li>
+                    <li>El backend valide el mensaje (no vacío, máx 1000 caracteres)</li>
+                    <li>El backend llame a OpenAI y devuelva la respuesta</li>
+                    <li>El frontend muestre el diálogo de forma clara</li>
+                    <li>Muestre un estado "Pensando..." mientras se procesa</li>
+                    <li>Maneje errores de forma elegante</li>
+                </ul>
+
+                <p><strong>Criterios de éxito:</strong></p>
+                <ul>
+                    <li>✅ La app se ejecuta en <code>npm run dev</code> sin errores</li>
+                    <li>✅ Puedes escribir mensajes y recibir respuestas de OpenAI</li>
+                    <li>✅ La API key NO está en el código frontend (inspect de Chrome no la muestra)</li>
+                    <li>✅ Validación básica funciona (mensaje vacío muestra error)</li>
+                    <li>✅ El estado "Pensando..." aparece mientras procesa</li>
+                </ul>
+
+                <p><strong>Bonus (opcional):</strong></p>
+                <ul>
+                    <li>Añade CSS personalizado para que se vea profesional</li>
+                    <li>Guarda el historial de mensajes en localStorage</li>
+                    <li>Añade un botón "Limpiar chat" para resetear la conversación</li>
+                    <li>Muestra tokens gastados (en respuesta de OpenAI)</li>
+                    <li>Implementa un sistema de "personalidad" del bot (system prompt)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Exercise Submission Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">✅</span>
+                Entrega de ejercicios
+            </h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Next.js con Vercel AI SDK</h4>
+                <p>Crea una aplicación Next.js que use Vercel AI SDK para llamar a un modelo de IA en el servidor.</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Código (archivo principal de Next.js) — Pega tu código aquí..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Explicación de la arquitectura y integración..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c01', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Streaming chat en Next.js</h4>
+                <p>Implementa un chat que use streaming en tiempo real para mostrar las respuestas del modelo conforme se generan.</p>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Código del servidor y cliente — Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Prueba del streaming (cómo fluyen los mensajes en tiempo real)..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c01', 2, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📝</span>
+                Test de conocimiento
+            </h2>
+            <p>Responde las siguientes 10 preguntas para verificar tu comprensión de la arquitectura Full-Stack AI. Necesitas al menos 8 correctas para marcar esta clase como completada.</p>
+
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <div class="clase-nav">
+            <a href="../modulo-07.html">← Módulo 7</a>
+            <span> | </span>
+            <a href="clase-02.html">Clase 02 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        // Quiz data
+        const quizQuestions = [
+            {
+                question: "¿Por qué las API keys de OpenAI NUNCA deben estar en el código frontend?",
+                options: [
+                    "Porque hacen lento el navegador",
+                    "Porque cualquiera puede verlas en el inspector de Chrome y abusar de tu API",
+                    "Porque JavaScript no soporta strings tan largos",
+                    "Porque es una mala práctica estética"
+                ],
+                correct: 1  // Seguridad - visible en inspector
+            },
+            {
+                question: "En una arquitectura Full-Stack AI, ¿dónde debería ir la llamada a OpenAI?",
+                options: [
+                    "En el componente React (frontend)",
+                    "En una API route del backend",
+                    "Directamente en el navegador con CORS",
+                    "En una librería de Node.js instalada"
+                ],
+                correct: 1  // Backend - API route
+            },
+            {
+                question: "¿Cuál es la ventaja principal de usar Next.js para una AI app?",
+                options: [
+                    "Es el framework más rápido del mercado",
+                    "Frontend + Backend en el mismo repo, deploy automático a Vercel",
+                    "Viene con una BD integrada",
+                    "Genera automáticamente UIs bonitas"
+                ],
+                correct: 1  // Frontend + Backend integrado
+            },
+            {
+                question: "En el flujo Frontend → Backend → LLM, ¿qué hace el Backend?",
+                options: [
+                    "Solo pasar el mensaje del usuario a OpenAI sin cambios",
+                    "Validar input, gestionar API keys, rate limiting, logs, llamar a LLM",
+                    "Renderizar HTML para el navegador",
+                    "Entrenar modelos de IA"
+                ],
+                correct: 1  // Validación, seguridad, orquestación
+            },
+            {
+                question: "¿Qué es un 'API Route' en Next.js?",
+                options: [
+                    "Una carpeta donde se guardan imágenes",
+                    "Un endpoint HTTP que se ejecuta en el servidor (backend)",
+                    "Un componente React que hace peticiones",
+                    "Una ruta del navegador para ir entre páginas"
+                ],
+                correct: 1  // Endpoint del servidor
+            },
+            {
+                question: "¿En qué lugar del código debe estar configurada la API key de OpenAI?",
+                options: [
+                    "En archivos .js del frontend",
+                    "En un archivo .env.local en la raíz del proyecto (NO en git)",
+                    "En el localStorage del navegador",
+                    "En la URL como parámetro de query"
+                ],
+                correct: 1  // .env.local - variable de entorno
+            },
+            {
+                question: "¿Cuál es la diferencia principal entre Streamlit y Next.js para AI apps?",
+                options: [
+                    "Streamlit es más rápido",
+                    "Next.js requiere API keys, Streamlit no",
+                    "Streamlit es Python puro sin separación frontend/backend; Next.js es full-stack profesional",
+                    "No hay diferencia, son iguales"
+                ],
+                correct: 2  // Arquitectura: Streamlit monolítico vs Next.js separado
+            },
+            {
+                question: "Si el frontend intenta llamar directamente a OpenAI (sin backend), ¿qué sucede?",
+                options: [
+                    "Funciona perfectamente",
+                    "CORS error - el navegador bloquea la solicitud (seguridad)",
+                    "OpenAI rechaza la solicitud porque no viene de un servidor verificado",
+                    "Todo depende del modelo de IA que uses"
+                ],
+                correct: 1  // CORS error
+            },
+            {
+                question: "¿Qué tool/librería usamos en el ejemplo práctico para llamar a OpenAI desde el backend?",
+                options: [
+                    "React Query",
+                    "El fetch() nativo de JavaScript + headers de Authorization",
+                    "axios con TypeScript",
+                    "Un SDK específico de OpenAI"
+                ],
+                correct: 1  // fetch() nativo
+            },
+            {
+                question: "En Vercel (hosting de Next.js), ¿dónde configurarías la API key de OpenAI para producción?",
+                options: [
+                    "En el archivo .env del repo (y subirlo a git)",
+                    "En el dashboard de Vercel → Settings → Environment Variables",
+                    "En un archivo .secrets en la raíz",
+                    "En el navegador del cliente como localStorage"
+                ],
+                correct: 1  // Dashboard de Vercel - Environment Variables
+            }
+        ];
+
+        // Initialize quiz (único sistema: CourseProgress)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm7-c01');
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm7-c01');
+        }
+    </script>
+
+    <style>
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+        }
+
+        .comparison-table thead {
+            background-color: #00e676;
+            color: #0a0a1a;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+        }
+
+        .comparison-table tbody tr:nth-child(odd) {
+            background-color: #1a1a2e;
+        }
+
+        .comparison-table tbody tr:hover {
+            background-color: #1a1a3e;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1em;
+            margin: 1em 0;
+            border-radius: 4px;
+            color: var(--text-primary);
+        }
+
+        .warning strong {
+            color: #856404;
+        }
+
+        .warning ul {
+            margin-top: 0.8em;
+            margin-bottom: 0;
+        }
+
+        .warning li {
+            margin: 0.5em 0;
+            color: var(--text-primary);
+        }
+
+        .warning a {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        .warning code {
+            color: #d63384;
+            background: rgba(0,0,0,0.06);
+            padding: 0.15em 0.4em;
+            border-radius: 3px;
+        }
+    </style>
+</body>
+</html>

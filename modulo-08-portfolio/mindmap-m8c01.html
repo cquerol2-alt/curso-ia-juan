@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: README Profesional — Módulo 8</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #00e676;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .mindmap-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .mindmap-section {
+            background: #1a1f3a;
+            border: 1px solid #00e676;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .mindmap-section:hover {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .mindmap-section h2 {
+            color: #00e676;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mindmap-section ul {
+            list-style: none;
+        }
+
+        .mindmap-section li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 14px;
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        .mindmap-section li:before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #00ff88;
+        }
+
+        .central-concept {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: #1a1f3a;
+            border: 2px solid #00e676;
+            border-radius: 12px;
+        }
+
+        .central-concept h3 {
+            color: #00e676;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .central-concept p {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .tool-card {
+            background: #0f1428;
+            border: 1px solid #00e676;
+            padding: 15px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover {
+            border-color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .tool-card h4 {
+            color: #00e676;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .tool-card p {
+            color: #999;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .checklist {
+            background: #1a1f3a;
+            border: 1px solid #00e676;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .checklist h3 {
+            color: #00e676;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            color: #ccc;
+            font-size: 13px;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 1px solid #00e676;
+            border-radius: 3px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .checkbox:hover {
+            background: rgba(0, 230, 118, 0.1);
+        }
+
+        .checkbox.checked {
+            background: #00e676;
+            color: #0a0e27;
+        }
+
+        .checkbox.checked:after {
+            content: '✓';
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #00e676;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            color: #00ff88;
+            margin-left: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .mindmap-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="clase-01.html" class="back-btn">← Volver a Clase 01</a>
+
+        <header>
+            <h1>📊 Mind Map: README Profesional</h1>
+            <p class="subtitle">Conceptos clave sobre cómo escribir un README de 10/10</p>
+        </header>
+
+        <div class="central-concept">
+            <h3>README Profesional</h3>
+            <p>Tu carta de presentación ante recruiters y la comunidad open source</p>
+        </div>
+
+        <div class="mindmap-wrapper">
+            <!-- Estructura -->
+            <div class="mindmap-section">
+                <h2>🏗️ Estructura Básica</h2>
+                <ul>
+                    <li>Título + badges de estado</li>
+                    <li>Descripción clara (2-3 frases)</li>
+                    <li>Screenshot o GIF animado</li>
+                    <li>Tech Stack visible</li>
+                    <li>Instalación paso a paso</li>
+                    <li>Ejemplos de uso</li>
+                    <li>Arquitectura / diagrama</li>
+                    <li>Qué aprendí (reflexión)</li>
+                    <li>Licencia + Contacto</li>
+                </ul>
+            </div>
+
+            <!-- Elementos Visuales -->
+            <div class="mindmap-section">
+                <h2>🎨 Elementos Visuales</h2>
+                <ul>
+                    <li><strong>Badges:</strong> shields.io (estado, versión, tech)</li>
+                    <li><strong>Screenshot:</strong> Muestra app funcionando</li>
+                    <li><strong>GIF animado:</strong> 10-15 segundos de demo</li>
+                    <li><strong>Diagrama:</strong> Arquitectura ASCII clara</li>
+                    <li><strong>Tabla:</strong> Comparativa de versiones</li>
+                    <li><strong>Code blocks:</strong> Ejemplos formateados</li>
+                    <li><strong>Emojis:</strong> Subtítulos, no abuso</li>
+                </ul>
+            </div>
+
+            <!-- Contenido Clave -->
+            <div class="mindmap-section">
+                <h2>📝 Contenido Clave</h2>
+                <ul>
+                    <li><strong>¿Qué hace?</strong> Propósito claro</li>
+                    <li><strong>¿Por qué?</strong> Problema que resuelve</li>
+                    <li><strong>¿Cómo funciona?</strong> Arquitectura</li>
+                    <li><strong>¿Cómo usarlo?</strong> Guía de usuario</li>
+                    <li><strong>¿Qué aprendiste?</strong> Reflexión personal</li>
+                    <li><strong>Instalación sin fricciones</strong> Clone + run en 5 min</li>
+                    <li><strong>Contacto accesible</strong> Email + GitHub + LinkedIn</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Herramientas útiles -->
+        <div class="checklist">
+            <h3>🛠️ Herramientas Recomendadas</h3>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h4>shields.io</h4>
+                    <p>Genera badges visuales para estado, versión, tech stack. Aumenta profesionalidad al instante.</p>
+                </div>
+                <div class="tool-card">
+                    <h4>gifcap.dev</h4>
+                    <p>Graba GIFs de tu pantalla sin instalar nada. Perfecto para demos cortas (10-15s).</p>
+                </div>
+                <div class="tool-card">
+                    <h4>carbon.now.sh</h4>
+                    <p>Captura bonitas de código con tema y fuente personalizados. Ideal para screenshots.</p>
+                </div>
+                <div class="tool-card">
+                    <h4>OBS Studio / Loom</h4>
+                    <p>Grabación de pantalla profesional. OBS es gratis y potente. Loom es más rápido.</p>
+                </div>
+                <div class="tool-card">
+                    <h4>readme.so</h4>
+                    <p>Editor visual drag & drop para generar READMEs. Bueno para ver estructura mientras escribes.</p>
+                </div>
+                <div class="tool-card">
+                    <h4>YouTube (No listado)</h4>
+                    <p>Sube tus demostraciones como "No listado" y embebe el iframe en README.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checklist -->
+        <div class="checklist">
+            <h3>✅ Checklist de un README Profesional</h3>
+            <div class="checklist-item">
+                <span class="checkbox" onclick="this.classList.toggle('checked')"></span>
+                <span>Título claro + 2-3 badges de estado</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checkbox" onclick="this.classList.toggle('checked')"></span>
+                <span>Descripción: ¿qué hace, por qué, qué problema resuelve?</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checkbox" onclick="this.classList.toggle('checked')"></span>
+                <span>Screenshot o GIF animado funcionando</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checkbox" onclick="this.classList.toggle('checked')"></span>
+                <span>Tech stack con badges visuales</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checkbox" onclick="this.classList.toggle('checked')"></span>
+                <span>Instalación: clone + venv + pip install (sin fricciones)</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checkbox" onclick="this.classList.toggle('checked')"></span>
+                <span>Ejemplos de uso con código ejecutable</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checkbox" onclick="this.classList.toggle('checked')"></span>
+                <span>Arquitectura con diagrama o explicación clara</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checkbox" onclick="this.classList.toggle('checked')"></span>
+                <span>Sección "Qué aprendí" con reflexión genuina (3-5 puntos)</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checkbox" onclick="this.classList.toggle('checked')"></span>
+                <span>Demo en vídeo (60s: contexto → demo → cierre)</span>
+            </div>
+            <div class="checklist-item">
+                <span class="checkbox" onclick="this.classList.toggle('checked')"></span>
+                <span>Licencia (MIT) + Contacto (email, GitHub, LinkedIn)</span>
+            </div>
+        </div>
+
+        <!-- Volver -->
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="clase-01.html" class="back-btn" style="font-size: 16px;">← Volver a Clase 01</a>
+        </div>
+    </div>
+</body>
+</html>

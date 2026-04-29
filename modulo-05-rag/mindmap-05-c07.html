@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map — Frontend con Streamlit para tu App RAG</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0a0a1a;color:#e8e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+        .topbar{padding:12px 20px;background:linear-gradient(90deg,#00f0ff,#0a6e5c);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+        .topbar a{color:#fff;text-decoration:none;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;font-size:.85em;transition:.3s}
+        .topbar a:hover{background:rgba(255,255,255,.3)}
+        .topbar h1{font-size:1.1em;color:#fff;text-align:center;flex:1;margin:0 12px}
+        .map{max-width:900px;margin:30px auto;padding:0 16px}
+        .center{text-align:center;margin-bottom:32px}
+        .center .pill{display:inline-block;background:linear-gradient(135deg,#00f0ff,#ff00e5);padding:16px 32px;border-radius:60px;font-size:1.4em;font-weight:800;color:#0a0a1a;box-shadow:0 0 30px rgba(0,240,255,.3)}
+        .center .sub{color:#8888aa;margin-top:8px;font-size:.95em}
+        .branch{margin-bottom:16px;border:1px solid rgba(0,240,255,.15);border-radius:12px;overflow:hidden;transition:.3s}
+        .branch:hover{border-color:rgba(0,240,255,.4);box-shadow:0 0 15px rgba(0,240,255,.08)}
+        .branch-head{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;background:#12122a;user-select:none;transition:.2s}
+        .branch-head:hover{background:#1a1a3e}
+        .branch-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2em;flex-shrink:0}
+        .b1 .branch-icon{background:rgba(0,240,255,.15);border:2px solid #00f0ff}
+        .b2 .branch-icon{background:rgba(255,0,229,.15);border:2px solid #ff00e5}
+        .b3 .branch-icon{background:rgba(57,255,20,.15);border:2px solid #39ff14}
+        .b4 .branch-icon{background:rgba(255,230,0,.15);border:2px solid #ffe600}
+        .b5 .branch-icon{background:rgba(255,107,0,.15);border:2px solid #ff6b00}
+        .branch-title{flex:1;font-weight:700;font-size:1.05em}
+        .b1 .branch-title{color:#00f0ff}
+        .b2 .branch-title{color:#ff00e5}
+        .b3 .branch-title{color:#39ff14}
+        .b4 .branch-title{color:#ffe600}
+        .b5 .branch-title{color:#ff6b00}
+        .toggle{color:#8888aa;font-size:1.4em;transition:transform .3s}
+        .branch.open .toggle{transform:rotate(45deg)}
+        .branch-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+        .branch.open .branch-body{max-height:600px}
+        .sub-list{padding:8px 20px 16px 72px;display:flex;flex-direction:column;gap:8px}
+        .sub-item{padding:10px 16px;background:#1a1a2e;border-radius:8px;border-left:3px solid;font-size:.93em;line-height:1.5}
+        .b1 .sub-item{border-color:#00f0ff}
+        .b2 .sub-item{border-color:#ff00e5}
+        .b3 .sub-item{border-color:#39ff14}
+        .b4 .sub-item{border-color:#ffe600}
+        .b5 .sub-item{border-color:#ff6b00}
+        .sub-item strong{color:#fff}
+        .sub-item code{background:#12122a;padding:2px 6px;border-radius:4px;font-size:.88em;color:#39ff14;font-family:'Fira Code',monospace}
+        @media(max-width:600px){.topbar h1{font-size:.9em}.center .pill{font-size:1.1em;padding:12px 24px}.sub-list{padding-left:52px}}
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="clase-07.html">← Volver a la clase</a>
+        <h1>Mind Map — Clase 07</h1>
+        <div style="width:80px"></div>
+    </div>
+
+    <div class="map">
+        <div class="center">
+            <div class="pill">Frontend con Streamlit para tu App RAG</div>
+            <p class="sub">Crea UIs para IA sin escribir HTML/CSS, todo en Python</p>
+        </div>
+
+        <!-- Rama 1 -->
+        <div class="branch b1">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">❓</div>
+                <div class="branch-title">¿Por qué Streamlit?</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Framework Python para UIs</strong> — escribe el frontend sin tocar HTML, CSS ni JavaScript</div>
+                    <div class="sub-item">Perfecto para prototipos de IA — construir y iterar rápidamente</div>
+                    <div class="sub-item">Se ejecuta con <code>streamlit run app.py</code> — un comando y tienes servidor local</div>
+                    <div class="sub-item">Ideal para portfolios y demos — se ve profesional sin esfuerzo</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 2 -->
+        <div class="branch b2">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🧩</div>
+                <div class="branch-title">Componentes básicos</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><code>st.title()</code> — título grande para la página</div>
+                    <div class="sub-item"><code>st.text_input()</code> y <code>st.button()</code> — inputs y botones</div>
+                    <div class="sub-item"><code>st.write()</code> y <code>st.markdown()</code> — mostrar texto con formato</div>
+                    <div class="sub-item"><code>st.sidebar</code> — panel lateral para controles secundarios</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 3 -->
+        <div class="branch b3">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">💬</div>
+                <div class="branch-title">Chat UI</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><code>st.chat_message("user"/"assistant")</code> — burbujas de chat estilizadas</div>
+                    <div class="sub-item"><code>st.chat_input()</code> — campo de texto para el usuario en la parte inferior</div>
+                    <div class="sub-item"><strong>session_state</strong> — guardar el historial de mensajes entre ejecuciones</div>
+                    <div class="sub-item">Loop que renderiza mensajes anteriores y captura nuevos en cada click</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 4 -->
+        <div class="branch b4">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🔗</div>
+                <div class="branch-title">Integración con RAG</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><code>st.file_uploader()</code> — widget para que el usuario suba PDFs</div>
+                    <div class="sub-item">Procesar documentos en background con <code>st.spinner()</code></div>
+                    <div class="sub-item">Llamar a la chain de LangChain cuando se pregunta algo</div>
+                    <div class="sub-item">Mostrar respuesta + fuentes con <code>st.expander()</code> para expandir/contraer</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 5 -->
+        <div class="branch b5">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🎨</div>
+                <div class="branch-title">Personalización</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><code>st.set_page_config()</code> — título e icono de la página</div>
+                    <div class="sub-item"><code>st.columns()</code> — layouts en columnas para organizar contenido</div>
+                    <div class="sub-item"><code>st.slider()</code> y <code>st.selectbox()</code> — controles de usuario interactivos</div>
+                    <div class="sub-item">CSS custom con <code>st.markdown(unsafe_allow_html=True)</code> — controlar estilos avanzados</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

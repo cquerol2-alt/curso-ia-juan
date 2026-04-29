@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss Battle: App Completa — Asistente IA Full-Stack — Curso IA Juan</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .boss-battle-header {
+            background: linear-gradient(135deg, #00e676 0%, #00d89a 100%);
+            padding: 2em;
+            border-radius: 8px;
+            margin-bottom: 2em;
+            color: #0a0a1a;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.3);
+        }
+        .boss-battle-header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        .boss-battle-header .subtitle {
+            font-size: 1.1em;
+            margin-top: 0.5em;
+            opacity: 0.95;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin: 2em 0 1em 0;
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #00e676;
+            border-bottom: 2px solid #00e676;
+            padding-bottom: 0.5em;
+        }
+        .section-header em {
+            margin-right: 0.5em;
+            font-style: normal;
+        }
+        .challenge-box {
+            background: #1a1a3e;
+            border-left: 4px solid #00e676;
+            padding: 1.5em;
+            margin: 1.5em 0;
+            border-radius: 4px;
+        }
+        .challenge-box ul {
+            margin: 1em 0;
+            padding-left: 1.5em;
+        }
+        .challenge-box li {
+            margin: 0.8em 0;
+            line-height: 1.6;
+        }
+        .step-card {
+            background: #12122a;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 6px;
+            padding: 1.5em;
+            margin: 1em 0;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+        }
+        .step-card h4 {
+            color: #00e676;
+            margin-top: 0;
+            font-size: 1.15em;
+        }
+        .step-card code {
+            background: #1a1a2e;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .checklist {
+            background: rgba(57, 255, 20, 0.08);
+            border: 1px solid #00e676;
+            padding: 1.5em;
+            border-radius: 6px;
+            margin: 1.5em 0;
+        }
+        .checklist ul {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 0.6em 0;
+            margin: 0;
+        }
+        .checklist li:before {
+            content: "☐ ";
+            color: #00e676;
+            font-weight: bold;
+            margin-right: 0.5em;
+        }
+        .tips-box {
+            background: rgba(255, 107, 0, 0.08);
+            border-left: 4px solid #ff9800;
+            padding: 1.5em;
+            margin: 1.5em 0;
+            border-radius: 4px;
+        }
+        .tips-box strong {
+            color: #ff9800;
+        }
+        .bonus-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6f00, #ff9800);
+            color: white;
+            padding: 0.4em 0.8em;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 0.5em;
+        }
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            margin: 2em 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            margin: 2em 0;
+            gap: 1em;
+        }
+        .nav-links a {
+            flex: 1;
+            padding: 1em;
+            background: #00e676;
+            color: #0a0a1a;
+            text-decoration: none;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover {
+            background: #00ff88;
+            color: #0a0a1a;
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+        }
+        .nav-links a.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .badge-unlock {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border: 2px solid #ff9800;
+            padding: 1.5em;
+            border-radius: 8px;
+            text-align: center;
+            margin: 2em 0;
+            box-shadow: 0 0 20px rgba(255, 152, 0, 0.3);
+            color: #0a0a1a;
+        }
+        .badge-unlock h3 {
+            color: #b45309;
+            margin-top: 0;
+        }
+        .badge-icon {
+            font-size: 3em;
+            margin: 0.5em 0;
+        }
+        .info {
+            background: rgba(57, 255, 20, 0.06);
+            border-left: 3px solid #00e676;
+            padding: 1em;
+            margin: 1em 0;
+            border-radius: 4px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.8em 1.5em;
+            background: #00e676;
+            color: #0a0a1a;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #00ff88;
+            color: #0a0a1a;
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <nav class="breadcrumb">
+        <a href="../index.html">Dashboard</a> /
+        <a href="index.html">Módulo 7: Full-Stack IA</a> /
+        <span>Boss Battle</span>
+    </nav>
+        <div class="boss-battle-header">
+            <h1>⚔️ Boss Battle: App Completa — Asistente IA Full-Stack</h1>
+            <div class="subtitle">
+                📅 Semana 9 — Viernes | 🎯 Boss Battle — Proyecto Portfolio #3 | ⭐ 50 XP
+            </div>
+        </div>
+
+        <!-- Video -->
+        <div class="video-wrapper">
+            <iframe
+                src="https://www.youtube.com/embed/r895rFUbGtE"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+            <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+        </div>
+
+        <div class="tip" style="margin-top: 1em;">
+            <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+            <a href="mindmap-07-c05.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+        </div>
+
+        <!-- SECCIÓN 1: EL RETO -->
+        <div class="section-header">
+            <em>🎯</em> El Reto
+        </div>
+
+        <p style="font-size: 1.05em; line-height: 1.8; color: #e0e0e8;">
+            Has llegado al último nivel del Módulo 7. Es hora de poner en juego todo lo que has aprendido sobre <strong>Full-Stack IA</strong> construyendo una <strong>aplicación completa, profesional y deployada</strong> que funcione en el mundo real.
+        </p>
+
+        <p style="font-size: 1.05em; line-height: 1.8; color: #e0e0e8;">
+            Tu misión: <strong>Crear un Asistente IA especializado para un caso de uso real</strong>. Elige un tema que te apasione — podría ser un asistente para magos que sugiere trucos usando un libro de magia, un coach de juegos, un asesor musical, un entrenador deportivo, o lo que quieras. Este es tu <strong>Proyecto Portfolio #3</strong> — lo vas a mostrar a otros developers, recruiters, o simplemente a ti mismo con el máximo orgullo.
+        </p>
+
+        <div class="challenge-box">
+            <h3>Opción A: Chatbot IA — Requisitos Mínimos (MVP)</h3>
+            <ul>
+                <li><strong>✅ Next.js 14+ con App Router:</strong> Backend y frontend en un solo proyecto, deployable sin fricción</li>
+                <li><strong>✅ Vercel AI SDK con streaming:</strong> Las respuestas del IA llegan en tiempo real, no esperamos a que termine de pensar</li>
+                <li><strong>✅ Autenticación con Auth.js:</strong> Al menos un provider OAuth (Google, GitHub, etc.). Los usuarios tienen sesión segura</li>
+                <li><strong>✅ Rate limiting:</strong> Mínimo 20 requests por minuto por usuario. Evita abuso y controlamos costos de API</li>
+                <li><strong>✅ Chat UI profesional:</strong> Soporte markdown, bloques de código formateados, indicador de escritura, historial limpio</li>
+                <li><strong>✅ System prompt personalizado:</strong> El asistente tiene una personalidad única para tu caso de uso elegido</li>
+                <li><strong>✅ Responsive:</strong> Funciona perfectamente en móvil, tablet y desktop</li>
+                <li><strong>✅ Deployado en Vercel:</strong> URL pública, dominio personalizado opcional, actualizaciones automáticas desde GitHub</li>
+            </ul>
+        </div>
+
+        <div class="challenge-box" style="background: rgba(255, 230, 0, 0.08); border-left-color: #ff9800;">
+            <h3>Bonus (Gana XP Extra)</h3>
+            <ul>
+                <li><strong>🌟 RAG integrado:</strong> Conecta documentos propios del tema elegido — el asistente responde basándose en tus fuentes</li>
+                <li><strong>🌟 Historial persistente:</strong> Las conversaciones se guardan en una base de datos (Supabase, MongoDB, etc.) — el usuario recupera su historial</li>
+                <li><strong>🌟 Múltiples modelos:</strong> Selector de OpenAI, Claude, Ollama — el usuario elige su favorito</li>
+                <li><strong>🌟 Dark/Light mode:</strong> Toggle de tema que persiste en localStorage</li>
+                <li><strong>🌟 Export de conversaciones:</strong> Descargar chats en PDF o Markdown</li>
+                <li><strong>🌟 Analytics:</strong> Seguimiento de uso (cuántas preguntas, promedio de respuesta, modelos favoritos)</li>
+            </ul>
+        </div>
+
+        <!-- OPCIÓN B: CO-WRITER -->
+        <div class="section-header" style="color: #ff00e5; border-bottom-color: #ff00e5;">
+            <em>✍️</em> Opción B: AI Co-Writer — Editor Inteligente <span class="bonus-badge">RECOMENDADO</span>
+        </div>
+
+        <p style="font-size: 1.05em; line-height: 1.8; color: #e0e0e8;">
+            En lugar de un chatbot (que todo el mundo tiene), construye algo que <strong>casi nadie tiene en su portfolio</strong>: un <strong>editor de texto con IA integrada</strong>. Seleccionas un párrafo, haces clic en "Reescribir", "Expandir" o "Resumir", y la IA lo transforma en tiempo real. Como Notion AI, pero tuyo.
+        </p>
+
+        <div class="challenge-box" style="background: rgba(255, 0, 229, 0.08); border-left-color: #ff00e5;">
+            <h3 style="color: #ff00e5;">¿Por qué el Co-Writer es mejor para tu portfolio?</h3>
+            <ul>
+                <li><strong>Diferenciación:</strong> El 95% de portfolios de IA junior tienen un chatbot. Un Co-Writer muestra que entiendes UX, selección de texto, prompts contextuales y streaming — nivel senior.</li>
+                <li><strong>Complejidad real:</strong> Combina editor de texto + API IA + selección de texto + streaming parcial + RAG opcional. Recruiters ven esto y piensan "este sabe".</li>
+                <li><strong>Producto útil:</strong> Tú mismo lo usarás para escribir README, emails, documentación. No es un demo que nadie usa.</li>
+            </ul>
+        </div>
+
+        <div class="challenge-box" style="background: rgba(255, 0, 229, 0.08); border-left-color: #ff00e5;">
+            <h3 style="color: #ff00e5;">Requisitos del Co-Writer (MVP)</h3>
+            <ul>
+                <li><strong>✅ Editor Markdown:</strong> Área de texto con preview en tiempo real (usa <code>react-markdown</code> o <code>@uiw/react-md-editor</code>)</li>
+                <li><strong>✅ Selección + Acciones IA:</strong> El usuario selecciona texto → aparece un menú flotante con 4 acciones:
+                    <ul style="margin-top: 0.5em;">
+                        <li>🔄 <strong>Reescribir</strong> — misma idea, mejor redacción</li>
+                        <li>📝 <strong>Expandir</strong> — añade detalle y ejemplos</li>
+                        <li>✂️ <strong>Resumir</strong> — comprime en menos palabras</li>
+                        <li>🌍 <strong>Traducir</strong> — español ↔ inglés</li>
+                    </ul>
+                </li>
+                <li><strong>✅ Streaming parcial:</strong> La IA reemplaza el texto seleccionado mientras se genera (no espera a terminar)</li>
+                <li><strong>✅ Undo/Redo:</strong> Ctrl+Z deshace la última acción de IA (guarda el texto original antes de cada transformación)</li>
+                <li><strong>✅ Prompt completo desde texto:</strong> Botón "Escribe sobre..." donde describes un tema y la IA genera un borrador inicial</li>
+                <li><strong>✅ Auth + Rate Limit:</strong> Mismo requisito que la Opción A</li>
+                <li><strong>✅ Deployado en Vercel:</strong> URL pública funcional</li>
+            </ul>
+        </div>
+
+        <div class="step-card" style="border-color: rgba(255, 0, 229, 0.3);">
+            <h4 style="color: #ff00e5;">Arquitectura del Co-Writer</h4>
+            <pre style="background: #1a1a2e; padding: 1em; border-radius: 4px; overflow-x: auto; color: #00e676;">
+src/
+├── app/
+│   ├── api/
+│   │   ├── auth/[...nextauth]/     # OAuth (igual que Opción A)
+│   │   ├── transform/
+│   │   │   └── route.ts            # POST: {text, action, context?} → streaming
+│   │   └── generate/
+│   │       └── route.ts            # POST: {topic} → genera borrador completo
+│   ├── page.tsx                    # El editor principal
+│   └── layout.tsx
+├── components/
+│   ├── Editor.tsx                  # Área de texto + markdown preview
+│   ├── SelectionToolbar.tsx        # Menú flotante sobre texto seleccionado
+│   ├── ActionButton.tsx            # Botones: Reescribir, Expandir, etc.
+│   └── UndoStack.tsx              # Gestión de historial undo/redo
+└── lib/
+    ├── prompts.ts                  # Prompts por acción (rewrite, expand, etc.)
+    ├── selection.ts                # Utilidades para capturar selección de texto
+    └── history.ts                  # Stack de undo/redo
+            </pre>
+        </div>
+
+        <div class="step-card" style="border-color: rgba(255, 0, 229, 0.3);">
+            <h4 style="color: #ff00e5;">Prompts por Acción (lib/prompts.ts)</h4>
+            <p>Cada acción tiene un prompt específico. El truco es que SOLO devuelves el texto transformado, sin explicaciones:</p>
+            <pre style="background: #1a1a2e; padding: 1em; border-radius: 4px; overflow-x: auto; color: #00e676;">
+export const ACTION_PROMPTS = {
+  rewrite: `Reescribe el siguiente texto manteniendo el mismo significado
+pero mejorando la claridad y fluidez. Devuelve SOLO el texto reescrito,
+sin explicaciones ni comillas.\n\nTexto:\n{text}`,
+
+  expand: `Expande el siguiente texto añadiendo detalles, ejemplos y
+explicaciones. Mantén el tono original. Devuelve SOLO el texto expandido,
+sin explicaciones.\n\nTexto:\n{text}`,
+
+  summarize: `Resume el siguiente texto en aproximadamente 1/3 de su
+longitud original. Mantén las ideas clave. Devuelve SOLO el resumen,
+sin explicaciones.\n\nTexto:\n{text}`,
+
+  translate: `Traduce el siguiente texto. Si está en español, traduce al
+inglés. Si está en inglés, traduce al español. Devuelve SOLO la
+traducción.\n\nTexto:\n{text}`,
+
+  generate: `Escribe un borrador sobre el siguiente tema. Usa markdown
+con headers, listas y párrafos claros. Tono profesional pero accesible.
+Extensión: 300-500 palabras.\n\nTema:\n{topic}`
+};
+            </pre>
+        </div>
+
+        <div class="step-card" style="border-color: rgba(255, 0, 229, 0.3);">
+            <h4 style="color: #ff00e5;">Clave Técnica: Selección de Texto + Menú Flotante</h4>
+            <p>Este es el componente más interesante. Usa <code>window.getSelection()</code> para detectar qué ha seleccionado el usuario:</p>
+            <pre style="background: #1a1a2e; padding: 1em; border-radius: 4px; overflow-x: auto; color: #00e676;">
+// components/SelectionToolbar.tsx (concepto)
+function SelectionToolbar({ onAction }) {
+  const [position, setPosition] = useState(null);
+  const [selectedText, setSelectedText] = useState('');
+
+  useEffect(() => {
+    const handleMouseUp = () => {
+      const selection = window.getSelection();
+      if (selection && selection.toString().trim().length > 5) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        setPosition({
+          top: rect.top - 50 + window.scrollY,
+          left: rect.left + rect.width / 2
+        });
+        setSelectedText(selection.toString());
+      } else {
+        setPosition(null);
+      }
+    };
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => document.removeEventListener('mouseup', handleMouseUp);
+  }, []);
+
+  if (!position) return null;
+
+  return (
+    &lt;div style={{ position: 'absolute', ...position }}&gt;
+      &lt;button onClick={() => onAction('rewrite', selectedText)}&gt;
+        🔄 Reescribir
+      &lt;/button&gt;
+      &lt;button onClick={() => onAction('expand', selectedText)}&gt;
+        📝 Expandir
+      &lt;/button&gt;
+      {/* ... más botones */}
+    &lt;/div&gt;
+  );
+}
+            </pre>
+        </div>
+
+        <div class="step-card" style="border-color: rgba(255, 0, 229, 0.3);">
+            <h4 style="color: #ff00e5;">Bonus Co-Writer</h4>
+            <ul>
+                <li><strong>🌟 RAG Context:</strong> Sube documentos de referencia. Cuando haces "Expandir", la IA consulta tus docs para añadir datos reales (no inventa). Usa el pipeline RAG del Módulo 5.</li>
+                <li><strong>🌟 Tone Selector:</strong> Dropdown para elegir tono: Formal, Casual, Técnico, Creativo. Se inyecta en el prompt.</li>
+                <li><strong>🌟 Version History:</strong> Cada transformación se guarda. Puedes ver el "antes" y "después" de cada cambio.</li>
+                <li><strong>🌟 Export:</strong> Descargar el documento como .md o .pdf.</li>
+                <li><strong>🌟 Keyboard Shortcuts:</strong> Ctrl+Shift+R = Reescribir, Ctrl+Shift+E = Expandir (como un editor pro).</li>
+            </ul>
+        </div>
+
+        <div class="tips-box" style="border-left-color: #ff00e5;">
+            <p><strong>💡 ¿Opción A o B?</strong> Ambas cumplen los requisitos del Boss Battle. La <strong>Opción A (Chatbot)</strong> es más fácil y rápida (~4h). La <strong>Opción B (Co-Writer)</strong> es más impresionante para portfolio (~6h) pero más exigente técnicamente. Si tienes tiempo, ve por la B. Si vas justo, la A es sólida.</p>
+        </div>
+
+        <!-- SECCIÓN 2: GUÍA PASO A PASO (OPCIÓN A) -->
+        <div class="section-header">
+            <em>🗺️</em> Guía Paso a Paso — Opción A: Chatbot
+        </div>
+
+        <p style="font-size: 1.05em; line-height: 1.8; color: #e0e0e8;">
+            No te damos el código completo — este es tu boss battle. Pero sí te damos la arquitectura y los hints para que no te pierdas. Aquí está la ruta:
+        </p>
+
+        <div class="step-card">
+            <h4>Paso 1: Elige Tu Tema y Planifica</h4>
+            <p>Dedica 30 minutos a definir tu asistente:</p>
+            <ul>
+                <li><strong>¿Qué tema?</strong> (magia, gaming, música, deporte, educación, etc.)</li>
+                <li><strong>¿Quién es el usuario?</strong> (principiante, experto, entusiasta)</li>
+                <li><strong>¿Qué problemas resuelve?</strong> (dar consejos, generar ideas, explicar conceptos)</li>
+                <li><strong>¿Qué documentos necesitas?</strong> (PDFs, URLs, tu propio know-how)</li>
+            </ul>
+            <p>Crea un fichero <code>VISION.md</code> con estos puntos. Esto te guiará todo el proyecto.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>Paso 2: Setup Next.js + Dependencias Clave</h4>
+            <p>Inicia el proyecto:</p>
+            <pre style="background: #1a1a2e; padding: 1em; border-radius: 4px; overflow-x: auto;">
+npx create-next-app@latest mi-asistente-ia --typescript --tailwind
+cd mi-asistente-ia
+npm install ai @ai-sdk/openai @ai-sdk/anthropic next-auth
+npm install zod axios dotenv
+            </pre>
+            <p><strong>Estructura recomendada:</strong></p>
+            <pre style="background: #1a1a2e; padding: 1em; border-radius: 4px; overflow-x: auto;">
+src/
+├── app/
+│   ├── api/
+│   │   ├── auth/
+│   │   │   └── [...nextauth]/
+│   │   ├── chat/
+│   │   │   └── route.ts       # Endpoint del chat con streaming
+│   │   └── rate-limit/
+│   │       └── route.ts        # Middleware de rate limit
+│   ├── page.tsx               # Dashboard principal
+│   ├── layout.tsx
+│   └── chat/
+│       └── page.tsx           # Página del chat
+├── lib/
+│   ├── auth.ts                # Configuración Auth.js
+│   ├── rate-limit.ts          # Lógica de rate limiting
+│   ├── db.ts                  # Conexión a BD
+│   └── prompts.ts             # System prompts por caso de uso
+└── components/
+    ├── ChatUI.tsx             # Componente principal del chat
+    ├── Message.tsx            # Renderado de mensajes
+    └── InputBox.tsx           # Campo de entrada
+            </pre>
+        </div>
+
+        <div class="step-card">
+            <h4>Paso 3: Configura Autenticación con Auth.js</h4>
+            <p>Esto es crítico para tracking de usuarios y rate limiting:</p>
+            <ul>
+                <li>Crea un OAuth app en Google Cloud Console (o GitHub)</li>
+                <li>Configura <code>src/lib/auth.ts</code> con tus credentials</li>
+                <li>Añade <code>NEXTAUTH_SECRET</code> y <code>NEXTAUTH_URL</code> a <code>.env.local</code></li>
+                <li>Protege las rutas sensibles (API /chat, /history) con <code>getServerSession()</code></li>
+            </ul>
+            <p><strong>Tip:</strong> Para desarrollo rápido, usa Auth.js en modo "desarrollo" sin verificación de correo.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>Paso 4: Implementa el Endpoint del Chat</h4>
+            <p>Crea <code>src/app/api/chat/route.ts</code> — este es el corazón de tu app:</p>
+            <ul>
+                <li>Recibe POST con <code>{ messages: Message[], model: string }</code></li>
+                <li>Valida que el usuario está autenticado (getServerSession)</li>
+                <li>Aplica rate limiting (máximo 20 req/min por usuario_id)</li>
+                <li>Construye el system prompt (personalizado para tu caso de uso)</li>
+                <li>Llama a OpenAI/Claude con <code>generateStream()</code> de Vercel AI SDK</li>
+                <li>Devuelve streaming de respuesta (no esperes a terminar)</li>
+                <li>Guarda el mensaje en BD si es bonus (persistencia)</li>
+            </ul>
+            <p><strong>Ejemplo de system prompt:</strong> "Eres un asistente experto en magia con 20 años de experiencia. Cuando el usuario pregunta por un truco, sugieres opciones basadas en el nivel de dificultad y propósito del evento. Siempre explicas brevemente el fundamento mágico."</p>
+        </div>
+
+        <div class="step-card">
+            <h4>Paso 5: Construye la UI del Chat</h4>
+            <p>Crea componentes React para:</p>
+            <ul>
+                <li><strong>ChatUI:</strong> Contenedor principal. Maneja estado de mensajes, loading, errores</li>
+                <li><strong>Message:</strong> Renderiza cada mensaje. Soporte markdown, código con syntax highlighting</li>
+                <li><strong>InputBox:</strong> Campo de entrada con envío de Enter, indicador de carga, contador de caracteres</li>
+                <li><strong>Typing indicator:</strong> "el asistente está escribiendo..." mientras llega la respuesta</li>
+            </ul>
+            <p><strong>Tip:</strong> Usa <code>useChat</code> del hook <code>ai/react</code> para simplificar el streaming. Automáticamente maneja el historial y actualiza en tiempo real.</p>
+        </div>
+
+        <div class="step-card">
+            <h4>Paso 6: Implementa Rate Limiting</h4>
+            <p>Protege tu API de abuso:</p>
+            <ul>
+                <li>Usa una librearía como <code>Ratelimit</code> (Vercel Edge) o Redis</li>
+                <li>Checkea antes de procesar cada request: <code>await ratelimit.limit(user_id)</code></li>
+                <li>Devuelve 429 (Too Many Requests) si se excede</li>
+                <li>Muestra al usuario: "Espera 30 segundos antes de la siguiente pregunta"</li>
+            </ul>
+            <p><strong>Configuración recomendada:</strong> 20 requests / minuto por usuario (testing) o 50 / hora (producción).</p>
+        </div>
+
+        <div class="step-card">
+            <h4>Paso 7: Testing y Polish</h4>
+            <p>Antes de deployar:</p>
+            <ul>
+                <li>Prueba el chat localmente: escribe varias preguntas, verifica que las respuestas fluyen en tiempo real</li>
+                <li>Verifica autenticación: logout y login con OAuth</li>
+                <li>Prueba rate limiting: envía 25 requests rápidamente, confirma que falla en el 21º</li>
+                <li>Test en móvil: respuestas, input box, todo debe ser readable</li>
+                <li>Error handling: ¿qué pasa si la API de OpenAI falla? ¿Si se pierde conexión?</li>
+                <li>Performance: mide speed (FirstContentfulPaint, etc.) con Lighthouse</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <h4>Paso 8: Deploy en Vercel</h4>
+            <p>Tu app está lista:</p>
+            <ul>
+                <li>Haz push a GitHub (rama main)</li>
+                <li>Conecta el repo a Vercel (vercel.com > Import Project > GitHub)</li>
+                <li>Añade variables de entorno en Vercel: <code>OPENAI_API_KEY</code>, <code>NEXTAUTH_SECRET</code>, <code>DATABASE_URL</code>, etc.</li>
+                <li>Deploy se ejecuta automáticamente. En 2 minutos, tu app está live en una URL pública</li>
+                <li><strong>Dominio personalizado (optional):</strong> Apunta tu propio dominio a Vercel</li>
+            </ul>
+            <p><strong>Recuerda:</strong> Los secrets no se suben a GitHub — solo a Vercel Environment Variables.</p>
+        </div>
+
+        <!-- SECCIÓN 3: CHECKLIST -->
+        <div class="section-header">
+            <em>📋</em> Checklist de Entrega
+        </div>
+
+        <div class="checklist">
+            <h3 style="color: #00e676; margin-top: 0;">Antes de Entregar, Comprueba:</h3>
+            <ul>
+                <li>El repo está en GitHub (public o private, pero con README detallado)</li>
+                <li>La app está deployada en Vercel con URL pública y funcional</li>
+                <li>Puedo hacer login con OAuth (Google, GitHub, etc.)</li>
+                <li>El chat funciona: escribo una pregunta → respuesta en streaming → no se cuelga</li>
+                <li>Rate limiting funciona: pasados 20 req/min, me rechaza con error amable</li>
+                <li>La UI es responsive (escribo en móvil, se ve bien, puedo enviar mensajes)</li>
+                <li>El system prompt está personalizado para mi caso de uso (la respuesta refleja la "personalidad")</li>
+                <li>El README explica: qué es la app, cómo usarla, cómo deployar localmente, qué dependencias</li>
+                <li>Código limpio: funciones con nombres claros, comentarios en lógica compleja, sin "console.log" de debug</li>
+                <li>Manejo de errores: si OpenAI falla, muestro mensaje amable; si rate limit, lo explico</li>
+                <li>Variables de entorno en .env.example (NO en .env, y .env está en .gitignore)</li>
+            </ul>
+        </div>
+
+        <!-- SECCIÓN 4: TIPS -->
+        <div class="section-header">
+            <em>💡</em> Tips y Trampas Comunes
+        </div>
+
+        <div class="tips-box">
+            <p><strong>🔴 Trampa 1: Olvidar .gitignore.</strong> Si subes <code>.env.local</code> con tu API key a GitHub, está comprometida. <strong>Solución:</strong> Asegúrate de que <code>.env.local</code> está en <code>.gitignore</code> antes de hacer push. Verifica con <code>git status</code> antes de cada commit.</p>
+        </div>
+
+        <div class="tips-box">
+            <p><strong>🔴 Trampa 2: No implementar rate limiting.</strong> Sin límites, un usuario malicioso puede drenar tu presupuesto de OpenAI en minutos. <strong>Solución:</strong> Implementa rate limiting DESDE EL DÍA 1. No es opcional, es crítico.</p>
+        </div>
+
+        <div class="tips-box">
+            <p><strong>🔴 Trampa 3: Sistema prompt genérico.</strong> Si tu asistente responde como ChatGPT normal, no hay diferencial. <strong>Solución:</strong> Escribe un system prompt que refleje tu caso de uso. Ejemplo: "Eres un coach de ajedrez que explica movimientos brillantes. Siempre sugiere la siguiente jugada táctica."</p>
+        </div>
+
+        <div class="tips-box">
+            <p><strong>🔴 Trampa 4: No testear en móvil.</strong> Tu UI se ve bien en desktop pero es inutilizable en phone. <strong>Solución:</strong> Abre DevTools, modo responsive, prueba en 375px y 768px. Asegúrate de que el input box no desaparece, los mensajes son legibles.</p>
+        </div>
+
+        <div class="tips-box">
+            <p><strong>💡 Consejo Pro:</strong> Antes de gastar dinero en OpenAI, prueba con Ollama (modelos gratuitos locales como Mistral). Cuando esté listo el MVP, cambia a OpenAI. Ahorras $100s en development.</p>
+        </div>
+
+        <div class="tips-box">
+            <p><strong>💡 Consejo Pro 2:</strong> Si quieres bonus RAG, integra <code>LangChain</code> + <code>Chroma</code> en el endpoint del chat. Busca documentos relevantes al prompt del usuario y pásalos al sistema como contexto. El LLM responde basándose en TUS fuentes — mucho más personalizado.</p>
+        </div>
+
+        <!-- Exercise Submission Section -->
+        <div class="section-header">
+            <em>✅</em> Entrega del Boss Battle
+        </div>
+
+        <section class="card" style="margin: 2em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="boss-battle">
+                <h4>🏆 Boss Battle: Asistente IA Full-Stack</h4>
+                <p>Implementa una aplicación IA completa full-stack: frontend Next.js, backend FastAPI, base de datos, autenticación, chat con historial, y despliegue en producción.</p>
+                <textarea id="code-ejercicio-1" rows="14" placeholder="Código de la aplicación (arquitectura general y componentes principales) — Describe la estructura y pega código importante..."></textarea>
+                <textarea id="output-ejercicio-1" rows="10" placeholder="Documentación técnica y demo — Explica arquitectura, stack, decisiones de diseño, flujo de usuario, características y deployment..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-bb', 1, this)" class="btn btn-submit">Enviar Boss Battle 🏆</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: TEST/QUIZ -->
+        <div class="section-header">
+            <em>🧪</em> Test: Valida Tu Comprensión
+        </div>
+
+        <p style="font-size: 1.05em; color: var(--text-muted)acc;">
+            Antes de empezar a codear, responde estas preguntas. Si no sabes la respuesta, vuelve a los apuntes de las clases anteriores.
+        </p>
+
+        <div id="quiz-container" style="margin: 2em 0;"></div>
+
+        <div style="text-align: center; margin: 2em 0;">
+            <button onclick="scrollToQuiz()" style="padding: 0.8em 1.5em; background: #00e676; color: #0a0a1a; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+                ↑ Ir al Test
+            </button>
+        </div>
+
+        <!-- BADGE UNLOCK -->
+        <div class="badge-unlock">
+            <h3>🏆 ¡Completa el Boss Battle y Desbloquea el Badge!</h3>
+            <div class="badge-icon">🚀</div>
+            <p style="font-size: 1.1em; margin: 1em 0;">
+                <strong>"Full-Stack IA Dev"</strong> — Construiste una aplicación IA completa, desplegada en producción y con usuarios reales (tú mismo). Eres un verdadero ingeniero de IA.
+            </p>
+            <p style="color: #b45309; font-weight: bold;">
+                +50 XP | Desbloquea: Módulo 8 (Próximo Nivel)
+            </p>
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <div class="nav-links">
+            <a href="clase-04.html">← Clase 04: Deployment y DevOps</a>
+            <a href="index.html">Volver a Módulo 7 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es la ventaja principal de usar Next.js 14 con App Router para un asistente IA?",
+                options: [
+                    "Un único proyecto para backend (API routes) y frontend (React), con deploy simplificado en Vercel",
+                    "Es más barato que usar separadamente un backend en Python y un frontend en React",
+                    "No necesitas autenticación ni variables de entorno",
+                    "Todos los usuarios comparten el mismo estado global"
+                ],
+                correct: 0,
+                explanation: "Next.js App Router permite escribir tanto rutas API como componentes React en el mismo proyecto. Simplifica el deploy y la gestión de secretos."
+            },
+            {
+                question: "¿Qué propósito tiene el streaming en una aplicación de chat con IA?",
+                options: [
+                    "Enviar la respuesta carácter a carácter a medida que el modelo la genera, en lugar de esperar a que termine",
+                    "Comprimir la respuesta para ahorrar bandwidth",
+                    "Encriptar la comunicación entre cliente y servidor",
+                    "Guardar automáticamente los mensajes en una base de datos"
+                ],
+                correct: 0,
+                explanation: "El streaming mejora la UX: el usuario ve la respuesta llegando en tiempo real, no esperando 10 segundos a que el modelo termine."
+            },
+            {
+                question: "¿Por qué es crítico implementar rate limiting en tu app antes de deployar?",
+                options: [
+                    "Previene abuso: sin límites, alguien puede gastar tu presupuesto de OpenAI en minutos",
+                    "Mejora la velocidad de respuesta del servidor",
+                    "Es requerido por Vercel para deployar",
+                    "Reduce el tamaño del bundle de JavaScript"
+                ],
+                correct: 0,
+                explanation: "Rate limiting es seguridad financiera y operacional. Sin él, un bot malicioso drenará tu crédito de API."
+            },
+            {
+                question: "¿Cuál es la función de Auth.js en tu asistente IA?",
+                options: [
+                    "Autentica usuarios (OAuth) y permite rastrear quién hace cada request (necesario para rate limiting y persistencia)",
+                    "Automatiza el entrenamiento de modelos IA",
+                    "Encripta automáticamente todos los mensajes",
+                    "Maneja la facturación de OpenAI"
+                ],
+                correct: 0,
+                explanation: "Auth.js proporciona sesiones seguras y control de identidad. Sin él, no puedes saber quién es cada usuario para rate limiting o guardar historial."
+            },
+            {
+                question: "¿Qué es un system prompt y por qué personalizar el tuyo para tu caso de uso?",
+                options: [
+                    "Un prompt que define la 'personalidad' del asistente. Personalizado, hace que responda como un experto en tu tema, no como ChatGPT genérico",
+                    "El nombre de la variable donde guardas el API key",
+                    "Un archivo de configuración de Vercel",
+                    "Un tipo de autenticación más segura que OAuth"
+                ],
+                correct: 0,
+                explanation: "El system prompt moldea cómo responde el LLM. Un prompt bien escrito = un asistente especializado con valor real."
+            },
+            {
+                question: "¿Cuál es el riesgo de subir tu .env.local a GitHub?",
+                options: [
+                    "Tu API key de OpenAI queda pública. Cualquiera puede usarla para drenar tu crédito",
+                    "GitHub rechaza automáticamente archivos .env",
+                    "Los repositorios privados están 100% protegidos",
+                    "No hay riesgo, .env es un archivo de sistema"
+                ],
+                correct: 0,
+                explanation: "Nunca subas secretos a GitHub. Si lo haces, considera el API key comprometido. Usa .gitignore y variables de entorno en Vercel."
+            },
+            {
+                question: "¿Cuál es la diferencia entre localStorage y una base de datos para guardar historial de chat?",
+                options: [
+                    "localStorage es local (pierde al limpiar caché); BD es persistente y accesible desde cualquier dispositivo",
+                    "localStorage es más seguro que una BD",
+                    "localStorage no puede guardar strings",
+                    "No hay diferencia, son lo mismo"
+                ],
+                correct: 0,
+                explanation: "Para historial persistente real, necesitas una BD (Supabase, MongoDB). localStorage solo guarda en el navegador del usuario."
+            },
+            {
+                question: "¿Qué es el 'hook useChat' de Vercel AI SDK?",
+                options: [
+                    "Un hook React que simplifica el streaming: maneja mensajes, loading, errors automáticamente",
+                    "Un comando de terminal para instalar paquetes",
+                    "Un tipo de autenticación OAuth",
+                    "Una base de datos en tiempo real"
+                ],
+                correct: 0,
+                explanation: "useChat del paquete 'ai' maneja todo el boilerplate del chat: envía mensajes, recibe streaming, actualiza UI — muy útil."
+            },
+            {
+                question: "¿Cuál es el primer paso recomendado antes de escribir código en un proyecto de asistente IA?",
+                options: [
+                    "Escribir un VISION.md definiendo: tema, usuario objetivo, problemas que resuelve, documentos necesarios",
+                    "Instalar todas las dependencias npm posibles",
+                    "Crear un Vercel account y deployar un proyecto vacío",
+                    "Empezar a codear el UI del chat"
+                ],
+                correct: 0,
+                explanation: "Planificar primero ahorra horas de refactoring. Define tu visión, arquitectura, y flujo de usuario ANTES de escribir una línea de código."
+            },
+            {
+                question: "¿Qué es RAG y cómo lo integrarías como bonus en tu asistente?",
+                options: [
+                    "Retrieval-Augmented Generation: buscar documentos relevantes + pasar como contexto al LLM. Bonus: incluir tus propios PDFs/URLs para respuestas personalizadas",
+                    "Rapid API Gateway, una plataforma de hosting",
+                    "Un tipo de modelo de IA entrenado desde cero",
+                    "Una estrategia de marketing para usuarios"
+                ],
+                correct: 0,
+                explanation: "RAG hace que tu asistente responda basándose en TUS fuentes, no solo en el conocimiento general del modelo. Máximo valor agregado."
+            }
+        ];
+
+        function scrollToQuiz() {
+            document.getElementById('quiz-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Inicializar el quiz
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm7-bb');
+                if (typeof CourseProgress !== 'undefined') {
+                    CourseProgress.initSubmissionIndicators('m7-bb');
+                }
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm7-bb');
+        }
+    </script>
+</body>
+</html>

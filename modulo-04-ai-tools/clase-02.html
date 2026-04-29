@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 02: Cursor IDE — El Editor que Programa por Ti — Módulo 4</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a><span> > </span>
+            <a href="index.html">Módulo 4</a><span> > </span>
+            <strong>Clase 02</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 02: Cursor IDE — El Editor que Programa por Ti</h1>
+            <div class="subtitle">📅 Semana 5 — Martes | 🎬 30 min vídeo + 💻 50 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <!-- SECCIÓN 1: VÍDEO -->
+        <section class="lesson-section">
+            <h2>🎬 Vídeo de la lección</h2>
+            <p>Descubre Cursor IDE, un fork de VS Code con IA integrada nativa que puede generar código, refactorizar y crear features completas solo con descripciones en lenguaje natural.</p>
+
+            <div class="video-wrapper">
+                <iframe width="100%" height="400" src="https://www.youtube.com/embed/SM8040cwBdw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>📚 Documentación oficial:</strong> Consulta la <a href="https://cursor.com/learn" target="_blank" style="color: #00e676;">guía de Cursor</a> para profundizar en todas las características.
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: CONCEPTOS CLAVE -->
+        <section class="lesson-section">
+            <h2>📖 Conceptos clave</h2>
+
+            <!-- 2.1: ¿Qué es Cursor? -->
+            <div class="card">
+                <h3>2.1 ¿Qué es Cursor?</h3>
+                <p>Cursor es un <strong>fork de VS Code con IA nativa</strong>. Mantiene todos los atajos, extensiones y temas de VS Code, pero añade herramientas de IA integradas de serie.</p>
+
+                <table style="width: 100%; margin-top: 1em; border-collapse: collapse;">
+                    <tr style="background: rgba(0, 240, 255, 0.15);">
+                        <th style="padding: 10px; text-align: left;">Aspecto</th>
+                        <th style="padding: 10px; text-align: left;">VS Code + Copilot</th>
+                        <th style="padding: 10px; text-align: left;">Cursor IDE</th>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><strong>Editor base</strong></td>
+                        <td style="padding: 10px;">VS Code estándar</td>
+                        <td style="padding: 10px;">Fork de VS Code</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><strong>IA integrada</strong></td>
+                        <td style="padding: 10px;">Extensión (requiere suscripción)</td>
+                        <td style="padding: 10px;">Nativa, de serie</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><strong>Modelos disponibles</strong></td>
+                        <td style="padding: 10px;">Solo GPT-4, GPT-3.5</td>
+                        <td style="padding: 10px;">Claude (Sonnet), GPT-4, GPT-4o</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><strong>Funciones IA</strong></td>
+                        <td style="padding: 10px;">Autocompletado + Chat</td>
+                        <td style="padding: 10px;">Tab + Cmd+K + Chat + Composer</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><strong>Free tier</strong></td>
+                        <td style="padding: 10px;">Limitado</td>
+                        <td style="padding: 10px;">2000 completions + 50 slow premium/mes</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;"><strong>Precio pro</strong></td>
+                        <td style="padding: 10px;">$20/mes</td>
+                        <td style="padding: 10px;">$20/mes (ilimitado)</td>
+                    </tr>
+                </table>
+
+                <div class="tip" style="margin-top: 1em;">
+                    <strong>💡 Ventaja clave:</strong> Cursor no es una extensión, es un editor completo. Eso significa la IA está optimizada en cada rincón del editor.
+                </div>
+            </div>
+
+            <!-- 2.2: Instalación y setup -->
+            <div class="card">
+                <h3>2.2 Instalación y configuración inicial</h3>
+                <p><strong>Paso 1: Descargar Cursor</strong></p>
+                <p>Ve a <a href="https://cursor.com" target="_blank">cursor.com</a>, descarga el instalador para tu SO (Windows, macOS, Linux).</p>
+
+                <p style="margin-top: 1em;"><strong>Paso 2: Importar configuración de VS Code</strong></p>
+                <p>Al abrir Cursor por primera vez, te pregunta si quieres importar la configuración de VS Code. <strong>Di que sí</strong>. Esto importará:</p>
+                <ul>
+                    <li>Tema oscuro/claro</li>
+                    <li>Extensiones instaladas (algunas)</li>
+                    <li>Atajos de teclado personalizados</li>
+                    <li>Ajustes generales (font size, word wrap, etc.)</li>
+                </ul>
+
+                <p style="margin-top: 1em;"><strong>Paso 3: Configurar el modelo de IA</strong></p>
+                <p>Abre <code>Cursor Settings</code> (Cmd+Shift+P en Mac, Ctrl+Shift+P en Windows/Linux, busca "cursor settings").</p>
+                <div class="code-block">
+<pre><code>// En Settings, busca "model" y verás opciones como:
+// - Claude 3.5 Sonnet (recomendado, por defecto)
+// - GPT-4o
+// - GPT-4
+// - Claude 3 Opus
+
+// Recomendación: Usa Claude Sonnet (mejor balance calidad/velocidad)</code></pre>
+                </div>
+
+                <div class="info" style="margin-top: 1em;">
+                    <strong>🔑 Autenticación:</strong> Cursor te pedirá una API key de OpenAI (si quieres usar GPT) o cuenta de Anthropic (para Claude). Free tier = sin credenciales necesarias.
+                </div>
+            </div>
+
+            <!-- 2.3: Los 4 pilares de Cursor -->
+            <div class="card">
+                <h3>2.3 Los 4 pilares de Cursor: Tab, Cmd+K, Chat y Composer</h3>
+
+                <div style="margin: 1.5em 0; padding: 1em; background: #0d1117; border-left: 3px solid #00e676; border-radius: 4px;">
+                    <strong style="color: #00e676;">1. Tab (Autocompletado inteligente)</strong><br>
+                    <p style="margin-top: 0.5em;">Pulsa <code>Tab</code> para aceptar el siguiente bloque de código que predice la IA.</p>
+                    <ul style="margin-top: 0.5em;">
+                        <li><strong>¿Cómo funciona?</strong> La IA ve el contexto (función actual, archivo, proyecto) y predice el siguiente cambio completo, no solo la siguiente línea.</li>
+                        <li><strong>Caso de uso:</strong> Escribir boilerplate rápido, completar bucles, generar tests.</li>
+                        <li><strong>Diferencia con Copilot:</strong> Cursor predice cambios mayores; Copilot solo predice la siguiente línea.</li>
+                    </ul>
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>// Escribes:
+function calculateTotal(items) {
+
+// Cursor predice y ofrece como Tab suggestion:
+function calculateTotal(items) {
+  return items.reduce((sum, item) => sum + item.price, 0);
+}</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin: 1.5em 0; padding: 1em; background: #0d1117; border-left: 3px solid #FFD700; border-radius: 4px;">
+                    <strong style="color: #FFD700;">2. Cmd+K / Ctrl+K (Edición inline)</strong><br>
+                    <p style="margin-top: 0.5em;">Selecciona código y pulsa Cmd+K (Mac) o Ctrl+K (Windows/Linux). Se abre un input donde puedes describir cambios en lenguaje natural.</p>
+                    <ul style="margin-top: 0.5em;">
+                        <li><strong>¿Cómo funciona?</strong> La IA reescribe el código seleccionado según tu descripción.</li>
+                        <li><strong>Caso de uso:</strong> Refactorizar funciones, cambiar lógica, optimizar código.</li>
+                        <li><strong>Ejemplo:</strong> Selecciona una función y escribe "convierte esto a async/await".</li>
+                    </ul>
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>// Seleccionas esta función:
+function getData(url) {
+  let result = null;
+  fetch(url)
+    .then(res => res.json())
+    .then(data => { result = data; });
+  return result;
+}
+
+// Abres Cmd+K y escribes: "convierte a async/await"
+// La IA reescribe:
+async function getData(url) {
+  const res = await fetch(url);
+  return await res.json();
+}</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin: 1.5em 0; padding: 1em; background: #0d1117; border-left: 3px solid #FF1493; border-radius: 4px;">
+                    <strong style="color: #FF1493;">3. Cmd+L / Ctrl+L (Chat)</strong><br>
+                    <p style="margin-top: 0.5em;">Abre un panel de chat lateral donde conversar con la IA sobre tu código.</p>
+                    <ul style="margin-top: 0.5em;">
+                        <li><strong>¿Cómo funciona?</strong> Puedes preguntar sobre el código, pedir explicaciones, o pedir cambios sin seleccionar nada.</li>
+                        <li><strong>Caso de uso:</strong> Entender código legado, obtener ideas de refactorización, debugging colaborativo.</li>
+                        <li><strong>Bonus:</strong> Puedes usar @symbols para dar contexto (ver sección 2.4).</li>
+                    </ul>
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>// En el chat escribes:
+"@file Explícame cómo funciona esta función"
+// La IA ve el archivo actual y lo explica
+
+// O:
+"@codebase ¿Dónde se llama a validateUser()?"
+// Busca en todo el proyecto</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin: 1.5em 0; padding: 1em; background: #0d1117; border-left: 3px solid #00CED1; border-radius: 4px;">
+                    <strong style="color: #00CED1;">4. Composer (Cmd+I / Ctrl+I)</strong><br>
+                    <p style="margin-top: 0.5em;">Abre un editor grande donde describe qué quieres crear. La IA genera el código en múltiples archivos.</p>
+                    <ul style="margin-top: 0.5em;">
+                        <li><strong>¿Cómo funciona?</strong> Describes una feature o componente, y Composer crea todo el código necesario (puede tocar N archivos).</li>
+                        <li><strong>Caso de uso:</strong> Crear features completas, scaffolding de proyectos, agregar módulos grandes.</li>
+                        <li><strong>Modes:</strong> Agent Mode (IA decide cambios), Ask Mode (solo propone, tú revisas), Manual Mode (tú dirigeso).</li>
+                    </ul>
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>// En Composer (Cmd+I) escribes:
+"Crea una API REST con 3 endpoints:
+- GET /users (lista todos)
+- POST /users (crea nuevo)
+- DELETE /users/:id (borra por ID)
+Usa Node.js + Express. Devuelve JSON. Incluye error handling."
+
+// Composer genera:
+// - server.js (toda la lógica)
+// - package.json (dependencias)
+// - .env.example (variables)
+// Revisa cada cambio antes de aceptar</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2.4: @Symbols para contexto -->
+            <div class="card">
+                <h3>2.4 @Symbols: Cómo dar contexto a la IA</h3>
+                <p>En Chat y Composer, puedes usar <strong>@symbols</strong> para indicar a la IA dónde buscar contexto:</p>
+
+                <table style="width: 100%; margin-top: 1em; border-collapse: collapse;">
+                    <tr style="background: rgba(0, 240, 255, 0.15);">
+                        <th style="padding: 10px; text-align: left;">Symbol</th>
+                        <th style="padding: 10px; text-align: left;">Qué hace</th>
+                        <th style="padding: 10px; text-align: left;">Ejemplo</th>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><code>@file</code></td>
+                        <td style="padding: 10px;">Referencia el archivo actual</td>
+                        <td style="padding: 10px;">"@file Refactoriza esta función"</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><code>@folder</code></td>
+                        <td style="padding: 10px;">Referencia toda una carpeta</td>
+                        <td style="padding: 10px;">"@folder /src ¿Dónde se usa React?"</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><code>@codebase</code></td>
+                        <td style="padding: 10px;">Indexa todo el proyecto (lento la primera vez)</td>
+                        <td style="padding: 10px;">"@codebase ¿Qué es la función main()?"</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><code>@web</code></td>
+                        <td style="padding: 10px;">Busca en internet (para documentación, API docs)</td>
+                        <td style="padding: 10px;">"@web Integra la API de Stripe"</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;"><code>@docs</code></td>
+                        <td style="padding: 10px;">Busca en documentación oficial (si está indexada)</td>
+                        <td style="padding: 10px;">"@docs ¿Cómo hacer pagination en React?"</td>
+                    </tr>
+                </table>
+
+                <div class="tip" style="margin-top: 1em;">
+                    <strong>💡 Pro tip:</strong> Combina @symbols. "Crea un hook que use @codebase para entender el estado global del proyecto" → la IA ve el proyecto completo antes de generar.
+                </div>
+            </div>
+
+            <!-- 2.5: Agent vs Ask vs Manual -->
+            <div class="card">
+                <h3>2.5 Composer Modes: Agent, Ask y Manual</h3>
+                <p>En Composer (Cmd+I), puedes elegir cómo la IA maneja los cambios:</p>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-left: 3px solid #00e676; border-radius: 4px;">
+                    <strong style="color: #00e676;">Agent Mode</strong><br>
+                    La IA decide y aplica cambios automáticamente. Rápido, pero menos control.
+                    <ul style="margin-top: 0.5em;">
+                        <li>✓ Rápido para tareas simples</li>
+                        <li>✗ Puedes no revisar cambios importantes</li>
+                        <li><strong>Cuándo:</strong> Scaffolding rápido, boilerplate, refactoring pequeño</li>
+                    </ul>
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-left: 3px solid #FFD700; border-radius: 4px;">
+                    <strong style="color: #FFD700;">Ask Mode (RECOMENDADO)</strong><br>
+                    La IA propone cambios, tú revisas y aceptas cada uno antes de aplicar.
+                    <ul style="margin-top: 0.5em;">
+                        <li>✓ Control total, aprendes qué hace la IA</li>
+                        <li>✓ Seguro para código importante</li>
+                        <li><strong>Cuándo:</strong> Siempre, especialmente proyectos reales</li>
+                    </ul>
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-left: 3px solid #FF1493; border-radius: 4px;">
+                    <strong style="color: #FF1493;">Manual Mode</strong><br>
+                    Tú escribes los cambios paso a paso; la IA ayuda pero no toca código.
+                    <ul style="margin-top: 0.5em;">
+                        <li>✓ Control máximo</li>
+                        <li>✗ Más lento</li>
+                        <li><strong>Cuándo:</strong> Código crítico, seguridad</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 2.6: Ejemplo flujo completo -->
+            <div class="card">
+                <h3>2.6 Flujo completo: De idea a API en 5 minutos</h3>
+                <p><strong>Escenario:</strong> Crear una API REST simple que maneje tareas.</p>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-radius: 4px;">
+                    <strong>Paso 1: Abre Composer (Cmd+I)</strong>
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>Crea una API REST en Node.js con Express para gestionar tareas.
+Necesito:
+- GET /tasks (devuelve todas las tareas)
+- GET /tasks/:id (devuelve una tarea por ID)
+- POST /tasks (crea una nueva tarea con titulo y descripcion)
+- PUT /tasks/:id (actualiza una tarea)
+- DELETE /tasks/:id (borra una tarea)
+- Usa un array en memoria (no BD)
+- Devuelve JSON
+- Incluye manejo de errores basico</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-radius: 4px;">
+                    <strong>Paso 2: Selecciona Ask Mode y revisa los cambios</strong>
+                    <p style="margin-top: 0.5em;">Composer propone crear <code>server.js</code> y <code>package.json</code>. Reviúsa el código, verifica que sea correcto.</p>
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-radius: 4px;">
+                    <strong>Paso 3: Acepta los cambios</strong>
+                    <p style="margin-top: 0.5em;">Click en "Accept" para cada archivo. El código se escribe automáticamente.</p>
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-radius: 4px;">
+                    <strong>Paso 4: Prueba</strong>
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>npm install
+node server.js
+# Ahora tu API corre en http://localhost:3000</code></pre>
+                    </div>
+                </div>
+
+                <div class="info" style="margin-top: 1em;">
+                    <strong>⏱️ Tiempo total:</strong> ~5 minutos. Sin Cursor, escribir esto desde cero sería 20+ minutos.
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: PRÁCTICA GUIADA -->
+        <section class="lesson-section">
+            <h2>💻 Práctica guiada</h2>
+            <p>Cuatro ejercicios para dominar Cursor. Hazlos en orden.</p>
+
+            <!-- Ejercicio 1 -->
+            <div class="card">
+                <h3>Ejercicio 1: Instalación y primeros pasos (10 min)</h3>
+                <p><strong>Objetivo:</strong> Instalar Cursor, importar configuración de VS Code, cambiar el modelo a Claude.</p>
+
+                <div class="tip">
+                    <strong>Pasos:</strong>
+                    <ol>
+                        <li>Descargar Cursor desde <a href="https://cursor.com" target="_blank">cursor.com</a> según tu SO.</li>
+                        <li>Abrirlo. Importar configuración de VS Code.</li>
+                        <li>Abre Cursor Settings (Cmd+Shift+P → "cursor settings").</li>
+                        <li>Busca "model" y selecciona Claude 3.5 Sonnet.</li>
+                        <li>Abre un proyecto existente (o crea una carpeta vacía) y verifica que Tab te sugiera código.</li>
+                    </ol>
+                </div>
+
+                <div class="info" style="margin-top: 1em;">
+                    <strong>✓ Checklist de completitud:</strong>
+                    <ul>
+                        <li>Cursor instalado y abierto</li>
+                        <li>Configuración importada de VS Code</li>
+                        <li>Modelo = Claude Sonnet</li>
+                        <li>Tab funciona (escribe un comentario, presiona Tab)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ejercicio 2 -->
+            <div class="card">
+                <h3>Ejercicio 2: Tab y Cmd+K (15 min)</h3>
+                <p><strong>Objetivo:</strong> Practicar autocompletado con Tab y edición inline con Cmd+K.</p>
+
+                <div class="tip">
+                    <strong>Tarea A: Usa Tab para autocompletar</strong>
+                    <ol>
+                        <li>Crea un archivo <code>app.js</code> vacío.</li>
+                        <li>Escribe: <code>function sumArray(arr) {</code></li>
+                        <li>Presiona Tab. Cursor debería completar la función (sumar elementos).</li>
+                        <li>Acepta si parece correcto.</li>
+                        <li>Escribe otro: <code>function reverseString(str) {</code> y prueba Tab.</li>
+                    </ol>
+                </div>
+
+                <div class="tip" style="margin-top: 1em;">
+                    <strong>Tarea B: Usa Cmd+K para refactorizar</strong>
+                    <ol>
+                        <li>Escribe una función (puede ser código mediocre a propósito):</li>
+                        <div class="code-block" style="margin: 0.5em 0;">
+<pre><code>function calculatePrice(price, quantity, tax) {
+  var result = price * quantity;
+  result = result + (result * tax / 100);
+  return result;
+}</code></pre>
+                        </div>
+                        <li>Selecciona la función (Ctrl+A si es el único contenido).</li>
+                        <li>Presiona Cmd+K (Mac) o Ctrl+K (Windows/Linux).</li>
+                        <li>Escribe: "Refactoriza: usa const, simplifica cálculos, usa una sola línea de retorno".</li>
+                        <li>Revisa el resultado.</li>
+                    </ol>
+                </div>
+
+                <div class="info" style="margin-top: 1em;">
+                    <strong>✓ Qué deberías ver:</strong>
+                    <ul>
+                        <li>Tab genera código funcional (probablemente correcto)</li>
+                        <li>Cmd+K reescribe el código según tu descripción</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ejercicio 3 -->
+            <div class="card">
+                <h3>Ejercicio 3: Chat con @symbols (15 min)</h3>
+                <p><strong>Objetivo:</strong> Usar Cmd+L para conversar con la IA sobre tu código.</p>
+
+                <div class="tip">
+                    <strong>Tarea:</strong>
+                    <ol>
+                        <li>Crea un archivo con una función algo compleja (ej: función recursiva, closure, etc.).</li>
+                        <li>Abre Chat (Cmd+L o Ctrl+L).</li>
+                        <li>En el chat, escribe: "@file Explícame esta función paso a paso".</li>
+                        <li>Revisa la explicación de la IA.</li>
+                        <li>Luego escribe: "@file Sugiere mejoras".</li>
+                        <li>La IA debería analizar el archivo y dar recomendaciones.</li>
+                    </ol>
+                </div>
+
+                <div class="info" style="margin-top: 1em;">
+                    <strong>✓ Pro tip:</strong> Prueba @codebase si tienes varios archivos. Ej: "@codebase ¿Dónde se importa la función helper?"
+                </div>
+            </div>
+
+            <!-- Ejercicio 4 -->
+            <div class="card">
+                <h3>Ejercicio 4: Composer — Crear una feature completa (10 min)</h3>
+                <p><strong>Objetivo:</strong> Usar Composer (Cmd+I) para generar código multi-archivo.</p>
+
+                <div class="tip">
+                    <strong>Tarea:</strong>
+                    <ol>
+                        <li>Crea una carpeta vacía llamada <code>todo-app</code>.</li>
+                        <li>Abre Composer (Cmd+I o Ctrl+I).</li>
+                        <li>Escribe este prompt:</li>
+                        <div class="code-block" style="margin: 0.5em 0;">
+<pre><code>Crea una aplicación de tareas simple con HTML, CSS y JavaScript.
+- Permite agregar tareas nuevas
+- Mostrar lista de tareas con botón eliminar
+- Marcar como completada (tachado)
+- Guardar en localStorage
+- Interfaz limpia y moderna
+Necesito: index.html, style.css, script.js</code></pre>
+                        </div>
+                        <li>Selecciona <strong>Ask Mode</strong>.</li>
+                        <li>Revisa cada archivo que propone la IA.</li>
+                        <li>Haz click en "Accept" para aceptar.</li>
+                        <li>Abre <code>index.html</code> en el navegador y prueba la app.</li>
+                    </ol>
+                </div>
+
+                <div class="info" style="margin-top: 1em;">
+                    <strong>🎯 Reflexión:</strong> ¿Cuánto tiempo tardarías escribiendo esto desde cero? Cursor lo hace en minutos.
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: MINI-RETO DEL DÍA -->
+        <section class="lesson-section">
+            <h2>🎯 Mini-reto del día: De idea a código en 5 minutos</h2>
+            <p><strong>Reto:</strong> Usa Composer para crear una mini app escribiendo solo la descripción en español. Cronométrate.</p>
+
+            <div class="card">
+                <h3>Especificación del reto</h3>
+                <p>Elige UNO de estos retos (todos deben completarse en ≤5 minutos):</p>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-radius: 4px;">
+                    <strong>Opción A: Generador de contraseñas</strong>
+                    <p style="margin-top: 0.5em;">Input para seleccionar longitud y tipo (números, mayúsculas, símbolos). Botón generar. Mostrar contraseña. Botón copiar al portapapeles.</p>
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-radius: 4px;">
+                    <strong>Opción B: Conversor de unidades</strong>
+                    <p style="margin-top: 0.5em;">Convierte entre: metros/pies, kg/libras, celsius/fahrenheit. Select para elegir conversión. Inputs para valores. Resultado en tiempo real.</p>
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-radius: 4px;">
+                    <strong>Opción C: Pomodoro Timer</strong>
+                    <p style="margin-top: 0.5em;">25 minutos trabajo, 5 minutos descanso. Timer con progreso visual. Botones start/pausa/reset. Sonido al completar.</p>
+                </div>
+
+                <div class="info" style="margin-top: 1em;">
+                    <strong>Reglas del reto:</strong>
+                    <ul>
+                        <li>Abre Composer (Cmd+I)</li>
+                        <li>Describe SOLO en español (sin escribir código)</li>
+                        <li>Usa Ask Mode y revisa los cambios</li>
+                        <li>Acepta y prueba en el navegador</li>
+                        <li>¿Cuánto tardaste realmente?</li>
+                    </ul>
+                </div>
+
+                <div class="warning" style="margin-top: 1em;">
+                    <strong>🏆 Bonificación:</strong> Si logras menos de 5 minutos, intenta otro reto. Si logras todos tres en ≤15 minutos total, eres un Cursor master.
+                </div>
+            </div>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Primeros pasos con Cursor</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí tu código o evidencia de instalación..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c02', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="code-along">
+                <h4>📤 Entregar práctica: Tab y Cmd+K en Cursor</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c02', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-3" data-type="code-along">
+                <h4>📤 Entregar práctica: Chat con @symbols</h4>
+                <textarea id="code-ejercicio-3" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-3" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c02', 3, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-3" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-4" data-type="code-along">
+                <h4>📤 Entregar práctica: Composer: crear feature completa</h4>
+                <textarea id="code-ejercicio-4" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-4" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c02', 4, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-4" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-5" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: De idea a código en 5 minutos</h4>
+                <textarea id="code-ejercicio-5" rows="12" placeholder="Pega aquí tu código..."></textarea>
+                <textarea id="output-ejercicio-5" rows="4" placeholder="Pega aquí el output de tu programa..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-5" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c02', 5, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-5" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: TEST DE CONOCIMIENTO -->
+        <section class="lesson-section">
+            <h2>🧪 Test de conocimiento</h2>
+            <p>Responde estas 10 preguntas para verificar que has entendido el material. Mínimo 7/10 para pasar.</p>
+
+            <div id="quiz-container" class="quiz-container"></div>
+        </section>
+
+        <!-- NAVEGACIÓN ENTRE CLASES -->
+        <div class="clase-nav">
+            <a href="clase-01.html">← Clase 01</a>
+            <span> | </span>
+            <a href="clase-03.html">Clase 03 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es la diferencia principal entre VS Code + Copilot y Cursor IDE?",
+                options: [
+                    "Cursor es más caro",
+                    "Cursor es un fork con IA nativa; Copilot es extensión",
+                    "VS Code es mejor para código",
+                    "No hay diferencia real"
+                ],
+                correct: 1,
+                explanation: "Cursor es un fork de VS Code con IA integrada de serie. Copilot es una extensión adicional. Eso significa Cursor tiene IA optimizada en todo el editor."
+            },
+            {
+                question: "¿Qué función tiene Tab en Cursor?",
+                options: [
+                    "Indent el código (como en cualquier editor)",
+                    "Autocompletado de la siguiente línea",
+                    "Predice el siguiente bloque completo de código (función, bucle, etc)",
+                    "Abre un menú de sugerencias"
+                ],
+                correct: 2,
+                explanation: "Tab en Cursor no es indent normal. Presionar Tab acepta la siguiente predicción de la IA, que puede ser un bloque completo, no solo una línea."
+            },
+            {
+                question: "¿Cuál es el atajo para Cmd+K (edición inline)?",
+                options: [
+                    "Ctrl+K en Windows; Cmd+K en Mac",
+                    "Ctrl+L en ambos",
+                    "Ambos usan Cmd+K",
+                    "No existe ese atajo"
+                ],
+                correct: 0,
+                explanation: "Cmd+K en Mac abre edición inline. En Windows/Linux es Ctrl+K. Selecciona código, abre el prompt, describe cambios en lenguaje natural."
+            },
+            {
+                question: "¿Qué es Composer (Cmd+I)?",
+                options: [
+                    "Un chat simple",
+                    "Una herramienta para crear features completas en múltiples archivos",
+                    "Un debugger",
+                    "Una extensión de VS Code"
+                ],
+                correct: 1,
+                explanation: "Composer es para generar código en múltiples archivos. Describes una feature y Composer crea todo lo necesario (puede tocar N archivos)."
+            },
+            {
+                question: "¿Qué hace el símbolo @codebase en Chat?",
+                options: [
+                    "Busca solo en la carpeta actual",
+                    "Busca en internet",
+                    "Indexa todo el proyecto para dar contexto",
+                    "Borra el código base"
+                ],
+                correct: 2,
+                explanation: "@codebase indexa todo el proyecto. Util para preguntas como '¿Dónde se usa esta función?' Lento la primera vez, después rápido."
+            },
+            {
+                question: "¿Cuál es el model recomendado por defecto en Cursor?",
+                options: [
+                    "GPT-4",
+                    "GPT-4o",
+                    "Claude 3.5 Sonnet",
+                    "GPT-3.5-turbo"
+                ],
+                correct: 2,
+                explanation: "Claude 3.5 Sonnet es el default y recomendado. Balance perfecto de calidad/velocidad/coste. Puedes cambiar en Cursor Settings."
+            },
+            {
+                question: "¿Cuál es el free tier de Cursor?",
+                options: [
+                    "Ilimitado",
+                    "2000 completions + 50 slow premium requests/mes",
+                    "Solo 100 requests/mes",
+                    "Requiere pagar siempre"
+                ],
+                correct: 1,
+                explanation: "Free tier: 2000 completions (Tab) + 50 slow premium requests/mes. Después de eso, hay límite. Pro es $20/mes con ilimitado."
+            },
+            {
+                question: "¿Qué es Ask Mode en Composer?",
+                options: [
+                    "Modo donde la IA decide automáticamente los cambios",
+                    "Modo donde la IA propone cambios y tú revisas antes de aceptar",
+                    "Modo donde escribes código manualmente",
+                    "Modo de depuración"
+                ],
+                correct: 1,
+                explanation: "Ask Mode es el recomendado para control. La IA propone, tú revisas cada cambio antes de aceptar. Seguro y educativo."
+            },
+            {
+                question: "¿Cuál es el símbolo para referenciar un archivo específico en Chat?",
+                options: [
+                    "@web",
+                    "@codebase",
+                    "@file",
+                    "@docs"
+                ],
+                correct: 2,
+                explanation: "@file referencia el archivo actual que tienes abierto. Útil para pedir explicaciones o sugerencias sobre código específico."
+            },
+            {
+                question: "¿Cuánto tiempo debería tardar el mini-reto: 'De idea a código en 5 minutos'?",
+                options: [
+                    "Mínimo 15 minutos",
+                    "Entre 5-10 minutos",
+                    "Máximo 5 minutos",
+                    "No hay límite de tiempo"
+                ],
+                correct: 2,
+                explanation: "El reto es generar una app simple en ≤5 minutos usando Composer. Con Cursor, es posible. Sin él, tomaría 15-20 minutos escribir código."
+            }
+        ];
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm4-c02');
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm4-c02');
+        }
+
+        if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+            CourseProgress.initSubmissionIndicators('m4-c02');
+        }
+    </script>
+</body>
+</html>

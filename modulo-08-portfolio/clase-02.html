@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 02: GitHub Profile: Bio, Pinned Repos y Contributions — Módulo 8</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <a href="index.html">Módulo 8</a>
+            <span> > </span>
+            <strong>Clase 02</strong>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <h1>Clase 02: GitHub Profile: Bio, Pinned Repos y Contributions</h1>
+            <div class="subtitle">📅 Semana 16 — Miércoles | ⏱️ 50 minutos</div>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎬</span>
+                Vídeo de la lección
+            </h2>
+            <p>En este vídeo aprenderás cómo crear y optimizar tu perfil de GitHub como portfolio profesional. Cubriremos la creación del README especial, pinning de repositorios, badges, GitHub stats y estrategias para que los hiring managers se fijen en ti.</p>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/G-EGDH50hGE" allowfullscreen></iframe>
+            </div>
+
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-08-c02.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📚</span>
+                Resumen de Conceptos
+            </h2>
+
+            <h3>GitHub ES tu Portfolio</h3>
+            <p>El 87% de los hiring managers revisan GitHub antes de una entrevista. Tu perfil de GitHub no es solo código; es tu marca profesional como desarrollador. Un perfil bien optimizado puede abrir puertas más que cualquier currículum.</p>
+
+            <h3>Elementos de un Perfil Profesional de GitHub</h3>
+
+            <h4>1. Foto Profesional</h4>
+            <ul>
+                <li>La misma foto que en LinkedIn para consistencia visual</li>
+                <li>Cara clara, bien iluminada, fondo neutro</li>
+                <li>Resolución mínima 200x200px</li>
+                <li>Evita filtros excesivos; sé profesional</li>
+            </ul>
+
+            <h4>2. Bio Clara (Bio field en tu perfil)</h4>
+            <p>Ejemplo de bios profesionales:</p>
+            <div class="code-block">
+                <span class="lang-label">Ejemplos</span>
+                <pre><code>AI Developer | Python, React, LangChain | Building intelligent apps
+
+Full-Stack Developer | Node.js + React + PostgreSQL | Open Source Contributor
+
+ML Engineer | PyTorch, TensorFlow, Computer Vision | Passionate about AI Ethics
+
+Backend Specialist | Go, PostgreSQL, Kubernetes | Cloud Infrastructure Enthusiast</code></pre>
+            </div>
+            <p><strong>Regla:</strong> Máximo 160 caracteres. Incluye: especialidad + tech stack + uno valores/intereses.</p>
+
+            <h4>3. Location, Company, Website Links</h4>
+            <ul>
+                <li><strong>Location:</strong> Ciudad real donde trabajas o estudias (ej: "Madrid, Spain")</li>
+                <li><strong>Company:</strong> Tu empresa actual o "Learning AI" si eres estudiante</li>
+                <li><strong>Website:</strong> Enlace a tu portfolio web, blog o LinkedIn</li>
+                <li><strong>Email:</strong> Puedes agregar un email de contacto (aparecerá en "Contributions")</li>
+            </ul>
+
+            <h4>4. README del Perfil (El Repo Especial username/username)</h4>
+            <p>Es un repositorio público con el mismo nombre que tu usuario. Cuando alguien visita tu perfil, lo ve primero.</p>
+
+            <p><strong>Estructura recomendada:</strong></p>
+            <div class="code-block">
+                <span class="lang-label">Markdown</span>
+                <pre><code># 👋 Hola, soy [Tu Nombre]
+
+**AI Developer | Python | React | LangChain**
+
+Desarrollo aplicaciones inteligentes usando IA y backend sólido. Apasionado por el código limpio y la experiencia de usuario.
+
+---
+
+## 🛠️ Tech Stack
+
+### Backend & IA
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?logo=fastapi&logoColor=white)
+![LangChain](https://img.shields.io/badge/LangChain-0.1-FF9900?logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14-316192?logo=postgresql&logoColor=white)
+
+### Frontend
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.3-06B6D4?logo=tailwindcss&logoColor=white)
+
+### DevOps & Cloud
+![Docker](https://img.shields.io/badge/Docker-24-2496ED?logo=docker&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-1.27-326CE5?logo=kubernetes&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-Certified-FF9900?logo=amazonaws&logoColor=white)
+
+---
+
+## 📁 Proyectos Destacados
+
+### 🤖 [ChatGPT Clone — RAG System](https://github.com/username/chatgpt-rag)
+Chatbot con Retrieval-Augmented Generation usando OpenAI y LangChain. Conecta a documentos PDF.
+- **Tech:** Python, FastAPI, LangChain, React, PostgreSQL
+- **Stats:** ⭐ 145 | 🔀 23 | 👁️ 400+
+
+### 🌐 [Portfolio Web Full-Stack](https://github.com/username/portfolio)
+Portfolio interactivo con blog integrado, SEO optimizado y analytics.
+- **Tech:** React, Next.js, TypeScript, Tailwind, Contentful CMS
+- **Stats:** ⭐ 89 | 🔀 12 | 👁️ 250+
+
+### 🎯 [Open Source Contribution: FastAPI Docs](https://github.com/tiangolo/fastapi/pull/9487)
+Mejoré la documentación de validación y agregué ejemplos en español.
+
+### 🎮 [Wordle Solver — Algoritmo Óptimo](https://github.com/username/wordle-solver)
+Solver de Wordle basado en estrategia de información. Ganador en 3.5 intentos promedio.
+- **Tech:** Python, Algoritmos, Statistics
+- **Stats:** ⭐ 340 | 🔀 67
+
+---
+
+## 📊 Mi Actividad
+
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=username&show_icons=true&theme=dark&count_private=true)
+![Language Stats](https://github-readme-stats.vercel.app/api/top-langs/?username=username&layout=compact&theme=dark)
+
+---
+
+## 🔗 Contacto
+
+- **Email:** tu-email@example.com
+- **LinkedIn:** [linkedin.com/in/tunambre](https://linkedin.com)
+- **Blog:** [tu-blog.com](https://tu-blog.com)
+- **Twitter:** [@tutwitter](https://twitter.com)</code></pre>
+            </div>
+
+            <h4>5. Pinned Repos: Estrategia</h4>
+            <p>Puedes "pinear" (fijar) hasta 6 repositorios en tu perfil. Estos aparecen arriba del todo.</p>
+
+            <p><strong>Mezcla estratégica recomendada:</strong></p>
+            <table border="1" cellpadding="10" cellspacing="0">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Cantidad</th>
+                    <th>Ejemplo</th>
+                    <th>Por qué</th>
+                </tr>
+                <tr>
+                    <td>Proyectos Portfolio</td>
+                    <td>2</td>
+                    <td>ChatGPT Clone, SaaS completo</td>
+                    <td>Demuestra capacidad full-stack</td>
+                </tr>
+                <tr>
+                    <td>Open Source</td>
+                    <td>1</td>
+                    <td>PR merged a FastAPI, Django</td>
+                    <td>Prueba que colaboras en comunidad</td>
+                </tr>
+                <tr>
+                    <td>Proyecto Personal/Fun</td>
+                    <td>1</td>
+                    <td>Game, Script útil, Herramienta</td>
+                    <td>Muestra creatividad y pasión</td>
+                </tr>
+                <tr>
+                    <td>Libre (2-3 adicionales)</td>
+                    <td>2-3</td>
+                    <td>Contribuciones, Experimentos, Templates</td>
+                    <td>Demuestra amplitud de habilidades</td>
+                </tr>
+            </table>
+
+            <p><strong>Cada repo pinneado debe tener:</strong></p>
+            <ul>
+                <li>README.md pulido (clase anterior)</li>
+                <li>Descripción clara en el repo (editar en settings)</li>
+                <li>Topics/tags relevantes (#python, #react, #ai, etc.)</li>
+                <li>Licencia explícita (MIT, Apache 2.0, GPL)</li>
+            </ul>
+
+            <h4>6. Contribution Graph (El Calendario Verde)</h4>
+            <p>No se trata de commits vacíos, sino de <strong>actividad consistente real:</strong></p>
+            <ul>
+                <li><strong>Contribuciones a open source:</strong> PRs, issues, documentación</li>
+                <li><strong>Proyectos personales:</strong> Commits regulares, incluso proyectos pequeños</li>
+                <li><strong>Consistencia:</strong> Es mejor tener commits pequeños regulares que 1 mega-commit al mes</li>
+                <li><strong>Lo que cuenta como "contribución":</strong> Commits a cualquier rama, PRs abiertas, issues creadas, código en repositorios públicos</li>
+            </ul>
+
+            <h3>Tabla: Perfil Básico vs Perfil Optimizado</h3>
+
+            <table border="1" cellpadding="10" cellspacing="0">
+                <tr>
+                    <th>Aspecto</th>
+                    <th>Perfil Básico</th>
+                    <th>Perfil Optimizado</th>
+                </tr>
+                <tr>
+                    <td><strong>Foto</strong></td>
+                    <td>Sin foto o foto casual</td>
+                    <td>Foto profesional consistente con LinkedIn</td>
+                </tr>
+                <tr>
+                    <td><strong>Bio</strong></td>
+                    <td>"Developer" o vacía</td>
+                    <td>"AI Developer | Python, React, LangChain | Building intelligent apps"</td>
+                </tr>
+                <tr>
+                    <td><strong>README Perfil</strong></td>
+                    <td>No existe o es genérico</td>
+                    <td>Saludos, sobre mí, tech stack con badges, estadísticas, proyectos destacados</td>
+                </tr>
+                <tr>
+                    <td><strong>Pinned Repos</strong></td>
+                    <td>0-2 repos, sin organización</td>
+                    <td>6 repos: 2 portfolio, 1 open source, 1 personal, 2 flexibles</td>
+                </tr>
+                <tr>
+                    <td><strong>READMEs Repos</strong></td>
+                    <td>Minimalistas o falta de información</td>
+                    <td>Estructura clara: qué es, cómo instalar, screenshots, ejemplos, cómo contribuir</td>
+                </tr>
+                <tr>
+                    <td><strong>Contribution Graph</strong></td>
+                    <td>Huecos irregulares, poco verde</td>
+                    <td>Verde consistente: commits regulares, contribuciones públicas</td>
+                </tr>
+                <tr>
+                    <td><strong>Topics/Tags</strong></td>
+                    <td>Pocos o ninguno</td>
+                    <td>Etiquetas relevantes (#python #react #fastapi #langchain)</td>
+                </tr>
+                <tr>
+                    <td><strong>Ubicación</strong></td>
+                    <td>Vacía</td>
+                    <td>"Madrid, Spain" o "Remote (EU)"</td>
+                </tr>
+                <tr>
+                    <td><strong>Contacto</strong></td>
+                    <td>No disponible</td>
+                    <td>Email, LinkedIn, Portfolio web</td>
+                </tr>
+                <tr>
+                    <td><strong>GitHub Stats</strong></td>
+                    <td>No visibles</td>
+                    <td>Embed de GitHub Readme Stats (contribuciones, lenguajes)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Guided Practice Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">⚙️</span>
+                Práctica Guiada: Optimiza tu Perfil de GitHub
+            </h2>
+
+            <p>Sigue estos pasos para convertir tu perfil de GitHub en un portfolio profesional.</p>
+
+            <h3>Paso 1: Crea el README Especial (username/username)</h3>
+
+            <p>En GitHub, crea un repositorio <strong>con exactamente tu nombre de usuario:</strong></p>
+            <ul>
+                <li>Si tu usuario es <code>juanpayero</code>, el repo debe ser <code>juanpayero/juanpayero</code></li>
+                <li>Marcar como <strong>Public</strong></li>
+                <li>Marcar como <strong>"Add a README.md"</strong> al crear</li>
+            </ul>
+
+            <p><strong>GitHub lo detectará automáticamente</strong> y mostrará este README en la parte superior de tu perfil.</p>
+
+            <h3>Paso 2: Estructura tu README con Markdown</h3>
+
+            <div class="code-block">
+                <span class="lang-label">Markdown — README.md</span>
+                <pre><code># 👋 Hola, Soy Juan Payero
+
+**Full-Stack Developer | Python | React | Cloud Architecture**
+
+Desarrollo aplicaciones web escalables y sistemas con IA integrada. Apasionado por la calidad del código y la experiencia del usuario.
+
+---
+
+## 🛠️ Mi Stack Técnico
+
+### Backend & IA
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?logo=fastapi&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20-339933?logo=node.js&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-316192?logo=postgresql&logoColor=white)
+
+### Frontend
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.3-06B6D4?logo=tailwindcss&logoColor=white)
+
+### DevOps
+![Docker](https://img.shields.io/badge/Docker-24-2496ED?logo=docker&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=github-actions&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-FF9900?logo=amazonaws&logoColor=white)
+
+---
+
+## 📁 Proyectos Destacados
+
+### 🚀 [Tu Mejor Proyecto](https://github.com/username/proyecto-1)
+Descripción clara de qué hace, por qué es importante y tech stack usado.
+- **Tecnologías:** Python, FastAPI, React, PostgreSQL
+- ⭐ 200+ | 🔀 45 | 👁️ 1000+
+
+### 🌐 [Otro Proyecto Importante](https://github.com/username/proyecto-2)
+Describe aquí...
+- **Tecnologías:** Node.js, React, MongoDB
+- ⭐ 120+ | 🔀 20 | 👁️ 500+
+
+---
+
+## 📊 Mi Actividad en GitHub
+
+![Stats](https://github-readme-stats.vercel.app/api?username=username&show_icons=true&theme=dark&count_private=true&hide_title=false)
+
+![Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=username&layout=compact&theme=dark&hide_title=false)
+
+---
+
+## 🔗 Conecta Conmigo
+
+- 📧 Email: tu-email@example.com
+- 💼 LinkedIn: [linkedin.com/in/tu-perfil](https://linkedin.com)
+- 🌍 Portfolio: [tu-website.com](https://tu-website.com)
+- 🐦 Twitter: [@tu_usuario](https://twitter.com)</code></pre>
+            </div>
+
+            <p><strong>Herramientas útiles para tu README:</strong></p>
+            <ul>
+                <li><a href="https://shields.io/" target="_blank">Shields.io</a> — Badges profesionales para tech stack</li>
+                <li><a href="https://github.com/anuraghazra/github-readme-stats" target="_blank">GitHub Readme Stats</a> — Estadísticas embedidas</li>
+                <li><a href="https://github.com/DenverCoder1/github-readme-streak-stats" target="_blank">GitHub Streak Stats</a> — Racha de contribuciones</li>
+                <li><a href="https://rahuldkjain.github.io/github-profile-readme-generator/" target="_blank">GitHub Profile README Generator</a> — Generador interactivo</li>
+            </ul>
+
+            <h3>Paso 3: Pineados tus 6 Mejores Repos</h3>
+
+            <p>En tu perfil de GitHub:</p>
+            <ol>
+                <li>Ve a tu perfil (github.com/tuusuario)</li>
+                <li>Debajo de tu nombre, haz clic en "Customize your pins"</li>
+                <li>Selecciona exactamente 6 repositorios públicos</li>
+                <li>Ordénalos por importancia (drag & drop)</li>
+                <li>Guarda los cambios</li>
+            </ol>
+
+            <p><strong>Recomendación de orden:</strong></p>
+            <ol>
+                <li>Tu proyecto más impresionante (más stars, mejor README)</li>
+                <li>Otro proyecto portfolio sólido</li>
+                <li>Contribución a open source (PR merged)</li>
+                <li>Proyecto personal/fun que muestra creatividad</li>
+                <li>Proyecto reciente o en desarrollo</li>
+                <li>Herramienta o librería útil</li>
+            </ol>
+
+            <h3>Paso 4: Actualiza tu Bio, Location y Links</h3>
+
+            <p>En Settings > Profile:</p>
+            <ul>
+                <li><strong>Name:</strong> Tu nombre completo (ej: "Juan Payero")</li>
+                <li><strong>Bio:</strong> 160 caracteres máximo (ej: "AI Developer | Python, React, LangChain | Building intelligent apps")</li>
+                <li><strong>Company:</strong> Tu empresa actual o "Learning AI"</li>
+                <li><strong>Location:</strong> Tu ciudad (ej: "Madrid, Spain")</li>
+                <li><strong>Website:</strong> URL a tu portfolio o blog</li>
+            </ul>
+
+            <h3>Paso 5: Agrega Topics a Tus Repos</h3>
+
+            <p>Cada repositorio puede tener tags. Para cada repo importante:</p>
+            <ol>
+                <li>Abre el repo</li>
+                <li>Ve a "About" (ícono de engranaje arriba a la derecha)</li>
+                <li>Agrega topics: #python #react #fastapi #langchain #ai</li>
+            </ol>
+
+            <p><strong>Topics recomendados (según tu stack):</strong></p>
+            <div class="code-block">
+                <span class="lang-label">Ejemplo</span>
+                <pre><code>python, fastapi, langchain, ai, backend, rest-api
+react, typescript, frontend, tailwind-css, web-development
+full-stack, docker, kubernetes, aws, devops
+open-source, machine-learning, computer-vision</code></pre>
+            </div>
+
+            <h3>Paso 6: Certifica que tus READMEs son Profesionales</h3>
+
+            <p>Cada repositorio pinneado debe tener un README con:</p>
+            <ul>
+                <li><strong>Título y descripción clara</strong> — ¿Qué hace?</li>
+                <li><strong>Screenshot o demo</strong> — Una imagen vale mil palabras</li>
+                <li><strong>Instalación en 3 pasos</strong> — Fácil de reproducir</li>
+                <li><strong>Uso/Ejemplos</strong> — Código funcionando</li>
+                <li><strong>Tech Stack</strong> — Qué tecnologías usa</li>
+                <li><strong>Features principales</strong> — Viñetas de qué hace</li>
+                <li><strong>Cómo contribuir</strong> — Abierto a PRs</li>
+                <li><strong>Licencia</strong> — MIT, Apache 2.0, GPL, etc.</li>
+            </ul>
+        </section>
+
+        <!-- Challenge Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎯</span>
+                Mini-Reto
+            </h2>
+
+            <div class="reto-box">
+                <h3>Agregar GitHub Readme Stats y Gráfico de Lenguajes</h3>
+
+                <p>Edita tu README especial (username/username) para incluir tarjetas visualmente atractivas de tus estadísticas.</p>
+
+                <p><strong>Requisitos:</strong></p>
+                <ul>
+                    <li>Agrega tarjeta de GitHub Stats (contribuciones, repos, followers)</li>
+                    <li>Agrega gráfico de top lenguajes usados</li>
+                    <li>Agrega streak de contribuciones (racha verde)</li>
+                    <li>Personaliza los colores del tema (dark/light)</li>
+                    <li>Posiciona estas tarjetas de forma visualmente equilibrada</li>
+                </ul>
+
+                <p><strong>Código para pegar en tu README:</strong></p>
+
+                <div class="code-block">
+                    <span class="lang-label">Markdown</span>
+                    <pre><code>## 📊 Mi Actividad en GitHub
+
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=TU_USUARIO&show_icons=true&theme=dark&count_private=true&hide_title=true)
+
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=TU_USUARIO&layout=compact&theme=dark)
+
+![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=TU_USUARIO&theme=dark)
+
+---
+
+## 🏆 Estadísticas
+
+- **Total de contribuciones:** Visible en el gráfico arriba
+- **Racha actual:** ✅ Ver GitHub Streak arriba
+- **Repos destacados:** 6 pinneados arriba del perfil</code></pre>
+                </div>
+
+                <p><strong>Opciones de temas disponibles:</strong> dark, dark_dimmed, github_dark, github_light, highcontrast, nord, radical, dracula, etc.</p>
+
+                <p><strong>Bonus avanzado:</strong> Usa GitHub Actions para actualizar automáticamente tus stats cada día. <a href="https://github.com/anuraghazra/github-readme-stats" target="_blank">Ver documentación aquí</a></p>
+            </div>
+        </section>
+
+        <!-- Exercise Submission Section -->
+        <section class="card submission-section" data-class-id="m8-c02">
+            <h2 class="section-title">
+                <span class="section-icon">📤</span>
+                Envío de ejercicios
+            </h2>
+            <p>Envía el link a tu perfil de GitHub optimizado o describe las mejoras realizadas.</p>
+
+            <!-- Exercise 1: Type A (Code-along) -->
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Optimización perfil GitHub</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Enlace a tu perfil de GitHub con bio optimizada, foto profesional, ubicación y website actualizado. Ejemplo: https://github.com/tu-usuario"></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m8-c02', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <!-- Exercise 2: Type B (Mini-reto) -->
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>📤 Entregar práctica: Perfil GitHub para AI developer</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Enlace a tu repositorio especial (username/username) con README profesional, badges de tech stack, estadísticas embedidas (GitHub Stats, Top Languages, Streak), 6 repos pinneados bien organizados, y topics actualizados en cada repo."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m8-c02', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📝</span>
+                Test de conocimiento
+            </h2>
+            <p>Responde las siguientes 10 preguntas para verificar tu comprensión. Necesitas al menos 8 correctas para marcar esta clase como completada.</p>
+
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <div class="clase-nav">
+            <a href="clase-01.html">← Clase 01</a>
+            <span> | </span>
+            <a href="clase-03.html">Clase 03 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        // Quiz data
+        const quizQuestions = [
+            {
+                question: "¿Qué porcentaje de hiring managers revisan GitHub antes de una entrevista?",
+                options: [
+                    "42%",
+                    "65%",
+                    "87%",
+                    "100%"
+                ],
+                correct: 2  // 87%
+            },
+            {
+                question: "¿Cuál es el nombre exacto del repositorio especial que muestra un README en tu perfil?",
+                options: [
+                    "repo/profile",
+                    "username/profile",
+                    "username/username",
+                    "profile/readme"
+                ],
+                correct: 2  // username/username
+            },
+            {
+                question: "¿Cuántos repositorios puedes pinear (fijar) en tu perfil de GitHub?",
+                options: [
+                    "3",
+                    "4",
+                    "6",
+                    "10"
+                ],
+                correct: 2  // 6
+            },
+            {
+                question: "¿Cuál es la mezcla estratégica recomendada de repos pinneados?",
+                options: [
+                    "Solo proyectos personales grandes",
+                    "2 portfolio + 1 open source + 1 personal + 2 flexibles",
+                    "6 open source contributions",
+                    "Todos los mismos tipo de proyecto"
+                ],
+                correct: 1  // Mix recomendado
+            },
+            {
+                question: "¿Qué elementos debe incluir un README profesional de repositorio?",
+                options: [
+                    "Solo código",
+                    "Descripción, instalación, ejemplos, cómo contribuir, licencia",
+                    "Título y nada más",
+                    "Únicamente screenshots"
+                ],
+                correct: 1  // Estructura completa
+            },
+            {
+                question: "¿Cuál es el máximo de caracteres recomendado para la bio de GitHub?",
+                options: [
+                    "80",
+                    "160",
+                    "256",
+                    "Sin límite"
+                ],
+                correct: 1  // 160
+            },
+            {
+                question: "¿Qué no cuenta como contribución válida para el gráfico verde de GitHub?",
+                options: [
+                    "Commits a cualquier rama pública",
+                    "PRs abiertas y merged",
+                    "Issues creadas",
+                    "Commits vacíos sin cambios reales"
+                ],
+                correct: 3  // Commits vacíos
+            },
+            {
+                question: "¿Qué herramienta se recomienda para generar badges de tech stack en tu README?",
+                options: [
+                    "GitHub Badges",
+                    "Shields.io",
+                    "BadgeKit",
+                    "Tech Icons"
+                ],
+                correct: 1  // Shields.io
+            },
+            {
+                question: "¿Cuál es el propósito principal del README especial (username/username)?",
+                options: [
+                    "Almacenar tus proyectos",
+                    "Mostrar un perfil personalizado arriba de tu perfil de GitHub",
+                    "Crear un wiki",
+                    "Documentar bugs"
+                ],
+                correct: 1  // Mostrar perfil personalizado
+            },
+            {
+                question: "¿Qué información debe incluir una buena bio de GitHub?",
+                options: [
+                    "Solo tu nombre",
+                    "Especialidad + tech stack + valores/intereses",
+                    "Una frase aleatoria",
+                    "Solo tu empresa"
+                ],
+                correct: 1  // Especialidad + stack + valores
+            }
+        ];
+
+        // Initialize quiz (único sistema: CourseProgress)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm8-c02');
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm8-c02');
+        }
+
+    </script>
+</body>
+</html>

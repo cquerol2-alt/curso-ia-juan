@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: Arquitectura Full-Stack AI — Módulo 7</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../../dashboard.html">Dashboard</a>
+            <span> > </span>
+            <a href="clase-01.html">← Volver a Clase 01</a>
+        </nav>
+
+        <header>
+            <h1>Mind Map: Arquitectura Full-Stack AI</h1>
+            <div class="subtitle">Conceptos clave de arquitectura Frontend + Backend + LLM</div>
+        </header>
+
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🧠</span>
+                Mind Map Interactivo
+            </h2>
+
+            <div id="mindmap-container"></div>
+        </section>
+    </div>
+
+    <style>
+        #mindmap-container {
+            display: flex;
+            justify-content: center;
+            padding: 2em;
+        }
+
+        .mindmap-node {
+            cursor: pointer;
+            padding: 1em;
+            margin: 0.5em;
+            border-radius: 8px;
+            border: 2px solid;
+            background-color: #f5f5f5;
+            font-weight: 500;
+            text-align: center;
+            user-select: none;
+            transition: all 0.3s ease;
+            max-width: 200px;
+        }
+
+        .mindmap-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .mindmap-node.root {
+            background: linear-gradient(135deg, #00e676 0%, #00d89a 100%);
+            color: white;
+            border-color: #00e676;
+            font-size: 1.1em;
+            padding: 1.5em;
+            max-width: 250px;
+        }
+
+        .mindmap-node.category {
+            background-color: rgba(0, 230, 118, 0.08);
+            border-color: #00e676;
+            color: #00e676;
+        }
+
+        .mindmap-node.detail {
+            background-color: #f1f8e9;
+            border-color: #7cb342;
+            color: #00e676;
+            font-size: 0.9em;
+        }
+
+        .mindmap-node.collapsed-indicator {
+            display: inline-block;
+            margin-right: 0.5em;
+            font-size: 0.8em;
+        }
+
+        .mindmap-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2em;
+            margin-top: 2em;
+        }
+
+        .mindmap-branch {
+            padding: 1.5em;
+            background-color: #f9f9f9;
+            border-left: 4px solid #00e676;
+            border-radius: 4px;
+        }
+
+        .mindmap-branch h3 {
+            color: #00e676;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .mindmap-branch h3:hover {
+            text-decoration: underline;
+        }
+
+        .mindmap-branch.collapsed .branch-content {
+            display: none;
+        }
+
+        .mindmap-branch .expand-icon {
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            font-weight: bold;
+        }
+
+        .mindmap-branch.collapsed .expand-icon {
+            transform: rotate(-90deg);
+        }
+
+        .branch-content {
+            margin-top: 1em;
+            padding-left: 1em;
+        }
+
+        .branch-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .branch-content li {
+            padding: 0.5em 0;
+            margin: 0.3em 0;
+            padding-left: 1.5em;
+            position: relative;
+        }
+
+        .branch-content li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #7cb342;
+            font-weight: bold;
+        }
+
+        .branch-content li strong {
+            color: #00e676;
+        }
+
+        .code-snippet {
+            background-color: #263238;
+            color: #aed581;
+            padding: 0.8em;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            margin: 0.5em 0;
+            overflow-x: auto;
+        }
+    </style>
+
+    <script>
+        // Mind map data structure
+        const mindmapData = [
+            {
+                title: "🏗️ Arquitectura Frontend",
+                icon: "🖥️",
+                expanded: true,
+                content: [
+                    { label: "React / Vue", detail: "Interfaz de usuario interactiva" },
+                    { label: "Input del usuario", detail: "Caja de texto, botón enviar" },
+                    { label: "Gestión de estado", detail: "useState, useEffect, Context" },
+                    { label: "Mostrar respuestas", detail: "Render dinámico del chat" },
+                    { label: "NO API keys aquí", detail: "🔒 Nunca guardes tokens en frontend" },
+                    { label: "Llamar a backend", detail: "fetch('/api/chat')" }
+                ]
+            },
+            {
+                title: "🔌 API Backend (Servidor)",
+                icon: "⚙️",
+                expanded: true,
+                content: [
+                    { label: "Next.js API Routes", detail: "app/api/chat/route.ts" },
+                    { label: "Validación de input", detail: "Mensaje no vacío, longitud máx" },
+                    { label: "Gestión de API keys", detail: "process.env.OPENAI_API_KEY" },
+                    { label: "Rate limiting", detail: "Máx X llamadas por usuario/hora" },
+                    { label: "Llamada a LLM", detail: "fetch() a OpenAI API" },
+                    { label: "Logging & auditoría", detail: "Quién hizo qué y cuándo" },
+                    { label: "Manejo de errores", detail: "Catch y responder con status codes" }
+                ]
+            },
+            {
+                title: "🤖 LLM Provider (OpenAI/Claude)",
+                icon: "🧠",
+                expanded: true,
+                content: [
+                    { label: "Procesa prompt", detail: "Entiende el mensaje del usuario" },
+                    { label: "Genera respuesta", detail: "Produce texto inteligente" },
+                    { label: "Conteo de tokens", detail: "Usa uso para facturación" },
+                    { label: "Parámetros", detail: "temperature, max_tokens, model" },
+                    { label: "Modelos", detail: "gpt-4o-mini, gpt-4, etc." }
+                ]
+            },
+            {
+                title: "🔄 Flujo de datos",
+                icon: "📊",
+                expanded: true,
+                content: [
+                    { label: "1. User Input", detail: "El usuario escribe en el input" },
+                    { label: "2. Frontend POST", detail: "Envía JSON a /api/chat" },
+                    { label: "3. Backend valida", detail: "Verifica que el input sea válido" },
+                    { label: "4. Backend autentica", detail: "Obtiene API key de .env" },
+                    { label: "5. Llamada a OpenAI", detail: "POST a https://api.openai.com/v1/chat/completions" },
+                    { label: "6. OpenAI responde", detail: "Devuelve JSON con tokens, contenido" },
+                    { label: "7. Backend procesa", detail: "Extrae respuesta, maneja errores" },
+                    { label: "8. Frontend recibe", detail: "JSON con { reply, usage, model }" },
+                    { label: "9. UI actualiza", detail: "Muestra respuesta al usuario" }
+                ]
+            },
+            {
+                title: "🛡️ Seguridad & Best Practices",
+                icon: "🔐",
+                expanded: true,
+                content: [
+                    { label: "Nunca exponer API keys", detail: "No en frontend, no en git" },
+                    { label: ".env.local", detail: "Variables de entorno locales" },
+                    { label: "Vercel Environment Variables", detail: "Para producción en Vercel" },
+                    { label: "CORS", detail: "Frontend no puede llamar a OpenAI directo" },
+                    { label: "Input sanitization", detail: "Validar antes de procesar" },
+                    { label: "Rate limiting", detail: "Proteger contra abuso" },
+                    { label: "Error handling", detail: "No mostrar errores internos al usuario" },
+                    { label: "Logs", detail: "Registra todas las llamadas para auditoría" }
+                ]
+            },
+            {
+                title: "📦 Stacks Alternativos",
+                icon: "🔧",
+                expanded: true,
+                content: [
+                    { label: "Flask + HTML/CSS/JS", detail: "Python ligero, rápido para MVP" },
+                    { label: "Express + React", detail: "Node.js full-stack" },
+                    { label: "Django", detail: "Python robusto con ORM integrado" },
+                    { label: "Streamlit", detail: "Python sin separación frontend/backend" },
+                    { label: "Vercel", detail: "Hosting de Next.js (automático)" },
+                    { label: "Render", detail: "Deploy de Flask/Express/Django" }
+                ]
+            }
+        ];
+
+        // Render mind map
+        function renderMindmap() {
+            const container = document.getElementById('mindmap-container');
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'mindmap-content';
+
+            mindmapData.forEach((branch, idx) => {
+                const branchDiv = document.createElement('div');
+                branchDiv.className = `mindmap-branch ${branch.expanded ? '' : 'collapsed'}`;
+                branchDiv.id = `branch-${idx}`;
+
+                // Header with toggle
+                const headerHTML = `
+                    <h3 onclick="toggleBranch(${idx})">
+                        <span class="expand-icon">▼</span>
+                        <span>${branch.icon}</span>
+                        <span>${branch.title}</span>
+                    </h3>
+                `;
+
+                // Content
+                const contentHTML = `
+                    <div class="branch-content">
+                        <ul>
+                            ${branch.content.map(item => `
+                                <li>
+                                    <strong>${item.label}:</strong> ${item.detail}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+
+                branchDiv.innerHTML = headerHTML + contentHTML;
+                contentDiv.appendChild(branchDiv);
+            });
+
+            container.appendChild(contentDiv);
+        }
+
+        // Toggle branch expansion
+        function toggleBranch(idx) {
+            const branch = document.getElementById(`branch-${idx}`);
+            branch.classList.toggle('collapsed');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderMindmap();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: OpenAI Function Calling</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #00e676;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #00e676;
+            font-weight: 700;
+        }
+
+        .back-link {
+            color: #00b0ff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #00e676;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .branch {
+            background: #111827;
+            border-left: 4px solid #00e676;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .branch-header {
+            background: linear-gradient(135deg, #1b3a3a, #0d5a5a);
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            transition: background 0.3s;
+        }
+
+        .branch-header:hover {
+            background: linear-gradient(135deg, #0d5a5a, #1b3a3a);
+        }
+
+        .branch-header.color-01 {
+            border-left-color: #00e676;
+            background: linear-gradient(135deg, #1a3a2a, #0d5a3a);
+        }
+
+        .branch-header.color-02 {
+            border-left-color: #00b0ff;
+            background: linear-gradient(135deg, #1a3a4a, #0d3a5a);
+        }
+
+        .branch-header.color-03 {
+            border-left-color: #ff6b6b;
+            background: linear-gradient(135deg, #3a1a1a, #5a0d0d);
+        }
+
+        .branch-header.color-04 {
+            border-left-color: #ffc107;
+            background: linear-gradient(135deg, #3a3a1a, #5a5a0d);
+        }
+
+        .branch-header.color-05 {
+            border-left-color: #9c27b0;
+            background: linear-gradient(135deg, #3a1a4a, #5a0d5a);
+        }
+
+        .branch-header.color-06 {
+            border-left-color: #ff5722;
+            background: linear-gradient(135deg, #3a2a1a, #5a3a0d);
+        }
+
+        .branch-header.color-07 {
+            border-left-color: #00e5ff;
+            background: linear-gradient(135deg, #1a3a4a, #0d5a5a);
+        }
+
+        .branch-header.color-08 {
+            border-left-color: #69f0ae;
+            background: linear-gradient(135deg, #1a3a2a, #0d5a3a);
+        }
+
+        .branch-title {
+            font-weight: 600;
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+            color: #00e676;
+        }
+
+        .branch.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .branch-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .branch.expanded .branch-content {
+            max-height: 1000px;
+        }
+
+        .branch-items {
+            padding: 0.5rem 1rem 1rem 1rem;
+            background: #0f1419;
+        }
+
+        .branch-item {
+            padding: 0.6rem 0;
+            padding-left: 1rem;
+            border-left: 2px solid #333;
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .branch-item strong {
+            color: #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mind Map: OpenAI Function Calling / Tool Use</h1>
+            <a href="clase-02.html" class="back-link">← Volver a la Clase 02</a>
+        </div>
+
+        <div class="mindmap">
+            <!-- Branch 1 -->
+            <div class="branch expanded">
+                <div class="branch-header color-01">
+                    <span class="branch-title">Function Calling</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Qué es:</strong> Capacidad del LLM de invocar funciones externas</div>
+                        <div class="branch-item"><strong>Por qué:</strong> Acceso a datos reales, ejecución de acciones, integración con APIs</div>
+                        <div class="branch-item"><strong>GPT 3.5+:</strong> Soporta function calling nativamente</div>
+                        <div class="branch-item"><strong>Ventaja:</strong> LLM decide cuándo y cómo usar herramientas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 2 -->
+            <div class="branch">
+                <div class="branch-header color-02">
+                    <span class="branch-title">Flujo de Ejecución</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>1. Prompt:</strong> Usuario envía mensaje + definiciones de tools</div>
+                        <div class="branch-item"><strong>2. Tool Call:</strong> LLM responde con tool_call (nombre + parámetros)</div>
+                        <div class="branch-item"><strong>3. Execute:</strong> Cliente ejecuta la función localmente</div>
+                        <div class="branch-item"><strong>4. Result:</strong> Envía resultado al LLM en el historial</div>
+                        <div class="branch-item"><strong>5. Response:</strong> LLM formula respuesta final basada en resultado</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 3 -->
+            <div class="branch">
+                <div class="branch-header color-03">
+                    <span class="branch-title">JSON Schema</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>name:</strong> Identificador único de la función</div>
+                        <div class="branch-item"><strong>description:</strong> Qué hace la función (LLM la lee)</div>
+                        <div class="branch-item"><strong>parameters:</strong> Definición de argumentos (type, properties, required)</div>
+                        <div class="branch-item"><strong>strict:</strong> Si true, LLM respeta schema exactamente</div>
+                        <div class="branch-item"><strong>Ejemplo:</strong> name: "search", description: "Buscar en web", params: {query}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 4 -->
+            <div class="branch">
+                <div class="branch-header color-04">
+                    <span class="branch-title">tool_choice Parameter</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>"auto":</strong> LLM elige si usar tool o no (por defecto)</div>
+                        <div class="branch-item"><strong>"required":</strong> LLM DEBE usar una tool</div>
+                        <div class="branch-item"><strong>"none":</strong> LLM NO usa tools, solo genera texto</div>
+                        <div class="branch-item"><strong>Especifica:</strong> {"type": "function", "function": {"name": "search"}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 5 -->
+            <div class="branch">
+                <div class="branch-header color-05">
+                    <span class="branch-title">Parallel Tool Calls</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Multiple Calls:</strong> LLM puede solicitar varias tools a la vez</div>
+                        <div class="branch-item"><strong>Eficiencia:</strong> Ejecuta todas en paralelo, luego envía resultados</div>
+                        <div class="branch-item"><strong>Caso:</strong> Buscar 3 productos, 3 precios, 3 reviews en una sola petición</div>
+                        <div class="branch-item"><strong>Implementation:</strong> Procesar todas las tool_calls antes de siguiente vuelta</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 6 -->
+            <div class="branch">
+                <div class="branch-header color-06">
+                    <span class="branch-title">Agent Loop</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>While Loop:</strong> Mientras haya tool_calls, ejecuta</div>
+                        <div class="branch-item"><strong>Condición:</strong> Si LLM responde "tool_calls", continúa ciclo</div>
+                        <div class="branch-item"><strong>Si LLM responde "text":</strong> Retorna respuesta, sale del loop</div>
+                        <div class="branch-item"><strong>Max Iterations:</strong> Limite seguridad para evitar loops infinitos</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 7 -->
+            <div class="branch">
+                <div class="branch-header color-07">
+                    <span class="branch-title">Structured Outputs (Strict Mode)</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Objetivo:</strong> Garantizar que LLM respete el schema exactamente</div>
+                        <div class="branch-item"><strong>Validación:</strong> LLM genera JSON que pasa schema validation</div>
+                        <div class="branch-item"><strong>GPT-4 Turbo+:</strong> Soporta strict mode en function calling</div>
+                        <div class="branch-item"><strong>Ventaja:</strong> Parseo sin errores, código más robusto</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 8 -->
+            <div class="branch">
+                <div class="branch-header color-08">
+                    <span class="branch-title">Errores Comunes</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Schema Incorrecto:</strong> Parámetros mal definidos → LLM confundido</div>
+                        <div class="branch-item"><strong>No Enviar Resultado:</strong> Tool se ejecuta pero no vuelve al LLM → agente desorienta</div>
+                        <div class="branch-item"><strong>Loop Infinito:</strong> LLM siempre pide misma tool, sin condición de salida</div>
+                        <div class="branch-item"><strong>Sin Manejo Errores:</strong> Tool falla → crash, no le dice al LLM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.branch-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const branch = this.closest('.branch');
+                branch.classList.toggle('expanded');
+            });
+        });
+    </script>
+</body>
+</html>

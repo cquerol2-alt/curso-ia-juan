@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 04: Funciones, Módulos e Imports — Python para Devs Web</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span class="separator">/</span>
+            <a href="index.html">Módulo 1</a>
+            <span class="separator">/</span>
+            <span class="current">Clase 04</span>
+        </nav>
+
+        <!-- Header -->
+        <header class="course-header">
+            <h1>Clase 04: Funciones, Módulos e Imports</h1>
+            <p class="meta">Semana 1 — Jueves | 🎬 30 min + 💻 50 min + 🧪 15 min</p>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+
+            <!-- 🎬 Video Section -->
+            <section class="card">
+                <h2 class="section-title"><span class="section-icon">🎬</span> Vídeo</h2>
+                <div class="video-wrapper">
+                    <iframe
+                        width="100%"
+                        height="400"
+                        src="https://www.youtube.com/embed/rfscVS0vtbw?start=10800"
+                        title="Python: Funciones, Módulos e Imports"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+                <p class="video-note">📌 Ve desde 3:00:00 hasta 4:00:00</p>
+            </section>
+
+            <!-- 📖 Resumen Section -->
+            <section class="card">
+                <h2 class="section-title"><span class="section-icon">📖</span> Resumen</h2>
+                    <h3>Funciones en Python</h3>
+                    <p>Las funciones son bloques reutilizables de código que realizan una tarea específica. Se definen con <code>def</code> y pueden recibir parámetros y devolver valores.</p>
+
+                    <h4>Definición y parámetros</h4>
+                    <pre><code class="language-python">def saludar(nombre, apellido):
+    return f"Hola, {nombre} {apellido}"
+
+resultado = saludar("Juan", "Querol")
+print(resultado)  # Hola, Juan Querol</code></pre>
+
+                    <h4>Valores por defecto</h4>
+                    <pre><code class="language-python">def crear_usuario(nombre, rol="usuario", activo=True):
+    return {"nombre": nombre, "rol": rol, "activo": activo}
+
+admin = crear_usuario("Carlos", rol="admin")
+print(admin)  # {'nombre': 'Carlos', 'rol': 'admin', 'activo': True}</code></pre>
+
+                    <h4>*args y **kwargs</h4>
+                    <pre><code class="language-python"># *args: argumentos posicionales variables
+def sumar(*numeros):
+    return sum(numeros)
+
+print(sumar(1, 2, 3, 4, 5))  # 15
+
+# **kwargs: argumentos nombrados variables
+def crear_perfil(nombre, **datos):
+    return {**datos, "nombre": nombre}
+
+perfil = crear_perfil("Ana", edad=28, ciudad="Madrid", rol="dev")
+print(perfil)  # {'edad': 28, 'ciudad': 'Madrid', 'rol': 'dev', 'nombre': 'Ana'}</code></pre>
+
+                    <h4>Funciones lambda</h4>
+                    <pre><code class="language-python"># Lambda: función anónima en una línea
+duplicar = lambda x: x * 2
+print(duplicar(5))  # 10
+
+# Útiles con map, filter, sorted
+numeros = [1, 2, 3, 4, 5]
+pares = list(filter(lambda x: x % 2 == 0, numeros))
+print(pares)  # [2, 4]</code></pre>
+
+                    <h3>Módulos e imports</h3>
+                    <p>Los módulos permiten organizar el código en archivos reutilizables. Python tiene módulos built-in y puedes crear los tuyos.</p>
+
+                    <h4>Importar módulos built-in</h4>
+                    <pre><code class="language-python">import math
+from datetime import datetime
+from random import randint, choice
+
+print(math.pi)  # 3.141592653589793
+ahora = datetime.now()
+numero = randint(1, 100)</code></pre>
+
+                    <h4>Crear tu propio módulo</h4>
+                    <p><strong>utils.py</strong></p>
+                    <pre><code class="language-python">def saludar(nombre):
+    return f"¡Hola, {nombre}!"
+
+def despedir(nombre):
+    return f"¡Hasta pronto, {nombre}!"
+
+PI = 3.14159</code></pre>
+
+                    <p><strong>main.py</strong></p>
+                    <pre><code class="language-python">import utils
+from utils import saludar, PI
+
+print(utils.saludar("María"))  # ¡Hola, María!
+print(saludar("Juan"))  # ¡Hola, Juan!
+print(PI)  # 3.14159</code></pre>
+
+                    <h4>__name__ == "__main__"</h4>
+                    <pre><code class="language-python"># archivo: herramientas.py
+def procesar_datos(datos):
+    return [x * 2 for x in datos]
+
+# Este código solo se ejecuta cuando corres el archivo directamente
+if __name__ == "__main__":
+    datos = [1, 2, 3, 4, 5]
+    resultado = procesar_datos(datos)
+    print(resultado)  # [2, 4, 6, 8, 10]</code></pre>
+
+                    <h3>Comparación con JavaScript</h3>
+                    <table>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Python</th>
+                            <th>JavaScript</th>
+                        </tr>
+                        <tr>
+                            <td>Función básica</td>
+                            <td><code>def func(x): return x*2</code></td>
+                            <td><code>function func(x) { return x*2; }</code></td>
+                        </tr>
+                        <tr>
+                            <td>Parámetros por defecto</td>
+                            <td><code>def func(x=5):</code></td>
+                            <td><code>function func(x=5) {}</code></td>
+                        </tr>
+                        <tr>
+                            <td>Función anónima</td>
+                            <td><code>lambda x: x*2</code></td>
+                            <td><code>(x) => x*2</code></td>
+                        </tr>
+                        <tr>
+                            <td>Múltiples argumentos</td>
+                            <td><code>def func(*args):</code></td>
+                            <td><code>function func(...args) {}</code></td>
+                        </tr>
+                        <tr>
+                            <td>Importar módulo</td>
+                            <td><code>import modulo</code></td>
+                            <td><code>import { func } from 'modulo'</code></td>
+                        </tr>
+                    </table>
+            </section>
+
+            <!-- 💻 Práctica Guiada Section -->
+            <section class="card">
+                <h2 class="section-title"><span class="section-icon">💻</span> Práctica Guiada</h2>
+                    <h3>Paso 1: Crear funciones de utilidad</h3>
+                    <p>Crea un archivo <code>texto.py</code> con funciones para manipular texto:</p>
+                    <pre><code class="language-python"># texto.py
+def contar_palabras(texto):
+    """Cuenta el número de palabras en un texto"""
+    return len(texto.split())
+
+def capitalizar_titulo(texto):
+    """Convierte texto a formato título"""
+    return texto.title()
+
+def invertir_texto(texto):
+    """Invierte un texto"""
+    return texto[::-1]
+
+def contar_caracteres(texto, incluir_espacios=False):
+    """Cuenta caracteres, opcionalmente excluyendo espacios"""
+    if incluir_espacios:
+        return len(texto)
+    return len(texto.replace(" ", ""))</code></pre>
+
+                    <h3>Paso 2: Crear un módulo reutilizable</h3>
+                    <p>Ahora crea <code>operaciones.py</code> con funciones matemáticas:</p>
+                    <pre><code class="language-python"># operaciones.py
+def sumar(a, b):
+    return a + b
+
+def restar(a, b):
+    return a - b
+
+def multiplicar(a, b):
+    return a * b
+
+def dividir(a, b):
+    if b == 0:
+        return "Error: no se puede dividir entre cero"
+    return a / b
+
+def potencia(base, exponente=2):
+    return base ** exponente</code></pre>
+
+                    <h3>Paso 3: Usar los módulos</h3>
+                    <p>Crea <code>main.py</code> que importe y use ambos módulos:</p>
+                    <pre><code class="language-python"># main.py
+import texto
+import operaciones
+
+# Usar módulo texto
+parrafo = "Python es un lenguaje de programación"
+print(f"Palabras: {texto.contar_palabras(parrafo)}")
+print(f"Título: {texto.capitalizar_titulo(parrafo)}")
+print(f"Invertido: {texto.invertir_texto(parrafo)}")
+print(f"Caracteres (sin espacios): {texto.contar_caracteres(parrafo)}")
+
+print("\n--- Operaciones Matemáticas ---\n")
+
+# Usar módulo operaciones
+x, y = 10, 3
+print(f"{x} + {y} = {operaciones.sumar(x, y)}")
+print(f"{x} - {y} = {operaciones.restar(x, y)}")
+print(f"{x} * {y} = {operaciones.multiplicar(x, y)}")
+print(f"{x} / {y} = {operaciones.dividir(x, y)}")
+print(f"{x} ^ {y} = {operaciones.potencia(x, y)}")</code></pre>
+
+                    <h3>Paso 4: Mejorar con __name__ == "__main__"</h3>
+                    <p>Modifica <code>operaciones.py</code> para que funcione como módulo Y como script:</p>
+                    <pre><code class="language-python"># operaciones.py (mejorado)
+def sumar(a, b):
+    return a + b
+
+def restar(a, b):
+    return a - b
+
+def multiplicar(a, b):
+    return a * b
+
+def dividir(a, b):
+    if b == 0:
+        return "Error: no se puede dividir entre cero"
+    return a / b
+
+if __name__ == "__main__":
+    # Este código solo se ejecuta al correr operaciones.py directamente
+    print("Probando el módulo operaciones:")
+    print(f"5 + 3 = {sumar(5, 3)}")
+    print(f"5 - 3 = {restar(5, 3)}")
+    print(f"5 * 3 = {multiplicar(5, 3)}")
+    print(f"5 / 3 = {dividir(5, 3)}")</code></pre>
+                </div>
+            </section>
+
+            <!-- 🧪 Mini-reto Section -->
+            <section class="card reto-box">
+                <h2 class="section-title"><span class="section-icon">🧪</span> Mini-reto</h2>
+                    <h3>Crea un módulo calculadora</h3>
+                    <p>Tu tarea: crear un módulo de calculadora completo con su propio archivo de pruebas.</p>
+
+                    <h4>Requisitos</h4>
+                    <ul>
+                        <li>Archivo <code>calculadora.py</code> con funciones: add, subtract, multiply, divide</li>
+                        <li>Cada función debe validar los argumentos (ej: no dividir entre 0)</li>
+                        <li>Archivo <code>test_calculadora.py</code> que importe y pruebe las funciones</li>
+                        <li>Archivo <code>main.py</code> que use la calculadora de forma interactiva</li>
+                    </ul>
+
+                    <h4>Estructura esperada</h4>
+                    <pre><code class="language-text">proyecto/
+├── calculadora.py
+├── test_calculadora.py
+└── main.py</code></pre>
+
+                    <h4>Ejemplo de calculadora.py</h4>
+                    <pre><code class="language-python"># calculadora.py
+def add(a, b):
+    """Suma dos números"""
+    return a + b
+
+def subtract(a, b):
+    """Resta dos números"""
+    return a - b
+
+def multiply(a, b):
+    """Multiplica dos números"""
+    return a * b
+
+def divide(a, b):
+    """Divide dos números"""
+    if b == 0:
+        raise ValueError("No se puede dividir entre cero")
+    return a / b
+
+if __name__ == "__main__":
+    print("Calculadora cargada correctamente")</code></pre>
+
+                    <h4>Ejemplo de test_calculadora.py</h4>
+                    <pre><code class="language-python"># test_calculadora.py
+from calculadora import add, subtract, multiply, divide
+
+print("=== PRUEBAS DE CALCULADORA ===\n")
+
+# Suma
+assert add(5, 3) == 8
+print("✓ add(5, 3) = 8")
+
+# Resta
+assert subtract(10, 4) == 6
+print("✓ subtract(10, 4) = 6")
+
+# Multiplicación
+assert multiply(6, 7) == 42
+print("✓ multiply(6, 7) = 42")
+
+# División
+assert divide(20, 4) == 5
+print("✓ divide(20, 4) = 5")
+
+# División por cero
+try:
+    divide(10, 0)
+except ValueError:
+    print("✓ divide(10, 0) lanza ValueError")
+
+print("\n¡Todas las pruebas pasaron!")</code></pre>
+
+                    <h4>Ejemplo de main.py</h4>
+                    <pre><code class="language-python"># main.py
+from calculadora import add, subtract, multiply, divide
+
+print("=== CALCULADORA INTERACTIVA ===\n")
+
+while True:
+    operacion = input("Operación (add/sub/mul/div) o 'salir': ").lower()
+
+    if operacion == "salir":
+        print("¡Hasta luego!")
+        break
+
+    try:
+        a = float(input("Primer número: "))
+        b = float(input("Segundo número: "))
+
+        if operacion == "add":
+            print(f"Resultado: {add(a, b)}\n")
+        elif operacion == "sub":
+            print(f"Resultado: {subtract(a, b)}\n")
+        elif operacion == "mul":
+            print(f"Resultado: {multiply(a, b)}\n")
+        elif operacion == "div":
+            print(f"Resultado: {divide(a, b)}\n")
+        else:
+            print("Operación no reconocida\n")
+    except ValueError:
+        print("Error: ingresa números válidos\n")</code></pre>
+            </section>
+
+            <!-- 📝 Test Section -->
+            <section class="card">
+                <h2 class="section-title"><span class="section-icon">📝</span> Test</h2>
+                <p>Responde las siguientes 10 preguntas para verificar tu comprensión.</p>
+
+                <div id="quiz-container" class="quiz-container"></div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="clase-nav">
+                <div class="nav-links">
+                    <a href="clase-03.html" class="btn">← Clase 03</a>
+                    <a href="clase-05.html" class="btn btn-green">Clase 05 →</a>
+                </div>
+            </nav>
+        </main>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = [
+                {
+                    question: '¿Cuál es la sintaxis correcta para definir una función en Python?',
+                    options: ['def funcion(x):', 'function funcion(x) {}', 'func funcion(x):', 'define funcion(x):'],
+                    correct: 0
+                },
+                {
+                    question: '¿Qué hace la palabra clave return?',
+                    options: [
+                        'Devuelve un valor de la función y termina su ejecución',
+                        'Imprime un valor en la consola',
+                        'Crea una variable nueva',
+                        'Repite el código'
+                    ],
+                    correct: 0
+                },
+                {
+                    question: '¿Cuál es la salida del siguiente código?\n\ndef saludar(nombre="Usuario"):\n    return f"Hola, {nombre}"\n\nprint(saludar())',
+                    options: ['Hola, Usuario', 'Hola, nombre', 'Error', 'Hola, None'],
+                    correct: 0
+                },
+                {
+                    question: '¿Qué son *args en Python?',
+                    options: [
+                        'Argumentos nombrados variables',
+                        'Argumentos posicionales variables',
+                        'Argumentos obligatorios',
+                        'Argumentos por defecto'
+                    ],
+                    correct: 1
+                },
+                {
+                    question: '¿Cuál es la forma correcta de importar una función específica de un módulo?',
+                    options: ['import math.sqrt', 'from math import sqrt', 'import sqrt from math', 'from sqrt import math'],
+                    correct: 1
+                },
+                {
+                    question: '¿Cuál es la salida de este código lambda?\n\nduplicar = lambda x: x * 2\nprint(duplicar(5))',
+                    options: ['5', '10', 'lambda', 'Error'],
+                    correct: 1
+                },
+                {
+                    question: '¿Para qué sirve if __name__ == "__main__"?',
+                    options: [
+                        'Verifica si el script se ejecuta directamente',
+                        'Verifica el nombre del usuario',
+                        'Define el nombre del programa',
+                        'Importa el módulo main'
+                    ],
+                    correct: 0
+                },
+                {
+                    question: '¿Cuál es la salida?\n\ndef sumar(*numeros):\n    return sum(numeros)\n\nprint(sumar(1, 2, 3, 4))',
+                    options: ['[1, 2, 3, 4]', '10', '(1, 2, 3, 4)', 'Error'],
+                    correct: 1
+                },
+                {
+                    question: '¿Cuál es la diferencia entre import modulo y from modulo import funcion?',
+                    options: [
+                        'No hay diferencia',
+                        'El primero importa todo; el segundo solo una función',
+                        'El primero es para módulos built-in; el segundo para módulos propios',
+                        'El segundo es más antiguo'
+                    ],
+                    correct: 1
+                },
+                {
+                    question: '¿Qué hace **kwargs?',
+                    options: [
+                        'Recibe múltiples argumentos posicionales',
+                        'Recibe argumentos nombrados como un diccionario',
+                        'Exporta funciones de un módulo',
+                        'Define valores por defecto'
+                    ],
+                    correct: 1
+                }
+            ];
+
+            CourseProgress.initQuiz('quiz-container', questions, 'm1-c04');
+            if (CourseProgress.initSubmissionIndicators) {
+                CourseProgress.initSubmissionIndicators('m1-c04');
+            }
+        });
+    </script>
+</body>
+</html>

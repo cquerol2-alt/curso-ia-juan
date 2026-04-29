@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: Prompt Engineering Avanzado</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a1a;
+            color: #e8e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #00f0ff;
+            padding-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: #00f0ff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #ff00e5;
+        }
+
+        h1 {
+            color: #00f0ff;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .subtitle {
+            color: #39ff14;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00f0ff, #ff00e5);
+            color: #0a0a1a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .mindmap-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tree {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .node {
+            margin: 5px 0;
+            border-left: 3px solid;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .node.level-0 {
+            border-color: #00f0ff;
+            padding-left: 0;
+            border: none;
+            margin-left: 0;
+        }
+
+        .node.level-0 > .node-content {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(255, 0, 229, 0.2));
+            border: 2px solid #00f0ff;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.4em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .node.level-1 {
+            border-color: #ff00e5;
+        }
+
+        .node.level-1 > .node-content {
+            background: rgba(255, 0, 229, 0.1);
+            border-left: 2px solid #ff00e5;
+            padding: 12px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+
+        .node.level-2 {
+            border-color: #39ff14;
+        }
+
+        .node.level-2 > .node-content {
+            background: rgba(57, 255, 20, 0.05);
+            border-left: 2px solid #39ff14;
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .node.level-3,
+        .node.level-4 {
+            border-color: #ffe600;
+        }
+
+        .node.level-3 > .node-content,
+        .node.level-4 > .node-content {
+            background: rgba(255, 230, 0, 0.05);
+            border-left: 2px solid #ffe600;
+            padding: 8px 10px;
+            border-radius: 3px;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+
+        .node-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .node-content:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 10px rgba(0, 240, 255, 0.2);
+        }
+
+        .toggle-btn {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: 1px solid currentColor;
+            color: #00f0ff;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(0, 240, 255, 0.2);
+        }
+
+        .toggle-btn.expanded {
+            transform: rotate(90deg);
+        }
+
+        .node.collapsed > .children {
+            display: none;
+        }
+
+        .node.expanded > .children {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .children {
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .leaf-node {
+            display: flex;
+            gap: 15px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            margin: 4px 0;
+            border-left: 2px solid #ffe600;
+        }
+
+        .leaf-content {
+            flex: 1;
+        }
+
+        .leaf-title {
+            color: #00f0ff;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .leaf-desc {
+            color: #b8b8c8;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding-bottom: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 0.95em;
+            }
+
+            .controls {
+                gap: 10px;
+            }
+
+            button {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+
+            .children {
+                margin-left: 15px;
+            }
+
+            .node {
+                padding-left: 15px;
+            }
+        }
+
+        .no-children-indicator {
+            color: #888;
+            font-style: italic;
+            font-size: 0.85em;
+            padding: 5px 10px;
+        }
+
+        </style>
+</head>
+<body>
+    <div class="header">
+        <a href="clase-03.html" class="back-link">← Volver a Clase 03</a>
+        <h1>Mind Map: Prompt Engineering Avanzado</h1>
+        <p class="subtitle">Guía visual para seguir el curso de DeepLearning.AI</p>
+    </div>
+
+    <div class="controls">
+        <button onclick="expandAll()">📖 Expandir todo</button>
+        <button onclick="collapseAll()">📕 Colapsar todo</button>
+</div>
+<div class="mindmap-container">
+        <div class="tree" id="mindmap">
+            <!-- Se generará dinámicamente con JavaScript -->
+        </div>
+    </div>
+
+    <script>
+
+
+        const mindmapData = {
+            title: "Prompt Engineering",
+            level: 0,
+            children: [
+                {
+                    title: "Estructura de Mensajes",
+                    level: 1,
+                    children: [
+                        {
+                            title: "System prompt: Define el comportamiento y reglas del asistente",
+                            level: 2,
+                            children: [
+                                {
+                                    title: "Ejemplo: \"Eres un experto en Python con 10 años de experiencia\"",
+                                    level: 3
+                                },
+                                {
+                                    title: "Analogía: Es como el constructor de una clase JS → define el estado inicial",
+                                    level: 3
+                                }
+                            ]
+                        },
+                        {
+                            title: "User prompt: El mensaje del usuario",
+                            level: 2
+                        },
+                        {
+                            title: "Assistant: La respuesta de la IA (también puedes pre-rellenarla)",
+                            level: 2
+                        }
+                    ]
+                },
+                {
+                    title: "Técnicas de Prompting",
+                    level: 1,
+                    children: [
+                        {
+                            title: "Zero-shot: Preguntar directamente sin dar ejemplos",
+                            level: 2,
+                            children: [
+                                {
+                                    title: "\"Clasifica este texto como positivo o negativo\"",
+                                    level: 3
+                                },
+                                {
+                                    title: "Funciona para tareas simples y claras",
+                                    level: 3
+                                }
+                            ]
+                        },
+                        {
+                            title: "One-shot: Dar UN ejemplo antes de la pregunta",
+                            level: 2,
+                            children: [
+                                {
+                                    title: "\"Ejemplo: 'Genial producto' → Positivo. Ahora clasifica: 'Terrible servicio'\"",
+                                    level: 3
+                                },
+                                {
+                                    title: "Mejor para tareas con formato específico",
+                                    level: 3
+                                }
+                            ]
+                        },
+                        {
+                            title: "Few-shot: Dar 3-5 ejemplos antes de la pregunta",
+                            level: 2,
+                            children: [
+                                {
+                                    title: "Muy útil para clasificación, extracción, formato",
+                                    level: 3
+                                },
+                                {
+                                    title: "El modelo \"entiende\" el patrón por los ejemplos",
+                                    level: 3
+                                }
+                            ]
+                        },
+                        {
+                            title: "Chain of Thought (CoT): \"Piensa paso a paso\"",
+                            level: 2,
+                            children: [
+                                {
+                                    title: "Mejora DRÁSTICAMENTE el razonamiento matemático y lógico",
+                                    level: 3
+                                },
+                                {
+                                    title: "Sin CoT: \"¿15 × 12 - 30?\" → A veces falla",
+                                    level: 3
+                                },
+                                {
+                                    title: "Con CoT: \"Paso 1: 15 × 12 = 180. Paso 2: 180 - 30 = 150\" → Correcto",
+                                    level: 3
+                                },
+                                {
+                                    title: "Truco: Añadir \"Let's think step by step\" o \"Piensa paso a paso\"",
+                                    level: 3
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    title: "Técnicas Avanzadas",
+                    level: 1,
+                    children: [
+                        {
+                            title: "Role Prompting: Asignar un rol al modelo",
+                            level: 2,
+                            children: [
+                                {
+                                    title: "\"Actúa como un ingeniero senior de Google\"",
+                                    level: 3
+                                },
+                                {
+                                    title: "Cambia el tono, profundidad y perspectiva de la respuesta",
+                                    level: 3
+                                }
+                            ]
+                        },
+                        {
+                            title: "Output Formatting: Pedir formato específico",
+                            level: 2,
+                            children: [
+                                {
+                                    title: "JSON, Markdown, tabla, lista numerada, XML",
+                                    level: 3
+                                },
+                                {
+                                    title: "Truco: Dar un ejemplo del formato exacto que esperas",
+                                    level: 3
+                                }
+                            ]
+                        },
+                        {
+                            title: "Constraints: Poner límites claros",
+                            level: 2,
+                            children: [
+                                {
+                                    title: "\"Máximo 100 palabras\"",
+                                    level: 3
+                                },
+                                {
+                                    title: "\"No uses jerga técnica\"",
+                                    level: 3
+                                },
+                                {
+                                    title: "\"Responde solo con Sí o No, seguido de una frase de justificación\"",
+                                    level: 3
+                                }
+                            ]
+                        },
+                        {
+                            title: "Delimitadores: Separar secciones del prompt",
+                            level: 2,
+                            children: [
+                                {
+                                    title: "Usar ```, ---, ### o etiquetas XML",
+                                    level: 3
+                                },
+                                {
+                                    title: "Evita que el modelo confunda instrucciones con datos",
+                                    level: 3
+                                }
+                            ]
+                        },
+                        {
+                            title: "Self-consistency: Pedir al modelo que verifique su propia respuesta",
+                            level: 2,
+                            children: [
+                                {
+                                    title: "\"Revisa tu respuesta y corrige errores antes de darla como final\"",
+                                    level: 3
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    title: "Prompt Templates: Prompts Reutilizables",
+                    level: 1,
+                    children: [
+                        {
+                            title: "Definición: Prompt con {variables} que puedes reusar",
+                            level: 2
+                        },
+                        {
+                            title: "Ejemplo: \"Analiza {tipo_contenido} y extrae: 1. Tema 2. Sentimiento 3. Puntos clave\"",
+                            level: 2
+                        },
+                        {
+                            title: "Ventaja: Consistencia + velocidad",
+                            level: 2
+                        },
+                        {
+                            title: "Analogía dev: Como una función con parámetros",
+                            level: 2
+                        }
+                    ]
+                },
+                {
+                    title: "Errores Comunes",
+                    level: 1,
+                    children: [
+                        {
+                            title: "Ser demasiado vago: \"Háblame de IA\" vs \"Explica en 3 párrafos qué es un LLM para un dev JS\"",
+                            level: 2
+                        },
+                        {
+                            title: "No dar contexto: ¿Quién eres? ¿Para quién es? ¿Qué nivel?",
+                            level: 2
+                        },
+                        {
+                            title: "No especificar formato de salida: El modelo adivina → resultados inconsistentes",
+                            level: 2
+                        },
+                        {
+                            title: "Prompt demasiado largo sin estructura: Usa delimitadores y secciones claras",
+                            level: 2
+                        },
+                        {
+                            title: "No iterar: El primer prompt rara vez es el mejor → refina y mejora",
+                            level: 2
+                        }
+                    ]
+                }
+            ]
+        };
+
+        function createNodeElement(node, isRoot = false) {
+            const nodeDiv = document.createElement('div');
+            nodeDiv.className = `node level-${node.level} expanded`;
+            nodeDiv.dataset.level = node.level;
+
+            // Crear contenedor de contenido
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'node-content';
+
+            // Crear botón toggle si tiene hijos
+            if (node.children && node.children.length > 0) {
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'toggle-btn expanded';
+                toggleBtn.innerHTML = '▶';
+                toggleBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleNode(nodeDiv);
+                };
+                contentDiv.appendChild(toggleBtn);
+            }
+
+            // Crear etiqueta del nodo
+            const labelSpan = document.createElement('span');
+            labelSpan.textContent = node.title;
+            contentDiv.appendChild(labelSpan);
+
+            nodeDiv.appendChild(contentDiv);
+
+            // Crear contenedor de hijos
+            if (node.children && node.children.length > 0) {
+                const childrenDiv = document.createElement('div');
+                childrenDiv.className = 'children';
+                node.children.forEach(child => {
+                    childrenDiv.appendChild(createNodeElement(child));
+                });
+                nodeDiv.appendChild(childrenDiv);
+            }
+
+            return nodeDiv;
+        }
+
+        function toggleNode(nodeElement) {
+            const toggleBtn = nodeElement.querySelector('.toggle-btn');
+            if (nodeElement.classList.contains('collapsed')) {
+                nodeElement.classList.remove('collapsed');
+                nodeElement.classList.add('expanded');
+                if (toggleBtn) {
+                    toggleBtn.classList.add('expanded');
+                }
+            } else {
+                nodeElement.classList.add('collapsed');
+                nodeElement.classList.remove('expanded');
+                if (toggleBtn) {
+                    toggleBtn.classList.remove('expanded');
+                }
+            }
+        }
+
+        function expandAll() {
+            const allNodes = document.querySelectorAll('.node');
+            allNodes.forEach(node => {
+                node.classList.remove('collapsed');
+                node.classList.add('expanded');
+                const toggleBtn = node.querySelector('.toggle-btn');
+                if (toggleBtn) {
+                    toggleBtn.classList.add('expanded');
+                }
+            });
+        }
+
+        function collapseAll() {
+            const allNodes = document.querySelectorAll('.node');
+            allNodes.forEach((node, index) => {
+                // No colapsar el nodo raíz (nivel 0)
+                if (node.dataset.level !== '0') {
+                    node.classList.add('collapsed');
+                    node.classList.remove('expanded');
+                    const toggleBtn = node.querySelector('.toggle-btn');
+                    if (toggleBtn) {
+                        toggleBtn.classList.remove('expanded');
+                    }
+                }
+            });
+        }
+
+        // Inicializar el árbol
+        function initMindmap() {
+            const container = document.getElementById('mindmap');
+            const rootNode = createNodeElement(mindmapData, true);
+            container.appendChild(rootNode);
+
+            // Colapsar nivel 2 y superior por defecto
+            const allNodes = document.querySelectorAll('.node');
+            allNodes.forEach(node => {
+                const level = parseInt(node.dataset.level);
+                if (level >= 2) {
+                    node.classList.add('collapsed');
+                    node.classList.remove('expanded');
+                    const toggleBtn = node.querySelector('.toggle-btn');
+                    if (toggleBtn) {
+                        toggleBtn.classList.remove('expanded');
+                    }
+                }
+            });
+        }
+
+        // Iniciar cuando cargue el DOM
+        document.addEventListener('DOMContentLoaded', initMindmap);
+    </script>
+</body>
+</html>

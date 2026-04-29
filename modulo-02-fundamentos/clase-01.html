@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 01: Qué es la IA, ML y Deep Learning — Módulo 2</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a><span> > </span>
+            <a href="index.html">Módulo 2</a><span> > </span>
+            <strong>Clase 01</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 01: Qué es la IA, ML y Deep Learning</h1>
+            <div class="subtitle">📅 Semana 3 — Lunes | 🎬 30 min vídeo + 💻 50 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <!-- SECCIÓN 1: Vídeo de la lección -->
+        <div class="card">
+            <h2>🎬 Vídeo de la lección</h2>
+            <p>En este vídeo, 3Blue1Brown explica de forma visual y clara qué es una red neuronal y cómo aprende.</p>
+            <iframe width="100%" height="400" src="https://www.youtube.com/embed/2ePf9rue1Ao" title="3Blue1Brown - But what is a neural network?" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <div class="info-box">
+                <strong>⚠️ Después de ver el vídeo:</strong><br>
+                Entra en <a href="https://www.elementsofai.com/" target="_blank">Elements of AI (Helsinki)</a> y completa los <strong>Capítulos 1 y 2</strong>. Son gratis, interactivos y fundamentales. Tiempo estimado: 30-40 minutos.
+            </div>
+
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> También puedes seguir los conceptos con el mind map visual en español.
+                <a href="mindmap-01.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: Resumen -->
+        <div class="card">
+            <h2>📖 Resumen de conceptos</h2>
+
+            <h3>a) ¿Qué es la Inteligencia Artificial?</h3>
+            <p><strong>Definición:</strong> La IA es la capacidad de una máquina para realizar tareas que normalmente requieren inteligencia humana. Estas incluyen aprender de la experiencia, reconocer patrones, entender lenguaje y tomar decisiones.</p>
+
+            <p><strong>Dos tipos principales:</strong></p>
+            <ul>
+                <li><strong>IA Estrecha (Narrow AI):</strong> Diseñada para una tarea específica. Ejemplos: Siri (procesamiento de voz), GPS (navegación), recomendaciones de Netflix (filtrado de películas). <em>Es la que existe hoy.</em></li>
+                <li><strong>IA General (AGI):</strong> Hipotética, podría hacer cualquier tarea intelectual que hace un humano. No existe todavía.</li>
+            </ul>
+
+            <p><strong>Para un desarrollador web:</strong></p>
+            <div class="info-box">
+                <em>"Ya usas IA todos los días sin saberlo: el autocompletado en VS Code, los filtros de spam en Gmail, la búsqueda de Google, las recomendaciones en Amazon. Todo eso es IA."</em>
+            </div>
+
+            <h3>b) Machine Learning: El motor de la IA moderna</h3>
+            <p><strong>¿Cuál es la diferencia con la programación tradicional?</strong></p>
+            <p>En programación clásica, <strong>tú defines las reglas</strong>:</p>
+            <pre><code>if (temperatura > 25) {
+    encenderAire();
+} else {
+    apagarAire();
+}</code></pre>
+
+            <p>En Machine Learning, <strong>le das datos y la máquina aprende los patrones</strong> automáticamente. El modelo descubre las reglas por sí solo.</p>
+
+            <p><strong>Tres tipos de Machine Learning:</strong></p>
+            <ul>
+                <li><strong>Supervised Learning (Aprendizaje Supervisado):</strong> Tienes datos etiquetados. Ejemplo: fotos de gatos y perros etiquetadas. El modelo aprende a clasificar.
+                    <ul>
+                        <li><em>Clasificación:</em> ¿Es gato o perro? (clases discretas)</li>
+                        <li><em>Regresión:</em> ¿Cuál será el precio de esta casa? (número continuo)</li>
+                    </ul>
+                </li>
+                <li><strong>Unsupervised Learning:</strong> Datos sin etiquetar. El modelo busca patrones por sí solo. Ejemplo: agrupar clientes por comportamiento de compra.</li>
+                <li><strong>Reinforcement Learning:</strong> El modelo aprende por prueba y error, recibiendo recompensas. Ejemplo: un robot que aprende a caminar.</li>
+            </ul>
+
+            <p><strong>Analogía para desarrolladores:</strong> Si JavaScript es escribir funciones manualmente, ML es un framework que <em>genera</em> las funciones optimales basándose en ejemplos. El modelo es como una función gigante con millones de parámetros.</p>
+
+            <h3>c) Deep Learning: Redes neuronales profundas</h3>
+            <p><strong>¿Qué es una red neuronal?</strong> Un modelo inspirado en el cerebro humano, compuesto por capas de "neuronas" artificiales conectadas.</p>
+
+            <p><strong>Estructura básica:</strong></p>
+            <pre><code>ENTRADA       CAPAS OCULTAS              SALIDA
+(datos)    (procesan info)          (predicción)
+
+  [o]  --\
+  [o]    |--[o]--[o]--[o]--\
+  [o]  --/                  |--[resultado]
+                            /
+            capa 1    capa 2  capa 3</code></pre>
+
+            <p><strong>¿Por qué "Deep" Learning?</strong> Porque usa <strong>muchas capas ocultas</strong> (profundidad). Una red con 10+ capas es considerada "profunda".</p>
+
+            <p><strong>Aplicaciones de Deep Learning:</strong></p>
+            <ul>
+                <li>Computer Vision: Reconocimiento facial, detección de objetos, conducción autónoma</li>
+                <li>NLP (Natural Language Processing): ChatGPT, traducción automática, análisis de sentimiento</li>
+                <li>Speech: Reconocimiento de voz (Alexa, Google Assistant)</li>
+            </ul>
+
+            <h3>d) La jerarquía: IA > ML > DL > LLMs</h3>
+            <p><strong>Relación de contenimiento (como muñecas rusas):</strong></p>
+            <pre><code>┌─────────────────────────────────────────┐
+│         INTELIGENCIA ARTIFICIAL         │
+│  ┌──────────────────────────────────┐  │
+│  │    MACHINE LEARNING              │  │
+│  │  ┌────────────────────────────┐  │  │
+│  │  │  DEEP LEARNING             │  │  │
+│  │  │  ┌────────────────────┐   │  │  │
+│  │  │  │  LLMs (ChatGPT)    │   │  │  │
+│  │  │  └────────────────────┘   │  │  │
+│  │  └────────────────────────────┘  │  │
+│  └──────────────────────────────────┘  │
+└─────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Definiciones simplificadas:</strong></p>
+            <ul>
+                <li><strong>IA:</strong> Campo amplio. Cualquier técnica que haga que máquinas parezcan inteligentes.</li>
+                <li><strong>ML:</strong> Subset de IA. Máquinas que <em>aprenden</em> de datos, en lugar de ser programadas.</li>
+                <li><strong>DL:</strong> Subset de ML. Usa redes neuronales con muchas capas.</li>
+                <li><strong>LLMs:</strong> Subset de DL. Modelos gigantes de lenguaje entrenados en trillones de palabras (GPT, Claude, Gemini).</li>
+            </ul>
+
+            <h3>e) Conceptos clave para un desarrollador</h3>
+            <p>Cuando leas sobre IA/ML, verás estos términos constantemente:</p>
+
+            <ul>
+                <li><strong>Dataset:</strong> El conjunto de datos que usas para entrenar. Ejemplo: 10,000 fotos de gatos y perros etiquetadas.</li>
+                <li><strong>Modelo:</strong> La red neuronal misma. El objeto que contiene los parámetros aprendidos.</li>
+                <li><strong>Entrenamiento (Training):</strong> El proceso de ajustar los parámetros del modelo para que prediga mejor.</li>
+                <li><strong>Inferencia (Inference):</strong> Usar el modelo ya entrenado para hacer predicciones en datos nuevos. <em>Es cuando el modelo "produce".</em></li>
+                <li><strong>Parámetros:</strong> Los "pesos" de cada neurona. Son lo que realmente "aprendió" el modelo. Un LLM como GPT-3 tiene 175 mil millones de parámetros.</li>
+                <li><strong>Época (Epoch):</strong> Una pasada completa por todo el dataset durante el entrenamiento. Si tienes 1000 imágenes y las procesas todas una vez = 1 época.</li>
+                <li><strong>Overfitting:</strong> Cuando el modelo memoriza el dataset de entrenamiento pero falla con datos nuevos. Aprende de más.</li>
+            </ul>
+
+            <div class="info-box">
+                <strong>💡 Analogía JS para entrenamiento:</strong><br>
+                <code>for (let epoch = 0; epoch < 100; epoch++) {
+    for (let sample of trainingData) {
+        // Predice, calcula error
+        error = predict(sample) - realValue;
+        // Ajusta pesos (descenso de gradiente)
+        adjustWeights(error);
+    }
+}</code><br><br>
+                <em>El entrenamiento es un bucle gigante que se repite millones de veces, ajustando millones de pesos. Por eso tarda días o semanas.</em>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: Práctica guiada -->
+        <div class="card">
+            <h2>💻 Práctica guiada</h2>
+
+            <h3>Ejercicio 1: Completa Elements of AI (OBLIGATORIO)</h3>
+            <p><strong>Objetivo:</strong> Consolidar conceptos con un curso interactivo profesional.</p>
+            <ul>
+                <li>Abre <a href="https://www.elementsofai.com/" target="_blank">https://www.elementsofai.com/</a></li>
+                <li>Completa <strong>Capítulo 1: What is AI?</strong> (aprox. 15-20 min)</li>
+                <li>Completa <strong>Capítulo 2: AI and Machine Learning</strong> (aprox. 20-25 min)</li>
+                <li>Al terminar, captura pantalla del certificado de progreso y guárdalo en tu carpeta de evidencias.</li>
+            </ul>
+            <div class="timer-note">⏱️ Tiempo total sugerido: 40-45 minutos</div>
+
+            <h3>Ejercicio 2: Clasifica ejemplos cotidianos</h3>
+            <p><strong>Objetivo:</strong> Entender las diferencias entre IA clásica, ML y DL con ejemplos reales.</p>
+            <p>Para cada ejemplo, decide si es:</p>
+            <ul>
+                <li><strong>IA Clásica:</strong> Reglas programadas explícitamente</li>
+                <li><strong>Machine Learning:</strong> Aprende de datos, pero con lógica interpretable</li>
+                <li><strong>Deep Learning:</strong> Redes neuronales, "caja negra"</li>
+            </ul>
+
+            <table border="1" style="width: 100%; margin-top: 15px; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="padding: 10px;">Ejemplo</th>
+                        <th style="padding: 10px;">Tu respuesta</th>
+                        <th style="padding: 10px;">Explicación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 10px;">Filtro de spam en Gmail</td>
+                        <td style="padding: 10px;">[ ]</td>
+                        <td style="padding: 10px;"><em>ML: analiza patrones de correos spam sin reglas fijas</em></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">ChatGPT respondiendo preguntas</td>
+                        <td style="padding: 10px;">[ ]</td>
+                        <td style="padding: 10px;"><em>DL: red neuronal masiva entrenada en billones de palabras</em></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">Calculadora (2 + 2 = 4)</td>
+                        <td style="padding: 10px;">[ ]</td>
+                        <td style="padding: 10px;"><em>IA Clásica: solo reglas de aritmética programadas</em></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">Conducción autónoma (Tesla Autopilot)</td>
+                        <td style="padding: 10px;">[ ]</td>
+                        <td style="padding: 10px;"><em>DL: redes neuronales para visión y decisiones</em></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">Reconocimiento facial en tu teléfono</td>
+                        <td style="padding: 10px;">[ ]</td>
+                        <td style="padding: 10px;"><em>DL: convnets entrenadas para detectar características faciales</em></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">Recomendaciones de Netflix</td>
+                        <td style="padding: 10px;">[ ]</td>
+                        <td style="padding: 10px;"><em>ML: filtra contenido según patrones de visualización</em></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">Sistemas de control de temperatura (termostato)</td>
+                        <td style="padding: 10px;">[ ]</td>
+                        <td style="padding: 10px;"><em>IA Clásica: si temp > 25, enciende aire</em></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">Traductor de Google (Google Translate)</td>
+                        <td style="padding: 10px;">[ ]</td>
+                        <td style="padding: 10px;"><em>DL: redes neuronales secuencia-a-secuencia</em></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">Búsqueda de Google (resultados personalizados)</td>
+                        <td style="padding: 10px;">[ ]</td>
+                        <td style="padding: 10px;"><em>ML/DL: combina ML (ranking) y DL (embeddings)</em></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;">Asistente Siri de Apple</td>
+                        <td style="padding: 10px;">[ ]</td>
+                        <td style="padding: 10px;"><em>DL: redes neuronales para NLP y comprensión</em></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Ejercicio 3: Dibuja la jerarquía</h3>
+            <p><strong>Objetivo:</strong> Visualizar la relación entre IA, ML, DL y LLMs.</p>
+            <p><strong>Instrucciones:</strong></p>
+            <ol>
+                <li>En una hoja de papel o en una app de dibujo (Figma, Draw.io, Procreate), dibuja las cuatro capas anidadas: IA > ML > DL > LLMs</li>
+                <li>En cada nivel, escribe <strong>2 ejemplos reales</strong> que correspondan a ese nivel</li>
+                <li>Usa colores diferentes para cada nivel</li>
+                <li>Captura una foto o descarga en PDF y guarda como evidencia</li>
+            </ol>
+            <p><strong>Ejemplo de estructura esperada:</strong></p>
+            <pre><code>┌─ IA ─────────────────────────────┐
+│ • Calculadora                    │
+│ • Ajedrez (reglas)               │
+│ ┌─ ML ──────────────────────┐   │
+│ │ • Filtro spam             │   │
+│ │ • Recomendaciones         │   │
+│ │ ┌─ DL ──────────────┐     │   │
+│ │ │ • Visión facial   │     │   │
+│ │ │ • NLP básico      │     │   │
+│ │ │ ┌─ LLMs ────────┐ │     │   │
+│ │ │ │ • ChatGPT     │ │     │   │
+│ │ │ │ • Claude      │ │     │   │
+│ │ │ └───────────────┘ │     │   │
+│ │ └───────────────────┘     │   │
+│ └──────────────────────────┘   │
+└────────────────────────────────┘</code></pre>
+        </div>
+
+        <!-- Certificación extra -->
+        <div class="card">
+            <h2 class="section-title"><span class="section-icon">🎓</span> Certificación extra para esta semana</h2>
+            <p>Además de Elements of AI, esta semana puedes sacarte el <strong>Google AI Essentials</strong> (2-4 horas, gratis). Te da un badge oficial de Google para tu LinkedIn.</p>
+            <p style="margin-top: 0.8em;"><a href="https://www.cloudskillsboost.google/course_templates/554" target="_blank" class="btn">Empezar Google AI Essentials ↗</a></p>
+        </div>
+
+        <!-- SECCIÓN 4: Mini-reto del día -->
+        <div class="card">
+            <h2>🎯 Mini-reto del día: "Explícaselo a tu abuela"</h2>
+            <p><strong>Objetivo:</strong> Simplificar conceptos complejos. La mejor forma de entender algo es explicarlo sin jerga.</p>
+
+            <p><strong>El reto:</strong></p>
+            <p>Escribe un párrafo de <strong>máximo 100 palabras</strong> explicando qué es la IA, Machine Learning y Deep Learning a alguien que no sabe nada de tecnología (tu abuela, un amigo sin formación técnica, etc.). Usa analogías cotidianas.</p>
+
+            <p><strong>Ejemplo para inspirarte:</strong></p>
+            <blockquote style="border-left: 4px solid var(--neon-cyan); padding-left: 15px; margin: 15px 0; font-style: italic;">
+                "La IA es como enseñarle a una persona a reconocer frutas. Primero, la IA clásica sería darle instrucciones: 'Si es rojo y redondo, es una manzana'. Machine Learning es mostrarle miles de frutas y dejar que aprenda solo a identificarlas. Deep Learning es aún más sofisticado: es como que la IA vea frutas desde ángulos, colores y tamaños diferentes, y después pueda identificar una fruta que nunca ha visto antes. ChatGPT es el nivel más avanzado: ha leído tanto sobre el mundo que puede conversar como si fuera una persona."
+            </blockquote>
+
+            <p><strong>Tu turno:</strong> Escribe tu explicación en el formulario de abajo y pulsa "Entregar" cuando termines.</p>
+        </div>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: "Explícaselo a tu abuela"</h4>
+                <p style="color: var(--text-muted); font-size: 0.95em;">Escribe un párrafo de máximo 100 palabras explicando qué es IA, Machine Learning y Deep Learning a alguien sin formación técnica. Usa analogías cotidianas.</p>
+                <textarea id="code-ejercicio-1" rows="8" placeholder="Escribe aquí tu explicación para tu abuela..."></textarea>
+                <label><input type="checkbox" required> He terminado mi explicación y la he revisado</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales (dudas, qué te costó...)"></textarea>
+                    <button onclick="CourseProgress.submitExercise('m2-c01', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: Test de conocimiento -->
+        <div class="card">
+            <h2>🧪 Test de conocimiento</h2>
+            <p>Contesta las 10 preguntas para evaluar tu comprensión de la lección. Necesitas <strong>8/10</strong> para pasar y continuar al siguiente nivel.</p>
+            <div id="quiz-container"></div>
+        </div>
+
+        <!-- Navegación entre clases -->
+        <div class="clase-nav">
+            <a href="index.html">← Módulo 2</a>
+            <span> | </span>
+            <a href="clase-02.html">Clase 02 →</a>
+        </div>
+
+    </div>
+
+    <!-- Script para cargar el sistema de progreso y quiz -->
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál de estos es un ejemplo de IA estrecha (narrow AI)?",
+                options: [
+                    "Un robot que piensa como un humano",
+                    "Siri respondiendo preguntas",
+                    "Una IA que domina todos los campos",
+                    "Un ordenador con conciencia"
+                ],
+                correct: 1,
+                explanation: "IA estrecha es aquella diseñada para una tarea específica. Siri es un asistente de voz que responde preguntas, un ejemplo clásico de IA estrecha."
+            },
+            {
+                question: "¿Qué diferencia al Machine Learning de la programación tradicional?",
+                options: [
+                    "ML es más rápido que la programación tradicional",
+                    "En ML defines las reglas manualmente",
+                    "En ML la máquina aprende patrones de los datos",
+                    "ML solo funciona con imágenes"
+                ],
+                correct: 2,
+                explanation: "En programación tradicional, defines las reglas explícitamente (if/else). En ML, le das datos y el algoritmo aprende los patrones automáticamente."
+            },
+            {
+                question: "¿Qué tipo de aprendizaje usa datos etiquetados?",
+                options: [
+                    "Supervised Learning (Aprendizaje Supervisado)",
+                    "Unsupervised Learning",
+                    "Reinforcement Learning",
+                    "Transfer Learning"
+                ],
+                correct: 0,
+                explanation: "El Supervised Learning requiere datos etiquetados (fotos de gatos etiquetadas como 'gato', por ejemplo) para que el modelo aprenda a clasificar."
+            },
+            {
+                question: "¿Por qué se llama 'Deep' Learning?",
+                options: [
+                    "Porque es difícil de entender",
+                    "Por las muchas capas ocultas de la red neuronal",
+                    "Porque requiere mucha memoria RAM",
+                    "Porque usa datos muy profundos"
+                ],
+                correct: 1,
+                explanation: "'Deep' Learning se refiere a redes neuronales con muchas capas ocultas (profundidad arquitectónica), a diferencia de redes simples con pocas capas."
+            },
+            {
+                question: "¿Cuál es la relación correcta de mayor a menor alcance?",
+                options: [
+                    "ML > IA > DL > LLMs",
+                    "DL > IA > ML > LLMs",
+                    "IA > ML > DL > LLMs",
+                    "LLMs > DL > ML > IA"
+                ],
+                correct: 2,
+                explanation: "IA es el campo más amplio. ML es un subset de IA. DL es un subset de ML. LLMs (ChatGPT) son un subset de DL. Es una jerarquía anidada."
+            },
+            {
+                question: "¿Qué es un 'dataset' en Machine Learning?",
+                options: [
+                    "Un tipo de base de datos SQL",
+                    "Un conjunto de datos usado para entrenar un modelo",
+                    "Un formato de archivo de configuración",
+                    "Una librería de Python"
+                ],
+                correct: 1,
+                explanation: "Un dataset es la colección de datos (ejemplos) que usas para entrenar tu modelo. Por ejemplo, 10,000 imágenes de gatos etiquetadas."
+            },
+            {
+                question: "¿Cuál de estos es un ejemplo de Deep Learning?",
+                options: [
+                    "Ordenar una lista alfabéticamente con sort()",
+                    "Reconocimiento facial en tu teléfono",
+                    "Una calculadora sumando dos números",
+                    "Un if/else que comprueba condiciones"
+                ],
+                correct: 1,
+                explanation: "El reconocimiento facial usa redes neuronales profundas (redes convolucionales) para detectar características de caras. Es un caso típico de Deep Learning."
+            },
+            {
+                question: "¿Qué es 'inferencia' en IA y Machine Learning?",
+                options: [
+                    "El proceso de entrenar un modelo con datos nuevos",
+                    "Usar un modelo ya entrenado para hacer predicciones",
+                    "Limpiar y preparar los datos antes del entrenamiento",
+                    "Crear y diseñar una red neuronal desde cero"
+                ],
+                correct: 1,
+                explanation: "Inferencia es cuando tomas un modelo ya entrenado y lo usas para hacer predicciones con datos nuevos. Es la 'producción' del modelo."
+            },
+            {
+                question: "¿Qué es 'overfitting' en Machine Learning?",
+                options: [
+                    "Cuando un modelo es demasiado simple y falla",
+                    "Cuando un modelo aprende demasiado bien los datos de entrenamiento y falla con datos nuevos",
+                    "Cuando faltan datos para entrenar el modelo",
+                    "Cuando el modelo es muy rápido y comete errores"
+                ],
+                correct: 1,
+                explanation: "Overfitting ocurre cuando el modelo memoriza los datos de entrenamiento pero no generaliza bien a datos nuevos. Es como estudiar solo las respuestas de un examen sin entender."
+            },
+            {
+                question: "¿Los LLMs (como ChatGPT) son un tipo de...?",
+                options: [
+                    "IA clásica basada en reglas",
+                    "Machine Learning básico con árboles de decisión",
+                    "Deep Learning",
+                    "Programación tradicional imperativa"
+                ],
+                correct: 2,
+                explanation: "Los LLMs (Large Language Models) son modelos de Deep Learning. Son redes neuronales profundas entrenadas en billones de palabras. Son un subset especializado de DL."
+            }
+        ];
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm2-c01');
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm2-c01');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 04 — UI/UX de Apps de IA: Buenas Prácticas | Módulo 7</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+        <a href="../index.html">Dashboard</a>
+        <span> > </span>
+        <a href="index.html">Módulo 7: Full Stack IA</a>
+        <span> > </span>
+        <span>Clase 04</span>
+    </div>
+        <!-- HEADER -->
+        <header class="course-header">
+            <h1>📅 Semana 9 — Jueves | ⏱️ 45 minutos</h1>
+            <h2>UI/UX de Apps de IA: Buenas Prácticas</h2>
+            <p class="subtitle">Cómo ChatGPT, Claude y Perplexity diseñan interfaces que parecen inteligentes</p>
+        </header>
+
+        <!-- VIDEO SECTION -->
+        <section class="section">
+            <h3>🎬 Vídeo Tutorial</h3>
+            <div class="video-wrapper">
+                <iframe width="100%" height="420" src="https://www.youtube.com/embed/98bGwOYoEGg"
+                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+
+            <!-- TRANSLATETUBE TIP -->
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <!-- MIND MAP LINK -->
+            <div class="tip" style="margin-top: 1em;">
+                <strong>🧠 Mind map interactivo:</strong> Sigue los conceptos clave con el mind map visual en español.
+                <a href="mindmap-07-c04.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- CONCEPTOS SECTION -->
+        <section class="section">
+            <h3>📚 Resumen de Conceptos</h3>
+
+            <h4>1. Principios de UX para Apps de IA</h4>
+            <p>Las mejores apps de IA (ChatGPT, Claude, Perplexity) siguen un patrón de diseño que no es casualidad:</p>
+            <ul>
+                <li><strong>Conversacional:</strong> Interface de chat bidireccional, como hablar con una persona.</li>
+                <li><strong>Transparente sobre limitaciones:</strong> Disclaimers claros: "Puede cometer errores", "No tiene acceso a internet".</li>
+                <li><strong>Feedback visual constante:</strong> Loading indicators, typing animations, indicadores de estado.</li>
+                <li><strong>Personalización sutil:</strong> Dark mode por defecto, compresión de historial, continuidad entre sesiones.</li>
+                <li><strong>Accesibilidad copy-paste:</strong> Cada respuesta es fácil de copiar, código resaltado, botones de acción.</li>
+            </ul>
+
+            <h4>2. El Efecto "Typing" — Por Qué Funciona</h4>
+            <p>Cuando ves que la IA escribe carácter por carácter (streaming), <strong>la percepción es que está "pensando"</strong>. Esto:</p>
+            <ul>
+                <li>Reduce la sensación de espera (percibida como más rápida que esperar un bloque completo).</li>
+                <li>Aumenta la confianza: parece menos robótico, más vivo.</li>
+                <li>Permite al usuario empezar a leer mientras la IA sigue escribiendo.</li>
+                <li>Es técnicamente necesario para no sobrecargar al cliente (HTTP streaming).</li>
+            </ul>
+
+            <h4>3. Gestión de Expectativas</h4>
+            <p>La UI debe ser honesta sobre lo que la IA puede y no puede hacer:</p>
+            <ul>
+                <li><strong>Disclaimers en lugar clave:</strong> Junto a la respuesta, no escondido en FAQ.</li>
+                <li><strong>Indicadores de confianza:</strong> Algunos modelos muestran qué fuentes usaron.</li>
+                <li><strong>Limitaciones visibles:</strong> "Esta versión tiene acceso a datos de 2024" o "No puede ejecutar código".</li>
+                <li><strong>Ejemplos de errores:</strong> Mostrar casos donde la IA falló (aumenta credibilidad paradójicamente).</li>
+            </ul>
+
+            <h4>4. Input Design: El Textarea Inteligente</h4>
+            <p>El campo de entrada es donde todo empieza:</p>
+            <ul>
+                <li><strong>Auto-expandible:</strong> Crece mientras escribes (no necesitas scroll dentro del input).</li>
+                <li><strong>Placeholder inspirador:</strong> "Pregunta cualquier cosa, copia código, haz análisis..." guía al usuario.</li>
+                <li><strong>Sugerencias de prompts:</strong> Cards con ejemplos ("Resume esto", "Explica como si fuera un niño").</li>
+                <li><strong>Atajos de teclado:</strong> Shift+Enter para salto de línea, Ctrl/Cmd+Enter para enviar.</li>
+                <li><strong>Archivo drag-and-drop:</strong> Muchas IAs ahora aceptan imágenes, PDFs, etc.</li>
+            </ul>
+
+            <h4>5. Output Design: Renderizado Markdown + Syntax Highlighting</h4>
+            <p>La respuesta no es solo texto — es contenido estructurado:</p>
+            <ul>
+                <li><strong>Markdown rendering:</strong> Títulos, listas, negrita, enlace renderizados.</li>
+                <li><strong>Code blocks con lenguaje:</strong> JavaScript, Python, SQL... cada uno con su color.</li>
+                <li><strong>Copy button en cada bloque:</strong> Una línea para copiar rápido sin seleccionar.</li>
+                <li><strong>Tables:</strong> Si la IA genera tabla, aparece bien formateada.</li>
+                <li><strong>Math rendering:</strong> Ecuaciones LaTeX si es necesario ($x^2 + y^2$).</li>
+            </ul>
+
+            <h4>6. Historial de Conversaciones: Sidebar + Búsqueda</h4>
+            <p>El historial es el "instinto" de la app — acceso rápido a lo pasado:</p>
+            <ul>
+                <li><strong>Sidebar colapsable:</strong> Lista todas las conversaciones (con títulos auto-generados).</li>
+                <li><strong>Búsqueda en historial:</strong> Buscar por palabra clave dentro de todas las conversations.</li>
+                <li><strong>Persistencia en localStorage/Backend:</strong> Los chats se guardan automáticamente.</li>
+                <li><strong>Renombrado de chats:</strong> El usuario puede cambiar el título para organizarse.</li>
+                <li><strong>Borrado selectivo:</strong> Eliminar un chat o toda la historia con un clic (con confirmación).</li>
+            </ul>
+
+            <h4>7. Responsive Design: Mobile-First</h4>
+            <p>Las AI apps funcionan en móvil porque están optimizadas desde el inicio:</p>
+            <ul>
+                <li><strong>Sidebar → Hamburger menu:</strong> En pantalla pequeña, el historial se oculta.</li>
+                <li><strong>Textarea y botones grandes:</strong> Fácil de tocar en un teléfono.</li>
+                <li><strong>Scroll suave:</strong> Las respuestas se desplazan sin saltos.</li>
+                <li><strong>Viewport correcta:</strong> No hay zoom accidental, texto legible sin zoom.</li>
+            </ul>
+
+            <h4>8. Dark Mode: Por Qué Es Estándar</h4>
+            <p>Casi todas las AI apps usan dark mode por defecto. Por qué:</p>
+            <ul>
+                <li><strong>Menos fatiga visual:</strong> Especialmente en sesiones largas.</li>
+                <li><strong>Mejor para el código:</strong> Los temas oscuros están optimizados para syntax highlighting.</li>
+                <li><strong>Psicológico:</strong> Sensación de "espacio de trabajo profesional".</li>
+                <li><strong>Batería:</strong> En OLED (muchos teléfonos modernos), reduce consumo.</li>
+                <li><strong>Toggle fácil:</strong> Botón en la esquina para cambiar tema al vuelo.</li>
+            </ul>
+
+            <h4>9. Patrones Comunes: ChatGPT vs Claude vs Perplexity</h4>
+            <p><strong>Tabla comparativa de UI elements:</strong></p>
+            <table style="width: 100%; border-collapse: collapse; margin: 1em 0;">
+                <thead>
+                    <tr style="background-color: #00e676; color: #0a0a1a;">
+                        <th style="padding: 0.8em; border: 1px solid var(--border-glow); text-align: left;">Elemento</th>
+                        <th style="padding: 0.8em; border: 1px solid var(--border-glow); text-align: left;">ChatGPT</th>
+                        <th style="padding: 0.8em; border: 1px solid var(--border-glow); text-align: left;">Claude</th>
+                        <th style="padding: 0.8em; border: 1px solid var(--border-glow); text-align: left;">Perplexity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background-color: #1a1a3e;">
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);"><strong>Input</strong></td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Textarea + file upload</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Textarea + @mentions</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Textarea + focus mode</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);"><strong>Streaming</strong></td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Sí, con typing animation</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Sí, rápido</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Sí + web sources</td>
+                    </tr>
+                    <tr style="background-color: #1a1a3e;">
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);"><strong>Code Highlight</strong></td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Sí + copy button</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Sí + copy button</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Sí + copy button</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);"><strong>Dark Mode</strong></td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Default + toggle</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Default + toggle</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Default + toggle</td>
+                    </tr>
+                    <tr style="background-color: #1a1a3e;">
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);"><strong>Sidebar</strong></td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Colapsable, búsqueda</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Colapsable, búsqueda</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Colapsable, filtros</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);"><strong>Acciones en mensaje</strong></td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Copy, regenerate, edit</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Copy, regenerate, edit</td>
+                        <td style="padding: 0.8em; border: 1px solid rgba(0, 240, 255, 0.15);">Copy, regenerate, cite</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- PRACTICA GUIADA SECTION -->
+        <section class="section">
+            <h3>⚙️ Práctica Guiada: Build a Chat UI Step by Step</h3>
+
+            <p>Vamos a construir una UI de chat completa con React. Cada paso añade un componente o funcionalidad.</p>
+
+            <h4>Step 1: Chat Bubble Component</h4>
+            <p><strong>Diferencia visual entre mensajes del usuario y la IA:</strong></p>
+            <pre><code class="language-jsx">
+// ChatBubble.jsx
+export function ChatBubble({ role, content }) {
+  const isUser = role === 'user';
+
+  return (
+    &lt;div
+      style={{
+        display: 'flex',
+        justifyContent: isUser ? 'flex-end' : 'flex-start',
+        marginBottom: '1rem',
+        animation: 'fadeIn 0.3s ease-in',
+      }}
+    &gt;
+      &lt;div
+        style={{
+          maxWidth: '70%',
+          padding: '0.75rem 1rem',
+          borderRadius: '12px',
+          backgroundColor: isUser ? '#00e676' : '#2a2a2a',
+          color: isUser ? 'white' : '#e0e0e0',
+          wordWrap: 'break-word',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+        }}
+      &gt;
+        {content}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+            </code></pre>
+
+            <h4>Step 2: Typing Indicator Animation</h4>
+            <p><strong>El efecto de "escritura" que ves en ChatGPT:</strong></p>
+            <pre><code class="language-jsx">
+// TypingIndicator.jsx
+export function TypingIndicator() {
+  return (
+    &lt;div style={{ display: 'flex', gap: '4px', padding: '0.75rem' }}&gt;
+      {[0, 1, 2].map((i) =&gt; (
+        &lt;div
+          key={i}
+          style={{
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            backgroundColor: '#888',
+            animation: `bounce 1.4s infinite`,
+            animationDelay: `${i * 0.2}s`,
+          }}
+        /&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+
+// En tu CSS global, añade:
+// @keyframes bounce {
+//   0%, 80%, 100% { transform: translateY(0); }
+//   40% { transform: translateY(-10px); }
+// }
+            </code></pre>
+
+            <h4>Step 3: Markdown Rendering con react-markdown</h4>
+            <p><strong>Las respuestas no son texto plano — son Markdown renderizado:</strong></p>
+            <pre><code class="language-jsx">
+// npm install react-markdown
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm'; // GitHub Flavored Markdown
+
+export function ChatMessage({ content }) {
+  return (
+    &lt;ReactMarkdown
+      remarkPlugins={[remarkGfm]}
+      components={{
+        h1: ({ node, ...props }) =&gt; (
+          &lt;h1 style={{ marginTop: '0.8em', color: '#00e676' }} {...props} /&gt;
+        ),
+        h2: ({ node, ...props }) =&gt; (
+          &lt;h2 style={{ marginTop: '0.6em', color: '#00e676' }} {...props} /&gt;
+        ),
+        ul: ({ node, ...props }) =&gt; (
+          &lt;ul style={{ marginLeft: '1.5em', lineHeight: '1.8' }} {...props} /&gt;
+        ),
+        code: ({ node, inline, ...props }) =&gt; (
+          inline ? (
+            &lt;code style={{ backgroundColor: '#333', padding: '2px 6px', borderRadius: '4px' }} {...props} /&gt;
+          ) : (
+            &lt;code {...props} /&gt;
+          )
+        ),
+      }}
+    &gt;
+      {content}
+    &lt;/ReactMarkdown&gt;
+  );
+}
+            </code></pre>
+
+            <h4>Step 4: Code Blocks con Syntax Highlighting</h4>
+            <p><strong>Resalta código JavaScript, Python, SQL, etc. con colores:</strong></p>
+            <pre><code class="language-jsx">
+// npm install react-syntax-highlighter
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
+export function CodeBlock({ language, code }) {
+  return (
+    &lt;div style={{ margin: '1em 0', borderRadius: '8px', overflow: 'hidden' }}&gt;
+      &lt;div style={{
+        backgroundColor: '#1a1a1a',
+        padding: '0.5em 1em',
+        fontSize: '0.85em',
+        color: '#b0b0cc',
+        borderBottom: '1px solid #333'
+      }}&gt;
+        {language || 'code'}
+      &lt;/div&gt;
+      &lt;SyntaxHighlighter language={language} style={atomOneDark}&gt;
+        {code}
+      &lt;/SyntaxHighlighter&gt;
+    &lt;/div&gt;
+  );
+}
+            </code></pre>
+
+            <h4>Step 5: Copy to Clipboard Button</h4>
+            <p><strong>Botón invisible hasta hover, copia con un clic:</strong></p>
+            <pre><code class="language-jsx">
+// CopyButton.jsx
+export function CopyButton({ text }) {
+  const [copied, setCopied] = React.useState(false);
+
+  const handleCopy = () =&gt; {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() =&gt; setCopied(false), 2000);
+  };
+
+  return (
+    &lt;button
+      onClick={handleCopy}
+      style={{
+        padding: '0.4em 0.8em',
+        backgroundColor: copied ? '#00e676' : '#333',
+        color: copied ? '#000' : '#ccc',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '0.85em',
+        transition: 'all 0.2s',
+      }}
+    &gt;
+      {copied ? '✓ Copied!' : 'Copy'}
+    &lt;/button&gt;
+  );
+}
+            </code></pre>
+
+            <h4>Step 6: Auto-Scroll a Latest Message</h4>
+            <p><strong>El chat siempre muestra el último mensaje sin que el usuario scroll:</strong></p>
+            <pre><code class="language-jsx">
+// ChatContainer.jsx
+export function ChatContainer({ messages }) {
+  const messagesEndRef = React.useRef(null);
+
+  const scrollToBottom = () =&gt; {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  React.useEffect(() =&gt; {
+    scrollToBottom();
+  }, [messages]);
+
+  return (
+    &lt;div
+      style={{
+        flex: 1,
+        overflowY: 'auto',
+        padding: '1em',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    &gt;
+      {messages.map((msg, i) =&gt; (
+        &lt;ChatBubble key={i} role={msg.role} content={msg.content} /&gt;
+      ))}
+      &lt;div ref={messagesEndRef} /&gt;
+    &lt;/div&gt;
+  );
+}
+            </code></pre>
+
+            <h4>Step 7: Responsive Layout con Tailwind CSS</h4>
+            <p><strong>Layout completo que funciona en móvil y desktop:</strong></p>
+            <pre><code class="language-jsx">
+// App.jsx — Estructura completa
+export default function ChatApp() {
+  const [messages, setMessages] = React.useState([]);
+  const [input, setInput] = React.useState('');
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+
+  const handleSend = async () =&gt; {
+    if (!input.trim()) return;
+
+    // Add user message
+    setMessages([...messages, { role: 'user', content: input }]);
+    setInput('');
+
+    // Simulate AI response (en real, llamarías a tu API)
+    setTimeout(() =&gt; {
+      setMessages(prev =&gt; [
+        ...prev,
+        { role: 'assistant', content: '# Respuesta\n\nEsto es una **respuesta** de ejemplo en Markdown.' }
+      ]);
+    }, 1000);
+  };
+
+  return (
+    &lt;div style={{ display: 'flex', height: '100vh', backgroundColor: '#121212' }}&gt;
+      {/* SIDEBAR */}
+      {sidebarOpen &amp;&amp; (
+        &lt;aside
+          style={{
+            width: '250px',
+            backgroundColor: '#1a1a1a',
+            borderRight: '1px solid #333',
+            padding: '1em',
+            overflowY: 'auto',
+            transition: 'transform 0.3s',
+          }}
+        &gt;
+          &lt;h3 style={{ color: '#00e676', marginBottom: '1em' }}&gt;Historial&lt;/h3&gt;
+          {/* Lista de chats */}
+        &lt;/aside&gt;
+      )}
+
+      {/* MAIN CHAT */}
+      &lt;div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}&gt;
+        {/* HEADER */}
+        &lt;header style={{
+          borderBottom: '1px solid #333',
+          padding: '1em',
+          display: 'flex',
+          alignItems: 'center',
+          backgroundColor: '#1a1a1a',
+        }}&gt;
+          &lt;button
+            onClick={() =&gt; setSidebarOpen(!sidebarOpen)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#ccc',
+              cursor: 'pointer',
+              fontSize: '1.2em',
+            }}
+          &gt;
+            ☰
+          &lt;/button&gt;
+          &lt;h1 style={{ marginLeft: '1em', color: '#00e676', fontSize: '1.2em' }}&gt;AI Chat&lt;/h1&gt;
+        &lt;/header&gt;
+
+        {/* MESSAGES */}
+        &lt;ChatContainer messages={messages} /&gt;
+
+        {/* INPUT SECTION */}
+        &lt;div style={{
+          padding: '1em',
+          borderTop: '1px solid #333',
+          backgroundColor: '#1a1a1a',
+          display: 'flex',
+          gap: '0.5em',
+        }}&gt;
+          &lt;textarea
+            value={input}
+            onChange={(e) =&gt; setInput(e.target.value)}
+            onKeyDown={(e) =&gt; {
+              if (e.key === 'Enter' &amp;&amp; !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            placeholder="Escribe tu pregunta aquí... (Shift+Enter para salto de línea)"
+            style={{
+              flex: 1,
+              padding: '0.75em',
+              backgroundColor: '#2a2a2a',
+              color: '#e0e0e0',
+              border: '1px solid #333',
+              borderRadius: '8px',
+              fontFamily: 'inherit',
+              resize: 'none',
+              maxHeight: '120px',
+            }}
+          /&gt;
+          &lt;button
+            onClick={handleSend}
+            style={{
+              padding: '0.75em 1.5em',
+              backgroundColor: '#00e676',
+              color: '#0a0a1a',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+            }}
+          &gt;
+            Enviar ↓
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+            </code></pre>
+        </section>
+
+        <!-- MINI RETO SECTION -->
+        <section class="section">
+            <h3>🎯 Mini-Reto: Build Complete Chat UI</h3>
+
+            <h4>Objetivo</h4>
+            <p>Construye una interface de chat funcional con <strong>todos estos elementos</strong>:</p>
+            <ul>
+                <li>✅ Message bubbles (user vs assistant con estilos diferentes)</li>
+                <li>✅ Typing indicator (animación de 3 puntos)</li>
+                <li>✅ Markdown rendering (títulos, listas, negrita)</li>
+                <li>✅ Code blocks con syntax highlighting</li>
+                <li>✅ Copy to clipboard button (aparece en hover)</li>
+                <li>✅ Dark mode toggle (botón en header)</li>
+                <li>✅ Responsive design (funciona en móvil y desktop)</li>
+                <li>✅ Auto-scroll a último mensaje</li>
+                <li>✅ Sidebar colapsable con historial (mínimo 3 chats dummy)</li>
+                <li>✅ Placeholder inspirador en input</li>
+            </ul>
+
+            <h4>Pasos</h4>
+            <ol>
+                <li>Crea componentes separados para: <code>ChatBubble</code>, <code>TypingIndicator</code>, <code>CodeBlock</code>, <code>CopyButton</code>.</li>
+                <li>Usa <code>react-markdown</code> para renderizar MD en respuestas.</li>
+                <li>Usa <code>react-syntax-highlighter</code> para color en código.</li>
+                <li>Implementa <code>useRef</code> + <code>scrollIntoView</code> para auto-scroll.</li>
+                <li>Añade toggle de dark/light mode con <code>useState</code> (guarda en localStorage).</li>
+                <li>Haz el sidebar colapsable con media queries CSS.</li>
+                <li>Test en móvil (DevTools → Responsive Mode).</li>
+            </ol>
+
+            <h4>Bonus</h4>
+            <ul>
+                <li>🔥 Llamadas reales a OpenAI API o similar.</li>
+                <li>🔥 Historial persistente en IndexedDB.</li>
+                <li>🔥 Búsqueda en historial con Cmd+K (estilo ChatGPT).</li>
+                <li>🔥 Animación de "scroll to latest" suave.</li>
+                <li>🔥 Soporte para archivos (drag-drop).</li>
+            </ul>
+        </section>
+
+        <!-- Exercise Submission Section -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">✅</span>
+                Entrega de ejercicios
+            </h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Chat UI/UX patterns</h4>
+                <p>Crea una interfaz de chat con buenas prácticas UX: auto-scroll, indicadores de escritura, timestamps, etc.</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Código HTML/React del componente Chat — Pega tu código aquí..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Explicación de los patrones UX implementados..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c04', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Chat interface con message history</h4>
+                <p>Implementa un chat con historial persistente de mensajes, permitiendo al usuario retomar conversaciones previas.</p>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Código del chat con persistencia — Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Prueba: cómo se guarda y recupera el historial..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c04', 2, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- TEST SECTION -->
+        <section class="section">
+            <h3>📊 Test de Conocimiento</h3>
+            <p>Responde las 10 preguntas sobre UX de apps de IA:</p>
+
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- NAVIGATION -->
+        <nav class="navigation">
+            <a href="clase-03.html" class="nav-btn nav-prev">← Clase 03</a>
+            <a href="clase-05.html" class="nav-btn nav-next">Clase 05 →</a>
+        </nav>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        // Quiz questions
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "¿Cuál es la principal razón por la que ChatGPT usa streaming (typing animation)?",
+                options: [
+                    "Para que la IA parezca que está pensando en tiempo real",
+                    "Para reducir la latencia de la red",
+                    "Para ahorrar energía en el servidor",
+                    "Para hacer más atractiva la UI"
+                ],
+                correct: 0,
+                explanation: "El streaming hace que la percepción sea de que está escribiendo en vivo. Técnicamente es necesario para no sobrecargar, pero la experiencia principal es psicológica."
+            },
+            {
+                id: 2,
+                question: "¿Qué librería de React se usa comunmente para renderizar Markdown?",
+                options: [
+                    "react-syntax-highlighter",
+                    "react-markdown",
+                    "markdown-to-html",
+                    "react-parser"
+                ],
+                correct: 1,
+                explanation: "react-markdown es la más popular y flexible para convertir MD a componentes React."
+            },
+            {
+                id: 3,
+                question: "¿Por qué casi todas las AI apps usan dark mode por defecto?",
+                options: [
+                    "Es más barato de desarrollar",
+                    "Menos fatiga visual, mejor para código, y en OLED ahorra batería",
+                    "Porque parece más profesional",
+                    "Porque reduce el tamaño del CSS"
+                ],
+                correct: 1,
+                explanation: "Dark mode tiene razones técnicas y de UX reales — fatiga visual, legibilidad de código, y eficiencia en pantallas OLED."
+            },
+            {
+                id: 4,
+                question: "¿Cuál es el componente visual que indica que la IA está 'escribiendo'?",
+                options: [
+                    "Un spinner circular",
+                    "Un progress bar",
+                    "Typing indicator (3 puntos animados)",
+                    "Un loading skeleton"
+                ],
+                correct: 2,
+                explanation: "El typing indicator con 3 puntos (o barras) animadas es el estándar en todas las chat apps."
+            },
+            {
+                id: 5,
+                question: "¿Qué hook de React se usa para hacer auto-scroll al último mensaje?",
+                options: [
+                    "useEffect + useRef",
+                    "useContext + useReducer",
+                    "useCallback + useMemo",
+                    "useLayoutEffect + useCallback"
+                ],
+                correct: 0,
+                explanation: "useRef guarda referencia al elemento final, y useEffect ejecuta scrollIntoView cuando hay nuevos mensajes."
+            },
+            {
+                id: 6,
+                question: "¿Cuál es el color corporativo recomendado para cabeceras en este curso?",
+                options: [
+                    "#00e676",
+                    "#1B5E20",
+                    "#2196F3",
+                    "#FF6B6B"
+                ],
+                correct: 1,
+                explanation: "Verde oscuro #1B5E20 es el color corporativo oficial (Rice in Action)."
+            },
+            {
+                id: 7,
+                question: "¿Qué característica del input design mejora la experiencia sin expandir el textarea?",
+                options: [
+                    "Placeholder inspirador",
+                    "Auto-expandible según contenido",
+                    "Drag-and-drop de archivos",
+                    "Atajos de teclado (Shift+Enter, Ctrl+Enter)"
+                ],
+                correct: 1,
+                explanation: "Auto-expandible permite escribir sin scroll interno, mejora UX."
+            },
+            {
+                id: 8,
+                question: "¿Cuál de estos NO es un patrón común en ChatGPT, Claude y Perplexity?",
+                options: [
+                    "Rendering de código con syntax highlighting",
+                    "Botón de copy en cada respuesta",
+                    "Publicidad visible en el chat",
+                    "Dark mode por defecto"
+                ],
+                correct: 2,
+                explanation: "Ninguna de las tres muestra publicidad en el chat — mantienen la interface limpia y enfocada."
+            },
+            {
+                id: 9,
+                question: "¿Cuál es el mayor beneficio de mostrar disclaimers sobre limitaciones de la IA?",
+                options: [
+                    "Cumplir regulación legal",
+                    "Aumentar la confianza (transparencia paradójica)",
+                    "Reducir costos de support",
+                    "Hacer el UI más largo"
+                ],
+                correct: 1,
+                explanation: "Sorprendentemente, mostrar que la IA puede fallar aumenta confianza — es más humano y honesto."
+            },
+            {
+                id: 10,
+                question: "¿Cómo se implementa responsividad para que el sidebar sea hamburger menu en móvil?",
+                options: [
+                    "Con @media queries en CSS",
+                    "Con componentes diferentes en React",
+                    "Con viewport meta tag",
+                    "Todas las anteriores"
+                ],
+                correct: 3,
+                explanation: "Se necesitan media queries para ocultar/mostrar el sidebar, componentes condicionales para el hamburger, y viewport correcto."
+            }
+        ];
+
+        // Initialize quiz
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm7-c04');
+        if (typeof CourseProgress !== 'undefined') {
+            CourseProgress.initSubmissionIndicators('m7-c04');
+        }
+    </script>
+</body>
+</html>

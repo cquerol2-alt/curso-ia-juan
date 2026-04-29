@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 09: Deploy + Observability con Langfuse | Módulo 5</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> &gt; </span>
+            <a href="index.html">Módulo 5</a>
+            <span> &gt; </span>
+            <strong>Clase 09</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 09: Deploy y observability con Langfuse</h1>
+            <div class="subtitle">📅 Semana 7 — Viernes | 🎬 25 min vídeo + 💻 60 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <section class="card" style="border-left: 4px solid #00f0ff;">
+            <h2 class="section-title"><span class="section-icon">🎯</span> Qué vas a construir hoy</h2>
+            <p>El RAG de la clase 05 + el chat Next.js de la clase 08 <strong>desplegados en Vercel</strong>, con <strong>Langfuse</strong> instrumentando cada llamada a Claude. Verás trazas (traces) de cada query del usuario: retrieve, rerank, llamada al LLM, tokens, coste y latencia por span. Eso es lo que te permite depurar en producción.</p>
+            <div class="info" style="margin-top: 12px;">
+                <strong>🧭 Filosofía:</strong> sin tracing, en producción estás ciego. Con tracing, cada queja de un usuario se convierte en un <em>trace</em> reproducible que puedes abrir y corregir. La diferencia entre "ayer fallaba algo" y "aquí está exactamente qué chunk devolvió mal el retriever".
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>📹 Vídeo principal (25 min)</h2>
+            <div class="video-wrapper">
+                <iframe width="100%" height="450" src="https://www.youtube.com/embed/2TJxpyO3ei4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <a href="https://www.youtube.com/watch?v=2TJxpyO3ei4" target="_blank" class="btn" style="background:#ff0000;">▶ Ver en YouTube ↗</a>
+                <p style="font-size:.85em; color:#b0b0cc; margin-top:6px;">Si el reproductor sale en blanco, usa este botón.</p>
+            </div>
+            <div class="warning" style="margin-top: 12px;">
+                <strong>⚠️ Aviso v2:</strong> el vídeo puede mostrar Langfuse integrado con LangChain/OpenAI. Aquí lo integramos con <strong>Anthropic SDK directo</strong> usando el decorador <code>@observe</code> + <code>langfuse_context.update_current_observation()</code>. El concepto de spans/traces es idéntico.
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📖</span> Qué es un trace (y por qué importa)</h2>
+            <p>Una query del usuario dispara varias operaciones en tu backend. Un <strong>trace</strong> es el árbol completo de esas operaciones, con tiempos, inputs y outputs de cada paso.</p>
+            <div class="code-block">
+                <span class="lang-label">Ejemplo de trace RAG</span>
+<pre><code>trace: "user asked: cómo funciona el prompt caching"
+├─ span retrieve (k=20)                     45 ms
+│   input: { query: "cómo funciona el prompt caching" }
+│   output: 20 candidates
+├─ span rerank (haiku)                     380 ms   $0.001
+│   input: 20 candidates
+│   output: top 3
+└─ span answer (sonnet)                   1120 ms   $0.014
+    input: prompt + 3 chunks
+    output: "El prompt caching cachea..."
+    tokens: { prompt: 2850, completion: 180 }
+</code></pre>
+            </div>
+            <p>Con esto puedes responder preguntas como: <em>¿cuánto cuesta la media de queries?</em>, <em>¿qué queries tardan más de 3s?</em>, <em>¿qué chunk es el más recuperado (quizá erróneamente)?</em>.</p>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ff00e5;">
+            <h2 class="section-title"><span class="section-icon">💻</span> Práctica: deploy + observability (60 min)</h2>
+
+            <h3>Paso 1 · Cuenta Langfuse (gratis hasta 50k observaciones/mes)</h3>
+            <ol>
+                <li>Crea cuenta en <a href="https://cloud.langfuse.com" target="_blank">https://cloud.langfuse.com</a></li>
+                <li>Crea un proyecto nuevo <em>"rag-chat"</em></li>
+                <li>Copia la <code>public key</code> y la <code>secret key</code></li>
+            </ol>
+
+            <h3>Paso 2 · Instrumenta el backend Python</h3>
+            <div class="code-block">
+                <span class="lang-label">Bash</span>
+<pre><code>pip install langfuse
+</code></pre>
+            </div>
+            <div class="code-block">
+                <span class="lang-label">Python — rag_pipeline.py (instrumentado)</span>
+<pre><code>import os
+from anthropic import Anthropic
+from langfuse.decorators import observe, langfuse_context
+from langfuse import Langfuse
+
+os.environ["LANGFUSE_PUBLIC_KEY"] = "pk-lf-..."
+os.environ["LANGFUSE_SECRET_KEY"] = "sk-lf-..."
+os.environ["LANGFUSE_HOST"] = "https://cloud.langfuse.com"
+
+langfuse = Langfuse()
+client = Anthropic()
+
+@observe(name="retrieve")
+def retrieve(query: str, k: int = 20):
+    # ... tu código ChromaDB
+    results = col.query(query_embeddings=[embed([query])[0]], n_results=k)
+    langfuse_context.update_current_observation(
+        input={"query": query, "k": k},
+        output={"n_candidates": k},
+    )
+    return [...]
+
+@observe(name="rerank")
+def rerank(query, candidates, n=3):
+    # ... tu código con Haiku
+    langfuse_context.update_current_observation(
+        input={"query": query, "n_candidates": len(candidates)},
+        output={"top_ids": [c["id"] for c in top]},
+    )
+    return top
+
+@observe(name="answer", as_type="generation")  # marca este span como llamada LLM
+def answer(query):
+    candidates = retrieve(query)
+    top = rerank(query, candidates)
+    ctx = "\n---\n".join([f"[{c['source']}] {c['text']}" for c in top])
+
+    resp = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=512,
+        system="Responde usando SOLO los chunks dados.",
+        messages=[{"role": "user", "content": f"{ctx}\n\nPregunta: {query}"}],
+    )
+    text = resp.content[0].text
+
+    # Langfuse registra tokens y coste si le das el modelo y usage
+    langfuse_context.update_current_observation(
+        input={"query": query},
+        output=text,
+        model="claude-sonnet-4-6",
+        usage={
+            "input": resp.usage.input_tokens,
+            "output": resp.usage.output_tokens,
+        },
+    )
+    return text
+</code></pre>
+            </div>
+
+            <h3>Paso 3 · Deploy del frontend Next.js a Vercel</h3>
+            <div class="code-block">
+                <span class="lang-label">Bash</span>
+<pre><code># Dentro del proyecto rag-chat de la clase 08
+npm install -g vercel
+vercel login
+vercel
+
+# Sigue el wizard. Añade secretos:
+vercel env add ANTHROPIC_API_KEY
+vercel env add RAG_API
+# (RAG_API debe apuntar a tu backend Python expuesto públicamente)
+</code></pre>
+            </div>
+
+            <h3>Paso 4 · Deploy del backend Python (Render o Railway)</h3>
+            <p>Vercel no corre Python persistente ni ChromaDB. Opciones:</p>
+            <ul>
+                <li><strong>Render.com</strong> (gratis con sleep) — Dockerfile con uvicorn + ChromaDB local</li>
+                <li><strong>Railway</strong> ($5/mes, sin sleep) — igual pero con volumen persistente</li>
+                <li><strong>Fly.io</strong> — más control, curva más empinada</li>
+            </ul>
+            <div class="code-block">
+                <span class="lang-label">Dockerfile (para Render)</span>
+<pre><code>FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+# Asume que los apuntes indexados están en ./chroma_db (commitea el volumen)
+CMD ["uvicorn", "rag_api:app", "--host", "0.0.0.0", "--port", "8000"]
+</code></pre>
+            </div>
+            <div class="code-block">
+                <span class="lang-label">requirements.txt</span>
+<pre><code>fastapi==0.115.0
+uvicorn==0.32.0
+anthropic==0.40.0
+openai==1.52.0
+chromadb==0.5.15
+langfuse==2.53.0
+</code></pre>
+            </div>
+
+            <h3>Paso 5 · Verifica las trazas en Langfuse</h3>
+            <ol>
+                <li>Haz 5 queries desde el chat en producción (URL de Vercel)</li>
+                <li>Abre <a href="https://cloud.langfuse.com" target="_blank">cloud.langfuse.com</a> → tu proyecto → <em>Traces</em></li>
+                <li>Clic en una traza — verás el árbol retrieve → rerank → answer con tiempos, tokens y coste</li>
+                <li>Filtra por "tokens &gt; 3000" o "latency &gt; 2000ms" para detectar outliers</li>
+            </ol>
+
+            <h3>Paso 6 · Añade scoring manual (thumbs up/down)</h3>
+            <p>En el frontend, añade botones 👍 / 👎 que llamen a <code>/api/feedback</code>. En el backend, registra con <code>langfuse.score(trace_id, name="thumb", value=1|0)</code>. Así tienes métricas de calidad en producción sin tener que montar una eval suite manualmente.</p>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ffe600;">
+            <h2 class="section-title"><span class="section-icon">📊</span> Qué mirar el primer día después del deploy</h2>
+            <table>
+                <thead>
+                    <tr><th>Métrica</th><th>Umbral sano</th><th>Qué hacer si falla</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Latency p95</td><td>&lt; 3s</td><td>Baja <code>k</code> del retrieve, reduce <code>max_tokens</code>, añade cache</td></tr>
+                    <tr><td>Coste medio por query</td><td>&lt; $0.03</td><td>Usa Haiku en rerank, corta chunks más pequeños</td></tr>
+                    <tr><td>Error rate</td><td>&lt; 1%</td><td>Revisa timeouts, añade retries con backoff</td></tr>
+                    <tr><td>Thumbs-down rate</td><td>&lt; 10%</td><td>Toma los traces con 👎 y conviértelos en eval set</td></tr>
+                </tbody>
+            </table>
+            <div class="tip" style="margin-top: 12px;">
+                Los traces con 👎 son <strong>oro puro</strong>: cada uno es un ejemplo real de fallo con su contexto completo. Añádelos a tu eval dataset y conviértete en antifragile.
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">🧪</span> Quiz</h2>
+            <div id="quiz-container"></div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #39ff14;">
+            <h2 class="section-title"><span class="section-icon">📝</span> Ejercicios entregables</h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h3>Ejercicio 1 (A) — Tracing con Langfuse</h3>
+                <p>Instrumenta tu pipeline RAG (retrieve, rerank, answer) con <code>@observe</code>. Haz 10 queries y captura una traza de ejemplo en Langfuse. Entrega screenshot del árbol de spans + las métricas agregadas (avg latency, avg cost).</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="# Screenshot Langfuse + métricas agregadas de 10 queries"></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c09', 1, this)">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h3>Ejercicio 2 (B) — Deploy en Vercel con observability</h3>
+                <p>Deploya el frontend Next.js en Vercel y el backend Python en Render/Railway. Verifica que Langfuse recibe trazas desde producción (no localhost). Añade un botón 👍 / 👎 en la UI que llame a <code>langfuse.score()</code>. Entrega URL pública + URL del dashboard Langfuse con al menos 1 score registrado.</p>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="# URL Vercel + URL dashboard Langfuse + captura con score"></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c09', 2, this)">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <div class="nav-buttons">
+            <a href="clase-08.html" class="btn btn-secondary">← Clase 08</a>
+            <a href="index.html" class="btn btn-secondary">📚 Módulo 5</a>
+            <a href="clase-10-boss-battle.html" class="btn">Boss Battle →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Qué es un trace en observability de LLMs?",
+                options: [
+                    "Un archivo de log plano",
+                    "El árbol de operaciones (retrieve, rerank, answer…) de una request, con tiempos, inputs, outputs y coste de cada span",
+                    "Una traza de memoria",
+                    "El historial del chat"
+                ],
+                correct: 1,
+                explanation: "Trace = árbol con spans anidados. Cada span es una operación con su propio input/output/tiempo."
+            },
+            {
+                question: "¿Por qué NO poner el pipeline RAG (Python + ChromaDB) en Vercel Serverless?",
+                options: [
+                    "Porque Vercel no existe",
+                    "Porque las funciones serverless no tienen almacenamiento persistente y ChromaDB necesita el índice en disco",
+                    "Porque es caro",
+                    "Porque Python no funciona en Vercel"
+                ],
+                correct: 1,
+                explanation: "Serverless = contenedor efímero. ChromaDB necesita que el índice persista. Mejor Render/Railway con volumen."
+            },
+            {
+                question: "¿Qué hace <code>@observe(as_type='generation')</code> en Langfuse?",
+                options: [
+                    "Nada especial",
+                    "Marca el span como llamada a un LLM, y registra tokens/coste si le pasas usage y model",
+                    "Desactiva la función",
+                    "Genera código"
+                ],
+                correct: 1,
+                explanation: "as_type='generation' convierte el span en una observación de LLM. Langfuse calcula coste automáticamente con el modelo + tokens."
+            },
+            {
+                question: "¿Para qué sirven los scores (thumbs up/down) en Langfuse?",
+                options: [
+                    "Decorar la UI",
+                    "Etiquetar trazas como buenas/malas en producción, para construir eval sets reales y detectar regresiones",
+                    "Pagar menos",
+                    "Activar el cache"
+                ],
+                correct: 1,
+                explanation: "Los 👍/👎 unen feedback humano a los traces. Un 👎 con su contexto completo = caso de test para el futuro."
+            },
+            {
+                question: "Tu p95 de latencia es 8s. ¿Primer intento razonable?",
+                options: [
+                    "Upgrade al modelo más grande",
+                    "Bajar k de retrieve, reducir max_tokens, ver si el rerank está metiendo latencia innecesaria",
+                    "Reiniciar el servidor",
+                    "Pagar más a Vercel"
+                ],
+                correct: 1,
+                explanation: "Latencia alta = muchos tokens o muchas llamadas. Baja k, max_tokens, o salta el rerank en queries sencillas."
+            },
+            {
+                question: "¿Cuál es el flujo correcto para deploy de la app completa?",
+                options: [
+                    "Todo en Vercel",
+                    "Frontend Next.js en Vercel + backend Python (FastAPI + ChromaDB) en Render/Railway/Fly",
+                    "Todo en tu laptop",
+                    "Todo en AWS Lambda"
+                ],
+                correct: 1,
+                explanation: "Vercel brilla para frontend + serverless edge. Python + vector store = servicio persistente en Render/Railway/Fly."
+            },
+            {
+                question: "¿Qué keys de Langfuse necesitas en el backend?",
+                options: [
+                    "Solo la public key",
+                    "Solo la secret key",
+                    "Ambas: public key y secret key, junto con LANGFUSE_HOST",
+                    "Ninguna"
+                ],
+                correct: 2,
+                explanation: "Ambas + host. El SDK las lee de env vars."
+            },
+            {
+                question: "Viste en Langfuse que un chunk concreto aparece en el 80% de queries pero la respuesta suele ser mala. ¿Qué indica?",
+                options: [
+                    "Que es un chunk muy popular",
+                    "Que es un 'chunk basura' que domina el retrieval — revisa chunking, dedup o mete un negative boost",
+                    "Que Claude lo adora",
+                    "Que debes indexarlo más"
+                ],
+                correct: 1,
+                explanation: "Chunks demasiado generales dominan semánticamente. Repartir mejor el corpus o filtrarlo soluciona el problema."
+            },
+            {
+                question: "¿Por qué usar el decorador @observe en vez de llamadas manuales a la API de Langfuse?",
+                options: [
+                    "Por estética",
+                    "Abstrae la creación de spans, captura automáticamente input/output/exceptions y anida spans hijos correctamente",
+                    "Es obligatorio",
+                    "Hace la app más rápida"
+                ],
+                correct: 1,
+                explanation: "@observe envuelve la función, crea el span, captura argumentos/retorno, anida hijos si son también @observe. Mucho menos boilerplate."
+            },
+            {
+                question: "Tras una semana en producción, ¿qué input de Langfuse es el más valioso para mejorar el sistema?",
+                options: [
+                    "Las queries rápidas",
+                    "Los traces con 👎 o errores — son ejemplos reales de fallo con su contexto completo para convertir en tests",
+                    "Las queries más cortas",
+                    "Los logos"
+                ],
+                correct: 1,
+                explanation: "Fallos reales con contexto = datos de oro. Conviertes cada 👎 en un test regresión y el sistema mejora con el uso."
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm5-c09');
+        });
+    </script>
+</body>
+</html>

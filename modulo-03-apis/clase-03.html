@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 03: Chatbot con Memoria de Conversación — Módulo 3</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a><span> > </span>
+            <a href="index.html">Módulo 3</a><span> > </span>
+            <strong>Clase 03</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 03: Chatbot con Memoria de Conversación</h1>
+            <div class="subtitle">📅 Semana 4 — Miércoles | 🎬 30 min vídeo + 💻 50 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <!-- VIDEO SECTION -->
+        <section class="card">
+            <h2>🎬 Vídeo de la lección</h2>
+            <p>Aprende cómo construir chatbots con memoria de conversación usando OpenAI API. Este vídeo cubre desde conceptos básicos hasta streaming en tiempo real.</p>
+            <div class="video-wrapper">
+                <iframe
+                    width="100%"
+                    height="480"
+                    src="https://www.youtube.com/embed/pGOyw_M1mNE"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-03.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- CONCEPTS SECTION -->
+        <section class="card">
+            <h2>📖 Conceptos clave</h2>
+
+            <h3>a) El problema: los LLMs no tienen memoria</h3>
+            <p>Los modelos de lenguaje no tienen estado persistente. Cada llamada a la API es <strong>completamente independiente</strong>.</p>
+            <div class="warning">
+                <strong>⚠️ Importante:</strong> Si no le envías el historial completo a OpenAI, el modelo no recuerda nada de lo que hablaste antes.
+            </div>
+            <p><strong>Analogía JavaScript:</strong> Es como si cada request HTTP no tuviera cookies ni session storage. El servidor no sabe quién eres a menos que le lo digas en cada petición.</p>
+
+            <h3>b) La solución: mantener un array de messages</h3>
+            <p>La clave es guardar todo el historial y enviarlo completo en cada llamada:</p>
+            <ul>
+                <li><code>conversation_history = []</code> (array que crece con cada turno)</li>
+                <li>Usuario escribe → Añadir mensaje a historial</li>
+                <li>Enviar <strong>TODO el historial</strong> a la API</li>
+                <li>Recibir respuesta → Añadir a historial</li>
+                <li>Repetir</li>
+            </ul>
+
+            <h3>Código completo: Chatbot básico con memoria</h3>
+            <pre class="code-block">from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI()
+
+# Historial de conversación
+conversation = [
+    {"role": "system", "content": "Eres un asistente amable y conciso."}
+]
+
+def chat(user_message):
+    """Envía mensaje y mantiene memoria de conversación."""
+    # Agregar mensaje del usuario al historial
+    conversation.append({"role": "user", "content": user_message})
+
+    # Enviar TODO el historial
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=conversation
+    )
+
+    # Extraer respuesta y guardarla
+    assistant_message = response.choices[0].message.content
+    conversation.append({"role": "assistant", "content": assistant_message})
+
+    return assistant_message
+
+# Loop principal
+print("🤖 Chatbot listo. Escribe 'salir' para terminar.\n")
+while True:
+    user_input = input("Tú: ")
+    if user_input.lower() == 'salir':
+        break
+    response = chat(user_input)
+    print(f"\n🤖 Bot: {response}\n")</pre>
+
+            <h3>c) El problema: context window overflow</h3>
+            <p>El historial crece indefinidamente. Eventualmente <strong>excede el context window</strong> del modelo y obtienes error.</p>
+            <p><strong>Contexto window de GPT-4o Mini:</strong> ~128K tokens. Parece infinito, pero una conversación larga puede alcanzarlo.</p>
+            <p><strong>Soluciones comunes:</strong></p>
+            <ul>
+                <li>Truncar mensajes antiguos (sliding window)</li>
+                <li>Resumir la conversación periódicamente</li>
+                <li>Usar modelos más pequeños con ventanas mayores</li>
+            </ul>
+
+            <h3>Sliding Window: Mantener solo los últimos N mensajes</h3>
+            <pre class="code-block">MAX_MESSAGES = 20  # Guardar últimos 20 mensajes + system prompt
+
+def chat_with_limit(user_message):
+    """Chat con límite de historial."""
+    conversation.append({"role": "user", "content": user_message})
+
+    # Enviar: system prompt + últimos N mensajes
+    messages_to_send = [conversation[0]] + conversation[-MAX_MESSAGES:]
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages_to_send
+    )
+
+    assistant_message = response.choices[0].message.content
+    conversation.append({"role": "assistant", "content": assistant_message})
+
+    return assistant_message</pre>
+
+            <h3>d) Streaming: Respuestas en tiempo real</h3>
+            <p>Por defecto, OpenAI espera a generar la respuesta completa antes de devolverla. Con <code>stream=True</code>, obtienes tokens conforme se generan (como ChatGPT).</p>
+            <pre class="code-block">def chat_streaming(user_message):
+    """Chat con streaming de respuesta."""
+    conversation.append({"role": "user", "content": user_message})
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=conversation,
+        stream=True  # ← Activa streaming
+    )
+
+    assistant_message = ""
+    print("\n🤖 Bot: ", end="", flush=True)
+
+    # Iterar sobre chunks y imprimir conforme llegan
+    for chunk in response:
+        if chunk.choices[0].delta.content:
+            text = chunk.choices[0].delta.content
+            print(text, end="", flush=True)
+            assistant_message += text
+
+    print("\n")
+    conversation.append({"role": "assistant", "content": assistant_message})
+    return assistant_message</pre>
+
+            <h3>e) Manejo de errores</h3>
+            <p>La API de OpenAI puede fallar por rate limits, timeouts, claves inválidas, etc. Siempre envuelve en try/except:</p>
+            <pre class="code-block">from openai import OpenAIError, RateLimitError
+
+def chat_safe(user_message):
+    """Chat con manejo robusto de errores."""
+    try:
+        conversation.append({"role": "user", "content": user_message})
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=conversation
+        )
+
+        assistant_message = response.choices[0].message.content
+        conversation.append({"role": "assistant", "content": assistant_message})
+        return assistant_message
+
+    except RateLimitError:
+        return "⏳ Has alcanzado el límite de requests. Espera un momento."
+    except OpenAIError as e:
+        return f"❌ Error de API: {str(e)}"
+    except Exception as e:
+        return f"❌ Error inesperado: {str(e)}"</pre>
+        </section>
+
+        <!-- GUIDED PRACTICE -->
+        <section class="card">
+            <h2>💻 Práctica guiada: 3 ejercicios</h2>
+
+            <h3>Ejercicio 1: Chatbot básico con memoria</h3>
+            <div class="tip">
+                <strong>🎯 Objetivo:</strong> Implementa el loop completo con historial funcionando.
+            </div>
+            <p><strong>Pasos:</strong></p>
+            <ol>
+                <li>Copia el código completo de "Chatbot básico" (sección b arriba)</li>
+                <li>Crea un archivo <code>chatbot_simple.py</code> en tu proyecto</li>
+                <li>Ejecuta: <code>python chatbot_simple.py</code></li>
+                <li>Mantén una conversación de al menos 5 turnos. Verifica que el bot recuerda lo anterior.</li>
+                <li><strong>Comprobación:</strong> Pregunta "¿Qué dijiste hace poco?" y el bot debería ser capaz de responder.</li>
+            </ol>
+
+            <h3>Ejercicio 2: Añadir streaming</h3>
+            <div class="tip">
+                <strong>🎯 Objetivo:</strong> Modifica el chatbot para que las respuestas aparezcan palabra a palabra.
+            </div>
+            <p><strong>Pasos:</strong></p>
+            <ol>
+                <li>Usa el código de "Streaming" (sección d)</li>
+                <li>Reemplaza la función <code>chat()</code> por <code>chat_streaming()</code> en el loop principal</li>
+                <li>Ejecuta y observa cómo la respuesta aparece en tiempo real en lugar de de golpe</li>
+                <li><strong>Desafío extra:</strong> Agrega una barra de "escribiendo..." mientras el modelo genera la respuesta</li>
+            </ol>
+
+            <h3>Ejercicio 3: Chatbot con personalidad + sliding window</h3>
+            <div class="tip">
+                <strong>🎯 Objetivo:</strong> Combina system prompt creativo + límite de historial.
+            </div>
+            <p><strong>Pasos:</strong></p>
+            <ol>
+                <li>Crea un archivo <code>chef_bot.py</code></li>
+                <li>Usa un system prompt específico: <code>"Eres un chef experto en cocina española. Hablas con pasión sobre recetas, ingredientes y técnicas. Siempre das recomendaciones prácticas."</code></li>
+                <li>Incorpora el sliding window (<code>MAX_MESSAGES = 20</code>)</li>
+                <li>Mantén una conversación sobre recetas españolas</li>
+                <li><strong>Comprobación:</strong> Genera una conversación de 30+ turnos. Debería funcionar sin error, y al final, el bot no debería recor dar los primeros mensajes (solo los últimos 20)</li>
+            </ol>
+        </section>
+
+        <!-- MINI CHALLENGE -->
+        <section class="card" style="background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.2);">
+            <h2>🎯 Mini-reto del día: "El asistente de cocina"</h2>
+            <p style="color: #fff;">Construye un chatbot que:</p>
+            <ul style="color: #fff;">
+                <li>Recuerda las preferencias alimentarias del usuario a lo largo de la conversación</li>
+                <li>Sugiere recetas basándose en conversaciones previas (dietario, alergias, sabores favoritos)</li>
+                <li>Mantiene un tono amable y profesional</li>
+                <li>Usa sliding window para evitar overflow</li>
+            </ul>
+            <p style="color: #fff;"><strong>Bonus:</strong> Guarda la conversación en un archivo JSON al finalizar para poder "recordar" al usuario en futuras sesiones.</p>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Chatbot básico con memoria</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c03', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr>
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="code-along">
+                <h4>📤 Entregar práctica: Añadir streaming</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c03', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+            <hr>
+            <div class="exercise-submit" id="submit-ejercicio-3" data-type="code-along">
+                <h4>📤 Entregar práctica: Chatbot con personalidad + sliding window</h4>
+                <textarea id="code-ejercicio-3" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-3" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c03', 3, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-3" class="submit-status"></div>
+            </div>
+            <hr>
+            <div class="exercise-submit" id="submit-ejercicio-4" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: El asistente de cocina</h4>
+                <textarea id="code-ejercicio-4" rows="12" placeholder="Pega aquí tu código..."></textarea>
+                <textarea id="output-ejercicio-4" rows="4" placeholder="Pega aquí el output de tu programa..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-4" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c03', 4, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-4" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- QUIZ SECTION -->
+        <section class="card">
+            <h2>🧪 Test: ¿Cuánto has aprendido?</h2>
+            <p>Responde estas 10 preguntas sobre chatbots con memoria:</p>
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- NAVIGATION -->
+        <div class="clase-nav">
+            <a href="clase-02.html">← Clase 02</a>
+            <span> | </span>
+            <a href="clase-04.html">Clase 04 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                id: "q1",
+                question: "¿Por qué los modelos de lenguaje no tienen memoria por defecto?",
+                options: [
+                    "Porque guardan datos en un servidor externo",
+                    "Porque cada llamada a la API es completamente independiente (stateless)",
+                    "Porque la memoria es demasiado cara",
+                    "Porque OpenAI no lo permite"
+                ],
+                correct: 1,
+                explanation: "Los LLMs son stateless. No tienen conexión con llamadas anteriores. Debes enviarles el historial completo para que 'recuerden'."
+            },
+            {
+                id: "q2",
+                question: "¿Qué estructura de datos se usa para mantener el historial de conversación?",
+                options: [
+                    "Un diccionario con user/bot keys",
+                    "Un array/lista de objetos con 'role' y 'content'",
+                    "Una base de datos SQL",
+                    "Un archivo CSV"
+                ],
+                correct: 1,
+                explanation: "OpenAI espera un array donde cada elemento es {\"role\": \"user|assistant|system\", \"content\": \"texto\"}."
+            },
+            {
+                id: "q3",
+                question: "¿En qué orden se envían los mensajes a la API?",
+                options: [
+                    "Solo el último mensaje del usuario",
+                    "Todos los mensajes en orden cronológico, incluyendo el system prompt al inicio",
+                    "Solo los mensajes del bot",
+                    "En orden inverso (más recientes primero)"
+                ],
+                correct: 1,
+                explanation: "Se envía TODO el historial en orden cronológico: system prompt, luego todos los user/assistant messages alternados."
+            },
+            {
+                id: "q4",
+                question: "¿Cuál es el principal riesgo de mantener el historial completo indefinidamente?",
+                options: [
+                    "El archivo se hace muy grande (disco lleno)",
+                    "Exceder el context window del modelo → error de API",
+                    "El bot olvida información antigua",
+                    "Se corre más lentamente"
+                ],
+                correct: 1,
+                explanation: "Context window overflow. GPT-4o Mini tiene ~128K tokens, pero una conversación muy larga puede alcanzarlo."
+            },
+            {
+                id: "q5",
+                question: "¿Qué es 'sliding window' en el contexto de chatbots?",
+                options: [
+                    "Una ventana del navegador que se redimensiona automáticamente",
+                    "Guardar solo los últimos N mensajes + system prompt, descartando los antiguos",
+                    "Un efecto visual en la interfaz del chat",
+                    "Comprimir el historial automáticamente"
+                ],
+                correct: 1,
+                explanation: "Sliding window = mantener un 'ventana' de últimos N mensajes. Ejemplo: MAX_MESSAGES=20, envías los 20 más recientes + system prompt."
+            },
+            {
+                id: "q6",
+                question: "¿Qué parámetro activa el streaming en OpenAI?",
+                options: [
+                    "stream=True en el método create()",
+                    "streaming=1 en los headers",
+                    "use_stream en la configuración",
+                    "real_time=True"
+                ],
+                correct: 0,
+                explanation: "stream=True en client.chat.completions.create() hace que la respuesta llegue en chunks, como ChatGPT."
+            },
+            {
+                id: "q7",
+                question: "¿Cuál de estos errores es común cuando se alcanza el context window limit?",
+                options: [
+                    "ConnectionError",
+                    "RateLimitError",
+                    "max_tokens exceeds context window",
+                    "TimeoutError"
+                ],
+                correct: 2,
+                explanation: "Cuando el historial total excede la ventana de contexto, OpenAI devuelve un error indicando que los tokens exceden el límite."
+            },
+            {
+                id: "q8",
+                question: "¿Qué debe hacerse después de recibir una respuesta de la API?",
+                options: [
+                    "Mostrarla inmediatamente al usuario",
+                    "Guardarla en el historial (como role='assistant')",
+                    "Enviarla a una base de datos externa",
+                    "Descartar el historial anterior"
+                ],
+                correct: 1,
+                explanation: "SIEMPRE guardar la respuesta del asistente en el historial. Si no, el modelo no tendrá continuidad en el siguiente turno."
+            },
+            {
+                id: "q9",
+                question: "¿Por qué el system prompt se mantiene al principio del array, incluso con sliding window?",
+                options: [
+                    "Porque ocupa menos tokens",
+                    "Porque define la personalidad/rol del bot para toda la conversación",
+                    "Porque OpenAI lo requiere",
+                    "Porque es más rápido procesarlo al inicio"
+                ],
+                correct: 1,
+                explanation: "El system prompt establece el contexto y rol del asistente. Debe estar siempre presente para mantener consistencia."
+            },
+            {
+                id: "q10",
+                question: "¿Qué es lo primero que debería hacer si obtienes un RateLimitError?",
+                options: [
+                    "Reiniciar el programa inmediatamente",
+                    "Cambiar la API key",
+                    "Esperar unos segundos/minutos antes de reintentar",
+                    "Usar un modelo diferente"
+                ],
+                correct: 2,
+                explanation: "RateLimitError significa que has excedido el límite de requests. Espera e intenta de nuevo. Puedes usar exponential backoff para reintentos automáticos."
+            }
+        ];
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm3-c03');
+                if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+                    CourseProgress.initSubmissionIndicators('m3-c03');
+                }
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm3-c03');
+            if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+                CourseProgress.initSubmissionIndicators('m3-c03');
+            }
+        }
+    </script>
+</body>
+</html>

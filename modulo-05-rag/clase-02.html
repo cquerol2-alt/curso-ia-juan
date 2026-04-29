@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 02: Context stuffing en serio — ventanas largas y PDFs de 200 páginas</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> &gt; </span>
+            <a href="index.html">Módulo 5</a>
+            <span> &gt; </span>
+            <strong>Clase 02</strong>
+        </nav>
+        <!-- Header -->
+        <header class="module-header">
+            <h1>Clase 02: Context stuffing en serio — ventanas largas y PDFs de 200 páginas</h1>
+            <p class="subtitle">📅 Semana 6 — Martes | ⏱️ 50 minutos | 🧭 La opción que muchos ignoran</p>
+        </header>
+
+        <!-- Intro -->
+        <div class="card" style="border-left: 4px solid #00f0ff;">
+            <h2>🧭 Por qué esta clase importa</h2>
+            <p>
+                En la Clase 01 viste que tienes 3 arquitecturas. Hoy la llevamos a fondo: <strong>context stuffing</strong> no es "el truco de principiante antes de montar RAG". En 2026, con ventanas de <strong>200K–1M tokens</strong> y <strong>prompt caching</strong>, stuffing <em>gana a RAG clásico en la mayoría de casos prácticos</em> de menos de 500 páginas.
+            </p>
+            <p>
+                Al acabar la clase sabrás: cuántos tokens pesa realmente un PDF largo, cómo meterlo entero en Claude Sonnet 4.6, cómo activar prompt caching para que las siguientes preguntas cuesten <strong>10× menos</strong>, y cómo detectar cuándo el modelo empieza a sufrir "lost in the middle".
+            </p>
+        </div>
+
+        <!-- Video Section -->
+        <div class="card">
+            <h2>📹 Vídeo Principal</h2>
+            <div class="video-wrapper">
+                <iframe width="100%" height="450" src="https://www.youtube.com/embed/23KRqeybIZc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <a href="https://www.youtube.com/watch?v=23KRqeybIZc" target="_blank" class="btn" style="background:#ff0000;">▶ Ver en YouTube ↗</a>
+                <p style="font-size:.85em; color:#b0b0cc; margin-top:6px;">Si el reproductor de arriba sale en blanco (pasa al abrir el HTML con doble-click por política de YouTube), usa este botón.</p>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+            <div class="warning" style="margin-top: 12px; border-left: 3px solid #ffe600;">
+                <strong>⚠️ Nota de modelo:</strong> el vídeo usa Claude 3.5, pero en el código canónico del módulo usamos <code>claude-sonnet-4-6</code> (modelo actual, ventana 200K, prompt caching disponible). Los conceptos de prompt caching y "lost in the middle" aplican igual — solo cambia el nombre del modelo en <code>client.messages.create(model=...)</code>.
+            </div>
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos clave con el mind map visual en español — cubre ventanas, tokens, prompt caching y lost in the middle.
+                <a href="mindmap-05-c02.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+            <div class="tip" style="margin-top: 1em; background: rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107;">
+                <strong>📚 Lectura complementaria:</strong> <a href="https://www.anthropic.com/news/prompt-caching" target="_blank">Prompt Caching with Claude — Anthropic</a> (inglés). Léelo antes de la práctica: los números que dan son los que justifican por qué stuffing es la opción por defecto de este módulo.
+            </div>
+        </div>
+
+        <!-- Resumen de Conceptos -->
+        <div class="card">
+            <h2>📚 Resumen de Conceptos</h2>
+
+            <h3>¿Qué significa "200K tokens" en la vida real?</h3>
+            <p>
+                Los tokens no son palabras. En español, la regla que casi nunca falla:
+            </p>
+            <ul>
+                <li><strong>1 token ≈ 4 caracteres</strong> (con espacios incluidos)</li>
+                <li><strong>1 palabra española ≈ 1,3–1,5 tokens</strong></li>
+                <li><strong>1 página de PDF (texto normal) ≈ 500–700 tokens</strong></li>
+            </ul>
+            <p>
+                Con esa regla, la ventana de <strong>200 000 tokens</strong> de Claude Sonnet 4.6 te da <strong>~280–400 páginas de PDF</strong>. La versión 1M (beta/long-context) llega a <strong>~1 500 páginas</strong>: un libro técnico completo más documentación.
+            </p>
+            <div class="tip">
+                <strong>Intuición rápida:</strong> si puedes leer tu doc en una tarde, cabe en el prompt. Si llenaría una estantería, probablemente no.
+            </div>
+
+            <h3>Los 3 problemas reales del stuffing (y cómo se resuelven en 2026)</h3>
+
+            <h4 style="color: #ff6b6b;">Problema 1 — Coste: pagas todos los tokens en cada llamada</h4>
+            <p>
+                Claude Sonnet 4.6 (abril 2026) cobra <strong>~3 $/M tokens de input</strong>. Un PDF de 200 páginas ≈ 130 K tokens. Cada pregunta cuesta <strong>~0,39 $ solo en input</strong>. Diez preguntas al día = 4 $/día = <strong>120 $/mes</strong> solo por hacer Q&amp;A sobre un documento.
+            </p>
+            <p style="background: rgba(0, 240, 255, 0.08); padding: 1em; border-radius: 8px;">
+                <strong>Solución 2026 → Prompt caching.</strong> Anthropic te deja marcar bloques de prompt como cacheados. El primer envío cuesta <strong>1,25×</strong> (sobrecoste de escritura); los siguientes, durante 5 min, cuestan <strong>0,1×</strong>. Traducido: <strong>10× más barato</strong> a partir de la segunda pregunta sobre el mismo documento.
+            </p>
+
+            <h4 style="color: #ff00e5;">Problema 2 — "Lost in the middle"</h4>
+            <p>
+                Demostrado por Liu et al. (2023) y replicado infinitas veces: cuando el modelo recibe un contexto muy largo, tiende a recordar mejor el <strong>principio y el final</strong> que la <strong>zona central</strong>. Es una curva en forma de U.
+            </p>
+            <p>
+                En 2026 Claude Sonnet 4.6 lo mitiga bastante — en la evaluación "needle in a haystack" alcanza &gt; 99 % hasta los 200 K tokens — <strong>pero sigue existiendo</strong> cuando metes docs ruidosos, estructura pobre o múltiples documentos juntos.
+            </p>
+            <p>
+                <strong>Mitigaciones prácticas:</strong>
+            </p>
+            <ul>
+                <li>Pon la <strong>pregunta al final del prompt</strong>, nunca al principio.</li>
+                <li>Añade <strong>cabeceras claras</strong> al documento (<code>## Sección 3 — Devoluciones</code>) para que el modelo pueda "saltar" mentalmente.</li>
+                <li>Si metes varios documentos, sepáralos con marcadores: <code>&lt;doc id="manual-v2"&gt;...&lt;/doc&gt;</code>.</li>
+                <li>Si cuelga el resultado, prueba a <strong>partir el doc por la mitad</strong> y hacer dos llamadas — es el diagnóstico más barato antes de montar RAG.</li>
+            </ul>
+
+            <h4 style="color: #39ff14;">Problema 3 — Latencia</h4>
+            <p>
+                Meter 200 K tokens no es gratis en tiempo. El <em>time-to-first-token</em> con prompt cacheado baja de ~8–10 s a ~1–2 s. <strong>Sin caché</strong>, prepara a Juan para esperar unos segundos; <strong>con caché</strong>, la experiencia es casi interactiva.
+            </p>
+
+            <h3>Cuándo stuffing gana a RAG clásico (la sorpresa del módulo)</h3>
+            <p>
+                Si tu corpus cumple <strong>las tres</strong> condiciones de abajo, stuffing con prompt caching es <strong>más simple, más barato operativamente (sin infra) y a menudo igual o mejor de preciso</strong> que un RAG clásico:
+            </p>
+            <ol>
+                <li><strong>Volumen</strong> &lt; 200 K tokens (~300 páginas)</li>
+                <li><strong>Cambios</strong> poco frecuentes (el caché se aprovecha)</li>
+                <li><strong>Preguntas</strong> que requieren mirar varias partes del doc a la vez (cross-sección)</li>
+            </ol>
+            <p>
+                Esta es <strong>la trampa</strong> en la que caen los juniors: montar RAG por defecto cuando el doc cabe en el contexto. En 2026 eso cuesta tiempo, complejidad y suele dar peores respuestas.
+            </p>
+
+            <h3>Comparativa operativa</h3>
+            <table style="width: 100%; margin-top: 1em;">
+                <thead>
+                    <tr style="background: rgba(27, 94, 32, 0.2);">
+                        <th>Aspecto</th>
+                        <th>Stuffing sin caché</th>
+                        <th>Stuffing con caché</th>
+                        <th>RAG clásico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Coste 1ª query (200 pág)</strong></td>
+                        <td>~0,39 $</td>
+                        <td>~0,49 $ (escribe caché)</td>
+                        <td>~0,003 $ (solo chunks relevantes)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Coste 10ª query</strong></td>
+                        <td>~0,39 $</td>
+                        <td>~0,04 $ 🟢</td>
+                        <td>~0,003 $</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Infra</strong></td>
+                        <td>Nada 🟢</td>
+                        <td>Nada 🟢</td>
+                        <td>Vector DB + embeddings</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cross-sección</strong></td>
+                        <td>Perfecta 🟢</td>
+                        <td>Perfecta 🟢</td>
+                        <td>Depende del retrieval 🟡</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Latencia</strong></td>
+                        <td>Alta (8-10s)</td>
+                        <td>Baja (1-2s) 🟢</td>
+                        <td>Baja-media</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Lo que vale en tu CV</h3>
+            <p>
+                Saber <strong>cargar un PDF, medir tokens, activar caché y razonar "aquí stuffing es suficiente"</strong> te diferencia del 90 % de juniors que saltan a RAG por reflejo. Este es un skill de arquitectura, no de copy-paste.
+            </p>
+        </div>
+
+        <!-- Práctica Guiada -->
+        <div class="card">
+            <h2>⚙️ Práctica Guiada: un PDF de 200 páginas, con caché, y Q&amp;A real</h2>
+            <p>
+                Vamos a coger un PDF grande (un manual técnico o un paper largo), meterlo entero en un prompt de Claude y hacerle preguntas. Medimos tokens, medimos coste, activamos prompt caching y comprobamos la diferencia.
+            </p>
+
+            <h3>Paso 1: Instalar dependencias</h3>
+            <pre><code>pip install anthropic python-dotenv pypdf</code></pre>
+            <p>
+                Sigue sin haber LangChain. <code>pypdf</code> es el parser estándar y es una librería de 1 archivo, no un framework.
+            </p>
+
+            <h3>Paso 2: Conseguir un PDF grande de prueba</h3>
+            <p>
+                Si no tienes uno a mano, descárgate uno real (publicaciones abiertas):
+            </p>
+            <ul>
+                <li>Un paper largo de arXiv (muchos tienen 50-80 páginas).</li>
+                <li>El <a href="https://www.amazon.science/publications" target="_blank">informe anual de Amazon Science</a> u otra publicación corporativa.</li>
+                <li>Un libro en dominio público (Project Gutenberg → PDF).</li>
+            </ul>
+            <p>Guárdalo como <code>manual.pdf</code> en la raíz del proyecto.</p>
+
+            <h3>Paso 3: Cargar el PDF y contar tokens</h3>
+            <pre><code>import os
+from pathlib import Path
+from pypdf import PdfReader
+from anthropic import Anthropic
+from dotenv import load_dotenv
+
+load_dotenv()
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+# 1. Cargar el PDF a texto plano
+reader = PdfReader("manual.pdf")
+texto = "\n\n".join(
+    f"## Página {i+1}\n{page.extract_text() or ''}"
+    for i, page in enumerate(reader.pages)
+)
+
+print(f"Páginas extraídas: {len(reader.pages)}")
+print(f"Caracteres totales: {len(texto):,}")
+print(f"Tokens estimados (chars/4): {len(texto)//4:,}")
+
+# 2. Contar tokens exactos con el endpoint de Anthropic
+respuesta_count = client.messages.count_tokens(
+    model="claude-sonnet-4-6",
+    messages=[{"role": "user", "content": texto[:100_000]}]
+)
+print(f"Tokens reales (primeros 100K chars): {respuesta_count.input_tokens:,}")</code></pre>
+            <p>
+                Fíjate en la diferencia entre <em>estimación</em> (chars/4) y <em>tokens reales</em>. Para español suelen coincidir ± 10 %. El contador de Anthropic es la referencia.
+            </p>
+
+            <h3>Paso 4: Primera pregunta — stuffing sin caché</h3>
+            <pre><code>pregunta = "¿Cuáles son las 3 ideas principales del documento? Cita las páginas."
+
+prompt = f"""Usa SOLO la información del documento para responder. Si no está, di "no está en el documento".
+
+DOCUMENTO:
+{texto}
+
+PREGUNTA: {pregunta}"""
+
+import time
+t0 = time.time()
+resp = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": prompt}]
+)
+latencia = time.time() - t0
+
+print(resp.content[0].text)
+print(f"\n⏱️  Latencia: {latencia:.1f}s")
+print(f"📊 Tokens in: {resp.usage.input_tokens:,}  out: {resp.usage.output_tokens:,}")
+
+coste = (resp.usage.input_tokens * 3 + resp.usage.output_tokens * 15) / 1_000_000
+print(f"💸 Coste: ${coste:.4f}")</code></pre>
+
+            <h3>Paso 5: Activar prompt caching</h3>
+            <p>
+                Este es <em>el cambio</em>. El doc va en <code>system</code> con <code>cache_control</code>. Primera llamada: escribe el caché (1,25× el coste base). Siguientes llamadas en los próximos 5 min: 10× más baratas.
+            </p>
+            <pre><code># Nota: prompt caching se activa en el bloque system con cache_control
+system_con_cache = [
+    {
+        "type": "text",
+        "text": f"Eres un asistente experto en este documento. Usa SOLO el documento para responder.\n\nDOCUMENTO:\n{texto}",
+        "cache_control": {"type": "ephemeral"}
+    }
+]
+
+def preguntar_con_cache(pregunta: str):
+    t0 = time.time()
+    resp = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=1024,
+        system=system_con_cache,
+        messages=[{"role": "user", "content": pregunta}]
+    )
+    latencia = time.time() - t0
+    u = resp.usage
+    print(f"\n❓ {pregunta}")
+    print(resp.content[0].text[:300] + "...")
+    print(f"⏱️  {latencia:.1f}s  |  in: {u.input_tokens}  out: {u.output_tokens}"
+          f"  |  cache_read: {getattr(u, 'cache_read_input_tokens', 0)}"
+          f"  |  cache_write: {getattr(u, 'cache_creation_input_tokens', 0)}")
+    return resp
+
+# 1ª llamada — ESCRIBE caché (pagas 1,25× en input_tokens de la parte cacheada)
+preguntar_con_cache("Resume el documento en 5 puntos.")
+
+# 2ª, 3ª, 4ª llamadas — LEEN caché (pagas 0,1× en input_tokens de la parte cacheada)
+preguntar_con_cache("¿Menciona el documento alguna limitación o gap?")
+preguntar_con_cache("Dame 3 citas textuales que apoyen la idea principal.")</code></pre>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>💡 Observa los campos <code>cache_read_input_tokens</code> y <code>cache_creation_input_tokens</code> en el <code>usage</code>.</strong> La primera llamada tiene <code>cache_creation</code> alto y <code>cache_read</code> a cero. A partir de la segunda, se invierte. Esto es lo que quieres ver en logs de producción.
+            </div>
+
+            <h3>Paso 6: Calcula el ahorro real</h3>
+            <pre><code># Precios Claude Sonnet 4.6 (abril 2026) — verifica en docs:
+# input normal:        $3 / M tokens
+# cache write (5 min): $3.75 / M tokens (1,25×)
+# cache read:          $0.30 / M tokens (0,1×)
+# output:              $15 / M tokens
+
+def coste(u):
+    normal = (u.input_tokens or 0) * 3
+    write  = (getattr(u, "cache_creation_input_tokens", 0) or 0) * 3.75
+    read   = (getattr(u, "cache_read_input_tokens", 0) or 0) * 0.30
+    out    = (u.output_tokens or 0) * 15
+    return (normal + write + read + out) / 1_000_000
+
+# Compara tus 3 llamadas cacheadas con una llamada sin caché
+# Deberías ver que la llamada 3 cuesta ~10× menos que la 1</code></pre>
+
+            <div class="warning" style="margin-top: 1em;">
+                <strong>⚠️ Advertencia importante:</strong> el caché <strong>expira a los 5 minutos</strong> de inactividad. Si dejas una pausa larga entre preguntas, pagas la escritura otra vez. Para producción hay caché extendido (1 h) con coste distinto — míralo en la <a href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching" target="_blank">doc oficial</a>.
+            </div>
+        </div>
+
+        <!-- Mini Reto del Día -->
+        <div class="card" style="border-left: 4px solid #ff6b6b;">
+            <h2>🎯 Mini-Reto del Día: doc entero vs doc partido</h2>
+            <p><strong>Desafío:</strong> demuestra empíricamente si "lost in the middle" te afecta con tu documento.</p>
+
+            <h3>Requisitos:</h3>
+            <ol>
+                <li>Coge el mismo PDF de la práctica (idealmente &gt; 80 páginas).</li>
+                <li>Diseña una <strong>pregunta cuya respuesta esté en la página central del doc</strong> (mira tú el PDF y escoge algo concreto, que sepas que está ahí).</li>
+                <li>Haz <strong>la llamada A</strong>: stuff el doc <em>entero</em> y pregunta.</li>
+                <li>Haz <strong>la llamada B</strong>: parte el doc en 2 mitades; haz dos llamadas (una a cada mitad) y pregunta a ambas. Quédate con la respuesta no vacía.</li>
+                <li>Compara: ¿ha encontrado la respuesta en A? ¿En B? ¿Cuál ha sido más precisa, más corta, más citable?</li>
+            </ol>
+
+            <h3>Código de inicio:</h3>
+            <pre><code>import os, time
+from pathlib import Path
+from pypdf import PdfReader
+from anthropic import Anthropic
+from dotenv import load_dotenv
+
+load_dotenv()
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+reader = PdfReader("manual.pdf")
+paginas = [p.extract_text() or "" for p in reader.pages]
+n = len(paginas)
+mid = n // 2
+
+doc_entero  = "\n\n".join(f"## p.{i+1}\n{t}" for i, t in enumerate(paginas))
+doc_primera = "\n\n".join(f"## p.{i+1}\n{t}" for i, t in enumerate(paginas[:mid]))
+doc_segunda = "\n\n".join(f"## p.{i+1}\n{t}" for i, t in enumerate(paginas[mid:], start=mid))
+
+PREGUNTA = "¿Qué dice el documento sobre [ESCRIBE AQUÍ algo que esté en la zona central]?"
+
+def ask(doc, pregunta):
+    prompt = f"Usa SOLO este documento. Si no está, di 'no está'.\n\n{doc}\n\nPREGUNTA: {pregunta}"
+    r = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=800,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return r.content[0].text, r.usage
+
+print("=== A: doc entero ===")
+txt_a, u_a = ask(doc_entero, PREGUNTA)
+print(txt_a)
+print(f"tokens in/out: {u_a.input_tokens}/{u_a.output_tokens}")
+
+print("\n=== B: doc partido (mitad 1) ===")
+txt_b1, u_b1 = ask(doc_primera, PREGUNTA)
+print(txt_b1)
+
+print("\n=== B: doc partido (mitad 2) ===")
+txt_b2, u_b2 = ask(doc_segunda, PREGUNTA)
+print(txt_b2)</code></pre>
+
+            <p style="margin-top: 1em; color: #ff6b6b;"><strong>Bonus:</strong> hazlo con 3 preguntas distintas (una de la página 10, una de la página central, una de la última). Apunta cuál estrategia gana en cada caso. Eso <em>es</em> un mini-eval.</p>
+        </div>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: stuff un PDF de 200 páginas en Claude Sonnet</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí el código de los pasos 3 y 4 (carga PDF + primera pregunta sin caché)..."></textarea>
+                <label><input type="checkbox" required> He conseguido respuesta coherente sobre el contenido real del PDF</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Qué PDF usaste, cuántas páginas, cuántos tokens..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m5-c02', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="code-along">
+                <h4>📤 Entregar práctica: medir tokens y coste por llamada (con y sin caché)</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí el código del paso 5 y 6 (caching + cálculo de coste)..."></textarea>
+                <textarea id="output-ejercicio-2" rows="6" placeholder="Pega el output con tokens, cache_read, cache_creation y coste de las 3 llamadas..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="¿Cuánto bajó el coste entre la llamada 1 y la 3? ¿Y la latencia?"></textarea>
+                    <button onclick="CourseProgress.submitExercise('m5-c02', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+
+            <div class="exercise-submit" id="submit-ejercicio-3" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: comparar doc entero vs doc partido</h4>
+                <textarea id="code-ejercicio-3" rows="12" placeholder="Pega aquí el código del mini-reto..."></textarea>
+                <textarea id="output-ejercicio-3" rows="6" placeholder="Pega las 3 respuestas (A, B1, B2) y tu diagnóstico: ¿lost in the middle afectó?"></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-3" rows="2" placeholder="¿Qué estrategia ganó y por qué? ¿Recomendarías stuffing entero para tu PDF?"></textarea>
+                    <button onclick="CourseProgress.submitExercise('m5-c02', 3, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-3" class="submit-status"></div>
+            </div>
+        </section>
+
+        <hr style="margin: 2em 0; border: none; border-top: 1px solid rgba(0,240,255,0.1);">
+
+        <!-- Test de Conocimiento -->
+        <div class="card">
+            <h2>📊 Test de Conocimiento</h2>
+            <p>Responde estas 10 preguntas para consolidar lo aprendido:</p>
+
+            <div id="quiz-container"></div>
+
+            <div id="quiz-result" class="result-box" style="display: none; margin-top: 2em;">
+                <h3>Resultado Final</h3>
+                <p id="result-text"></p>
+                <div id="result-details"></div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation" style="margin-top: 3em;">
+            <a href="clase-01.html" class="btn btn-secondary">← Clase 01</a>
+            <a href="clase-03.html" class="btn btn-primary">Clase 03 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Aproximadamente cuántas páginas de PDF caben en la ventana de 200K tokens de Claude Sonnet 4.6?",
+                options: [
+                    "20-30 páginas",
+                    "280-400 páginas",
+                    "1 500 páginas",
+                    "Infinitas, no hay límite"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué es prompt caching en la API de Anthropic?",
+                options: [
+                    "Una base de datos vectorial integrada",
+                    "Un mecanismo que permite reutilizar un bloque de prompt entre llamadas, pagando ~10× menos a partir de la segunda",
+                    "Un wrapper de LangChain",
+                    "Un sistema de memoria a largo plazo entre sesiones"
+                ],
+                correct: 1
+            },
+            {
+                question: "Con prompt caching activo, la primera llamada cuesta aproximadamente:",
+                options: [
+                    "0× (es gratis)",
+                    "0,1× del coste normal",
+                    "1,25× del coste normal (se paga la escritura del caché)",
+                    "10× del coste normal"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Cuánto dura el caché 'ephemeral' por defecto?",
+                options: [
+                    "5 segundos",
+                    "5 minutos",
+                    "24 horas",
+                    "Para siempre"
+                ],
+                correct: 1
+            },
+            {
+                question: "'Lost in the middle' se refiere a:",
+                options: [
+                    "Que el modelo se pierde al llamar tools",
+                    "Que el modelo tiende a recordar peor la información que está en la zona central de contextos muy largos",
+                    "Un bug de LangChain",
+                    "Que la API deja de responder a mitad de la respuesta"
+                ],
+                correct: 1
+            },
+            {
+                question: "Regla práctica para mitigar lost in the middle con stuffing:",
+                options: [
+                    "Siempre montar RAG",
+                    "Poner la pregunta al principio del prompt",
+                    "Poner la pregunta al final del prompt y añadir cabeceras claras al documento",
+                    "Usar temperature muy alta"
+                ],
+                correct: 2
+            },
+            {
+                question: "Regla de estimación de tokens en español:",
+                options: [
+                    "1 palabra = 1 token exacto siempre",
+                    "1 token ≈ 4 caracteres; 1 página de PDF ≈ 500-700 tokens",
+                    "Los tokens no existen en español",
+                    "1 token = 10 palabras"
+                ],
+                correct: 1
+            },
+            {
+                question: "Stuffing con prompt caching GANA a RAG clásico cuando:",
+                options: [
+                    "El corpus es de millones de documentos",
+                    "El corpus cambia cada minuto",
+                    "El doc cabe en &lt;200K tokens, cambia poco y las preguntas requieren ver varias partes a la vez",
+                    "Nunca, RAG siempre gana"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Qué campo del objeto <code>usage</code> te dice cuántos tokens has leído del caché?",
+                options: [
+                    "<code>cache_hits</code>",
+                    "<code>cache_read_input_tokens</code>",
+                    "<code>total_tokens</code>",
+                    "<code>langchain_cache</code>"
+                ],
+                correct: 1
+            },
+            {
+                question: "Si tu PDF tiene 350 páginas (~200K tokens), ¿qué haces?",
+                options: [
+                    "Saltar directamente a RAG clásico con LangChain",
+                    "Probar stuffing con prompt caching primero; si sufre lost in the middle o supera la ventana, entonces escalas",
+                    "Meter el PDF en fine-tuning",
+                    "Rechazar el proyecto"
+                ],
+                correct: 1
+            }
+        ];
+
+        // Inicializar quiz
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm5-c02');
+
+        // Inicializar indicadores de envío
+        if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+            CourseProgress.initSubmissionIndicators('m5-c02');
+        }
+    </script>
+</body>
+</html>

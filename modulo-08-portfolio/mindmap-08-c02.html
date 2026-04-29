@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: GitHub Profile — Clase 02</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(27, 94, 32, 0.2);
+            border-left: 4px solid #00e676;
+            border-radius: 4px;
+        }
+
+        header h1 {
+            color: #00e676;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        header p {
+            color: #aaa;
+            font-size: 0.95em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-control {
+            padding: 10px 20px;
+            background: rgba(0, 230, 118, 0.2);
+            border: 1px solid #00e676;
+            color: #00e676;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-control:hover {
+            background: rgba(0, 230, 118, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .mindmap {
+            background: rgba(45, 45, 45, 0.6);
+            border: 1px solid #00e676;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .node {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #00e676;
+            background: rgba(0, 230, 118, 0.05);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .node:hover {
+            background: rgba(0, 230, 118, 0.15);
+            transform: translateX(5px);
+        }
+
+        .node-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #00e676;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #00e676;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+        }
+
+        .expand-btn.expanded {
+            transform: rotate(90deg);
+        }
+
+        .node-content {
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .node-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .node-content ul {
+            list-style: none;
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .node-content li {
+            color: #ccc;
+            margin: 8px 0;
+            font-size: 0.95em;
+            line-height: 1.5;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .node-content li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #00e676;
+        }
+
+        .node-content strong {
+            color: #fff;
+        }
+
+        .secondary-node {
+            margin-left: 20px;
+            margin-top: 15px;
+            padding: 12px;
+            border-left: 3px solid #00e676;
+            background: rgba(0, 230, 118, 0.03);
+        }
+
+        .secondary-node-title {
+            font-weight: 600;
+            color: #00e676;
+            margin-bottom: 6px;
+            font-size: 0.95em;
+        }
+
+        .secondary-content {
+            color: #bbb;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .tip-box {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #ffeb3b;
+        }
+
+        .tip-box strong {
+            color: #fff;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: rgba(0, 230, 118, 0.2);
+            border: 1px solid #00e676;
+            color: #00e676;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 230, 118, 0.3);
+            transform: translateX(-5px);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            padding: 20px;
+            border-top: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GitHub Profile: Bio, Pinned Repos y Contributions</h1>
+            <p>Mind map interactivo — Clase 02, Módulo 8 | Haz click en las secciones para expandir/contraer</p>
+        </header>
+
+        <div class="controls">
+            <button class="btn-control" onclick="expandAll()">Expandir Todo ▼</button>
+            <button class="btn-control" onclick="collapseAll()">Contraer Todo ▲</button>
+        </div>
+
+        <div class="mindmap">
+            <!-- Node 1: Tu GitHub ES Tu Portfolio -->
+            <div class="node">
+                <div class="node-title">
+                    🎯 Tu GitHub ES Tu Portfolio
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <ul>
+                        <li><strong>87% de hiring managers</strong> revisan tu GitHub antes de entrevista</li>
+                        <li><strong>Primera impresión digital</strong> más importante que CV</li>
+                        <li>GitHub complementa CV: <strong>demuestra habilidades reales</strong></li>
+                        <li>Un perfil GitHub bien estructurado = <strong>diferencial en procesos de selección</strong></li>
+                        <li>Los reclutadores juran más en código real que en promesas de CV</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Node 2: Foto y Bio -->
+            <div class="node">
+                <div class="node-title">
+                    📸 Foto y Bio
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Foto Profesional (Avatar)</div>
+                        <div class="secondary-content">
+                            • Consistente con LinkedIn (misma foto)<br>
+                            • Fondo limpio, buena iluminación<br>
+                            • Que se vea clara en tamaño 64x64px<br>
+                            • Sonrisa natural, profesional pero amigable
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Bio (160 caracteres max)</div>
+                        <div class="secondary-content">
+                            • Formato: [Rol] | [Top 2-3 Skills] | [Diferenciador]<br>
+                            • Ejemplo: "AI Developer | Python, FastAPI, LLMs | Building intelligent solutions"<br>
+                            • Keywords: AI, Developer, Python, React, Full-Stack<br>
+                            • Emojis permitidos pero usa solo 1-2
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Ubicación + Links</div>
+                        <div class="secondary-content">
+                            • Location: tu ciudad (búsquedas locales)<br>
+                            • Website: link a tu portfolio web<br>
+                            • Email: visible en perfil público<br>
+                            • Social: Twitter/LinkedIn (red profesional)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node 3: README del Perfil -->
+            <div class="node">
+                <div class="node-title">
+                    📄 README del Perfil (username/username)
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">¿Qué es? Repo especial</div>
+                        <div class="secondary-content">
+                            • Crear repo: username/username (ej: juanquerol/juanquerol)<br>
+                            • GitHub lo detecta automáticamente<br>
+                            • Se muestra en tu perfil como "Presentación"<br>
+                            • Visible a todos, primera impresión crucial
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Estructura Recomendada</div>
+                        <div class="secondary-content">
+                            • H1: Saludo + emoji personalizado<br>
+                            • About: 2-3 párrafos sobre quién eres<br>
+                            • Tech Stack: badges con tecnologías (shields.io)<br>
+                            • Proyectos Destacados: 3-4 con descripción<br>
+                            • GitHub Stats: gráficos de actividad<br>
+                            • Contacto: links a email, LinkedIn, Twitter
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Herramientas Útiles</div>
+                        <div class="secondary-content">
+                            • <strong>GitHub Profile README Generator:</strong> rapidg.github.io<br>
+                            • <strong>shields.io:</strong> badges personalizados<br>
+                            • <strong>readme.so:</strong> editor visual simple<br>
+                            • Markdown: headers, listas, emojis, links
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Ejemplo de Tech Stack con Badges</div>
+                        <div class="secondary-content">
+                            ![Python](https://img.shields.io/badge/Python-3776AB?...)<br>
+                            ![React](https://img.shields.io/badge/React-61DAFB?...)<br>
+                            ![FastAPI](https://img.shields.io/badge/FastAPI-009688?...)<br>
+                            ![Tailwind](https://img.shields.io/badge/Tailwind-38B2AC?...)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node 4: Pinned Repos -->
+            <div class="node">
+                <div class="node-title">
+                    📌 Pinned Repos (Máximo 6)
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Estrategia de Selección</div>
+                        <div class="secondary-content">
+                            • Mezcla: Portfolio + Open Source + Personal<br>
+                            • Orden: Los 2-3 mejores primero (recruiters no bajan)<br>
+                            • Mínimo 4 repos pinned (6 máximo)<br>
+                            • NO pinear repos vacíos o incompletos
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Tipos de Repos a Pinear</div>
+                        <div class="secondary-content">
+                            • 1-2 Portfolio: tu mejor proyecto con demo live<br>
+                            • 1-2 Open Source: contribuciones destacadas<br>
+                            • 1-2 Personal: proyectos de aprendizaje relevantes<br>
+                            • Total: 4-6, máximo variedad de skills
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">README Profesional (CADA repo)</div>
+                        <div class="secondary-content">
+                            • Título + descripción clara<br>
+                            • 📋 Tabla de contenidos<br>
+                            • 🎯 Features principales<br>
+                            • 🛠️ Tech stack usado<br>
+                            • 🚀 Cómo ejecutar (instalación + demo)<br>
+                            • 📸 Screenshot o GIF demo<br>
+                            • 📄 Licencia + Contacto
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Cómo Pinear</div>
+                        <div class="secondary-content">
+                            • Ir a tu perfil GitHub<br>
+                            • Repos: mostrar 6 pinned<br>
+                            • Click en repo → "Pin to profile"<br>
+                            • Reordenar: arrastra icons<br>
+                            • Máximo 6 (GitHub limita)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node 5: Contribution Graph -->
+            <div class="node">
+                <div class="node-title">
+                    📊 Contribution Graph
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Consistencia > Cantidad</div>
+                        <div class="secondary-content">
+                            • Verde cada día = dedicación<br>
+                            • Reclutadores valoran continuidad<br>
+                            • 1 commit/día relevante > 20 commits vacíos<br>
+                            • Semanas completas verdes impactan más
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Cómo Mantener Consistencia</div>
+                        <div class="secondary-content">
+                            • Commits: incluso cambios pequeños cuentan<br>
+                            • Dailies: problemas de CodeWars, Leetcode<br>
+                            • Proyectos personales: commit de feature/fix/doc<br>
+                            • Open Source: issues, PRs, comentarios
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Contribuciones que Cuentan</div>
+                        <div class="secondary-content">
+                            • ✅ Commits a repos propios<br>
+                            • ✅ PRs aceptados en open source<br>
+                            • ✅ Issues creados/resueltos<br>
+                            • ✅ Documentación<br>
+                            • ✅ Código review en otros repos<br>
+                            • ⚠️ Solo cuenta en repos públicos
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Impacto Visual</div>
+                        <div class="secondary-content">
+                            • Perfil con "graph verde" = comprometido<br>
+                            • Gaps visibles = abandono percibido<br>
+                            • Mes completo verde = muy atractivo<br>
+                            • GitHub Stats cardan con ésta info
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node 6: Herramientas Útiles -->
+            <div class="node">
+                <div class="node-title">
+                    🛠️ Herramientas Útiles
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">GitHub Readme Stats (anuraghazra)</div>
+                        <div class="secondary-content">
+                            • URL: github.com/anuraghazra/github-readme-stats<br>
+                            • Generador de badges con estadísticas<br>
+                            • Muestra: commits, repos, stars, contribuciones<br>
+                            • Temas: dark, vue, tokyonight<br>
+                            • Embed en README con markdown
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">GitHub Streak Stats</div>
+                        <div class="secondary-content">
+                            • github-readme-streak-stats.herokuapp.com<br>
+                            • Muestra: días consecutivos contribuyendo<br>
+                            • Motivador visual para mantener racha<br>
+                            • Tema oscuro por defecto<br>
+                            • Embed en README
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">shields.io (Badges)</div>
+                        <div class="secondary-content">
+                            • shields.io: badges personalizados<br>
+                            • Para tech stack: ![Python](https://img.shields.io...)<br>
+                            • Colores, logos, estilos customizables<br>
+                            • Popular en la comunidad dev<br>
+                            • Directo desde markdown
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">GitHub Profile README Generator</div>
+                        <div class="secondary-content">
+                            • rapidg.github.io/github-profile-readme-generator/<br>
+                            • Generador visual simple<br>
+                            • Configura: foto, bio, techs, stats<br>
+                            • Descarga markdown listo<br>
+                            • Perfecto para empezar
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node 7: Checklist -->
+            <div class="node">
+                <div class="node-title">
+                    ✅ Checklist: Perfil GitHub Completo
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <ul>
+                        <li>☐ Foto de perfil profesional (64x64px mínimo)</li>
+                        <li>☐ Bio (160 chars): [Rol | Skills | Diferenciador]</li>
+                        <li>☐ Location + Website + Email visibles</li>
+                        <li>☐ README perfil especial (username/username creado)</li>
+                        <li>☐ README con saludo, about, tech stack badges</li>
+                        <li>☐ GitHub Stats y Streak Stats embebidos</li>
+                        <li>☐ 4-6 repos pinned (mejores primero)</li>
+                        <li>☐ Cada repo pinned tiene README profesional</li>
+                        <li>☐ README repos: descripción, tech stack, cómo ejecutar, demo</li>
+                        <li>☐ Contribuciones diarias consistentes (verde)</li>
+                        <li>☐ Al menos 1 repo con actividad reciente</li>
+                        <li>☐ Perfiles en GitHub, LinkedIn y Twitter enlazados</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Node 8: Errores Comunes -->
+            <div class="node">
+                <div class="node-title">
+                    🚩 Errores Comunes & 🎯 Best Practices
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">❌ Errores Frecuentes</div>
+                        <div class="secondary-content">
+                            • Bio genérica: "Student" (sin skills)<br>
+                            • README perfil vacío o solo markdown<br>
+                            • Repos pinned sin documentación<br>
+                            • Contribution graph con gaps grandes<br>
+                            • Repos viejos/abandonados pinned<br>
+                            • Sin portfolio/demo projects visibles<br>
+                            • Links rotos en README<br>
+                            • Código de calidad mala (copy-paste del tutorial)
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">✅ Best Practices</div>
+                        <div class="secondary-content">
+                            • Bio especifica: rol + 2-3 skills principales<br>
+                            • README completo: saludo + about + tech + projects<br>
+                            • Repos documentados profesionalmente<br>
+                            • Contribuciones consistentes (verde diario)<br>
+                            • Pinear solo lo mejor (quality > quantity)<br>
+                            • Mix: personal + open source + portfolio<br>
+                            • Stats embebidos (GitHub Readme Stats)<br>
+                            • Código limpio, buenas prácticas
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <strong>💡 Conclusión:</strong> Tu GitHub es tu portfolio interactivo. Un perfil bien estructurado con README llamativo, repos documentados y contribuciones consistentes es un imán de oportunidades. Invierte 3 horas ahora: bio + README + 6 repos pinned. Reclutadores lo verán durante meses.
+        </div>
+
+        <a href="clase-02.html" class="back-btn">← Volver a Clase 02</a>
+    </div>
+
+    <footer>
+        <p>Mind Map interactivo — Clase 02, Módulo 8 | Curso IA para Juan Querol</p>
+    </footer>
+
+    <script>
+        function toggleNode(btn) {
+            const node = btn.closest('.node');
+            const content = node.querySelector('.node-content');
+
+            btn.classList.toggle('expanded');
+            content.classList.toggle('collapsed');
+        }
+
+        function expandAll() {
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach(node => {
+                const btn = node.querySelector('.expand-btn');
+                const content = node.querySelector('.node-content');
+                btn.classList.add('expanded');
+                content.classList.remove('collapsed');
+            });
+        }
+
+        function collapseAll() {
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach(node => {
+                const btn = node.querySelector('.expand-btn');
+                const content = node.querySelector('.node-content');
+                btn.classList.remove('expanded');
+                content.classList.add('collapsed');
+            });
+        }
+
+        // Start collapsed
+        document.addEventListener('DOMContentLoaded', function() {
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach(node => {
+                const btn = node.querySelector('.expand-btn');
+                const content = node.querySelector('.node-content');
+                btn.classList.remove('expanded');
+                content.classList.add('collapsed');
+            });
+        });
+    </script>
+</body>
+</html>

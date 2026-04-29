@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: Observability y Debugging de Agentes con LangSmith</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #00e676;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #00e676;
+            font-weight: 700;
+        }
+
+        .back-link {
+            color: #00b0ff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #00e676;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .branch {
+            background: #111827;
+            border-left: 4px solid #00e676;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .branch-header {
+            background: linear-gradient(135deg, #1b3a3a, #0d5a5a);
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            transition: background 0.3s;
+        }
+
+        .branch-header:hover {
+            background: linear-gradient(135deg, #0d5a5a, #1b3a3a);
+        }
+
+        .branch-header.color-01 {
+            border-left-color: #00e676;
+            background: linear-gradient(135deg, #1a3a2a, #0d5a3a);
+        }
+
+        .branch-header.color-02 {
+            border-left-color: #00b0ff;
+            background: linear-gradient(135deg, #1a3a4a, #0d3a5a);
+        }
+
+        .branch-header.color-03 {
+            border-left-color: #ff6b6b;
+            background: linear-gradient(135deg, #3a1a1a, #5a0d0d);
+        }
+
+        .branch-header.color-04 {
+            border-left-color: #ffc107;
+            background: linear-gradient(135deg, #3a3a1a, #5a5a0d);
+        }
+
+        .branch-header.color-05 {
+            border-left-color: #9c27b0;
+            background: linear-gradient(135deg, #3a1a4a, #5a0d5a);
+        }
+
+        .branch-header.color-06 {
+            border-left-color: #ff5722;
+            background: linear-gradient(135deg, #3a2a1a, #5a3a0d);
+        }
+
+        .branch-title {
+            font-weight: 600;
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+            color: #00e676;
+        }
+
+        .branch.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .branch-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .branch.expanded .branch-content {
+            max-height: 1200px;
+        }
+
+        .branch-items {
+            padding: 0.5rem 1rem 1rem 1rem;
+            background: #0f1419;
+        }
+
+        .branch-item {
+            padding: 0.6rem 0;
+            padding-left: 1rem;
+            border-left: 2px solid #333;
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .branch-item strong {
+            color: #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mind Map: Observability y Debugging de Agentes con LangSmith</h1>
+            <a href="clase-05.html" class="back-link">&larr; Volver a la Clase 05</a>
+        </div>
+
+        <div class="mindmap">
+            <!-- Branch 1: Por qué observability -->
+            <div class="branch expanded">
+                <div class="branch-header color-01">
+                    <span class="branch-title">Por qué un agente necesita observability</span>
+                    <span class="toggle-icon">&#9660;</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Caja negra peligrosa:</strong> un agente ejecuta una trayectoria multi-paso; mirar solo la respuesta final esconde fallos.</div>
+                        <div class="branch-item"><strong>Fallo 1 — Bucles:</strong> el agente llama la misma tool una y otra vez con argumentos parecidos.</div>
+                        <div class="branch-item"><strong>Fallo 2 — Tool equivocada:</strong> usa <code>buscar_web</code> cuando debería usar <code>consultar_bbdd</code> e inventa la respuesta.</div>
+                        <div class="branch-item"><strong>Fallo 3 — Tokens fugados:</strong> devuelve respuesta correcta pero se come 40k tokens innecesarios.</div>
+                        <div class="branch-item"><strong>Sin tracing no los ves.</strong> Observability = ver la trayectoria completa para cazarlos.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 2: Conceptos -->
+            <div class="branch">
+                <div class="branch-header color-02">
+                    <span class="branch-title">Conceptos clave: project, run, trace, span</span>
+                    <span class="toggle-icon">&#9660;</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Project:</strong> carpeta lógica donde agrupas runs (ej: "agente-ria-prod" vs "agente-ria-dev").</div>
+                        <div class="branch-item"><strong>Run:</strong> una ejecución completa del agente — una conversación o una llamada.</div>
+                        <div class="branch-item"><strong>Trace:</strong> el árbol de pasos de un run, con timings y tokens. Un flamegraph aplicado a tu agente.</div>
+                        <div class="branch-item"><strong>Span:</strong> cada nodo individual — una llamada LLM, un tool call, una función decorada.</div>
+                        <div class="branch-item"><strong>Mismo modelo mental</strong> que Datadog, Honeycomb, Jaeger — aplicado a LLMs.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 3: Setup -->
+            <div class="branch">
+                <div class="branch-header color-03">
+                    <span class="branch-title">Setup en 10 líneas</span>
+                    <span class="toggle-icon">&#9660;</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Cuenta + API key:</strong> smith.langchain.com → Settings → API Keys (<code>lsv2_pt_...</code>).</div>
+                        <div class="branch-item"><strong>4 env vars:</strong> <code>LANGSMITH_TRACING=true</code>, <code>LANGSMITH_API_KEY</code>, <code>LANGSMITH_PROJECT</code>, <code>ANTHROPIC_API_KEY</code>.</div>
+                        <div class="branch-item"><strong>Wrap del cliente:</strong> <code>client = wrap_anthropic(Anthropic())</code> instrumenta todas las <code>messages.create</code>.</div>
+                        <div class="branch-item"><strong>Decorador entrypoint:</strong> <code>@traceable</code> en la función principal del agente crea el span padre.</div>
+                        <div class="branch-item"><strong>Decoradores anidados:</strong> funciones auxiliares con <code>@traceable</code> aparecen como spans hijos — útil para parsing bugs disfrazados.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 4: Qué ves en un trace -->
+            <div class="branch">
+                <div class="branch-header color-04">
+                    <span class="branch-title">Qué ves en un trace de LangSmith</span>
+                    <span class="toggle-icon">&#9660;</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Waterfall:</strong> cascada horizontal donde cada barra es un span, la longitud = duración.</div>
+                        <div class="branch-item"><strong>Input y output exactos:</strong> el prompt completo enviado al modelo, no una versión truncada.</div>
+                        <div class="branch-item"><strong>Tokens in/out y coste estimado</strong> por span.</div>
+                        <div class="branch-item"><strong>Metadatos:</strong> modelo (<code>claude-sonnet-4-6</code>), temperatura, <code>stop_reason</code>.</div>
+                        <div class="branch-item"><strong>Agregados de proyecto:</strong> latencia p50/p95, coste medio por run, error rate por tool.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 5: Workflow de debugging -->
+            <div class="branch">
+                <div class="branch-header color-05">
+                    <span class="branch-title">Workflow de debugging cuando algo falla</span>
+                    <span class="toggle-icon">&#9660;</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Paso 1 — Localizar el run:</strong> filtra por proyecto, fecha y texto del input.</div>
+                        <div class="branch-item"><strong>Paso 2 — Mirar el waterfall:</strong> ¿cuántos spans? ¿dónde está la latencia? ¿falta una tool esperada?</div>
+                        <div class="branch-item"><strong>Paso 3 — Leer el prompt exacto</strong> del span LLM — casi siempre el bug está en la descripción de la tool o en el system prompt, no en el modelo.</div>
+                        <div class="branch-item"><strong>Paso 4 — Compare runs:</strong> side-by-side del run fallido vs el corregido para validar el fix.</div>
+                        <div class="branch-item"><strong>Paso 5 — Add to dataset:</strong> el input del bug se convierte en test de regresión permanente.</div>
+                        <div class="branch-item"><strong>🚩 Red flags</strong> siempre bug: misma tool 3+ veces (loop), <code>stop_reason=max_tokens</code>, tool call con input <code>{}</code>, span LLM &gt; 20 s.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 6: Datasets, experiments y alternativas -->
+            <div class="branch">
+                <div class="branch-header color-06">
+                    <span class="branch-title">De debugging a evals: datasets, experiments y alternativas</span>
+                    <span class="toggle-icon">&#9660;</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Dataset:</strong> golden set de 30-50 inputs con output esperado. Se alimenta desde traces reales con "Add to dataset".</div>
+                        <div class="branch-item"><strong>Experiment:</strong> corre tu agente contra el dataset + evaluators (funciones que devuelven un score) — el equivalente a pytest pero con LLMs.</div>
+                        <div class="branch-item"><strong>Comparar versiones:</strong> corre el mismo dataset contra v1 y v2 → tabla diff: cuántos mejoraron, cuántos empeoraron.</div>
+                        <div class="branch-item"><strong>Langfuse:</strong> alternativa europea, open-source, self-hostable. Mismo modelo mental.</div>
+                        <div class="branch-item"><strong>Arize Phoenix:</strong> open-source, habla OpenTelemetry, ideal si el stack ya usa OTel.</div>
+                        <div class="branch-item"><strong>Weave (W&amp;B):</strong> tiene sentido si el equipo ya vive en Weights &amp; Biases.</div>
+                        <div class="branch-item"><strong>Recomendación:</strong> empieza con LangSmith cloud (5 min y tracing); cambia a Langfuse/Phoenix self-hosted cuando tengas datos sensibles.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.branch-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('expanded');
+            });
+        });
+    </script>
+</body>
+</html>

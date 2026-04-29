@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss Battle: 5 Problemas Reales con Prompts — Curso IA</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Nav Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="../index.html">Dashboard</a> >
+        <a href="index.html">Módulo 2</a> >
+        <span>Boss Battle</span>
+    </nav>
+
+    <!-- Header Épico -->
+    <header>
+        <h1>🎯 Boss Battle: 5 Problemas Reales con Prompts</h1>
+        <div class="subtitle">📅 Semana 3 — Viernes | 🏆 50 XP | ⚔️ Demuestra todo lo aprendido esta semana</div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- MISIÓN -->
+        <section class="card">
+            <h2>⚔️ Misión</h2>
+            <p>
+                Esta semana has aprendido <strong>qué es la IA</strong>, <strong>cómo funcionan los LLMs</strong>, <strong>prompt engineering avanzado</strong> y <strong>modelos open source</strong>. Ahora toca demostrar que puedes resolver problemas <strong>REALES</strong> usando solo prompts — sin escribir ni una línea de código.
+            </p>
+            <p>
+                Tienes <strong>5 retos</strong>. El último debe hacerse con Ollama (modelo local).
+            </p>
+            <div class="rules-box">
+                <h3>⚙️ Reglas del juego</h3>
+                <ul>
+                    <li>Puedes usar ChatGPT, Claude o cualquier LLM (excepto el reto 5, que debe ser con Ollama)</li>
+                    <li>Guarda las conversaciones completas (prompt + respuesta)</li>
+                    <li>Para cada reto, usa <strong>al menos una técnica avanzada de prompting</strong> (CoT, few-shot, role prompting, etc.)</li>
+                    <li>Evalúa la calidad de la respuesta del 1 al 10</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- RETO 1 -->
+        <section class="card reto-box">
+            <h2>🎯 Reto 1: Analista de Negocio</h2>
+            <p>
+                Un restaurante nuevo te pide que analices si abrir en el barrio de Ruzafa (Valencia). Usando <strong>SOLO prompts</strong> (sin buscar en Google), consigue que el LLM te dé:
+            </p>
+            <ul>
+                <li>Análisis demográfico del barrio</li>
+                <li>Competencia de restaurantes</li>
+                <li>Ticket medio estimado</li>
+                <li>3 riesgos principales</li>
+                <li>Una recomendación final</li>
+            </ul>
+            <div class="technique-box">
+                <strong>💡 Técnica sugerida:</strong> Role prompting + Chain of Thought
+            </div>
+            <div class="success-criteria">
+                <strong>✓ Criterio de éxito:</strong> La respuesta debe incluir datos concretos (aunque estimados) y una recomendación argumentada.
+            </div>
+        </section>
+
+        <!-- RETO 2 -->
+        <section class="card reto-box">
+            <h2>🎯 Reto 2: Generador de Código</h2>
+            <p>
+                Necesitas una función Python que reciba una lista de pedidos (cada pedido es un diccionario con 'cliente', 'productos', 'total') y devuelva:
+            </p>
+            <ul>
+                <li>El cliente que más ha gastado</li>
+                <li>El producto más vendido</li>
+                <li>El ticket medio</li>
+            </ul>
+            <p>
+                Usa prompt engineering para que el LLM te dé código limpio, documentado y con tests.
+            </p>
+            <div class="technique-box">
+                <strong>💡 Técnica sugerida:</strong> Few-shot + output formatting (pide JSON de ejemplo primero)
+            </div>
+            <div class="success-criteria">
+                <strong>✓ Criterio de éxito:</strong> El código debe funcionar si lo copias y pegas en Python.
+            </div>
+        </section>
+
+        <!-- RETO 3 -->
+        <section class="card reto-box">
+            <h2>🎯 Reto 3: Traductor Técnico</h2>
+            <p>
+                Traduce la página 'About' de un proyecto open source del inglés al español. No una traducción literal: adapta el tono para el mercado español, mantén los términos técnicos correctos y sugiere mejoras de copywriting.
+            </p>
+            <div class="translation-box">
+                <p><strong>Texto a traducir:</strong></p>
+                <blockquote>
+                    "We're building the future of AI-powered development tools. Our platform helps developers ship faster, write better code, and focus on what matters. With over 100K developers already on board, we're just getting started. Join us and transform how you build software."
+                </blockquote>
+            </div>
+            <div class="technique-box">
+                <strong>💡 Técnica sugerida:</strong> System prompt detallado + constraints
+            </div>
+            <div class="success-criteria">
+                <strong>✓ Criterio de éxito:</strong> Traducción natural, no literal. Tono profesional pero cercano.
+            </div>
+        </section>
+
+        <!-- RETO 4 -->
+        <section class="card reto-box">
+            <h2>🎯 Reto 4: Debugger de Prompts</h2>
+            <p>
+                El siguiente prompt da malos resultados. Reescríbelo usando las técnicas aprendidas para que el output sea útil.
+            </p>
+            <div class="bad-prompt-box">
+                <p><strong>❌ Prompt malo:</strong></p>
+                <code>"dime cosas sobre hacer una app"</code>
+            </div>
+            <p>
+                <strong>Tu tarea:</strong> Reescrbirlo aplicando role prompting, contexto, constraints, formato de salida y Chain of Thought. Ejecuta ambas versiones y compara los resultados.
+            </p>
+            <div class="technique-box">
+                <strong>💡 Técnica sugerida:</strong> Aplicar TODAS las técnicas aprendidas
+            </div>
+            <div class="success-criteria">
+                <strong>✓ Criterio de éxito:</strong> El prompt mejorado debe producir una respuesta 3x más útil y específica.
+            </div>
+        </section>
+
+        <!-- RETO 5 -->
+        <section class="card reto-box">
+            <h2>🎯 Reto 5: Ollama Challenge (Modelo Local)</h2>
+            <div class="warning-box">
+                <p>⚠️ Este reto <strong>DEBE hacerse con Ollama</strong></p>
+            </div>
+            <p>
+                Usando <strong>SOLO Ollama</strong> con un modelo local (llama3.2 o phi3), crea un prompt que genere 5 preguntas de entrevista técnica para un puesto de <strong>'Junior AI Developer'</strong>. Las preguntas deben cubrir:
+            </p>
+            <ul>
+                <li>Python</li>
+                <li>APIs</li>
+                <li>LLMs</li>
+                <li>Prompt engineering</li>
+                <li>Un caso práctico</li>
+            </ul>
+            <div class="technique-box">
+                <strong>💡 Técnica sugerida:</strong> System prompt + few-shot + output formatting
+            </div>
+            <div class="success-criteria">
+                <strong>✓ Criterio de éxito:</strong> Las preguntas deben ser realistas, progresivas en dificultad y con respuestas modelo.
+            </div>
+            <div class="bonus-box">
+                <p><strong>🌟 Bonus:</strong> Compara la calidad del resultado con la misma pregunta en ChatGPT/Claude. ¿Qué diferencias notas?</p>
+            </div>
+        </section>
+
+        <!-- ENTREGA -->
+        <section class="card">
+            <h2>📋 Entrega</h2>
+            <p>
+                Para completar el Boss Battle, prepara un documento (puede ser un .md, .txt o .doc) con:
+            </p>
+            <ol>
+                <li>Los 5 prompts que usaste (versión final)</li>
+                <li>Las respuestas del LLM (resumidas si son muy largas)</li>
+                <li>Tu evaluación de cada respuesta (1-10) y por qué</li>
+                <li>Qué técnica de prompting usaste en cada reto</li>
+                <li>Reflexión final: ¿Qué has aprendido sobre cómo comunicarte con una IA?</li>
+            </ol>
+            <p>
+                <strong>Envía el documento a través del formulario de entregas o comparte el link del drive.</strong>
+            </p>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="boss-battle">
+                <h4>🎯 Entregar Boss Battle: 5 Problemas Reales con Prompts</h4>
+                <input type="url" placeholder="URL de tu repositorio en GitHub" />
+                <input type="url" placeholder="URL de deploy (si aplica)" />
+                <textarea id="code-ejercicio-1" rows="15" placeholder="Pega aquí el código más importante de tu proyecto..."></textarea>
+                <textarea rows="4" placeholder="¿Qué fue lo más difícil? ¿Qué aprendiste?"></textarea>
+                <div style="margin-top:8px;">
+                    <button onclick="CourseProgress.submitExercise('m2-bb', 1, this)" class="btn btn-green btn-submit">Entregar Boss Battle 🎯</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="card">
+            <h2>📝 Test de Conocimiento</h2>
+            <p>Demuestra que dominas los conceptos del Módulo 2. Responde correctamente para ganar XP extra.</p>
+            <div id="quiz-container"></div>
+        </section>
+    </main>
+
+    <!-- Footer Navigation -->
+    <footer class="nav-buttons">
+        <a href="clase-04.html" class="btn-nav btn-prev">← Clase 04</a>
+        <a href="index.html" class="btn-nav btn-home">Módulo 2 →</a>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Qué tipo de IA es ChatGPT?",
+                options: [
+                    "IA General (AGI)",
+                    "IA Estrecha (Narrow AI)",
+                    "Superinteligencia",
+                    "IA simbólica"
+                ],
+                correct: 1
+            },
+            {
+                question: "Un modelo con temperatura 0 producirá...",
+                options: [
+                    "Respuestas aleatorias",
+                    "Siempre la misma respuesta para el mismo prompt",
+                    "Errores",
+                    "Respuestas más largas"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es la mejor técnica para resolver un problema matemático complejo con un LLM?",
+                options: [
+                    "Zero-shot",
+                    "Few-shot",
+                    "Chain of Thought",
+                    "Role prompting"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Qué herramienta permite correr modelos de IA en tu ordenador?",
+                options: [
+                    "GitHub Copilot",
+                    "Ollama",
+                    "Vercel",
+                    "npm"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuántos tokens tiene aproximadamente la palabra 'Inteligencia'?",
+                options: [
+                    "1",
+                    "2-3",
+                    "Exactamente 5",
+                    "10"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué es few-shot prompting?",
+                options: [
+                    "Usar pocos recursos",
+                    "Dar ejemplos al modelo antes de la pregunta real",
+                    "Hacer preguntas cortas",
+                    "Usar modelos pequeños"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál NO es una buena práctica de prompting?",
+                options: [
+                    "Ser específico",
+                    "Dar contexto",
+                    "Ser vago y genérico",
+                    "Pedir formato de salida"
+                ],
+                correct: 2
+            },
+            {
+                question: "La ventana de contexto de un LLM determina...",
+                options: [
+                    "Su velocidad",
+                    "Cuánta información puede procesar a la vez",
+                    "Su precio",
+                    "Su idioma"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué ventaja tiene usar Ollama sobre una API como GPT-4o?",
+                options: [
+                    "Es siempre mejor",
+                    "Tus datos no salen de tu ordenador",
+                    "Es más rápido",
+                    "Tiene más parámetros"
+                ],
+                correct: 1
+            },
+            {
+                question: "Deep Learning es un subconjunto de...",
+                options: [
+                    "IA",
+                    "Programación",
+                    "Bases de datos",
+                    "DevOps"
+                ],
+                correct: 0
+            }
+        ];
+
+        // Inicializar quiz
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm2-bb');
+
+        // Inicializar indicadores de entrega
+        if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+            CourseProgress.initSubmissionIndicators('m2-bb');
+        }
+    </script>
+</body>
+</html>

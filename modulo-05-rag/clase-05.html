@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 05: RAG clásico como pieza — Módulo 5</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> &gt; </span>
+            <a href="index.html">Módulo 5</a>
+            <span> &gt; </span>
+            <strong>Clase 05</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 05: RAG clásico como pieza — chunking, retrieval, reranking</h1>
+            <div class="subtitle">📅 Semana 6 — Viernes | 🎬 20 min vídeo + 💻 60 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <section class="card" style="border-left: 4px solid #ffe600;">
+            <h2 class="section-title"><span class="section-icon">🎯</span> Qué vas a construir hoy</h2>
+            <p>Un <strong>pipeline RAG clásico completo</strong> de punta a punta, sobre 5 PDFs de tus apuntes. Sin LangChain. Solo Python + Anthropic SDK + ChromaDB + OpenAI embeddings. Añadirás un <strong>reranker</strong> para subir la calidad y compararás chunk sizes (400, 800, 1600 caracteres) para ver cuál gana en tu corpus.</p>
+            <div class="info" style="margin-top: 12px;">
+                <strong>🧭 Filosofía de la clase:</strong> RAG no es magia, es <em>una pieza</em> con 4 pasos claros: chunk → embed → retrieve → rerank. Hoy la construyes tú. Mañana sabrás cuándo usarla y cuándo no (clase 06).
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>📹 Vídeo principal (20 min)</h2>
+            <div class="video-wrapper">
+                <iframe width="100%" height="450" src="https://www.youtube.com/embed/tcqEUSNCn8I" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <a href="https://www.youtube.com/watch?v=tcqEUSNCn8I" target="_blank" class="btn" style="background:#ff0000;">▶ Ver en YouTube ↗</a>
+                <p style="font-size:.85em; color:#b0b0cc; margin-top:6px;">Si el reproductor de arriba sale en blanco (pasa al abrir el HTML con doble-click por política de YouTube), usa este botón.</p>
+            </div>
+            <div class="warning" style="margin-top: 12px;">
+                <strong>⚠️ Aviso v2:</strong> el vídeo usa LangChain como envoltorio. El contenido canónico de la clase es el tutorial escrito de abajo, con <strong>Anthropic SDK directo</strong>. Mira el vídeo para los conceptos (chunking, retrieval, reranking), pero implementa la parte de código siguiendo el guion de la práctica.
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — extensión de Chrome con doblaje en tiempo real.
+            </div>
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> <a href="mindmap-05-c05.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📖</span> Los 4 pasos del RAG clásico</h2>
+            <ol>
+                <li><strong>Chunk</strong> — partes tu corpus (PDF, apuntes) en trozos de ~400-1600 caracteres con solape. El tamaño <em>importa mucho</em>: muy corto pierde contexto, muy largo mete ruido.</li>
+                <li><strong>Embed</strong> — cada chunk pasa por <code>text-embedding-3-small</code> (OpenAI) y queda como vector de 1536 dimensiones. Lo guardas en ChromaDB.</li>
+                <li><strong>Retrieve</strong> — cuando llega la pregunta, la embedees y pides a Chroma los <strong>top-K</strong> chunks más parecidos (similitud coseno).</li>
+                <li><strong>Rerank</strong> — pasas los top-K (ej: K=20) por un <em>reranker</em> (modelo más potente que decide cuáles de los 20 son realmente relevantes). Te quedas con los top-N (ej: N=3) para el prompt final.</li>
+            </ol>
+            <div class="tip" style="margin-top: 12px;">
+                <strong>Reranker = filtro de precisión.</strong> El retriever es rápido pero ruidoso (mete resultados tangenciales). El reranker es lento pero preciso. Combinar ambos (retrieval amplio + rerank estricto) es la técnica estándar de RAG moderno — lo que Anthropic llama <em>contextual retrieval</em>.
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">💡</span> Por qué el chunk size cambia todo</h2>
+            <table>
+                <thead>
+                    <tr><th>Chunk size</th><th>Pros</th><th>Contras</th><th>Buen uso</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>200-400 chars</strong></td><td>Retrieval muy preciso, poco ruido</td><td>Fragmenta el contexto; frases sueltas sin sentido</td><td>FAQs, Q&amp;A cortos</td></tr>
+                    <tr><td><strong>800 chars</strong></td><td>Balance estándar, funciona bien en apuntes</td><td>Puede partir un razonamiento por la mitad</td><td>Default recomendado</td></tr>
+                    <tr><td><strong>1600-2000 chars</strong></td><td>Conserva contexto largo, razonamientos completos</td><td>Retrieval más ruidoso, más tokens al LLM</td><td>Papers, manuales técnicos</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 12px;">Hoy harás el experimento tú: con el mismo corpus, misma query, compararás los 3 tamaños y verás cuál da mejores respuestas. <strong>Este es el tipo de decisión que te hace senior.</strong></p>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ff00e5;">
+            <h2 class="section-title"><span class="section-icon">💻</span> Práctica (60 min)</h2>
+            <p>Montamos RAG clásico sobre tus apuntes. Usaremos la carpeta <code>apuntes/</code> del ejercicio anterior (clase 04). Si no la tienes, crea 3-5 ficheros <code>.txt</code> con notas tuyas (apuntes de Python, resumen de un libro, cualquier cosa).</p>
+
+            <h3>Paso 1 · Setup</h3>
+            <div class="code-block">
+                <span class="lang-label">Terminal</span>
+<pre><code>pip install anthropic openai chromadb pypdf python-dotenv
+# .env con ANTHROPIC_API_KEY y OPENAI_API_KEY</code></pre>
+            </div>
+
+            <h3>Paso 2 · Chunker con solape</h3>
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+<pre><code>from pathlib import Path
+
+def chunk_text(text: str, size: int = 800, overlap: int = 100) -&gt; list[str]:
+    """Parte en chunks con solape. Nada de LangChain."""
+    chunks = []
+    start = 0
+    while start &lt; len(text):
+        end = start + size
+        chunks.append(text[start:end])
+        start = end - overlap
+    return chunks
+
+def load_corpus(dir_path: str) -&gt; list[dict]:
+    """Carga todos los .txt como {id, source, text}."""
+    out = []
+    for p in Path(dir_path).glob("**/*.txt"):
+        raw = p.read_text(encoding="utf-8")
+        for i, ch in enumerate(chunk_text(raw)):
+            out.append({"id": f"{p.stem}_{i}", "source": p.name, "text": ch})
+    return out
+
+chunks = load_corpus("./apuntes")
+print(f"Total chunks: {len(chunks)}")</code></pre>
+            </div>
+
+            <h3>Paso 3 · Indexar en Chroma</h3>
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+<pre><code>import os, chromadb
+from openai import OpenAI
+from dotenv import load_dotenv
+load_dotenv()
+
+oai = OpenAI()
+chroma = chromadb.PersistentClient(path="./chroma")
+col = chroma.get_or_create_collection(
+    name="apuntes_rag",
+    metadata={"hnsw:space": "cosine"},
+)
+
+def embed(texts: list[str]) -&gt; list[list[float]]:
+    resp = oai.embeddings.create(model="text-embedding-3-small", input=texts)
+    return [d.embedding for d in resp.data]
+
+# Batch de 100 para no romper el límite de la API
+BATCH = 100
+for i in range(0, len(chunks), BATCH):
+    part = chunks[i:i+BATCH]
+    col.add(
+        ids=[c["id"] for c in part],
+        documents=[c["text"] for c in part],
+        embeddings=embed([c["text"] for c in part]),
+        metadatas=[{"source": c["source"]} for c in part],
+    )
+print(f"Indexados: {col.count()} chunks")</code></pre>
+            </div>
+
+            <h3>Paso 4 · Retrieve + Rerank + Answer</h3>
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+<pre><code>from anthropic import Anthropic
+client = Anthropic()
+MODEL = "claude-sonnet-4-6"
+
+def retrieve(query: str, k: int = 20) -&gt; list[dict]:
+    q_vec = embed([query])[0]
+    res = col.query(query_embeddings=[q_vec], n_results=k)
+    return [
+        {"text": d, "source": m["source"], "distance": dist}
+        for d, m, dist in zip(res["documents"][0], res["metadatas"][0], res["distances"][0])
+    ]
+
+RERANK_PROMPT = """Eres un reranker. Puntúa de 0 a 10 cuán relevante es cada fragmento para la pregunta.
+Devuelve solo JSON: [{{"i": 0, "score": 8}}, ...]
+
+Pregunta: {q}
+
+Fragmentos:
+{frags}"""
+
+def rerank(query: str, candidates: list[dict], n: int = 3) -&gt; list[dict]:
+    import json
+    frags = "\n".join([f"[{i}] {c['text'][:300]}" for i, c in enumerate(candidates)])
+    resp = client.messages.create(
+        model="claude-haiku-4-5-20251001",  # haiku = barato y rápido para rerank
+        max_tokens=1024,
+        messages=[{"role": "user", "content": RERANK_PROMPT.format(q=query, frags=frags)}],
+    )
+    scores = json.loads(resp.content[0].text)
+    ranked = sorted(scores, key=lambda s: s["score"], reverse=True)[:n]
+    return [candidates[s["i"]] for s in ranked]
+
+ANSWER_PROMPT = """Responde usando SOLO los fragmentos dados. Cita la fuente entre corchetes [fuente].
+Si la respuesta no está en los fragmentos, di "no lo sé".
+
+Pregunta: {q}
+
+Fragmentos:
+{ctx}"""
+
+def answer(query: str) -&gt; str:
+    candidates = retrieve(query, k=20)
+    top = rerank(query, candidates, n=3)
+    ctx = "\n---\n".join([f"[{c['source']}] {c['text']}" for c in top])
+    resp = client.messages.create(
+        model=MODEL,
+        max_tokens=1024,
+        messages=[{"role": "user", "content": ANSWER_PROMPT.format(q=query, ctx=ctx)}],
+    )
+    return resp.content[0].text
+
+print(answer("¿Qué dicen mis apuntes sobre context engineering?"))</code></pre>
+            </div>
+
+            <h3>Paso 5 · Mini-benchmark de chunk size</h3>
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+<pre><code># Repite el indexado 3 veces con size=[400, 800, 1600]
+# Lanza las mismas 5 preguntas a cada configuración
+# Anota a ojo cuál da mejor respuesta (esto es el preludio de evals - clase 07)
+
+SIZES = [400, 800, 1600]
+PREGUNTAS = [
+    "¿Cuándo conviene RAG sobre context stuffing?",
+    "¿Qué es tool use en Anthropic?",
+    # ... 3 más tuyas
+]
+
+# Truco: usa una colección distinta por tamaño
+#   col_400 = chroma.get_or_create_collection(f"apuntes_{size}", ...)
+# y guarda resultados en un dict {size: {pregunta: respuesta}}</code></pre>
+            </div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ffe600;">
+            <h2 class="section-title"><span class="section-icon">⚠️</span> Trampas típicas</h2>
+            <ul>
+                <li><strong>Embedear query con otro modelo distinto al del corpus</strong> — el espacio vectorial no coincide. Usa SIEMPRE el mismo <code>text-embedding-3-small</code> para ambos.</li>
+                <li><strong>Chunks sin solape</strong> — si un concepto clave está justo en el borde, lo pierdes. Siempre <code>overlap ≥ 10%</code> del size.</li>
+                <li><strong>k demasiado bajo</strong> — con k=3 sin rerank, el tercer resultado puede ser basura pero lo metes en el prompt. Mejor k=20 y rerank a 3.</li>
+                <li><strong>Rerank con el modelo grande</strong> — caro. Usa Haiku para rerank, Sonnet para la respuesta final.</li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">🧪</span> Quiz</h2>
+            <div id="quiz-container"></div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #39ff14;">
+            <h2 class="section-title"><span class="section-icon">📝</span> Ejercicios entregables</h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h3>Ejercicio 1 (A) — Pipeline RAG clásico de punta a punta</h3>
+                <p>Entrega tu script completo con los 4 pasos (chunk, embed, retrieve, rerank, answer) funcionando sobre tus apuntes. Al menos 3 preguntas respondidas con citas de fuente pegadas como comentario.</p>
+                <textarea id="code-ejercicio-1" rows="14" placeholder="# Código completo + 3 preguntas y respuestas en comentario"></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c05', 1, this)">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h3>Ejercicio 2 (B) — Probar chunking sizes + reranking</h3>
+                <p>Repite el indexado con <code>size=[400, 800, 1600]</code> y pasa 5 preguntas por cada configuración. Entrega tabla comparativa + 2-3 líneas de conclusión: ¿qué tamaño gana en TU corpus y por qué?</p>
+                <textarea id="code-ejercicio-2" rows="14" placeholder="# Código + tabla + conclusión"></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="¿Qué tamaño ganó y por qué?"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c05', 2, this)">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <div class="nav-buttons">
+            <a href="clase-04.html" class="btn btn-secondary">← Clase 04</a>
+            <a href="index.html" class="btn btn-secondary">📚 Módulo 5</a>
+            <a href="clase-06.html" class="btn">Clase 06 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es el orden correcto del pipeline RAG clásico?",
+                options: [
+                    "embed → chunk → retrieve → rerank",
+                    "chunk → embed → retrieve → rerank",
+                    "retrieve → chunk → embed → rerank",
+                    "rerank → retrieve → embed → chunk"
+                ],
+                correct: 1,
+                explanation: "Primero partes el corpus (chunk), luego lo pasas a vectores (embed), y solo entonces puedes hacer retrieval + rerank sobre una query."
+            },
+            {
+                question: "¿Por qué usamos solape (overlap) entre chunks?",
+                options: [
+                    "Para tener más chunks y cobrar más",
+                    "Para que un concepto clave en el borde no se pierda",
+                    "Es un requisito de ChromaDB",
+                    "Solo por estética"
+                ],
+                correct: 1,
+                explanation: "El solape evita que un dato importante quede cortado entre dos chunks y desaparezca del retrieval."
+            },
+            {
+                question: "¿Qué función cumple el reranker?",
+                options: [
+                    "Reemplazar al retriever",
+                    "Filtrar con más precisión los top-K ruidosos a los top-N relevantes",
+                    "Embeddear los documentos más rápido",
+                    "Guardar los chunks en ChromaDB"
+                ],
+                correct: 1,
+                explanation: "El retriever es rápido pero ruidoso (k=20). El reranker es lento pero preciso (n=3). Se combinan."
+            },
+            {
+                question: "Para rerankear 20 candidatos ¿qué modelo conviene más?",
+                options: [
+                    "Claude Opus (el más caro)",
+                    "Claude Haiku (barato y suficientemente bueno)",
+                    "GPT-4",
+                    "Un modelo local que no existe"
+                ],
+                correct: 1,
+                explanation: "Rerank es tarea simple de puntuar relevancia. Haiku 4.5 lo hace muy bien a ~10× menos coste que Sonnet."
+            },
+            {
+                question: "¿Qué pasa si embeddeas la query con un modelo distinto al del corpus?",
+                options: [
+                    "Nada, los vectores son universales",
+                    "El retrieval devuelve basura porque los espacios vectoriales no coinciden",
+                    "Mejora la precisión",
+                    "ChromaDB lo autocorrige"
+                ],
+                correct: 1,
+                explanation: "Los embeddings son específicos del modelo. Dos modelos distintos producen espacios vectoriales distintos. Siempre el MISMO modelo para query y corpus."
+            },
+            {
+                question: "¿Chunk size de 200 caracteres cuándo funciona mejor?",
+                options: [
+                    "Papers científicos largos",
+                    "Manuales técnicos",
+                    "FAQs y Q&amp;A con respuestas muy cortas",
+                    "Nunca se usa"
+                ],
+                correct: 2,
+                explanation: "Con FAQs, cada chunk coincide casi con una respuesta. En papers pierdes razonamientos completos."
+            },
+            {
+                question: "En el prompt final de respuesta, ¿por qué citamos la fuente entre corchetes?",
+                options: [
+                    "Para pedirle al usuario que pague más",
+                    "Para trazabilidad: el usuario puede verificar de dónde salió el dato",
+                    "Es un requisito de Claude",
+                    "Para hacer el prompt más largo"
+                ],
+                correct: 1,
+                explanation: "Las citas son clave para confianza. Un RAG sin citas no es auditable — y eso lo hace inútil en muchas empresas."
+            },
+            {
+                question: "¿Cuál es la principal razón para NO usar LangChain en este pipeline?",
+                options: [
+                    "Es ilegal",
+                    "Añade abstracción innecesaria sobre primitivas simples (embed, query, prompt)",
+                    "No funciona con ChromaDB",
+                    "No es compatible con Python 3.11"
+                ],
+                correct: 1,
+                explanation: "Las primitivas (embed, chroma.query, client.messages.create) son 20 líneas. LangChain envuelve esto en 500 líneas de clases que cambian cada 3 meses. Innecesario."
+            },
+            {
+                question: "¿Qué mide la distancia coseno en ChromaDB?",
+                options: [
+                    "Tamaño del chunk en bytes",
+                    "Similaridad semántica entre dos vectores (0 = idénticos, 2 = opuestos)",
+                    "Tiempo de consulta",
+                    "Número de resultados"
+                ],
+                correct: 1,
+                explanation: "Chroma devuelve distancia = 1 - similaridad coseno. Cuanto más baja, más parecidos son query y chunk."
+            },
+            {
+                question: "Tu RAG devuelve respuestas correctas pero sin citar la fuente. ¿Qué falta?",
+                options: [
+                    "Cambiar de modelo",
+                    "Pedirlo explícitamente en el prompt de answer y meter la fuente en el contexto",
+                    "Actualizar ChromaDB",
+                    "Poner más k"
+                ],
+                correct: 1,
+                explanation: "Sin instrucción explícita en el prompt + fuente visible en el contexto, el modelo no cita. Es prompt engineering básico."
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm5-c05');
+        });
+    </script>
+</body>
+</html>

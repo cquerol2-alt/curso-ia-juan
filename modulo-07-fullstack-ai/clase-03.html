@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 03: Autenticación y Límites de Uso (Rate Limiting) | Fullstack AI</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="../index.html">Dashboard</a> >
+        <a href="index.html">Módulo 7</a> >
+        <span>Clase 03</span>
+    </nav>
+
+    <main>
+        <!-- Header -->
+        <header class="course-header">
+            <h1>Clase 03: Autenticación y Límites de Uso (Rate Limiting)</h1>
+            <p class="subtitle">📅 Semana 9 — Miércoles | ⏱️ 45 minutos</p>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2>📹 Vídeo: Next.js Authentication - AuthJS / NextAuth para Seguridad basada en Roles</h2>
+            <p>En este vídeo, freeCodeCamp nos introduce a AuthJS (anteriormente NextAuth.js): cómo implementar autenticación segura en aplicaciones Next.js con soporte para múltiples proveedores (Google, GitHub, etc.) y control de acceso basado en roles.</p>
+
+            <div class="video-wrapper">
+                <iframe width="100%" height="500" src="https://www.youtube.com/embed/MNm1XhDjX1s" title="Next.js Authentication - AuthJS / NextAuth for Role-Based Security" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-07-c03.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- Resumen de Conceptos -->
+        <section class="card">
+            <h2>📚 Resumen de Conceptos</h2>
+
+            <div class="info-box">
+                <h3>¿Por qué Autenticación en una Aplicación de IA?</h3>
+                <p>Cuando construyes una app que consume APIs de IA (OpenAI, Anthropic, etc.), la autenticación es <strong>crítica</strong>:</p>
+                <ul>
+                    <li><strong>Proteger API keys:</strong> Nunca exponer claves en el cliente. Las autenticación segura evita que usuarios vean tus credenciales.</li>
+                    <li><strong>Controlar costes:</strong> Cada request a una API cuesta dinero. Sin autenticación, cualquiera puede gastar tu presupuesto.</li>
+                    <li><strong>Personalización:</strong> Conocer quién es el usuario permite guardar históricos, preferencias, contexto personal.</li>
+                    <li><strong>Cumplimiento normativo:</strong> RGPD, CCPA y otras normativas requieren identificar y proteger datos de usuarios.</li>
+                </ul>
+            </div>
+
+            <h3>Auth.js (Anteriormente NextAuth.js)</h3>
+            <div class="info-box">
+                <h4>¿Qué es?</h4>
+                <p>Auth.js es un <strong>framework de autenticación de código abierto</strong> para aplicaciones web modernas (especialmente Next.js, pero también funciona en otros stacks). Proporciona:</p>
+                <ul>
+                    <li>Autenticación con proveedores OAuth2 (Google, GitHub, Discord, etc.)</li>
+                    <li>Autenticación por Email/Contraseña</li>
+                    <li>Gestión automática de sesiones (cookies seguras)</li>
+                    <li>Middleware para proteger rutas</li>
+                    <li>Callbacks para personalizar el flujo de autenticación</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h4>¿Cómo funciona?</h4>
+                <ol>
+                    <li><strong>Usuario hace login:</strong> Selecciona un proveedor (ej: "Continuar con Google")</li>
+                    <li><strong>Redirección OAuth:</strong> Se envía a Google, el usuario autoriza, Google devuelve un token</li>
+                    <li><strong>Sesión creada:</strong> Auth.js crea una sesión segura (JWT o cookie) y la guarda en el servidor o base de datos</li>
+                    <li><strong>Cliente recibe sesión:</strong> El navegador almacena la sesión (cookie segura). Siguientes requests la incluyen automáticamente</li>
+                    <li><strong>Middleware valida:</strong> Cada request se valida; si la sesión es válida, el usuario accede; si no, se redirige a login</li>
+                </ol>
+            </div>
+
+            <div class="info-box">
+                <h4>Proveedores Soportados</h4>
+                <p>Auth.js soporta cientos de proveedores. Los más comunes:</p>
+                <ul>
+                    <li><strong>Google:</strong> El más popular. Requiere OAuth 2.0 credentials en Google Cloud Console</li>
+                    <li><strong>GitHub:</strong> Perfecto para apps de desarrolladores. Crea OAuth App en GitHub Settings</li>
+                    <li><strong>Email/Password:</strong> Autenticación tradicional. Requiere base de datos para guardar usuarios</li>
+                    <li><strong>Credenciales personalizadas:</strong> Puedes crear tu propio proveedor</li>
+                </ul>
+            </div>
+
+            <h3>Sessions vs JWT: ¿Cuándo Usar Cada Una?</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1em;">
+                <thead>
+                    <tr style="background-color: #00e676; color: #0a0a1a;">
+                        <th style="padding: 12px; text-align: left;">Aspecto</th>
+                        <th style="padding: 12px; text-align: left;">Session (Cookie)</th>
+                        <th style="padding: 12px; text-align: left;">JWT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid rgba(0, 240, 255, 0.15);">
+                        <td style="padding: 12px;"><strong>Storage</strong></td>
+                        <td style="padding: 12px;">Servidor (base de datos) + Cookie en cliente</td>
+                        <td style="padding: 12px;">Cliente (localStorage/sessionStorage)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(0, 240, 255, 0.15);">
+                        <td style="padding: 12px;"><strong>Seguridad</strong></td>
+                        <td style="padding: 12px;">✅ Más segura (no expone credenciales en cliente)</td>
+                        <td style="padding: 12px;">⚠️ Vulnerable a XSS si se guarda en localStorage</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(0, 240, 255, 0.15);">
+                        <td style="padding: 12px;"><strong>Escalabilidad</strong></td>
+                        <td style="padding: 12px;">Requiere base de datos centralizada</td>
+                        <td style="padding: 12px;">✅ Stateless, escalable sin base de datos</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(0, 240, 255, 0.15);">
+                        <td style="padding: 12px;"><strong>Revocación</strong></td>
+                        <td style="padding: 12px;">✅ Inmediata (borrar de base de datos)</td>
+                        <td style="padding: 12px;">⚠️ Difícil (token sigue siendo válido hasta expirar)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(0, 240, 255, 0.15);">
+                        <td style="padding: 12px;"><strong>Mejor para</strong></td>
+                        <td style="padding: 12px;">Apps monolíticas, Next.js, alta seguridad</td>
+                        <td style="padding: 12px;">APIs REST, microservicios, apps móviles</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="margin-top: 1em;"><strong>Recomendación para este curso:</strong> Usa <strong>Sessions</strong> con Auth.js en Next.js. Es más simple y más segura para aplicaciones fullstack.</p>
+
+            <h3>Rate Limiting: ¿Qué es y por qué es CRÍTICO en Apps de IA?</h3>
+            <div class="info-box">
+                <h4>Definición</h4>
+                <p><strong>Rate Limiting</strong> es un mecanismo que <strong>controla cuántas requests puede hacer un usuario en un período de tiempo</strong>. Por ejemplo: "máximo 100 requests por minuto".</p>
+            </div>
+
+            <div class="info-box">
+                <h4>¿Por qué es crítico?</h4>
+                <p>En aplicaciones de IA, <strong>cada request cuesta dinero</strong>:</p>
+                <ul>
+                    <li><strong>OpenAI GPT-4:</strong> $0.03 por 1K tokens de entrada</li>
+                    <li><strong>Anthropic Claude:</strong> $0.80 por 1M tokens de entrada</li>
+                    <li><strong>Google Vertex AI:</strong> Varía, pero puede ser caro si hay tráfico masivo</li>
+                </ul>
+                <p style="margin-top: 0.5em;">Sin rate limiting, un atacante podría:</p>
+                <ul>
+                    <li>Hacer 10,000 requests en 1 segundo (DoS attack)</li>
+                    <li>Gastar $10,000 en 1 minuto</li>
+                    <li>Hacer que tu servicio sea inusable para otros usuarios</li>
+                </ul>
+                <p style="margin-top: 0.5em;"><strong>Rate Limiting evita esto limitando el daño.</strong></p>
+            </div>
+
+            <h3>Estrategias de Rate Limiting</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1em;">
+                <thead>
+                    <tr style="background-color: #00e676; color: #0a0a1a;">
+                        <th style="padding: 12px; text-align: left;">Estrategia</th>
+                        <th style="padding: 12px; text-align: left;">Descripción</th>
+                        <th style="padding: 12px; text-align: left;">Ventajas</th>
+                        <th style="padding: 12px; text-align: left;">Desventajas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid rgba(0, 240, 255, 0.15);">
+                        <td style="padding: 12px;"><strong>Por Usuario</strong></td>
+                        <td style="padding: 12px;">Cada usuario tiene su cuota (ej: 1000 requests/día)</td>
+                        <td style="padding: 12px;">✅ Justo, personalizable por plan</td>
+                        <td style="padding: 12px;">⚠️ Requiere base de datos</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(0, 240, 255, 0.15);">
+                        <td style="padding: 12px;"><strong>Por IP</strong></td>
+                        <td style="padding: 12px;">Limitar por dirección IP origen</td>
+                        <td style="padding: 12px;">✅ Rápido, sin base de datos</td>
+                        <td style="padding: 12px;">⚠️ Fácil de evadir con proxies</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(0, 240, 255, 0.15);">
+                        <td style="padding: 12px;"><strong>Por API Key</strong></td>
+                        <td style="padding: 12px;">Cada app/cliente obtiene una clave con su cuota</td>
+                        <td style="padding: 12px;">✅ Flexible, seguro</td>
+                        <td style="padding: 12px;">⚠️ Requiere gestión de claves</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid rgba(0, 240, 255, 0.15);">
+                        <td style="padding: 12px;"><strong>Global</strong></td>
+                        <td style="padding: 12px;">Límite total para todo el servicio</td>
+                        <td style="padding: 12px;">✅ Muy simple</td>
+                        <td style="padding: 12px;">⚠️ Poco granular</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Upstash Rate Limit: La Solución más Popular para Serverless</h3>
+            <div class="info-box">
+                <h4>¿Qué es Upstash?</h4>
+                <p><strong>Upstash</strong> es una plataforma de base de datos Redis serverless en la nube. Su característica <strong>Rate Limiting</strong> es perfecta para:</p>
+                <ul>
+                    <li>Next.js + Vercel (integración muy simple)</li>
+                    <li>Aplicaciones sin servidor (no necesitas tu propia infraestructura)</li>
+                    <li>Control granular por usuario, IP o API key</li>
+                    <li>Rápidísimo (Redis es ultrarrápido)</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h4>Plan Gratuito</h4>
+                <p>Upstash ofrece:</p>
+                <ul>
+                    <li>10,000 comandos/día (suficiente para desarrollo)</li>
+                    <li>Database Redis gratuita</li>
+                    <li>Sin tarjeta de crédito requerida</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Práctica Guiada -->
+        <section class="card">
+            <h2>⚙️ Práctica Guiada: Autenticación + Rate Limiting en una Chat App</h2>
+
+            <div class="tip">
+                <strong>Objetivo:</strong> Crear una aplicación de chat segura que proteja tu API key, autentique usuarios y limite su uso.
+            </div>
+
+            <h3>Step 1: Instalar Auth.js</h3>
+            <div class="info-box">
+                <p>En tu proyecto Next.js 13+:</p>
+                <pre><code>npm install next-auth</code></pre>
+                <p style="margin-top: 0.5em; font-size: 0.9em; color: var(--text-muted)acc;">Auth.js ya está integrado en Next.js 13+. Si usas una versión anterior, también: <code>npm install @auth/core</code></p>
+            </div>
+
+            <h3>Step 2: Configurar Auth.js con Google OAuth</h3>
+            <div class="info-box">
+                <p>Crea <code>app/api/auth/[...nextauth]/route.ts</code>:</p>
+                <pre><code>import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+
+const handler = NextAuth({
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+  ],
+  pages: {
+    signIn: '/auth/signin',
+  },
+  callbacks: {
+    async jwt({ token, account }) {
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user.id = token.sub;
+      return session;
+    },
+  },
+});
+
+export { handler as GET, handler as POST };</code></pre>
+            </div>
+
+            <div class="warning">
+                <strong>⚠️ Credenciales de Google:</strong>
+                <ol>
+                    <li>Ve a <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a></li>
+                    <li>Crea un proyecto nuevo</li>
+                    <li>Habilita "Google+ API"</li>
+                    <li>Crea credenciales OAuth 2.0 (tipo "Web application")</li>
+                    <li>Añade Authorized Redirect URI: <code>http://localhost:3000/api/auth/callback/google</code></li>
+                    <li>Copia Client ID y Client Secret a tu <code>.env.local</code></li>
+                </ol>
+            </div>
+
+            <h3>Step 3: Crear un Middleware para Proteger Rutas</h3>
+            <div class="info-box">
+                <p>Crea <code>middleware.ts</code> en la raíz:</p>
+                <pre><code>import { withAuth } from 'next-auth/middleware';
+
+export const config = {
+  matcher: [
+    '/api/chat/:path*',  // Proteger la ruta de chat
+    '/dashboard/:path*', // Proteger el dashboard
+  ],
+};
+
+export default withAuth(function middleware(req) {
+  // El middleware deja pasar si el usuario está autenticado
+  // Si no, Auth.js automáticamente redirige a signin
+});</code></pre>
+            </div>
+
+            <h3>Step 4: Proteger la Ruta de Chat API (Solo Usuarios Autenticados)</h3>
+            <div class="info-box">
+                <p>Crea <code>app/api/chat/route.ts</code>:</p>
+                <pre><code>import { getServerSession } from 'next-auth';
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(req: NextRequest) {
+  // 1. Verificar que el usuario está autenticado
+  const session = await getServerSession();
+  if (!session || !session.user) {
+    return NextResponse.json(
+      { error: 'No autenticado' },
+      { status: 401 }
+    );
+  }
+
+  const { message } = await req.json();
+  const userId = session.user.id;
+
+  // 2. Aquí vendría el rate limiting (Step 5)
+
+  // 3. Llamar a OpenAI (API key está segura en servidor)
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: message }],
+    }),
+  });
+
+  const data = await response.json();
+  return NextResponse.json({ reply: data.choices[0].message.content });
+}</code></pre>
+            </div>
+
+            <h3>Step 5: Implementar Rate Limiting Simple (En Memoria)</h3>
+            <div class="info-box">
+                <p>Opción 1: Rate limiting básico en memoria (solo para desarrollo):</p>
+                <pre><code>// lib/rateLimit.ts
+const requestMap = new Map&lt;string, number[]&gt;();
+
+export function checkRateLimit(
+  userId: string,
+  limit: number = 10,
+  windowMs: number = 60000 // 1 minuto
+): boolean {
+  const now = Date.now();
+  const requests = requestMap.get(userId) || [];
+
+  // Filtrar requests dentro de la ventana de tiempo
+  const recentRequests = requests.filter(time => now - time < windowMs);
+
+  // Comprobar si se excedió el límite
+  if (recentRequests.length >= limit) {
+    return false; // Rate limit excedido
+  }
+
+  // Registrar nuevo request
+  recentRequests.push(now);
+  requestMap.set(userId, recentRequests);
+
+  return true; // OK
+}</code></pre>
+            </div>
+
+            <div class="info-box">
+                <p>Opción 2: Rate Limiting con Upstash (Producción):</p>
+                <pre><code>npm install @upstash/ratelimit redis
+
+// lib/rateLimit.ts
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+export const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, '1 m'), // 10 requests por minuto
+});
+
+export async function checkRateLimitUpstash(userId: string) {
+  try {
+    const { success } = await ratelimit.limit(userId);
+    return success;
+  } catch (error) {
+    console.error('Rate limit error:', error);
+    return false; // En caso de error, denegar
+  }
+}</code></pre>
+            </div>
+
+            <h3>Step 6: Combinar Auth + Rate Limit en la API</h3>
+            <div class="info-box">
+                <p>Actualiza <code>app/api/chat/route.ts</code>:</p>
+                <pre><code>import { getServerSession } from 'next-auth';
+import { checkRateLimitUpstash } from '@/lib/rateLimit';
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(req: NextRequest) {
+  // 1. Autenticación
+  const session = await getServerSession();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  // 2. Rate Limiting
+  const allowed = await checkRateLimitUpstash(session.user.id);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Límite de requests excedido. Espera 1 minuto.' },
+      { status: 429 } // Too Many Requests
+    );
+  }
+
+  const { message } = await req.json();
+
+  // 3. Llamar a OpenAI
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: message }],
+    }),
+  });
+
+  const data = await response.json();
+  return NextResponse.json({ reply: data.choices[0].message.content });
+}</code></pre>
+            </div>
+
+            <div class="info-box">
+                <h4>Variables de Entorno Necesarias:</h4>
+                <p>Crea <code>.env.local</code>:</p>
+                <pre><code>NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=aleatorio-super-secreto-cambiar-en-produccion
+
+GOOGLE_CLIENT_ID=xxxxx
+GOOGLE_CLIENT_SECRET=xxxxx
+
+OPENAI_API_KEY=sk-xxxxx
+
+UPSTASH_REDIS_REST_URL=https://xxxxx.upstash.io
+UPSTASH_REDIS_REST_TOKEN=xxxxx</code></pre>
+            </div>
+        </section>
+
+        <!-- Mini-Reto -->
+        <section class="card" style="background-color: rgba(0, 240, 255, 0.06); border-left: 4px solid #00e676;">
+            <h2>🎯 Mini-Reto: Añade GitHub OAuth + Rate Limit Más Estricto</h2>
+            <p>Amplía tu app con:</p>
+
+            <ol>
+                <li>
+                    <strong>GitHub OAuth:</strong> Añade GitHub como proveedor de autenticación (además de Google)
+                    <ul style="margin-top: 0.5em;">
+                        <li>Ve a GitHub Settings → Developer Settings → OAuth Apps</li>
+                        <li>Crea una nueva OAuth App</li>
+                        <li>Configura Auth.js con GitHubProvider</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Rate Limiting Más Estricto:</strong> Implementa un sistema de dos niveles:
+                    <ul style="margin-top: 0.5em;">
+                        <li>Free users: 5 requests/minuto</li>
+                        <li>Premium users: 100 requests/minuto</li>
+                        <li>Guarda el plan en la sesión (añade a `session` callback)</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>UI de Login:</strong> Crea una página <code>/auth/signin</code> con botones de "Continuar con Google" y "Continuar con GitHub"
+                </li>
+                <li>
+                    <strong>Dashboard:</strong> Muestra el usuario actual, su plan, y cuántos requests ha usado hoy
+                </li>
+            </ol>
+
+            <p style="margin-top: 1em;"><strong>Bonus:</strong> Implementa un "modal de aviso" que alerte al usuario cuando esté cerca de su límite (ej: "9/10 requests usados").</p>
+        </section>
+
+        <!-- Exercise Submission Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">✅</span>
+                Entrega de ejercicios
+            </h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Rate limiting y API quotas</h4>
+                <p>Implementa un sistema de rate limiting en una API Next.js que limite los requests por usuario.</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Código del middleware de rate limiting — Pega tu código aquí..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Explicación de cómo el rate limiting detecta y bloquea requests excesivos..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c03', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Rate limiting middleware</h4>
+                <p>Integra un middleware de rate limiting en toda tu aplicación y demuestra cómo protege los endpoints de abuso.</p>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Código del middleware integrado en la aplicación — Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Prueba: simula exceso de requests y muestra cómo se bloquean..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c03', 2, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Test de Conocimiento -->
+        <section class="card">
+            <h2>✅ Test de Conocimiento</h2>
+            <p>Responde las siguientes preguntas para consolidar tu aprendizaje:</p>
+
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Navegación -->
+        <nav class="clase-nav">
+            <a href="clase-02.html" class="nav-prev">← Clase 02</a>
+            <a href="clase-04.html" class="nav-next">Clase 04 →</a>
+        </nav>
+    </main>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es la razón principal por la que necesitas autenticación en una app de IA?",
+                options: [
+                    "Para hacer que la app se vea profesional",
+                    "Para proteger tus API keys y controlar costes (cada request cuesta dinero)",
+                    "Porque NextAuth.js lo obliga",
+                    "Para impresionar a los inversores"
+                ],
+                correct: 1,
+                explanation: "La autenticación es crítica en apps de IA porque: (1) protege tus credenciales, (2) cada request cuesta dinero, (3) sin límites un atacante puede gastar miles en segundos."
+            },
+            {
+                question: "¿Cuál es la diferencia entre Sessions y JWT?",
+                options: [
+                    "Sessions son más rápidas",
+                    "JWT no necesita base de datos pero es más difícil de revocar; Sessions requieren servidor pero son más seguras",
+                    "Son exactamente lo mismo",
+                    "Sessions solo funcionan con Google OAuth"
+                ],
+                correct: 1,
+                explanation: "Sessions almacenan datos en el servidor (más seguro, fácil revocar). JWT se almacena en el cliente (más escalable, pero difícil de revocar). Para Next.js + seguridad = Sessions."
+            },
+            {
+                question: "¿Por qué el Rate Limiting es CRÍTICO en apps de IA?",
+                options: [
+                    "Porque hace que la app sea más rápida",
+                    "Porque cada request a una API de IA cuesta dinero, y sin límites un atacante puede gastar miles",
+                    "Porque Google lo requiere",
+                    "No es realmente importante"
+                ],
+                correct: 1,
+                explanation: "Sin rate limiting, alguien puede hacer 10,000 requests en 1 segundo y gastar $10,000 de tu presupuesto. Rate limiting es una defensa esencial."
+            },
+            {
+                question: "¿Qué es Auth.js (NextAuth)?",
+                options: [
+                    "Una librería para autenticar con Google solamente",
+                    "Un framework de autenticación que maneja OAuth, email, sesiones y más",
+                    "Una alternativa a las contraseñas",
+                    "Un middleware de seguridad genérico"
+                ],
+                correct: 1,
+                explanation: "Auth.js es un framework completo que maneja múltiples proveedores (Google, GitHub, etc.), sesiones, cookies seguras, y callbacks personalizables."
+            },
+            {
+                question: "¿Dónde deben estar almacenadas las API keys de OpenAI en una app segura?",
+                options: [
+                    "En variables JavaScript del cliente",
+                    "En archivos .env públicos en GitHub",
+                    "En variables de entorno del servidor (.env.local no versionado)",
+                    "En localStorage del navegador"
+                ],
+                correct: 2,
+                explanation: "NUNCA expongas API keys en el cliente. Úsalas solo en el servidor en variables .env.local (no en Git). Auth.js + API route protegida es el patrón."
+            },
+            {
+                question: "¿Qué es Upstash y cuándo lo usarías?",
+                options: [
+                    "Una librería para rate limiting que solo funciona en Node.js",
+                    "Un servicio Redis serverless que es perfecto para rate limiting en Next.js + Vercel",
+                    "Una alternativa a Google OAuth",
+                    "Un modelo de IA"
+                ],
+                correct: 1,
+                explanation: "Upstash proporciona Redis serverless en la nube, perfecto para rate limiting sin mantener tu propia infraestructura. Integración directa con Vercel."
+            },
+            {
+                question: "¿Cuál es el paso correcto para proteger una ruta API en Next.js con Auth.js?",
+                options: [
+                    "Usar un middleware que bloquee todas las requests",
+                    "Llamar a getServerSession() y comprobar que existe sesión válida",
+                    "Confiar en que el navegador solo envía requests autenticadas",
+                    "Usar contraseñas en texto plano"
+                ],
+                correct: 1,
+                explanation: "En cada ruta API que necesites proteger, llama a getServerSession(). Si no existe sesión válida, devuelve 401 Unauthorized."
+            },
+            {
+                question: "¿Qué código HTTP devuelves cuando el usuario excede su rate limit?",
+                options: [
+                    "401 Unauthorized",
+                    "403 Forbidden",
+                    "429 Too Many Requests",
+                    "500 Internal Server Error"
+                ],
+                correct: 2,
+                explanation: "429 Too Many Requests es el código específico para rate limiting. 401 es para no autenticados, 403 para permisos insuficientes."
+            },
+            {
+                question: "¿Cuál es la diferencia entre Rate Limiting por Usuario y por IP?",
+                options: [
+                    "Por usuario es obsoleto",
+                    "Por usuario es más justo (cada cuenta tiene su cuota) pero requiere DB; por IP es rápido pero fácil de evadir",
+                    "Son idénticos",
+                    "Por IP es más seguro"
+                ],
+                correct: 1,
+                explanation: "Por usuario: justo, granular, requiere autenticación. Por IP: rápido, sin DB, pero se puede evadir con proxies/VPNs."
+            },
+            {
+                question: "En el código de ejemplo, ¿cuál es el orden correcto de verificaciones en una ruta de chat protegida?",
+                options: [
+                    "Llamar a OpenAI → Autenticar → Rate limit",
+                    "Autenticar → Rate limit → Llamar a OpenAI",
+                    "Rate limit → Autenticar → Llamar a OpenAI",
+                    "El orden no importa"
+                ],
+                correct: 1,
+                explanation: "Orden correcto: 1) Verificar sesión (no perder tiempo si no autenticado). 2) Rate limiting. 3) Operación costosa (OpenAI). Así optimizas recursos."
+            }
+        ];
+
+        // Inicializar quiz
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm7-c03');
+        if (typeof CourseProgress !== 'undefined') {
+            CourseProgress.initSubmissionIndicators('m7-c03');
+        }
+    </script>
+</body>
+</html>

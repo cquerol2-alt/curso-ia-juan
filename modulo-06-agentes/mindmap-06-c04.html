@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: LangGraph - Agentes con Estado</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #00e676;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #00e676;
+            font-weight: 700;
+        }
+
+        .back-link {
+            color: #00b0ff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #00e676;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .branch {
+            background: #111827;
+            border-left: 4px solid #00e676;
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .branch-header {
+            background: linear-gradient(135deg, #1b3a3a, #0d5a5a);
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            transition: background 0.3s;
+        }
+
+        .branch-header:hover {
+            background: linear-gradient(135deg, #0d5a5a, #1b3a3a);
+        }
+
+        .branch-header.color-01 {
+            border-left-color: #00e676;
+            background: linear-gradient(135deg, #1a3a2a, #0d5a3a);
+        }
+
+        .branch-header.color-02 {
+            border-left-color: #00b0ff;
+            background: linear-gradient(135deg, #1a3a4a, #0d3a5a);
+        }
+
+        .branch-header.color-03 {
+            border-left-color: #ff6b6b;
+            background: linear-gradient(135deg, #3a1a1a, #5a0d0d);
+        }
+
+        .branch-header.color-04 {
+            border-left-color: #ffc107;
+            background: linear-gradient(135deg, #3a3a1a, #5a5a0d);
+        }
+
+        .branch-header.color-05 {
+            border-left-color: #9c27b0;
+            background: linear-gradient(135deg, #3a1a4a, #5a0d5a);
+        }
+
+        .branch-header.color-06 {
+            border-left-color: #ff5722;
+            background: linear-gradient(135deg, #3a2a1a, #5a3a0d);
+        }
+
+        .branch-header.color-07 {
+            border-left-color: #00e5ff;
+            background: linear-gradient(135deg, #1a3a4a, #0d5a5a);
+        }
+
+        .branch-header.color-08 {
+            border-left-color: #69f0ae;
+            background: linear-gradient(135deg, #1a3a2a, #0d5a3a);
+        }
+
+        .branch-title {
+            font-weight: 600;
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+            color: #00e676;
+        }
+
+        .branch.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .branch-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .branch.expanded .branch-content {
+            max-height: 1000px;
+        }
+
+        .branch-items {
+            padding: 0.5rem 1rem 1rem 1rem;
+            background: #0f1419;
+        }
+
+        .branch-item {
+            padding: 0.6rem 0;
+            padding-left: 1rem;
+            border-left: 2px solid #333;
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .branch-item strong {
+            color: #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mind Map: LangGraph — Agentes con Estado</h1>
+            <a href="clase-04.html" class="back-link">← Volver a la Clase 04</a>
+        </div>
+
+        <div class="mindmap">
+            <!-- Branch 1 -->
+            <div class="branch expanded">
+                <div class="branch-header color-01">
+                    <span class="branch-title">LangGraph</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Qué es:</strong> Framework para construir agentes con estado persistente</div>
+                        <div class="branch-item"><strong>Cómo:</strong> Define nodos (funciones) y aristas (transiciones) en un grafo</div>
+                        <div class="branch-item"><strong>Cuándo usar:</strong> Agentes complejos, flujos condicionados, human-in-the-loop</div>
+                        <div class="branch-item"><strong>Ventaja:</strong> Control explícito del flujo, debugging más fácil</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 2 -->
+            <div class="branch">
+                <div class="branch-header color-02">
+                    <span class="branch-title">Conceptos Clave</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>State:</strong> Objeto que fluye por el grafo, contiene contexto</div>
+                        <div class="branch-item"><strong>Node:</strong> Función que procesa el state y lo modifica</div>
+                        <div class="branch-item"><strong>Edge:</strong> Conexión entre nodos, define flujo secuencial</div>
+                        <div class="branch-item"><strong>Conditional Edge:</strong> Decide siguiendo nodo basado en state</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 3 -->
+            <div class="branch">
+                <div class="branch-header color-03">
+                    <span class="branch-title">StateGraph</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>TypedDict:</strong> Esquema Python que define estructura del state</div>
+                        <div class="branch-item"><strong>Campos:</strong> messages (list), tools_called (dict), result (str), etc.</div>
+                        <div class="branch-item"><strong>Shared State:</strong> Todos los nodos acceden al mismo state</div>
+                        <div class="branch-item"><strong>Actualizaciones:</strong> Cada nodo retorna cambios parciales que se mergean</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 4 -->
+            <div class="branch">
+                <div class="branch-header color-04">
+                    <span class="branch-title">Nodos</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Funciones Python:</strong> Reciben state, retornan cambios</div>
+                        <div class="branch-item"><strong>Firma:</strong> def my_node(state: AgentState) → dict</div>
+                        <div class="branch-item"><strong>Dentro:</strong> Lógica arbitraria, llamadas LLM, tools, etc.</div>
+                        <div class="branch-item"><strong>Retorno:</strong> Dict con claves que actualizan el state</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 5 -->
+            <div class="branch">
+                <div class="branch-header color-05">
+                    <span class="branch-title">Routing (Conditional Edges)</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Función:</strong> Examina state y decide siguiente nodo</div>
+                        <div class="branch-item"><strong>should_continue:</strong> ¿Hay tool_calls? → "tools" : "end"</div>
+                        <div class="branch-item"><strong>Sintaxis:</strong> add_conditional_edges(source_node, routing_fn, path_map)</div>
+                        <div class="branch-item"><strong>Ejemplo:</strong> Si state["messages"][-1].tool_calls → nodo "execute_tools"</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 6 -->
+            <div class="branch">
+                <div class="branch-header color-06">
+                    <span class="branch-title">Patrón ReAct</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Reason:</strong> Nodo LLM piensa y decide qué tool usar</div>
+                        <div class="branch-item"><strong>Act:</strong> Nodo ejecuta la tool y captura resultado</div>
+                        <div class="branch-item"><strong>Observe:</strong> Resultado se añade al state (messages)</div>
+                        <div class="branch-item"><strong>Loop:</strong> Si hay más tool_calls → vuelve a Reason</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 7 -->
+            <div class="branch">
+                <div class="branch-header color-07">
+                    <span class="branch-title">Checkpointing</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Guardar Estado:</strong> LangGraph puede persistir snapshots</div>
+                        <div class="branch-item"><strong>Reanudar:</strong> Reiniciar desde checkpoint anterior</div>
+                        <div class="branch-item"><strong>Caso Uso:</strong> Investigación larga, debugging, auditoría</div>
+                        <div class="branch-item"><strong>Storage:</strong> Memory, SQLite, PostgreSQL, Redis, etc.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branch 8 -->
+            <div class="branch">
+                <div class="branch-header color-08">
+                    <span class="branch-title">Human-in-the-Loop</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="branch-content">
+                    <div class="branch-items">
+                        <div class="branch-item"><strong>Interrupciones:</strong> Pausar en ciertos nodos (e.g., antes de ejecutar tool)</div>
+                        <div class="branch-item"><strong>Aprobación Manual:</strong> Humano revisa y aprueba antes de continuar</div>
+                        <div class="branch-item"><strong>Seguridad:</strong> Evita acciones peligrosas (borrar, enviar email)</div>
+                        <div class="branch-item"><strong>Sintaxis:</strong> add_node(..., interrupt_before=True)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.branch-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const branch = this.closest('.branch');
+                branch.classList.toggle('expanded');
+            });
+        });
+    </script>
+</body>
+</html>

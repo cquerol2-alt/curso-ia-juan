@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 03: Condicionales, Bucles y Comprensiones | Python para Devs Web</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb">
+        <a href="../index.html">Dashboard</a>
+        <span>/</span>
+        <a href="index.html">Módulo 1</a>
+        <span>/</span>
+        <span>Clase 03</span>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="course-header">
+            <h1>Clase 03: Condicionales, Bucles y Comprensiones</h1>
+            <p class="meta">Semana 1 — Miércoles | 🎬 30 min + 💻 50 min + 🧪 15 min</p>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+
+            <!-- Video Section -->
+            <section class="card">
+                <h2 class="section-title">🎬 Vídeo de la clase</h2>
+                <div class="video-wrapper">
+                    <iframe width="100%" height="500" src="https://www.youtube.com/embed/rfscVS0vtbw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+                <div class="info">
+                    <strong>📍 Nota:</strong> Ve desde <strong>2:00:00</strong> hasta <strong>3:00:00</strong> para esta clase.
+                </div>
+            </section>
+
+            <!-- Summary Section -->
+            <section class="card">
+                <h2 class="section-title"><span class="section-icon">📖</span> Resumen de conceptos</h2>
+                    <h3>Condicionales: if, elif, else</h3>
+                    <p>En Python, las condicionales se basan en <strong>indentación</strong>, no en llaves como en JavaScript:</p>
+                    <div class="code-block">
+<pre><code>edad = 18
+
+if edad >= 18:
+    print("Eres mayor de edad")
+elif edad >= 13:
+    print("Eres adolescente")
+else:
+    print("Eres menor")</code></pre>
+                    </div>
+                    <div class="tip">💡 <strong>Diferencia clave con JS:</strong> No hay llaves <code>{}</code>, la indentación es obligatoria y parte de la sintaxis.</div>
+
+                    <h3>Bucles: for y while</h3>
+                    <p><strong>Bucle for:</strong> Itera sobre secuencias (listas, tuplas, strings, rangos).</p>
+                    <div class="code-block">
+<pre><code># Iterar sobre un rango
+for i in range(5):
+    print(i)  # 0, 1, 2, 3, 4
+
+# Iterar sobre una lista
+colores = ["rojo", "verde", "azul"]
+for color in colores:
+    print(color)
+
+# Con enumerate() para obtener índice
+for idx, color in enumerate(colores):
+    print(f"{idx}: {color}")</code></pre>
+                    </div>
+
+                    <p><strong>Bucle while:</strong> Ejecuta mientras se cumpla la condición.</p>
+                    <div class="code-block">
+<pre><code>contador = 0
+while contador < 5:
+    print(contador)
+    contador += 1</code></pre>
+                    </div>
+
+                    <h3>range(): generador de secuencias</h3>
+                    <p><code>range()</code> crea una secuencia inmutable de números:</p>
+                    <div class="code-block">
+<pre><code>range(5)           # 0, 1, 2, 3, 4
+range(1, 6)        # 1, 2, 3, 4, 5
+range(0, 10, 2)    # 0, 2, 4, 6, 8 (paso 2)</code></pre>
+                    </div>
+
+                    <h3>enumerate(): índice + valor</h3>
+                    <p>Obtén tanto el índice como el valor sin usar variables adicionales:</p>
+                    <div class="code-block">
+<pre><code>estudiantes = ["Ana", "Bruno", "Clara"]
+for i, nombre in enumerate(estudiantes):
+    print(f"{i+1}. {nombre}")
+# 1. Ana
+# 2. Bruno
+# 3. Clara</code></pre>
+                    </div>
+
+                    <h3>List Comprehensions: crear listas de forma elegante</h3>
+                    <p>Construye listas en una sola línea. <strong>¡Esto NO existe en JavaScript!</strong></p>
+                    <div class="code-block">
+<pre><code># Básica: elevar al cuadrado
+numeros = [1, 2, 3, 4, 5]
+cuadrados = [x**2 for x in numeros]
+# [1, 4, 9, 16, 25]
+
+# Con condición: solo pares
+pares = [x for x in numeros if x % 2 == 0]
+# [2, 4]
+
+# Transformación + condición
+resultado = [x*2 for x in numeros if x > 2]
+# [6, 8, 10]</code></pre>
+                    </div>
+
+                    <h3>Dict Comprehensions: crear diccionarios</h3>
+                    <p>Mismo concepto que list comprehensions, pero para diccionarios:</p>
+                    <div class="code-block">
+<pre><code>numeros = [1, 2, 3, 4, 5]
+# {número: cuadrado}
+cuadrados_dict = {x: x**2 for x in numeros}
+# {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+
+# Con condición: solo pares
+pares_dict = {x: x**2 for x in numeros if x % 2 == 0}
+# {2: 4, 4: 16}</code></pre>
+                    </div>
+
+                    <h3>Comparativa Python vs JavaScript</h3>
+                    <table>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Python</th>
+                            <th>JavaScript</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Sintaxis</strong></td>
+                            <td>Indentación obligatoria</td>
+                            <td>Llaves {}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>range()</strong></td>
+                            <td>range(1, 6)</td>
+                            <td>Array.from({length: 5}, (_, i) => i+1)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Comprensiones</strong></td>
+                            <td>✅ [x**2 for x in lista]</td>
+                            <td>❌ No existen nativamente</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Alternativa en JS</strong></td>
+                            <td>—</td>
+                            <td>lista.map(x => x**2)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>enumerate()</strong></td>
+                            <td>✅ for i, v in enumerate(lista)</td>
+                            <td>❌ for (let [i, v] of lista.entries())</td>
+                        </tr>
+                    </table>
+            </section>
+
+            <!-- Guided Practice Section -->
+            <section class="card">
+                <h2 class="section-title"><span class="section-icon">💻</span> Práctica guiada</h2>
+                    <h3>Ejercicio 1: Validar edad con condicionales</h3>
+                    <p>Escribe una función que valide la edad y devuelva un mensaje:</p>
+                    <div class="code-block">
+<pre><code>def validar_edad(edad):
+    if edad < 0:
+        return "Edad inválida"
+    elif edad < 13:
+        return "Eres un niño"
+    elif edad < 18:
+        return "Eres adolescente"
+    else:
+        return "Eres adulto"
+
+print(validar_edad(25))  # "Eres adulto"</code></pre>
+                    </div>
+
+                    <h3>Ejercicio 2: Bucle for con range()</h3>
+                    <p>Imprime la tabla de multiplicar del 3:</p>
+                    <div class="code-block">
+<pre><code>numero = 3
+for i in range(1, 11):
+    print(f"{numero} x {i} = {numero * i}")
+# 3 x 1 = 3
+# 3 x 2 = 6
+# ...</code></pre>
+                    </div>
+
+                    <h3>Ejercicio 3: List comprehension con filtro</h3>
+                    <p>Extrae solo los números mayores de 10 y dóblalos:</p>
+                    <div class="code-block">
+<pre><code>numeros = [5, 12, 8, 15, 20, 3, 18]
+resultado = [x * 2 for x in numeros if x > 10]
+print(resultado)  # [24, 30, 40, 36]</code></pre>
+                    </div>
+
+                    <h3>Ejercicio 4: Dict comprehension con enumerate()</h3>
+                    <p>Crea un diccionario con posición como clave y valor al cuadrado:</p>
+                    <div class="code-block">
+<pre><code>valores = [2, 4, 6, 8]
+resultado = {i: v**2 for i, v in enumerate(valores)}
+print(resultado)  # {0: 4, 1: 16, 2: 36, 3: 64}</code></pre>
+                    </div>
+
+                    <h3>Ejercicio 5: Bucle while con contador</h3>
+                    <p>Suma números del 1 al 10:</p>
+                    <div class="code-block">
+<pre><code>suma = 0
+i = 1
+while i <= 10:
+    suma += i
+    i += 1
+print(f"La suma es: {suma}")  # 55</code></pre>
+                    </div>
+            </section>
+
+            <!-- Mini Challenge Section -->
+            <section class="card">
+                <h2 class="section-title"><span class="section-icon">🧪</span> Mini-reto: FizzBuzz con comprensiones</h2>
+
+                <div class="reto-box">
+                    <h3>El clásico FizzBuzz, versión Python elegante</h3>
+                    <p><strong>Reglas:</strong></p>
+                    <ul>
+                        <li>Números del 1 al 100</li>
+                        <li>Si múltiplo de 3 → "Fizz"</li>
+                        <li>Si múltiplo de 5 → "Buzz"</li>
+                        <li>Si múltiplo de ambos → "FizzBuzz"</li>
+                        <li>Si no → el número</li>
+                    </ul>
+
+                    <h4>Solución con list comprehension:</h4>
+                    <div class="code-block">
+<pre><code>fizzbuzz = [
+    "FizzBuzz" if i % 15 == 0 else
+    "Fizz" if i % 3 == 0 else
+    "Buzz" if i % 5 == 0 else
+    i
+    for i in range(1, 101)
+]
+
+# Imprime los primeros 20
+for item in fizzbuzz[:20]:
+    print(item)</code></pre>
+                    </div>
+
+                    <h4>Solución con bucle tradicional:</h4>
+                    <div class="code-block">
+<pre><code>for i in range(1, 101):
+    if i % 15 == 0:
+        print("FizzBuzz")
+    elif i % 3 == 0:
+        print("Fizz")
+    elif i % 5 == 0:
+        print("Buzz")
+    else:
+        print(i)</code></pre>
+                    </div>
+
+                    <div class="info">💡 Ambas funcionan. Elige la que te parezca más legible. En producción, la versión con bucle es más clara para otros desarrolladores.</div>
+            </section>
+
+            <!-- Test Section -->
+            <section class="card">
+                <h2 class="section-title"><span class="section-icon">📝</span> Test de conocimiento</h2>
+
+                <div id="quiz-container" class="quiz-container"></div>
+            </section>
+
+            <!-- Navigation -->
+            <nav class="clase-nav">
+                <div class="nav-links">
+                    <a href="clase-02.html" class="btn">← Clase 02</a>
+                    <a href="index.html" class="btn">Volver al Módulo</a>
+                    <a href="clase-04.html" class="btn btn-green">Clase 04 →</a>
+                </div>
+            </nav>
+        </main>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = [
+                {
+                    question: '¿Cuál es la salida de este código?<br><code>for i in range(3):<br>&nbsp;&nbsp;&nbsp;&nbsp;print(i)</code>',
+                    options: ['0, 1, 2', '1, 2, 3', '0, 1, 2, 3', 'Error'],
+                    correct: 0
+                },
+                {
+                    question: '¿Qué devuelve <code>list(range(2, 8, 2))</code>?',
+                    options: ['[2, 4, 6, 8]', '[2, 4, 6]', '[1, 2, 3, 4]', '[2, 3, 4, 5, 6, 7]'],
+                    correct: 1
+                },
+                {
+                    question: '¿Cuál es la salida de esta list comprehension?<br><code>resultado = [x*2 for x in [1, 2, 3] if x > 1]</code>',
+                    options: ['[2, 4, 6]', '[4, 6]', '[2, 3]', 'Error'],
+                    correct: 1
+                },
+                {
+                    question: '¿Qué diferencia principal hay entre Python y JavaScript respecto a las comprehensions?',
+                    options: ['Python no tiene comprehensions', 'JavaScript tiene comprehensions nativas, Python no', 'Python tiene comprehensions nativas, JavaScript no', 'Son idénticas en ambos lenguajes'],
+                    correct: 2
+                },
+                {
+                    question: '¿Qué imprime este código?<br><code>for i, letra in enumerate(["a", "b", "c"]):<br>&nbsp;&nbsp;&nbsp;&nbsp;print(i, letra)</code>',
+                    options: ['a, b, c', '0 a, 1 b, 2 c', '1 a, 2 b, 3 c', 'Error'],
+                    correct: 1
+                },
+                {
+                    question: '¿Cuál es la salida de este código?<br><code>edad = 15<br>if edad >= 18:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("Mayor")<br>elif edad >= 13:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("Adolescente")<br>else:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("Menor")</code>',
+                    options: ['Mayor', 'Adolescente', 'Menor', 'Error'],
+                    correct: 1
+                },
+                {
+                    question: '¿Qué crea esta dict comprehension?<br><code>{x: x**2 for x in [1, 2, 3]}</code>',
+                    options: ['{1: 1, 2: 2, 3: 3}', '{1: 1, 2: 4, 3: 9}', '[1, 4, 9]', 'Error'],
+                    correct: 1
+                },
+                {
+                    question: '¿Cuántas veces se ejecuta este bucle?<br><code>i = 0<br>while i < 5:<br>&nbsp;&nbsp;&nbsp;&nbsp;print(i)<br>&nbsp;&nbsp;&nbsp;&nbsp;i += 2</code>',
+                    options: ['3 veces (0, 2, 4)', '5 veces', 'Infinito', '2 veces'],
+                    correct: 0
+                },
+                {
+                    question: '¿Cuál es el resultado de esta list comprehension con filtro?<br><code>[i for i in range(10) if i % 2 == 0]</code>',
+                    options: ['[0, 2, 4, 6, 8]', '[1, 3, 5, 7, 9]', '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]', 'Error'],
+                    correct: 0
+                },
+                {
+                    question: 'En Python, ¿qué define dónde termina un bloque de código?',
+                    options: ['Las llaves {}', 'La palabra clave "end"', 'La indentación', 'Un punto y coma ;'],
+                    correct: 2
+                }
+            ];
+
+            CourseProgress.initQuiz('quiz-container', questions, 'm1-c03');
+            if (CourseProgress.initSubmissionIndicators) {
+                CourseProgress.initSubmissionIndicators('m1-c03');
+            }
+        });
+    </script>
+</body>
+</html>

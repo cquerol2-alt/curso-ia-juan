@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 07: Evals — Ragas + LLM-as-judge | Módulo 5</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> &gt; </span>
+            <a href="index.html">Módulo 5</a>
+            <span> &gt; </span>
+            <strong>Clase 07</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 07: Evals — cómo mides si tu sistema responde bien</h1>
+            <div class="subtitle">📅 Semana 7 — Miércoles | 🎬 25 min vídeo + 💻 60 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <section class="card" style="border-left: 4px solid #ffe600;">
+            <h2 class="section-title"><span class="section-icon">🎯</span> Qué vas a construir hoy</h2>
+            <p>Una <strong>suite de evals</strong> para tu sistema RAG con dos aproximaciones complementarias: <strong>Ragas</strong> (métricas automáticas específicas para RAG) y <strong>LLM-as-judge</strong> hecho a mano con Haiku 4.5. Al final sabrás medir <em>faithfulness</em>, <em>answer relevancy</em> y <em>context precision</em> de forma reproducible — sin opiniones.</p>
+            <div class="info" style="margin-top: 12px;">
+                <strong>🧭 Filosofía:</strong> sin evals, cada cambio en tu sistema es un <em>vibe check</em>. Con evals, cada cambio es un experimento con número. Esta es la diferencia entre un prototipo y un producto.
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>📹 Vídeo principal (25 min)</h2>
+            <div class="video-wrapper">
+                <iframe width="100%" height="450" src="https://www.youtube.com/embed/uVxmUzc5TeE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <a href="https://www.youtube.com/watch?v=uVxmUzc5TeE" target="_blank" class="btn" style="background:#ff0000;">▶ Ver en YouTube ↗</a>
+                <p style="font-size:.85em; color:#b0b0cc; margin-top:6px;">Si el reproductor sale en blanco, usa este botón.</p>
+            </div>
+            <div class="warning" style="margin-top: 12px;">
+                <strong>⚠️ Aviso v2:</strong> el vídeo muestra Ragas integrado con LangChain. En este curso usamos Ragas <em>directamente</em> con el pipeline Anthropic SDK + ChromaDB de la clase 05. Mira el vídeo por las métricas y la metodología, salta la parte de LangChain.
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📖</span> Las 3 métricas Ragas que importan</h2>
+            <table>
+                <thead>
+                    <tr><th>Métrica</th><th>Qué mide</th><th>Cómo interpretarla</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Faithfulness</strong></td>
+                        <td>¿La respuesta está respaldada por los chunks recuperados? Penaliza <em>hallucination</em>.</td>
+                        <td>&lt;0.7 = el modelo inventa. 0.9+ = fiel al contexto.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Answer Relevancy</strong></td>
+                        <td>¿La respuesta <em>responde</em> la pregunta (vs divagar)?</td>
+                        <td>&lt;0.6 = el modelo se va por las ramas. 0.8+ = directa.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Context Precision</strong></td>
+                        <td>¿Los chunks recuperados son realmente relevantes? Evalúa el <em>retriever</em>, no el LLM.</td>
+                        <td>&lt;0.5 = chunking malo o reranker ausente. 0.8+ = retriever sólido.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="tip" style="margin-top: 12px;">
+                Ragas internamente llama a un LLM para estimar cada métrica (descompone en claims, comprueba cobertura, etc.). Por eso ejecutar evals <strong>cuesta dinero</strong> — presupuéstalo.
+            </div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ff00e5;">
+            <h2 class="section-title"><span class="section-icon">💻</span> Práctica: tu suite de evals (60 min)</h2>
+            <p>Partimos del pipeline RAG de la clase 05. Construimos un dataset de evaluación, corremos Ragas, y comparamos con un LLM-as-judge propio hecho con Haiku.</p>
+
+            <h3>Paso 1 · Dataset de evaluación con ground truth</h3>
+            <div class="code-block">
+                <span class="lang-label">Python — eval_dataset.py</span>
+<pre><code># Dataset: lo que queremos evaluar
+# Cada entrada: pregunta, respuesta esperada (ground truth), y contexto que TÚ consideras correcto
+
+EVAL_SET = [
+    {
+        "question": "¿Qué modelo de embeddings usa el curso?",
+        "ground_truth": "text-embedding-3-small de OpenAI, 1536 dimensiones",
+    },
+    {
+        "question": "¿Cuál es el stop_reason cuando Claude decide llamar una tool?",
+        "ground_truth": "tool_use",
+    },
+    {
+        "question": "¿Qué es el prompt caching de Anthropic?",
+        "ground_truth": "Una técnica que cachea el contexto entre requests para pagar sólo 1/10 por los tokens cacheados en lecturas posteriores",
+    },
+    # ... añade 7 más sobre tus apuntes
+]
+print(f"Dataset: {len(EVAL_SET)} preguntas")
+</code></pre>
+            </div>
+
+            <h3>Paso 2 · Generar respuestas + contextos con tu RAG</h3>
+            <div class="code-block">
+                <span class="lang-label">Python — generate_eval_data.py</span>
+<pre><code>from eval_dataset import EVAL_SET
+from rag_pipeline import retrieve, rerank, answer  # funciones de la clase 05
+
+results = []
+for item in EVAL_SET:
+    q = item["question"]
+    # Retrieve + rerank (igual que la clase 05)
+    candidates = retrieve(q, k=20)
+    top = rerank(q, candidates, n=3)
+    contexts = [c["text"] for c in top]
+    # Genera la respuesta con el mismo pipeline
+    resp = answer(q)
+
+    results.append({
+        "question": q,
+        "answer": resp,
+        "contexts": contexts,
+        "ground_truth": item["ground_truth"],
+    })
+
+import json
+with open("eval_results.json", "w") as f:
+    json.dump(results, f, ensure_ascii=False, indent=2)
+print(f"Guardadas {len(results)} filas con answer + contexts + ground_truth")
+</code></pre>
+            </div>
+
+            <h3>Paso 3 · Correr Ragas</h3>
+            <div class="code-block">
+                <span class="lang-label">Bash — instalación</span>
+<pre><code>pip install ragas datasets
+# Ragas llama a un LLM por defecto OpenAI; configúralo con tu key
+export OPENAI_API_KEY=sk-...
+</code></pre>
+            </div>
+
+            <div class="code-block">
+                <span class="lang-label">Python — run_ragas.py</span>
+<pre><code>import json
+from datasets import Dataset
+from ragas import evaluate
+from ragas.metrics import (
+    faithfulness,
+    answer_relevancy,
+    context_precision,
+)
+
+# Cargamos los resultados del paso 2
+with open("eval_results.json") as f:
+    rows = json.load(f)
+
+ds = Dataset.from_list(rows)
+
+scores = evaluate(
+    ds,
+    metrics=[faithfulness, answer_relevancy, context_precision],
+)
+
+print(scores)
+# Ejemplo output:
+# {'faithfulness': 0.87, 'answer_relevancy': 0.92, 'context_precision': 0.78}
+
+# Exporta fila a fila para inspección
+df = scores.to_pandas()
+df.to_csv("ragas_report.csv", index=False)
+print(df[["question", "faithfulness", "answer_relevancy", "context_precision"]])
+</code></pre>
+            </div>
+
+            <h3>Paso 4 · LLM-as-judge con Haiku (sin librería, hecho a mano)</h3>
+            <div class="code-block">
+                <span class="lang-label">Python — llm_judge.py</span>
+<pre><code>from anthropic import Anthropic
+import json
+
+client = Anthropic()
+JUDGE_MODEL = "claude-haiku-4-5-20251001"  # barato y suficiente
+
+JUDGE_PROMPT = """Eres un juez imparcial. Recibes una pregunta, una respuesta esperada (ground truth) y una respuesta de un modelo.
+
+Devuelve SOLO JSON con dos campos:
+- "correct": true/false — ¿la respuesta del modelo comunica la misma información que la ground truth?
+- "reason": 1 frase explicando por qué.
+
+No exijas coincidencia literal. Exige equivalencia semántica.
+
+Pregunta: {question}
+Ground truth: {ground_truth}
+Respuesta del modelo: {answer}
+"""
+
+def judge(question, ground_truth, answer):
+    msg = client.messages.create(
+        model=JUDGE_MODEL,
+        max_tokens=200,
+        messages=[{
+            "role": "user",
+            "content": JUDGE_PROMPT.format(
+                question=question,
+                ground_truth=ground_truth,
+                answer=answer,
+            )
+        }],
+    )
+    raw = msg.content[0].text.strip()
+    # Quita posibles fences de markdown
+    if raw.startswith("```"):
+        raw = raw.split("```")[1].lstrip("json\n")
+    return json.loads(raw)
+
+# Úsalo sobre los mismos eval_results.json
+with open("eval_results.json") as f:
+    rows = json.load(f)
+
+scores = []
+for r in rows:
+    v = judge(r["question"], r["ground_truth"], r["answer"])
+    scores.append(v["correct"])
+    print(f"{'✓' if v['correct'] else '✗'} {r['question']}")
+    print(f"   → {v['reason']}\n")
+
+accuracy = sum(scores) / len(scores)
+print(f"LLM-as-judge accuracy: {accuracy:.0%}")
+</code></pre>
+            </div>
+
+            <h3>Paso 5 · Comparar Ragas vs tu juez</h3>
+            <div class="code-block">
+                <span class="lang-label">Python — compare.py</span>
+<pre><code>import pandas as pd
+
+# Ragas
+ragas = pd.read_csv("ragas_report.csv")
+print("=== RAGAS ===")
+print(ragas[["faithfulness", "answer_relevancy", "context_precision"]].mean())
+
+# Juez propio (calcúlalo como lista de booleanos)
+# judge_accuracy = 0.80  # del paso 4
+
+# Comparativa: si Ragas da faithfulness alto pero tu juez dice "incorrect",
+# probablemente la respuesta es FIEL al contexto pero el contexto era IRRELEVANTE.
+# → mejora el retriever, no el prompt.
+
+# Si Ragas da faithfulness bajo y tu juez dice "correct":
+# el modelo razonó más allá del contexto (risky — puede tener suerte hoy y fallar mañana).
+</code></pre>
+            </div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ffe600;">
+            <h2 class="section-title"><span class="section-icon">📊</span> Cómo actuar sobre los resultados</h2>
+            <table>
+                <thead>
+                    <tr><th>Síntoma</th><th>Dónde actuar</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Faithfulness baja</td>
+                        <td>El LLM alucina. Baja temperatura, refuerza el system prompt con "responde SOLO con los chunks dados".</td>
+                    </tr>
+                    <tr>
+                        <td>Answer relevancy baja</td>
+                        <td>El prompt pide "resumen" cuando la pregunta pide "dato puntual". Revisa instrucciones.</td>
+                    </tr>
+                    <tr>
+                        <td>Context precision baja</td>
+                        <td>El retriever falla. Cambia chunk size, añade/mejora reranker, prueba otro embedding.</td>
+                    </tr>
+                    <tr>
+                        <td>Todas altas pero juez humano dice "no"</td>
+                        <td>Tu ground_truth está mal escrito o es ambiguo. Revisa el dataset.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="info" style="margin-top: 12px;">
+                <strong>Regla de oro:</strong> cuando cambies algo en el pipeline (chunk size, rerank n, system prompt), re-ejecuta las evals. El número debe subir. Si baja, revierte. Sin evals, no sabes si has mejorado o empeorado.
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">🧪</span> Quiz</h2>
+            <div id="quiz-container"></div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #39ff14;">
+            <h2 class="section-title"><span class="section-icon">📝</span> Ejercicios entregables</h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h3>Ejercicio 1 (A) — Primera evaluación con Ragas</h3>
+                <p>Monta <code>eval_dataset.py</code> con 10 preguntas sobre tus apuntes + ground truth. Ejecuta el pipeline, corre Ragas con las 3 métricas (faithfulness, answer_relevancy, context_precision), y entrega el CSV <code>ragas_report.csv</code> + las medias globales.</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="# Medias de Ragas + 3 filas de ejemplo con score por pregunta"></textarea>
+                <label><input type="checkbox" required> Ragas corre sin errores sobre mi dataset</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c07', 1, this)">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h3>Ejercicio 2 (B) — LLM-as-judge sobre 10 respuestas</h3>
+                <p>Implementa <code>llm_judge.py</code> con Haiku 4.5. Evalúa las mismas 10 respuestas del ejercicio 1. Compara: ¿coincide tu juez con Ragas en las que fallan? Escribe 3 hallazgos concretos (ej: "en la pregunta X Ragas marca faithfulness 0.9 pero mi juez dice incorrect porque el contexto era irrelevante").</p>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="# Accuracy del juez + 3 hallazgos comparativos"></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="¿Dónde coincide/difiere tu juez con Ragas?"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c07', 2, this)">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <div class="nav-buttons">
+            <a href="clase-06.html" class="btn btn-secondary">← Clase 06</a>
+            <a href="index.html" class="btn btn-secondary">📚 Módulo 5</a>
+            <a href="clase-08.html" class="btn">Clase 08 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Qué mide 'faithfulness' en Ragas?",
+                options: [
+                    "La velocidad del LLM",
+                    "Si la respuesta del LLM está respaldada por los chunks recuperados (anti-hallucination)",
+                    "Cuántos tokens consume",
+                    "La lealtad del modelo a OpenAI"
+                ],
+                correct: 1,
+                explanation: "Faithfulness mide si lo que dice el modelo se puede rastrear al contexto. Faithfulness baja = hallucination."
+            },
+            {
+                question: "¿Qué métrica evalúa la calidad del RETRIEVER (no del LLM final)?",
+                options: [
+                    "Faithfulness",
+                    "Answer relevancy",
+                    "Context precision",
+                    "Temperature"
+                ],
+                correct: 2,
+                explanation: "Context precision puntúa si los chunks recuperados eran relevantes. Es la métrica para juzgar el retriever (chunking + embeddings + rerank)."
+            },
+            {
+                question: "Sin evals, ¿cómo sabes si un cambio en tu pipeline lo mejora?",
+                options: [
+                    "Con vibe checks (probarlo a ojo)",
+                    "No lo sabes — es opinión, no dato",
+                    "Con un eval set y rerunning las métricas",
+                    "B y C son las correctas"
+                ],
+                correct: 3,
+                explanation: "Sin evals es vibe check. Con evals tienes un número que sube o baja al hacer cambios."
+            },
+            {
+                question: "¿Qué es 'ground truth' en un eval set?",
+                options: [
+                    "La respuesta del LLM",
+                    "La respuesta que tú (humano) consideras correcta para cada pregunta",
+                    "Un tipo de embedding",
+                    "El chunk más alto del ranking"
+                ],
+                correct: 1,
+                explanation: "Ground truth = respuesta de referencia escrita por ti. Sin ground truth no hay medición objetiva."
+            },
+            {
+                question: "¿Por qué usar Haiku 4.5 como juez en vez de Sonnet?",
+                options: [
+                    "Sonnet no puede juzgar",
+                    "Haiku es mucho más barato y para tareas binarias 'correct/incorrect' suele bastar",
+                    "Haiku es más inteligente",
+                    "Obligación legal"
+                ],
+                correct: 1,
+                explanation: "Haiku ~$1/M tokens output vs Sonnet $15/M. Para judgeo binario rinde de sobra. Reserva Sonnet para la tarea principal."
+            },
+            {
+                question: "Ragas da faithfulness 0.95 pero tu juez dice 'incorrect'. ¿Qué interpretación es más probable?",
+                options: [
+                    "Ragas está roto",
+                    "La respuesta es fiel al contexto, pero el contexto recuperado no era relevante (retriever malo)",
+                    "El juez miente",
+                    "Todas son iguales"
+                ],
+                correct: 1,
+                explanation: "Fidelity alta + juez en contra = el modelo respetó el contexto, pero el contexto era irrelevante. Problema de retrieval, no de generación."
+            },
+            {
+                question: "¿Cuántas preguntas mínimas debe tener un eval set para ser útil?",
+                options: [
+                    "3",
+                    "10-20 para empezar; 100+ para producción seria",
+                    "1000 siempre",
+                    "No importa"
+                ],
+                correct: 1,
+                explanation: "Menos de 10 = ruido puro. 10-20 permite detectar regresiones grandes. 100+ para producción."
+            },
+            {
+                question: "¿Qué pasa con el coste si corres Ragas sobre 1000 preguntas?",
+                options: [
+                    "Es gratis",
+                    "Pagas los tokens de las llamadas internas de Ragas al LLM juez — puede ser $$",
+                    "Solo cobran si apruebas",
+                    "Depende del humor del API"
+                ],
+                correct: 1,
+                explanation: "Ragas llama a un LLM para calcular cada métrica. 1000 preguntas × 3 métricas × ~5k tokens = miles de llamadas. Presupuéstalo."
+            },
+            {
+                question: "Si cambias el chunk size de 800 a 1200 y faithfulness sube pero context_precision baja, ¿qué concluyes?",
+                options: [
+                    "Todo va mejor",
+                    "Chunks más grandes contienen más info útil (fidelity sube), pero traes ruido (precision baja). Trade-off.",
+                    "Hay que revertir",
+                    "Rota el datacenter"
+                ],
+                correct: 1,
+                explanation: "Chunks grandes = más contenido en cada uno, pero también más ruido. Es el clásico trade-off precision/recall aplicado a RAG."
+            },
+            {
+                question: "¿Por qué combinar Ragas + LLM-as-judge propio?",
+                options: [
+                    "Para gastar más dinero",
+                    "Ragas da métricas estándar comparables; tu juez captura criterios específicos de tu dominio (ej: corrección técnica en HORECA)",
+                    "Solo funciona con ambos",
+                    "Ninguno es fiable solo"
+                ],
+                correct: 1,
+                explanation: "Ragas es estándar reproducible. Tu juez añade reglas del dominio específicas. La combinación cubre ambos niveles."
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm5-c07');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 01: Qué Son los Agentes — Módulo 6</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <a href="index.html">Módulo 6</a>
+            <span> > </span>
+            <strong>Clase 01</strong>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <h1>Clase 01: Qué Son los Agentes: Tool Use, Planning y Memory</h1>
+            <div class="subtitle">📅 Semana 8 — Lunes | ⏱️ 45 minutos</div>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎬</span>
+                Vídeo de la lección
+            </h2>
+            <p>Mira este vídeo de Anthropic sobre cómo construir agentes efectivos. Barry Zhang explica los fundamentos de tool use, planning y memoria en sistemas agenticos.</p>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/D7_ipDqhtwk" allowfullscreen></iframe>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-06-c01.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+
+            <h3 style="margin-top: 2em;">Vídeo complementario</h3>
+            <p>Para profundizar en los fundamentos agenticos, mira también este webinar de Stanford sobre IA Agentica:</p>
+            <div class="info">
+                <a href="https://www.youtube.com/watch?v=kJLiOGle3Lw" target="_blank" style="color: #00e676;">Stanford Webinar: Building Agentic AI Systems</a> — Visión académica de cómo construir sistemas que actúen de forma autónoma.
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📖</span>
+                Resumen de conceptos
+            </h2>
+
+            <h3>¿Qué es un Agente de IA?</h3>
+            <p>Un <strong>agente de IA</strong> es un sistema que puede <strong>percibir su entorno, razonar y actuar</strong> de forma autónoma para alcanzar objetivos. A diferencia de un chatbot que solo responde preguntas, un agente puede:</p>
+            <ul>
+                <li><strong>Planificar:</strong> Dividir tareas complejas en pasos manejables</li>
+                <li><strong>Usar herramientas:</strong> Ejecutar acciones (buscar web, hacer cálculos, consultar bases de datos)</li>
+                <li><strong>Aprender:</strong> Mantener memoria de interacciones previas</li>
+                <li><strong>Adaptarse:</strong> Ajustar su estrategia basado en resultados</li>
+            </ul>
+
+            <div class="info-box">
+                <strong>📌 Chatbot vs Agente</strong><br>
+                <strong>Chatbot:</strong> "¿Cuál es la capital de Francia?" → Responde: "París"<br>
+                <strong>Agente:</strong> "Necesito comparar precios de vuelos a París" → Busca precios, compara, sugiere opciones
+            </div>
+
+            <h3 style="margin-top: 2em;">Los Cuatro Componentes Clave</h3>
+
+            <div class="code-block" style="border-left: 4px solid #00f0ff;">
+                <span class="lang-label">Arquitectura básica de un agente</span>
+                <pre><code>┌─────────────────────────────────────────┐
+│         AGENTE DE IA (LOOP)             │
+├─────────────────────────────────────────┤
+│                                         │
+│  1. PERCIBIR (Entrada del usuario)     │
+│     ↓                                   │
+│  2. RAZONAR (LLM + contexto)           │
+│     ├─ ¿Necesito una herramienta?      │
+│     ├─ ¿Qué herramienta uso?           │
+│     └─ ¿Cuál es mi próximo paso?       │
+│     ↓                                   │
+│  3. ACTUAR (Ejecutar herramientas)     │
+│     ├─ Búsqueda web                    │
+│     ├─ API calls                        │
+│     ├─ Cálculos                        │
+│     └─ Lectura de bases de datos       │
+│     ↓                                   │
+│  4. OBSERVAR (Procesar resultados)     │
+│     └─ Actualizar contexto/memoria     │
+│     ↓                                   │
+│  5. AJUSTAR (Siguiente iteración)      │
+│                                         │
+└─────────────────────────────────────────┘</code></pre>
+            </div>
+
+            <h4>1. LLM como Cerebro (Razonamiento)</h4>
+            <p>El modelo de lenguaje es el "cerebro" del agente. Analiza la entrada, decide qué hacer y genera instrucciones para ejecutar acciones. En lugar de código hardcodeado, usa la inteligencia de un LLM (GPT-4, Claude, etc.) para razonar dinámicamente.</p>
+
+            <h4>2. Tools (Herramientas / Function Calling)</h4>
+            <p>Las herramientas son funciones que el agente puede <strong>invocar</strong> para afectar al mundo exterior. El LLM decide <strong>cuándo</strong> y <strong>cómo</strong> usarlas.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Ejemplo: herramientas disponibles</span>
+                <pre><code>tools = [
+    {
+        "name": "search_web",
+        "description": "Busca información en Google",
+        "parameters": {
+            "query": "string - término de búsqueda"
+        }
+    },
+    {
+        "name": "calculator",
+        "description": "Realiza cálculos matemáticos",
+        "parameters": {
+            "expression": "string - operación (ej: 5 + 3 * 2)"
+        }
+    },
+    {
+        "name": "get_weather",
+        "description": "Obtiene el clima de una ciudad",
+        "parameters": {
+            "city": "string - nombre de la ciudad"
+        }
+    }
+]</code></pre>
+            </div>
+
+            <h4>3. Planning (Planificación)</h4>
+            <p>Los agentes buenos <strong>descomponen tareas complejas</strong> en pasos. Esto se llama <strong>chain-of-thought</strong> o <strong>reasoning</strong>.</p>
+
+            <div class="example-box">
+                <strong>Ejemplo de planificación:</strong><br><br>
+                <strong>Tarea:</strong> "Quiero ir a París. ¿Cuánto me cuesta un vuelo, dónde puedo dormir barato y qué monumentos debo visitar?"<br><br>
+                <strong>Plan del agente:</strong>
+                <ol>
+                    <li>Buscar vuelos a París (search_web o API de vuelos)</li>
+                    <li>Buscar hoteles baratos en París (search_web)</li>
+                    <li>Buscar monumentos principales (search_web o base de datos)</li>
+                    <li>Compilar respuesta con toda la información</li>
+                </ol>
+            </div>
+
+            <h4>4. Memory (Memoria)</h4>
+            <p>La memoria permite que el agente mantenga contexto a lo largo de múltiples interacciones.</p>
+
+            <div class="info">
+                <strong>Short-term Memory (Contexto):</strong> La conversación actual. Se mantiene en el prompt del LLM.<br><br>
+                <strong>Long-term Memory (Persistencia):</strong> Información que persiste entre sesiones, almacenada en:
+                <ul style="margin-top: 0.5em;">
+                    <li>Vector stores (búsqueda semántica con embeddings)</li>
+                    <li>Bases de datos estructuradas</li>
+                    <li>Archivos o logs</li>
+                </ul>
+            </div>
+
+            <h3 style="margin-top: 2em;">El Ciclo Agentico Completo</h3>
+
+            <div class="info-box" style="background: rgba(0,240,255,0.05); border-left: 4px solid #00f0ff;">
+                <strong>Fase 1: PERCIBIR</strong><br>
+                Usuario: "¿Cuál es el precio de Bitcoin ahora y cuál era hace una semana?"<br><br>
+                <strong>Fase 2: RAZONAR</strong><br>
+                LLM: "Necesito el precio actual (tool: get_bitcoin_price) y el precio histórico (tool: get_crypto_history)"<br><br>
+                <strong>Fase 3: ACTUAR</strong><br>
+                Ejecuta: get_bitcoin_price() → $42,500<br>
+                Ejecuta: get_crypto_history(date='1_week_ago') → $40,000<br><br>
+                <strong>Fase 4: OBSERVAR</strong><br>
+                LLM recibe: {current: 42500, week_ago: 40000}<br><br>
+                <strong>Fase 5: AJUSTAR</strong><br>
+                Respuesta: "Bitcoin subió un 6.25% en una semana, de $40,000 a $42,500"
+            </div>
+
+            <h3 style="margin-top: 2em;">Agentes Reactivos vs Proactivos</h3>
+
+            <table style="width: 100%; margin-top: 1em; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: rgba(0, 240, 255, 0.15); color: white;">
+                        <th style="padding: 12px; text-align: left; border: 1px solid var(--border-glow);">Característica</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid var(--border-glow);">Reactivo</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid var(--border-glow);">Proactivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Disparador</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Responde a inputs del usuario</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Toma iniciativas sin esperar</td>
+                    </tr>
+                    <tr style="background: #1a1a3e;">
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Ejemplo</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Chatbot de soporte</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Agente que monitorea y alerta</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Latencia</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Baja (responde rápido)</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Puede ser mayor (decide cuándo actuar)</td>
+                    </tr>
+                    <tr style="background: #1a1a3e;">
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Complejidad</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Simple</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Requiere goals y planificación</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="margin-top: 2em;">Casos de Uso Reales</h3>
+
+            <div class="code-block" style="background: #0d1117;">
+                <span class="lang-label">Aplicaciones de Agentes de IA</span>
+                <pre><code>1. ASISTENTES PERSONALES
+   - Agendar citas automáticamente
+   - Responder emails en tu nombre
+   - Organizar tu calendario
+
+2. AUTOMATIZACIÓN DE NEGOCIOS
+   - Procesar pedidos automáticamente
+   - Enviar facturas y recordatorios
+   - Filtrar y categorizar leads
+
+3. ANÁLISIS Y RESEARCH
+   - Investigar competidores
+   - Recopiar datos de múltiples fuentes
+   - Generar reportes automáticos
+
+4. SOPORTE AL CLIENTE
+   - Resolver problemas sin intervención humana
+   - Escalar casos complejos a un humano
+   - Aprender de interacciones previas
+
+5. OPTIMIZACIÓN
+   - Ajustar parámetros automáticamente
+   - Prueba A/B sin intervención
+   - Monitoreo y alertas en tiempo real</code></pre>
+            </div>
+
+            <h3 style="margin-top: 2em;">Comparativa: Chatbot vs Agente</h3>
+
+            <table style="width: 100%; margin-top: 1em; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: rgba(0, 240, 255, 0.15); color: white;">
+                        <th style="padding: 12px; text-align: left; border: 1px solid var(--border-glow);">Aspecto</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid var(--border-glow);">Chatbot</th>
+                        <th style="padding: 12px; text-align: left; border: 1px solid var(--border-glow);">Agente</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Entidad</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Máquina conversacional</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Sistema autónomo inteligente</td>
+                    </tr>
+                    <tr style="background: #1a1a3e;">
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Acción</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Genera texto (respuesta)</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Genera acciones + texto</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Decisiones</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Basadas en reglas/ML</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Razonamiento dinámico con LLM</td>
+                    </tr>
+                    <tr style="background: #1a1a3e;">
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Herramientas</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Tiene acceso limitado</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Usa tools dinámicamente</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Complejidad</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Simples y predecibles</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Complejas y adaptables</td>
+                    </tr>
+                    <tr style="background: #1a1a3e;">
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);"><strong>Escalabilidad</strong></td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Solo texto (escalable)</td>
+                        <td style="padding: 12px; border: 1px solid var(--border-glow);">Limitada por API calls</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Guided Practice Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">💻</span>
+                Práctica guiada
+            </h2>
+            <p>Vamos a construir agentes simples en Python, empezando con pseudocódigo y evolucionando a código real.</p>
+
+            <h3>Paso 1: El Loop Agentico Básico (Pseudocódigo)</h3>
+            <div class="code-block">
+                <span class="lang-label">Pseudocódigo</span>
+                <pre><code>FUNCIÓN agente_simple(pregunta_usuario):
+    MIENTRAS no_completado:
+        1. contexto = obtener_historial_conversación()
+
+        2. respuesta_llm = enviar_al_llm(pregunta_usuario, contexto)
+
+        3. SI respuesta_llm.requiere_tool:
+            - herramienta = respuesta_llm.nombre_tool
+            - parámetros = respuesta_llm.parámetros
+            - resultado = ejecutar_tool(herramienta, parámetros)
+            - contexto.añadir(f"Resultado tool: {resultado}")
+            - pregunta_usuario = resultado  // siguiente iteración
+
+        4. SINO:
+            - DEVOLVER respuesta_llm
+            - no_completado = FALSO</code></pre>
+            </div>
+
+            <h3 style="margin-top: 2em;">Paso 2: Agente Simple con OpenAI API</h3>
+            <p>Este agente decide dinámicamente si necesita una herramienta o puede responder directamente.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+                <pre><code>import json
+from openai import OpenAI
+
+client = OpenAI(api_key="tu-api-key")
+
+# Definir herramientas disponibles
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_time",
+            "description": "Obtiene la hora actual",
+            "parameters": {
+                "type": "object",
+                "properties": {}
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "calculator",
+            "description": "Realiza operaciones matemáticas",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "operation": {
+                        "type": "string",
+                        "description": "Operación a realizar (ej: 5 + 3)"
+                    }
+                },
+                "required": ["operation"]
+            }
+        }
+    }
+]
+
+# Funciones que el agente puede ejecutar
+def get_current_time():
+    from datetime import datetime
+    return datetime.now().strftime("%H:%M:%S")
+
+def calculator(operation):
+    try:
+        return str(eval(operation))
+    except:
+        return "Error en la operación"
+
+# Loop del agente
+def agent_loop(user_message):
+    messages = [
+        {"role": "user", "content": user_message}
+    ]
+
+    while True:
+        # Llamar al LLM
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+            tools=tools,
+            tool_choice="auto"
+        )
+
+        # Procesar respuesta
+        if response.stop_reason == "tool_calls":
+            # El LLM decidió usar una herramienta
+            for tool_call in response.tool_calls:
+                tool_name = tool_call.function.name
+                tool_args = json.loads(tool_call.function.arguments)
+
+                # Ejecutar la herramienta
+                if tool_name == "get_current_time":
+                    result = get_current_time()
+                elif tool_name == "calculator":
+                    result = calculator(tool_args["operation"])
+
+                # Añadir resultado al contexto
+                messages.append(
+                    {"role": "assistant", "content": response.content}
+                )
+                messages.append(
+                    {"role": "tool", "content": str(result),
+                     "tool_call_id": tool_call.id}
+                )
+        else:
+            # El LLM terminó y proporciona respuesta final
+            final_response = response.choices[0].message.content
+            print(f"Agente: {final_response}")
+            break
+
+# Usar el agente
+agent_loop("¿Qué hora es y cuál es 25 * 4?")</code></pre>
+            </div>
+
+            <h3 style="margin-top: 2em;">Paso 3: Agente con Herramienta de Calculadora</h3>
+            <p>Versión simplificada que muestra cómo un agente evalúa si una pregunta requiere una herramienta.</p>
+
+            <div class="code-block">
+                <span class="lang-label">Python</span>
+                <pre><code>class SimpleAgent:
+    def __init__(self):
+        self.tools = {
+            "calculator": self.calculator,
+            "search": self.search,
+            "translator": self.translator
+        }
+
+    def calculator(self, expression):
+        """Herramienta: ejecuta cálculos matemáticos"""
+        try:
+            result = eval(expression)
+            return f"Resultado: {result}"
+        except:
+            return "Error en la operación matemática"
+
+    def search(self, query):
+        """Herramienta: busca información (simulada)"""
+        # En producción, llamarías a Google API o similar
+        return f"Resultados para '{query}': [simulado]"
+
+    def translator(self, text, language):
+        """Herramienta: traduce texto (simulada)"""
+        # En producción, usarías Google Translate API
+        return f"Traducido a {language}: [simulado]"
+
+    def decide_tool(self, user_input):
+        """El agente decide qué herramienta usar"""
+        if any(word in user_input.lower() for word in
+               ["calcula", "operación", "matemática", "+"]):
+            return "calculator"
+        elif any(word in user_input.lower() for word in
+                 ["busca", "información", "investiga"]):
+            return "search"
+        elif any(word in user_input.lower() for word in
+                 ["traduce", "traducción"]):
+            return "translator"
+        return None
+
+    def execute(self, user_input):
+        """Loop principal del agente"""
+        print(f"Usuario: {user_input}")
+
+        # Paso 1: Decidir si necesita una herramienta
+        tool_needed = self.decide_tool(user_input)
+
+        if tool_needed:
+            # Paso 2: Ejecutar la herramienta
+            if tool_needed == "calculator":
+                # Extraer la expresión de la pregunta
+                expression = user_input.replace("Calcula", "").strip()
+                result = self.calculator(expression)
+            elif tool_needed == "search":
+                result = self.search(user_input)
+            elif tool_needed == "translator":
+                result = self.translator(user_input, "inglés")
+
+            # Paso 3: Generar respuesta final
+            response = f"Usé la herramienta {tool_needed}. {result}"
+        else:
+            # Sin herramientas necesarias, responde directamente
+            response = f"Entendido. La pregunta era: {user_input}"
+
+        print(f"Agente: {response}\n")
+        return response
+
+# Usar el agente
+agent = SimpleAgent()
+agent.execute("Calcula 25 * 4")
+agent.execute("Busca información sobre París")
+agent.execute("Traduce 'Hello' al español")</code></pre>
+            </div>
+        </section>
+
+        <!-- Challenge Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🧪</span>
+                Mini-reto del día
+            </h2>
+
+            <div class="reto-box">
+                <h3>🎯 Agente Wikipedia</h3>
+                <p>Crea un agente que pueda responder preguntas buscando información en Wikipedia. El agente debe:</p>
+                <ul>
+                    <li>Entender la pregunta del usuario</li>
+                    <li>Decidir qué buscar en Wikipedia</li>
+                    <li>Usar la librería <code>wikipedia</code> para obtener información</li>
+                    <li>Devolver una respuesta resumida</li>
+                </ul>
+
+                <p><strong>Requisitos:</strong></p>
+                <ul>
+                    <li>Instala: <code>pip install wikipedia</code></li>
+                    <li>Crea una función que busque en Wikipedia</li>
+                    <li>Crea un agente que decida cuándo usar la búsqueda</li>
+                </ul>
+
+                <div class="code-block">
+                    <span class="lang-label">Python — Punto de partida</span>
+                    <pre><code>import wikipedia
+
+class WikipediaAgent:
+    def search_wikipedia(self, query):
+        """Busca en Wikipedia y devuelve resumen"""
+        try:
+            result = wikipedia.summary(query, sentences=3)
+            return f"Encontrado: {result}"
+        except wikipedia.exceptions.PageError:
+            return "No encontré esa página en Wikipedia"
+        except wikipedia.exceptions.DisambiguationError as e:
+            return f"Término ambiguo. Opciones: {e.options[:3]}"
+
+    def execute(self, user_input):
+        # Implementa aquí la lógica del agente
+        pass
+
+# Uso
+agent = WikipediaAgent()
+print(agent.execute("¿Quién fue Leonardo da Vinci?"))</code></pre>
+                </div>
+
+                <p><strong>Preguntas de ejemplo para probar:</strong></p>
+                <ul>
+                    <li>"¿Quién fue Leonardo da Vinci?"</li>
+                    <li>"¿Dónde está París?"</li>
+                    <li>"¿Cuál es la mayor montaña del mundo?"</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📤</span>
+                Entrega de ejercicios
+            </h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: SimpleAgent con agentic loops</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-1" rows="4" placeholder="Explicación (cómo funciona tu agente)..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-c01', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>🎯 Entregar reto: Wikipedia agent con tool use</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Casos de prueba (al menos 2 preguntas y sus respuestas)..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-c01', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📝</span>
+                Test de conocimiento
+            </h2>
+            <p>Responde las siguientes 10 preguntas para verificar tu comprensión. Necesitas al menos 8 correctas para marcar esta clase como completada.</p>
+
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <div class="clase-nav">
+            <a href="../modulo-06.html">← Módulo 6</a>
+            <span> | </span>
+            <a href="clase-02.html">Clase 02 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        // Quiz data
+        const quizQuestions = [
+            {
+                question: "¿Cuál es la diferencia principal entre un chatbot y un agente?",
+                options: [
+                    "El chatbot es más rápido",
+                    "El agente solo genera texto, el chatbot ejecuta acciones",
+                    "El agente puede ejecutar acciones (tools) y tomar decisiones autónomas",
+                    "No hay diferencia real"
+                ],
+                correct: 2
+            },
+            {
+                question: "En el ciclo agentico, ¿cuál es el orden correcto de fases?",
+                options: [
+                    "Percibir → Actuar → Razonar → Observar → Ajustar",
+                    "Razonar → Percibir → Actuar → Observar → Ajustar",
+                    "Percibir → Razonar → Actuar → Observar → Ajustar",
+                    "Actuar → Observar → Razonar → Percibir → Ajustar"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Qué componente del agente actúa como el 'cerebro' para tomar decisiones?",
+                options: [
+                    "Base de datos",
+                    "Modelo de lenguaje (LLM)",
+                    "Vector store",
+                    "Tool registry"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué es 'tool use' en el contexto de agentes?",
+                options: [
+                    "La capacidad de ejecutar herramientas/funciones para afectar el entorno",
+                    "Usar herramientas de desarrollo",
+                    "Seleccionar la herramienta correcta de una lista",
+                    "Nada, no es un concepto importante"
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Cuál es la diferencia entre short-term y long-term memory?",
+                options: [
+                    "Short-term es más rápida, long-term es más lenta",
+                    "Short-term es el contexto conversación actual; long-term persiste entre sesiones",
+                    "No hay diferencia, son sinónimos",
+                    "Short-term es para agentes simples, long-term para complejos"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿En qué caso un agente es 'proactivo' en lugar de 'reactivo'?",
+                options: [
+                    "Cuando responde rápido",
+                    "Cuando toma iniciativas sin esperar input del usuario",
+                    "Cuando usa múltiples tools",
+                    "Cuando tiene memoria"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es un caso de uso real de agentes en una startup como Rice in Action?",
+                options: [
+                    "Automatizar respuestas de soporte al cliente",
+                    "Procesar automáticamente pedidos de clientes HORECA",
+                    "Monitorear y alertar sobre problemas de producción",
+                    "Todas las anteriores"
+                ],
+                correct: 3
+            },
+            {
+                question: "¿Qué es 'planning' en un agente?",
+                options: [
+                    "Planificar el código del agente",
+                    "Descomponer tareas complejas en pasos manejables",
+                    "Crear un calendario de ejecución",
+                    "Prever el futuro"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cómo decide un agente si debe ejecutar una tool?",
+                options: [
+                    "Basado en una regla hardcodeada",
+                    "El usuario lo especifica siempre",
+                    "El LLM razona dinámicamente y decide",
+                    "Aleatoriamente"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Cuál de estos es un ejemplo de agente REACTIVO?",
+                options: [
+                    "Un monitor que alerta si un servidor cae",
+                    "Un chatbot que responde cuando el usuario pregunta",
+                    "Un sistema que optimiza parámetros automáticamente",
+                    "Un agente de trading que actúa sin intervención"
+                ],
+                correct: 1
+            }
+        ];
+
+        // Initialize quiz (único sistema: CourseProgress)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm6-c01');
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm6-c01');
+        }
+    </script>
+</body>
+</html>

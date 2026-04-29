@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 02: Vercel AI SDK: Streaming de Respuestas en React — Módulo 7</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <a href="index.html">Módulo 7</a>
+            <span> > </span>
+            <strong>Clase 02</strong>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <h1>Clase 02: Vercel AI SDK: Streaming de Respuestas en React</h1>
+            <div class="subtitle">📅 Semana 9 — Martes | ⏱️ 45 minutos</div>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎬</span>
+                Vídeo de la lección
+            </h2>
+            <p>En este vídeo de freeCodeCamp aprenderás a construir un agente de soporte usando Vercel AI SDK. El vídeo cubre instalación, configuración de APIs, streaming de respuestas y componentes React interactivos.</p>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/WKIjkxxNH0c" allowfullscreen></iframe>
+            </div>
+
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-07-c02.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📚</span>
+                Resumen de Conceptos
+            </h2>
+
+            <h3>¿Qué es el Vercel AI SDK?</h3>
+            <p>Es un toolkit TypeScript de bajo nivel para construir aplicaciones de IA. Proporciona abstracciones unificadas para trabajar con múltiples proveedores de LLMs (OpenAI, Anthropic, Google, Ollama, etc.) con una interfaz consistente.</p>
+
+            <p><strong>Por qué es importante:</strong></p>
+            <ul>
+                <li>Una interfaz unificada para múltiples LLMs (cambiar de proveedor es fácil)</li>
+                <li>Soporte nativo para streaming de respuestas</li>
+                <li>Hooks React listos para usar (<code>useChat</code>, <code>useCompletion</code>)</li>
+                <li>Integración perfecta con Next.js App Router y API Routes</li>
+                <li>TypeScript first — excelente DX (developer experience)</li>
+            </ul>
+
+            <h3>Streaming vs Respuesta Completa</h3>
+
+            <p><strong>Respuesta completa (sin streaming):</strong></p>
+            <div class="code-block">
+                <span class="lang-label">Usuario espera a que termine todo</span>
+                <pre><code>Usuario envía mensaje
+         ↓
+    LLM procesa (3-5 segundos)
+         ↓
+   Recibe TODA la respuesta de golpe
+         ↓
+   UI se actualiza (lag perceptible)</code></pre>
+            </div>
+
+            <p><strong>Con streaming (mejor UX):</strong></p>
+            <div class="code-block">
+                <span class="lang-label">El usuario ve la respuesta en tiempo real</span>
+                <pre><code>Usuario envía mensaje
+         ↓
+   LLM empieza a generar
+         ↓
+  Chunk 1: "Hola,"
+  Chunk 2: " ¿cómo"
+  Chunk 3: " estás?"
+         ↓
+   UI actualiza mientras llegan chunks (sensación de fluidez)</code></pre>
+            </div>
+
+            <p><strong>Ventaja principal:</strong> El usuario percibe que la respuesta es inmediata, aunque el LLM esté procesando. Es la misma experiencia que ChatGPT o Copilot.</p>
+
+            <h3>El Flujo Completo: User → React → API → LLM → Streaming → UI</h3>
+
+            <div class="code-block">
+                <span class="lang-label">Arquitectura</span>
+                <pre><code>┌─────────────────────────────────────────┐
+│         NAVEGADOR (React)               │
+│  ┌──────────────────────────────────┐   │
+│  │  useChat Hook                    │   │
+│  │  - Gestiona mensajes             │   │
+│  │  - Estados (loading, error)      │   │
+│  │  - Historial de conversación     │   │
+│  └──────────────────────────────────┘   │
+└────────────┬────────────────────────────┘
+             │ POST /api/chat (stream)
+             ↓
+┌─────────────────────────────────────────┐
+│      SERVIDOR (Next.js)                 │
+│  ┌──────────────────────────────────┐   │
+│  │  API Route /api/chat             │   │
+│  │  - streamText() del AI SDK       │   │
+│  │  - Convierte a Server-Sent Events│   │
+│  │  - Envía chunks al cliente       │   │
+│  └──────────────────────────────────┘   │
+└────────────┬────────────────────────────┘
+             │ SSE (streaming)
+             ↓
+┌─────────────────────────────────────────┐
+│   PROVEEDOR LLM (OpenAI, Anthropic)     │
+│  - Genera respuesta token por token     │
+└─────────────────────────────────────────┘</code></pre>
+            </div>
+
+            <h3>Funciones Core del AI SDK</h3>
+
+            <p><strong>1. <code>streamText()</code> — Genera texto con streaming en el servidor</strong></p>
+            <div class="code-block">
+                <span class="lang-label">TypeScript</span>
+                <pre><code>import { streamText } from 'ai';
+import { openai } from '@ai-sdk/openai';
+
+const result = await streamText({
+  model: openai('gpt-4o-mini'),
+  messages: [
+    { role: 'user', content: 'Explica qué es streaming' }
+  ],
+  system: 'Eres un asistente de IA útil',
+  temperature: 0.7,
+});
+
+// result contiene el stream y metadata
+return result.toDataStreamResponse();</code></pre>
+            </div>
+
+            <p><strong>2. <code>generateText()</code> — Genera texto sin streaming (respuesta completa)</strong></p>
+            <div class="code-block">
+                <span class="lang-label">TypeScript</span>
+                <pre><code>const result = await generateText({
+  model: openai('gpt-4o-mini'),
+  prompt: '¿Cuál es la capital de Francia?',
+});
+
+console.log(result.text); // "París"</code></pre>
+            </div>
+
+            <p><strong>3. <code>useChat()</code> — Hook React para chat con historial</strong></p>
+            <div class="code-block">
+                <span class="lang-label">TypeScript (React Client Component)</span>
+                <pre><code>'use client';
+import { useChat } from 'ai/react';
+
+export default function Chat() {
+  const {
+    messages,        // Array de mensajes previos
+    input,           // Texto del input actual
+    handleInputChange, // Para actualizar el input
+    handleSubmit,    // Para enviar mensaje
+    isLoading,       // Si está esperando respuesta
+    error            // Si hay error
+  } = useChat({
+    api: '/api/chat', // Ruta de la API
+  });
+
+  return (
+    &lt;&gt;
+      &lt;div className="messages"&gt;
+        {messages.map((m) =&gt; (
+          &lt;div key={m.id} className={m.role}&gt;
+            {m.content}
+          &lt;/div&gt;
+        ))}
+      &lt;/div&gt;
+      &lt;form onSubmit={handleSubmit}&gt;
+        &lt;input
+          value={input}
+          onChange={handleInputChange}
+          placeholder="Escribe un mensaje..."
+          disabled={isLoading}
+        /&gt;
+        &lt;button type="submit" disabled={isLoading}&gt;
+          {isLoading ? 'Pensando...' : 'Enviar'}
+        &lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/&gt;
+  );
+}</code></pre>
+            </div>
+
+            <p><strong>4. <code>useCompletion()</code> — Hook para completación de texto (sin historial de chat)</strong></p>
+            <div class="code-block">
+                <span class="lang-label">TypeScript (React)</span>
+                <pre><code>const { completion, input, handleInputChange, handleSubmit } = useCompletion({
+  api: '/api/completion',
+});
+
+// Similar a useChat pero devuelve un string de completación
+// Útil para sugerencias, autocompletado, etc.</code></pre>
+            </div>
+
+            <h3>Proveedores Soportados</h3>
+            <p>El AI SDK funciona con múltiples proveedores. Cambiar es tan simple como cambiar una línea:</p>
+
+            <div class="code-block">
+                <span class="lang-label">TypeScript</span>
+                <pre><code>// OpenAI
+import { openai } from '@ai-sdk/openai';
+const model = openai('gpt-4o-mini');
+
+// Anthropic Claude
+import { anthropic } from '@ai-sdk/anthropic';
+const model = anthropic('claude-sonnet-4-6');
+
+// Google Gemini
+import { google } from '@ai-sdk/google';
+const model = google('gemini-2.0-flash');
+
+// Ollama (local)
+import { ollama } from 'ollama-ai-sdk';
+const model = ollama('llama2');
+
+// Todos se usan de la misma forma en streamText()
+const result = await streamText({
+  model: model, // ← Intercambia el proveedor aquí
+  messages,
+});</code></pre>
+            </div>
+
+            <h3>El Hook useChat — Gestión Automática de Estado</h3>
+
+            <p><code>useChat</code> gestiona automáticamente:</p>
+            <ul>
+                <li><strong>Historial de mensajes:</strong> Mantiene un array de todos los mensajes usuario/asistente</li>
+                <li><strong>Estados de carga:</strong> <code>isLoading</code> para deshabilitar botones</li>
+                <li><strong>Streaming en cliente:</strong> Los chunks llegan y actualizan la UI automáticamente</li>
+                <li><strong>Manejo de errores:</strong> Campo <code>error</code> para mostrar problemas</li>
+                <li><strong>Limpieza:</strong> Función <code>setMessages</code> para resetear si necesitas</li>
+            </ul>
+
+            <p>Sin useChat tendrías que:</p>
+            <ul>
+                <li>Mantener tu propio estado de mensajes</li>
+                <li>Hacer fetch manualmente a la API</li>
+                <li>Parsear el stream SSE</li>
+                <li>Actualizar la UI con cada chunk</li>
+            </ul>
+
+            <p>Con <code>useChat</code>, todo eso ya está hecho.</p>
+        </section>
+
+        <!-- Guided Practice Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">⚙️</span>
+                Práctica Guiada
+            </h2>
+
+            <p>Vamos a construir un chatbot con Vercel AI SDK paso a paso.</p>
+
+            <h3>Paso 1: Instalar Dependencias</h3>
+            <div class="code-block">
+                <span class="lang-label">bash</span>
+                <pre><code>npm install ai @ai-sdk/openai</code></pre>
+            </div>
+
+            <p><strong>Nota:</strong> Necesitas una clave API de OpenAI. Crea una en <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a> y guárdala en <code>.env.local</code>:</p>
+            <div class="code-block">
+                <span class="lang-label">.env.local</span>
+                <pre><code>OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxxxxxx</code></pre>
+            </div>
+
+            <h3>Paso 2: Crear la API Route en el Servidor</h3>
+            <p>Crea el archivo <code>app/api/chat/route.ts</code>:</p>
+
+            <div class="code-block">
+                <span class="lang-label">TypeScript — app/api/chat/route.ts</span>
+                <pre><code>import { streamText } from 'ai';
+import { openai } from '@ai-sdk/openai';
+
+export async function POST(req: Request) {
+  // 1. Recibir los mensajes del cliente
+  const { messages } = await req.json();
+
+  // 2. Llamar a streamText con el modelo
+  const result = streamText({
+    model: openai('gpt-4o-mini'),
+    messages,
+    system: 'Eres un asistente amable y útil. Responde en español.',
+    temperature: 0.7,
+  });
+
+  // 3. Convertir el stream a Server-Sent Events
+  return result.toDataStreamResponse();
+}</code></pre>
+            </div>
+
+            <p><strong>¿Qué pasa aquí?</strong></p>
+            <ul>
+                <li><code>streamText()</code> inicia la generación del LLM</li>
+                <li>El parámetro <code>system</code> define el comportamiento del asistente</li>
+                <li><code>.toDataStreamResponse()</code> convierte el stream a respuesta HTTP SSE</li>
+                <li>Los chunks llegan al cliente automáticamente</li>
+            </ul>
+
+            <h3>Paso 3: Crear el Componente React con useChat</h3>
+            <p>Crea el archivo <code>app/components/ChatInterface.tsx</code>:</p>
+
+            <div class="code-block">
+                <span class="lang-label">TypeScript — app/components/ChatInterface.tsx</span>
+                <pre><code>'use client'; // ← Necesario para hooks de cliente
+
+import { useChat } from 'ai/react';
+
+export default function ChatInterface() {
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading,
+    error
+  } = useChat({
+    api: '/api/chat',
+  });
+
+  return (
+    &lt;div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}&gt;
+      {/* Área de mensajes */}
+      &lt;div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}&gt;
+        {messages.map((message) =&gt; (
+          &lt;div
+            key={message.id}
+            style={{
+              marginBottom: '16px',
+              textAlign: message.role === 'user' ? 'right' : 'left',
+            }}
+          &gt;
+            &lt;div
+              style={{
+                display: 'inline-block',
+                maxWidth: '70%',
+                padding: '12px',
+                borderRadius: '8px',
+                backgroundColor: message.role === 'user' ? '#0070f3' : '#e5e5e5',
+                color: message.role === 'user' ? 'white' : 'black',
+              }}
+            &gt;
+              {message.content}
+            &lt;/div&gt;
+          &lt;/div&gt;
+        ))}
+        {isLoading &amp;&amp; &lt;p&gt;Pensando...&lt;/p&gt;}
+        {error &amp;&amp; &lt;p style={{ color: 'red' }}&gt;Error: {error.message}&lt;/p&gt;}
+      &lt;/div&gt;
+
+      {/* Input de mensaje */}
+      &lt;form
+        onSubmit={handleSubmit}
+        style={{
+          display: 'flex',
+          gap: '8px',
+          padding: '20px',
+          borderTop: '1px solid rgba(0, 240, 255, 0.15)',
+        }}
+      &gt;
+        &lt;input
+          value={input}
+          onChange={handleInputChange}
+          placeholder="Escribe tu mensaje..."
+          disabled={isLoading}
+          style={{
+            flex: 1,
+            padding: '12px',
+            borderRadius: '8px',
+            border: '1px solid rgba(0, 240, 255, 0.15)',
+            fontSize: '16px',
+          }}
+        /&gt;
+        &lt;button
+          type="submit"
+          disabled={isLoading}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: isLoading ? '#ccc' : '#0070f3',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            fontSize: '16px',
+          }}
+        &gt;
+          {isLoading ? 'Enviando...' : 'Enviar'}
+        &lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+            </div>
+
+            <h3>Paso 4: Agregar System Prompt y Temperature</h3>
+
+            <p>Puedes personalizar el comportamiento del modelo con parámetros:</p>
+
+            <div class="code-block">
+                <span class="lang-label">TypeScript</span>
+                <pre><code>const result = streamText({
+  model: openai('gpt-4o-mini'),
+  messages,
+
+  // System prompt: instrucciones del rol del asistente
+  system: `Eres un agente de soporte técnico.
+  - Sé educado y profesional
+  - Responde en español
+  - Si no sabes, pregunta para más contexto`,
+
+  // Temperature: controla creatividad (0-1)
+  // 0 = determinista, 1 = muy creativo
+  temperature: 0.5,
+
+  // Max tokens: limita la longitud de la respuesta
+  maxTokens: 500,
+});
+
+return result.toDataStreamResponse();</code></pre>
+            </div>
+
+            <h3>Paso 5: Usar el Componente en tu App</h3>
+
+            <div class="code-block">
+                <span class="lang-label">TypeScript — app/page.tsx</span>
+                <pre><code>import ChatInterface from '@/app/components/ChatInterface';
+
+export default function Home() {
+  return (
+    &lt;main&gt;
+      &lt;ChatInterface /&gt;
+    &lt;/main&gt;
+  );
+}</code></pre>
+            </div>
+
+            <p><strong>¡Listo! Ejecuta con:</strong></p>
+            <div class="code-block">
+                <span class="lang-label">bash</span>
+                <pre><code>npm run dev</code></pre>
+            </div>
+
+            <p>Ahora tienes un chatbot con streaming en tiempo real. Escribe un mensaje y verás cómo la respuesta aparece palabra por palabra.</p>
+        </section>
+
+        <!-- Challenge Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎯</span>
+                Mini-Reto
+            </h2>
+
+            <div class="reto-box">
+                <h3>Construye un Chatbot con Rol Específico</h3>
+                <p>Crea una aplicación de chat donde el asistente adopte un <strong>rol específico</strong> según el parámetro.</p>
+
+                <p><strong>Requisitos:</strong></p>
+                <ul>
+                    <li>Selecciona un rol (ej: "Profesor de Python", "Entrenador de Fitness", "Chef de Cocina")</li>
+                    <li>Define un <code>system</code> prompt que capture ese rol</li>
+                    <li>Usa <code>useChat</code> con streaming</li>
+                    <li>Muestra el rol actual en la UI</li>
+                    <li>Permite cambiar de rol sin perder el historial (o limpia el historial al cambiar)</li>
+                </ul>
+
+                <p><strong>Ejemplo de system prompt para "Profesor de Python":</strong></p>
+                <div class="code-block">
+                    <span class="lang-label">TypeScript</span>
+                    <pre><code>const systemPrompts: Record&lt;string, string&gt; = {
+  profesor: `Eres un profesor de Python experimentado.
+    - Explica conceptos con claridad
+    - Usa analogías y ejemplos reales
+    - Sugiere ejercicios prácticos
+    - Responde siempre en español`,
+
+  entrenador: `Eres un entrenador personal de fitness.
+    - Da consejos de ejercicio seguro
+    - Personaliza rutinas según el nivel
+    - Motiva al usuario
+    - Pregunta sobre lesiones previas`,
+};
+
+// Después, en tu API Route:
+const system = systemPrompts[rol] || systemPrompts.profesor;
+const result = streamText({
+  model: openai('gpt-4o-mini'),
+  messages,
+  system, // ← Cambiar según el rol
+});</code></pre>
+                </div>
+
+                <p><strong>Bonus:</strong> Guarda el historial en localStorage y recupera la conversación anterior.</p>
+            </div>
+        </section>
+
+        <!-- Exercise Submission Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">✅</span>
+                Entrega de ejercicios
+            </h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Auth.js integration</h4>
+                <p>Integra Auth.js en una aplicación Next.js para autenticación segura de usuarios.</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Código de configuración de Auth.js — Pega tu código aquí..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Explicación de proveedores de autenticación y flujo..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c02', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: User sessions y auth en chat</h4>
+                <p>Implementa un chat protegido por autenticación donde cada usuario ve solo sus propias conversaciones.</p>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Código del chat protegido — Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Prueba: múltiples usuarios, sesiones separadas..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c02', 2, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📝</span>
+                Test de conocimiento
+            </h2>
+            <p>Responde las siguientes 10 preguntas para verificar tu comprensión. Necesitas al menos 8 correctas para marcar esta clase como completada.</p>
+
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <div class="clase-nav">
+            <a href="clase-01.html">← Clase 01</a>
+            <span> | </span>
+            <a href="clase-03.html">Clase 03 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        // Quiz data
+        const quizQuestions = [
+            {
+                question: "¿Cuál es la principal ventaja del Vercel AI SDK frente a usar APIs de LLMs directamente?",
+                options: [
+                    "Es más barato",
+                    "Proporciona una interfaz unificada para múltiples proveedores",
+                    "Solo funciona con OpenAI",
+                    "Genera el código automáticamente"
+                ],
+                correct: 1  // Interfaz unificada
+            },
+            {
+                question: "¿Qué ventaja tiene usar streaming en un chatbot?",
+                options: [
+                    "Reduce el costo de la API",
+                    "El usuario ve la respuesta en tiempo real en lugar de esperar a que termine",
+                    "La respuesta es más correcta",
+                    "No hay ventaja real"
+                ],
+                correct: 1  // Respuesta en tiempo real
+            },
+            {
+                question: "¿Cuál es la función correcta para generar texto CON streaming en el servidor?",
+                options: [
+                    "generateText()",
+                    "streamText()",
+                    "useChat()",
+                    "useCompletion()"
+                ],
+                correct: 1  // streamText()
+            },
+            {
+                question: "¿Qué hace el hook useChat() automáticamente?",
+                options: [
+                    "Solo envía mensajes al servidor",
+                    "Gestiona el historial, estados de carga y streaming de chunks",
+                    "Genera el system prompt",
+                    "Valida el input del usuario"
+                ],
+                correct: 1  // Gestiona todo
+            },
+            {
+                question: "¿Cuál es el rango típico de la propiedad temperature en un LLM?",
+                options: [
+                    "0 - 100",
+                    "0 - 1",
+                    "1 - 10",
+                    "No existe"
+                ],
+                correct: 1  // 0 - 1
+            },
+            {
+                question: "¿Qué hace .toDataStreamResponse() en una API Route?",
+                options: [
+                    "Almacena la respuesta en la base de datos",
+                    "Convierte el stream a Server-Sent Events para el cliente",
+                    "Comprime la respuesta",
+                    "Valida el contenido"
+                ],
+                correct: 1  // Convierte a SSE
+            },
+            {
+                question: "¿Cuál es la forma correcta de usar useChat en un componente React?",
+                options: [
+                    "useChat() sin parámetros",
+                    "useChat({ api: '/api/chat' })",
+                    "useChat({ model: 'gpt-4o' })",
+                    "useChat({ messages: [] })"
+                ],
+                correct: 1  // Con api
+            },
+            {
+                question: "Si quieres cambiar de OpenAI a Claude (Anthropic) en el AI SDK, ¿qué cambias?",
+                options: [
+                    "Todo el código de la API Route",
+                    "Solo la importación y la línea del modelo",
+                    "El hook useChat",
+                    "El frontend completo"
+                ],
+                correct: 1  // Solo importación y modelo
+            },
+            {
+                question: "¿Qué parámetro en streamText() define el rol y comportamiento del asistente?",
+                options: [
+                    "role",
+                    "behavior",
+                    "system",
+                    "prompt"
+                ],
+                correct: 2  // system
+            },
+            {
+                question: "¿Cuál es la diferencia entre streamText() y generateText()?",
+                options: [
+                    "generateText() es más rápido",
+                    "streamText() envía chunks en tiempo real, generateText() espera a la respuesta completa",
+                    "No hay diferencia, son alias",
+                    "generateText() solo funciona con OpenAI"
+                ],
+                correct: 1  // streamText vs generateText
+            }
+        ];
+
+        // Initialize quiz (único sistema: CourseProgress)
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm7-c02');
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm7-c02');
+        }
+    </script>
+</body>
+</html>
