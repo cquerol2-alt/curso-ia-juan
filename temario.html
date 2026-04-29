@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temario — Plan de formación en IA · Juan Querol León</title>
+<meta name="description" content="Plan de formación autodidacta en IA aplicada al desarrollo web. 12 semanas, 9 módulos, 3 proyectos de portfolio y 5 certificaciones gratuitas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e14;
+  --bg-card: #121820;
+  --bg-elevated: #1a2230;
+  --border: #1f2b3d;
+  --text: #e6edf3;
+  --text-dim: #8b98a9;
+  --accent: #00e676;
+  --accent-dim: #00a854;
+  --accent-bg: rgba(0, 230, 118, 0.08);
+  --blue: #5cc8ff;
+  --orange: #ffa559;
+  --radius: 12px;
+  --max: 960px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+.mono { font-family: 'JetBrains Mono', monospace; }
+.container { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10, 14, 20, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+}
+nav .container { display: flex; justify-content: space-between; align-items: center; }
+nav .logo { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+nav .logo .dot { color: var(--accent); }
+nav a.back {
+  color: var(--text-dim); text-decoration: none; font-size: 14px; font-weight: 500;
+  transition: color .15s;
+}
+nav a.back:hover { color: var(--accent); }
+
+header {
+  padding: 80px 0 50px;
+  text-align: left;
+  position: relative;
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  width: 800px; height: 500px;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(0,230,118,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+header .container { position: relative; z-index: 1; }
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent); font-size: 13px; letter-spacing: 0.08em;
+  text-transform: uppercase; margin-bottom: 18px;
+}
+h1 {
+  font-size: clamp(32px, 5vw, 50px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 22px;
+}
+.lead {
+  font-size: clamp(16px, 1.8vw, 18px);
+  color: var(--text-dim);
+  max-width: 720px;
+  margin-bottom: 30px;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 30px 0 60px;
+}
+@media (max-width: 700px) { .facts { grid-template-columns: repeat(2, 1fr); } }
+.fact {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+}
+.fact .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 26px; font-weight: 700;
+  color: var(--accent);
+  display: block; margin-bottom: 4px;
+}
+.fact .lbl { font-size: 13px; color: var(--text-dim); }
+
+section { padding: 50px 0; border-top: 1px solid var(--border); }
+section h2 {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+section h2 .num {
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55em;
+  vertical-align: middle;
+  margin-right: 12px;
+}
+section .subtitle { color: var(--text-dim); margin-bottom: 34px; max-width: 720px; }
+
+.structure {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+@media (max-width: 800px) { .structure { grid-template-columns: repeat(2, 1fr); } }
+.block {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.block .time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--accent);
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.block h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.block p { font-size: 13px; color: var(--text-dim); }
+
+.modulos { display: grid; gap: 20px; }
+.modulo {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 26px 28px;
+  position: relative;
+}
+.modulo.done { border-left-color: var(--accent); background: linear-gradient(to right, rgba(0,230,118,0.04), var(--bg-card) 30%); }
+.modulo.current { border-left-color: var(--orange); }
+.modulo.future { border-left-color: var(--blue); opacity: 0.9; }
+.modulo .head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex-wrap: wrap; gap: 10px; margin-bottom: 14px;
+}
+.modulo .head .title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--text-dim);
+  letter-spacing: 0.06em; margin-bottom: 4px;
+}
+.modulo h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+.modulo .tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 4px 10px; border-radius: 999px;
+  white-space: nowrap;
+}
+.tag-done { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(0,230,118,0.3); }
+.tag-current { background: rgba(255,165,89,0.1); color: var(--orange); border: 1px solid rgba(255,165,89,0.3); }
+.tag-future { background: rgba(92,200,255,0.08); color: var(--blue); border: 1px solid rgba(92,200,255,0.25); }
+
+.modulo .obj {
+  font-size: 15px; color: #c5cdd9;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  background: var(--bg-elevated);
+  border-radius: 8px;
+  border-left: 2px solid var(--border);
+}
+.modulo .obj strong { color: var(--accent); font-weight: 600; }
+
+.modulo .topics {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 20px;
+  margin-bottom: 18px;
+}
+@media (max-width: 620px) { .modulo .topics { grid-template-columns: 1fr; } }
+.modulo .topics li {
+  font-size: 14px; color: #c5cdd9;
+  padding-left: 18px;
+  position: relative;
+}
+.modulo .topics li::before {
+  content: '▸'; color: var(--accent); position: absolute; left: 0;
+  font-size: 11px; top: 4px;
+}
+
+.modulo .footer {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  padding-top: 14px; border-top: 1px solid var(--border);
+  font-size: 13px;
+}
+.modulo .footer .item { color: var(--text-dim); }
+.modulo .footer .item strong { color: var(--text); font-weight: 600; }
+.modulo .footer .item.boss { color: var(--accent); }
+
+.certs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+@media (max-width: 700px) { .certs { grid-template-columns: 1fr; } }
+.cert {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 22px;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 14px;
+}
+.cert .info h4 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+.cert .info p { font-size: 13px; color: var(--text-dim); }
+.cert .dur {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--accent);
+  padding: 4px 10px;
+  background: var(--accent-bg); border-radius: 4px;
+  white-space: nowrap;
+}
+
+.stack-total {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-top: 20px;
+}
+.stack-total h3 {
+  font-size: 13px; color: var(--accent); letter-spacing: 0.08em;
+  text-transform: uppercase; font-weight: 600; margin-bottom: 12px;
+}
+.stack-total .list {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.stack-total .list span {
+  background: var(--bg-elevated); padding: 6px 12px; border-radius: 6px;
+  font-size: 13px; color: #c5cdd9;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+footer {
+  padding: 50px 0 60px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  margin-top: 50px;
+}
+footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="logo">juanquerol<span class="dot">.</span></div>
+    <a href="portfolio.html" class="back">← Volver al portfolio</a>
+  </div>
+</nav>
+
+<header>
+  <div class="container">
+    <div class="eyebrow">MI PLAN DE IA · 2026</div>
+    <h1>12 semanas de IA para developers web — mi plan</h1>
+    <p class="lead">Este es el plan que me he montado después de ver másteres y bootcamps y darme cuenta de que no cubrían las cosas que más ganas tenía yo de aprender. Aquí está todo lo que voy a hacer de aquí a julio.</p>
+
+    <div class="facts">
+      <div class="fact"><span class="num">12</span><span class="lbl">semanas</span></div>
+      <div class="fact"><span class="num">200h</span><span class="lbl">dedicación total</span></div>
+      <div class="fact"><span class="num">9</span><span class="lbl">módulos + boss battles</span></div>
+      <div class="fact"><span class="num">0€</span><span class="lbl">matrícula</span></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <h2><span class="num">01</span>Cómo está montado el día</h2>
+    <p class="subtitle">Cada día son 2 horas de trabajo de verdad, en cuatro bloques. Nada de dejar el vídeo de fondo sin hacer nada.</p>
+    <div class="structure">
+      <div class="block">
+        <div class="time">30 MIN</div>
+        <h3>Vídeo o lectura</h3>
+        <p>Un recurso bueno elegido con cuidado, no lo primero que salga en Google.</p>
+      </div>
+      <div class="block">
+        <div class="time">50 MIN</div>
+        <h3>Práctica guiada</h3>
+        <p>Tocar código, romperlo, cambiarlo. Si no lo escribo yo, no se me queda.</p>
+      </div>
+      <div class="block">
+        <div class="time">15 MIN</div>
+        <h3>Test rápido</h3>
+        <p>Un quiz corto para ver si lo he pillado de verdad o solo me lo parece.</p>
+      </div>
+      <div class="block">
+        <div class="time">25 MIN</div>
+        <h3>Reto del día</h3>
+        <p>Un ejercicio pequeño donde aplico lo aprendido a algo mío.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2><span class="num">02</span>Módulos</h2>
+    <p class="subtitle">9 módulos que van de Python como base hasta agentes autónomos y preparar entrevistas.</p>
+
+    <div class="modulos">
+
+      <!-- Módulo 1 -->
+      <div class="modulo done">
+        <div class="head">
+          <div>
+            <div class="title">MÓDULO 01 · Semanas 1-2 · 20 h</div>
+            <h3>Python para desarrolladores web</h3>
+          </div>
+          <span class="tag tag-done">COMPLETADO</span>
+        </div>
+        <div class="obj"><strong>Qué quería conseguir:</strong> manejar Python lo suficiente como para empezar a construir con IA, aprovechando que ya me muevo bien en JavaScript. En dos semanas quería pasar de "hola mundo" a un servidor web funcionando. Lo conseguí.</div>
+        <ul class="topics">
+          <li>Variables, tipos, strings, f-strings</li>
+          <li>Listas, diccionarios y tuplas</li>
+          <li>Condicionales, bucles y comprensiones</li>
+          <li>Funciones, módulos e imports</li>
+          <li>Ficheros, JSON y APIs con requests</li>
+          <li>Clases y OOP básica</li>
+          <li>Entornos virtuales y pip</li>
+          <li>Web scraping con BeautifulSoup</li>
+          <li>Flask: servidor web desde cero</li>
+        </ul>
+        <div class="footer">
+          <div class="item boss"><strong>Boss battle:</strong> mini API REST en Flask que devuelve datos en JSON</div>
+        </div>
+      </div>
+
+      <!-- Módulo 2 -->
+      <div class="modulo current">
+        <div class="head">
+          <div>
+            <div class="title">MÓDULO 02 · Semana 3 · 10 h</div>
+            <h3>Fundamentos de IA y LLMs</h3>
+          </div>
+          <span class="tag tag-current">EN CURSO</span>
+        </div>
+        <div class="obj"><strong>Qué quiero conseguir:</strong> entender qué está pasando por dentro cuando hablo con un LLM, y la diferencia entre los cerrados (GPT, Claude) y los open source. Algo de teoría, la necesaria, sin meterme en mates que no voy a usar.</div>
+        <ul class="topics">
+          <li>ML, Deep Learning y LLMs (los conceptos que hacen falta)</li>
+          <li>Tokens, contexto y temperatura</li>
+          <li>Prompt engineering avanzado: CoT, few-shot, system prompts</li>
+          <li>Modelos cerrados: GPT, Claude, Gemini</li>
+          <li>Modelos open source: Llama, Mistral, Ollama en local</li>
+          <li>Hugging Face Hub como ecosistema</li>
+        </ul>
+        <div class="footer">
+          <div class="item boss"><strong>Boss battle:</strong> resolver 5 problemas reales solo con prompts, uno con modelo local vía Ollama</div>
+          <div class="item">Certificaciones: <strong>Elements of AI</strong> (Helsinki), <strong>Google AI Essentials</strong>, <strong>DeepLearning.AI Prompt Engineering</strong></div>
+        </div>
+      </div>
+
+      <!-- Módulo 3 -->
+      <div class="modulo future">
+        <div class="head">
+          <div>
+            <div class="title">MÓDULO 03 · Semana 4 · 10 h</div>
+            <h3>APIs de IA — mi primer chatbot</h3>
+          </div>
+          <span class="tag tag-future">PRÓXIMO</span>
+        </div>
+        <div class="obj"><strong>Qué quiero conseguir:</strong> que mi propio código hable con una IA. Acabar con un chatbot desplegado en internet, con su seguridad básica cubierta desde el primer proyecto.</div>
+        <ul class="topics">
+          <li>OpenAI API: setup, primera llamada, parámetros</li>
+          <li>Temperatura, max tokens, roles (system / user / assistant)</li>
+          <li>Chatbot con memoria de conversación</li>
+          <li>Anthropic API (Claude) como alternativa</li>
+          <li>AI Safety: prompt injection, bias, moderación</li>
+          <li>Deploy en Render con gestión de secretos</li>
+        </ul>
+        <div class="footer">
+          <div class="item boss"><strong>Boss battle:</strong> chatbot web con Flask + OpenAI/Claude desplegado en Render, con protección básica contra prompt injection <em>(Proyecto de portfolio #1)</em></div>
+        </div>
+      </div>
+
+      <!-- Módulo 4 -->
+      <div class="modulo future">
+        <div class="head">
+          <div>
+            <div class="title">MÓDULO 04 · Semana 5 · 10 h</div>
+            <h3>AI Coding Tools</h3>
+          </div>
+          <span class="tag tag-future">PRÓXIMO</span>
+        </div>
+        <div class="obj"><strong>Qué quiero conseguir:</strong> programar con IA al lado, no detrás. Saber pedir bien, corregir lo que me sugiere y decidir qué acepto y qué no. Es medio magia y tengo mucha curiosidad.</div>
+        <ul class="topics">
+          <li>GitHub Copilot: autocompletado y chat en VS Code</li>
+          <li>Cursor IDE: Composer y edición asistida por IA</li>
+          <li>Claude Code y Windsurf: agentes de código en terminal</li>
+          <li>Prompts en comentarios, TDD con IA, refactoring asistido</li>
+          <li>Análisis de código ajeno con IA (ejercicio codebase-to-course)</li>
+        </ul>
+        <div class="footer">
+          <div class="item boss"><strong>Boss battle:</strong> reconstruir mi proyecto de fin de ciclo (red social de ideas) con AI tools y comparar tiempo y calidad vs. original</div>
+        </div>
+      </div>
+
+      <!-- Módulo 5 -->
+      <div class="modulo future">
+        <div class="head">
+          <div>
+            <div class="title">MÓDULO 05 · Semanas 6-7 · 20 h</div>
+            <h3>Context, Search y RAG — conectar la IA con tus propios datos</h3>
+          </div>
+          <span class="tag tag-future">PRÓXIMO · EL QUE MÁS GANAS TENGO</span>
+        </div>
+        <div class="obj"><strong>Qué quiero conseguir:</strong> que una IA pueda responderme sobre datos que no conoce de entrenamiento (mis apuntes, por ejemplo). Hay tres formas de hacerlo (context stuffing, agentic search, RAG clásico) y quiero entender cuándo usar cada una, no solo picar código.</div>
+        <ul class="topics">
+          <li>Concepto clave: context engineering &gt; prompt engineering</li>
+          <li>Context stuffing: ventanas de 200K-1M, costes y límites reales</li>
+          <li>Agentic search con tool use: el modelo decide qué buscar</li>
+          <li>Embeddings y vector stores desde cero (ChromaDB)</li>
+          <li>RAG clásico: chunking, retrieval, reranking</li>
+          <li>Evals: Ragas, LLM-as-judge, métricas básicas</li>
+          <li>Frontend: Next.js + Vercel AI SDK con streaming</li>
+          <li>Observability: Langfuse para trazar llamadas</li>
+        </ul>
+        <div class="footer">
+          <div class="item boss"><strong>Boss battle:</strong> "Pregúntale a mis apuntes" — implementar las 3 variantes sobre el mismo corpus con informe comparativo de coste, latencia y calidad <em>(Proyecto de portfolio #2)</em></div>
+        </div>
+      </div>
+
+      <!-- Módulo 6 -->
+      <div class="modulo future">
+        <div class="head">
+          <div>
+            <div class="title">MÓDULO 06 · Semana 8 · 10 h</div>
+            <h3>Agentes — del tool use al sistema autónomo</h3>
+          </div>
+          <span class="tag tag-future">PRÓXIMO</span>
+        </div>
+        <div class="obj"><strong>Qué quiero conseguir:</strong> entender qué es un agente en realidad (modelo + herramientas + bucle + memoria, no es magia) y montar uno desde cero sin depender de frameworks que añaden ruido.</div>
+        <ul class="topics">
+          <li>Anatomía de un agente: modelo + tools + loop + memoria</li>
+          <li>Claude Agent SDK / OpenAI Agents SDK (nativos)</li>
+          <li>Tool use avanzado: schemas JSON, llamadas paralelas, retries</li>
+          <li>MCP (Model Context Protocol) como estándar 2026</li>
+          <li>Patrones multi-agente: orquestador, peer-review, sequential</li>
+          <li>Mención a CrewAI y LangGraph (contexto, no uso)</li>
+        </ul>
+        <div class="footer">
+          <div class="item boss"><strong>Boss battle:</strong> agente que busca en web, razona y escribe informe, construido con SDK nativo y al menos una tool vía MCP</div>
+          <div class="item">Certificación: <strong>IBM AI Fundamentals</strong></div>
+        </div>
+      </div>
+
+      <!-- Módulo 7 -->
+      <div class="modulo future">
+        <div class="head">
+          <div>
+            <div class="title">MÓDULO 07 · Semana 9 · 10 h</div>
+            <h3>Full-stack AI app</h3>
+          </div>
+          <span class="tag tag-future">PRÓXIMO</span>
+        </div>
+        <div class="obj"><strong>Qué quiero conseguir:</strong> juntar todo lo aprendido en una app completa, de las de verdad. Con login, streaming, RAG y todo. Algo que pueda usar yo mismo o dejar a alguien para que pruebe.</div>
+        <ul class="topics">
+          <li>Arquitectura de una AI app: frontend + backend + LLM</li>
+          <li>Vercel AI SDK: streaming de respuestas en React</li>
+          <li>Autenticación y rate limiting</li>
+          <li>UX para apps de IA: patrones de ChatGPT, Perplexity, Claude</li>
+          <li>Observabilidad y costes en producción</li>
+        </ul>
+        <div class="footer">
+          <div class="item boss"><strong>Boss battle:</strong> app completa desplegada (asistente IA para un caso de uso real con RAG) <em>(Proyecto de portfolio #3)</em></div>
+        </div>
+      </div>
+
+      <!-- Módulo 8 -->
+      <div class="modulo future">
+        <div class="head">
+          <div>
+            <div class="title">MÓDULO 08 · Semana 10 · 10 h</div>
+            <h3>Portfolio, CV y perfil público</h3>
+          </div>
+          <span class="tag tag-future">PRÓXIMO</span>
+        </div>
+        <div class="obj"><strong>Qué quiero conseguir:</strong> que lo que he hecho se pueda ver y se pueda entender en 30 segundos. Un proyecto que nadie encuentra es como si no existiera.</div>
+        <ul class="topics">
+          <li>Pulir los 3 proyectos con README profesional y demos</li>
+          <li>GitHub profile: bio, pinned repos, contribuciones</li>
+          <li>CV actualizado con sección IA y keywords ATS</li>
+          <li>LinkedIn: headline, about, featured, certificaciones</li>
+          <li>Vídeo corto de presentación (2 min)</li>
+        </ul>
+        <div class="footer">
+          <div class="item boss"><strong>Boss battle:</strong> portfolio web publicado con los 3 proyectos + vídeo de presentación</div>
+        </div>
+      </div>
+
+      <!-- Módulo 9 -->
+      <div class="modulo future">
+        <div class="head">
+          <div>
+            <div class="title">MÓDULO 09 · Semanas 11-12 · 10 h</div>
+            <h3>Empezar a buscar curro</h3>
+          </div>
+          <span class="tag tag-future">PRÓXIMO</span>
+        </div>
+        <div class="obj"><strong>Qué quiero conseguir:</strong> saber dónde mirar ofertas, cómo preparar entrevistas técnicas de IA sin morir y cómo contar lo que he hecho para que se entienda.</div>
+        <ul class="topics">
+          <li>Plataformas: LinkedIn Jobs, InfoJobs Tech, Wellfound, RemoteOK, Turing</li>
+          <li>Lectura crítica de ofertas de AI Engineer</li>
+          <li>Adaptar CV a cada oferta (palabras clave, ATS)</li>
+          <li>Preparación de entrevistas técnicas sobre LLMs, RAG, agentes</li>
+          <li>Live coding asistido por IA</li>
+          <li>Networking: MadridAI, BarcelonaML, comunidades Discord</li>
+        </ul>
+        <div class="footer">
+          <div class="item boss"><strong>Boss battle final:</strong> plan de 30 días con 5 empresas target, CV adaptado a cada una, 3 mensajes fríos a recruiters y 1 candidatura enviada de verdad</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2><span class="num">03</span>Certificaciones</h2>
+    <p class="subtitle">Todas gratis, todas reconocidas. Las voy sacando en paralelo al curso.</p>
+    <div class="certs">
+      <div class="cert">
+        <div class="info"><h4>Generación con IA</h4><p>Founderz + Microsoft — <strong style="color:var(--accent);">ya obtenida</strong></p></div>
+        <span class="dur">7,5 h</span>
+      </div>
+      <div class="cert">
+        <div class="info"><h4>Elements of AI</h4><p>Universidad de Helsinki · 1M+ alumnos</p></div>
+        <span class="dur">6-8 h</span>
+      </div>
+      <div class="cert">
+        <div class="info"><h4>Google AI Essentials</h4><p>Google Cloud Skills Boost</p></div>
+        <span class="dur">2-4 h</span>
+      </div>
+      <div class="cert">
+        <div class="info"><h4>ChatGPT Prompt Engineering</h4><p>DeepLearning.AI · Andrew Ng</p></div>
+        <span class="dur">1 h</span>
+      </div>
+      <div class="cert">
+        <div class="info"><h4>IBM AI Fundamentals</h4><p>IBM / Coursera</p></div>
+        <span class="dur">10 h</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2><span class="num">04</span>Con qué voy a acabar trabajando</h2>
+    <p class="subtitle">Lo que entra en el plan. Y lo que he decidido dejar fuera (y por qué).</p>
+
+    <div class="stack-total">
+      <h3>Lenguajes y bases</h3>
+      <div class="list">
+        <span>Python</span><span>JavaScript</span><span>TypeScript</span><span>SQL básico</span><span>Git / GitHub</span>
+      </div>
+    </div>
+    <div class="stack-total">
+      <h3>IA aplicada</h3>
+      <div class="list">
+        <span>OpenAI API</span><span>Anthropic API</span><span>Claude Agent SDK</span><span>OpenAI Agents SDK</span><span>MCP</span><span>Tool use</span><span>Context engineering</span><span>RAG / ChromaDB</span><span>Embeddings</span><span>Ragas</span><span>Langfuse</span><span>Ollama</span><span>Hugging Face</span>
+      </div>
+    </div>
+    <div class="stack-total">
+      <h3>Web y despliegue</h3>
+      <div class="list">
+        <span>Flask</span><span>Next.js</span><span>Vercel AI SDK</span><span>React / Vue</span><span>Render</span><span>Vercel</span>
+      </div>
+    </div>
+    <div class="stack-total" style="border-left: 3px solid var(--orange);">
+      <h3 style="color:var(--orange);">Fuera del plan (a propósito)</h3>
+      <div class="list">
+        <span style="opacity:0.7;text-decoration:line-through;">LangChain (como framework central)</span>
+        <span style="opacity:0.7;text-decoration:line-through;">CrewAI</span>
+        <span style="opacity:0.7;text-decoration:line-through;">LangGraph</span>
+        <span style="opacity:0.7;text-decoration:line-through;">Fine-tuning</span>
+        <span style="opacity:0.7;text-decoration:line-through;">Multimodal avanzado</span>
+      </div>
+      <p style="margin-top:10px; font-size:13px; color:var(--text-dim);">Los conozco por encima pero no voy a construir proyectos con ellos. Prefiero ir a las piezas más directas y dedicar el tiempo a lo que más uso luego.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p><a href="portfolio.html">← Volver al portfolio</a></p>
+    <p style="margin-top:10px;">Juan Querol León · Madrid · 2026</p>
+  </div>
+</footer>
+
+</body>
+</html>
