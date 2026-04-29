@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juan Querol León — Frontend + VR + IA</title>
+<meta name="description" content="Desarrollador Frontend especializado en experiencias inmersivas (VR/AR) y en transición a AI Engineer. Portfolio, proyectos y relato del aprendizaje.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e14;
+  --bg-card: #121820;
+  --bg-elevated: #1a2230;
+  --border: #1f2b3d;
+  --text: #e6edf3;
+  --text-dim: #8b98a9;
+  --accent: #00e676;
+  --accent-dim: #00a854;
+  --accent-bg: rgba(0, 230, 118, 0.08);
+  --blue: #5cc8ff;
+  --orange: #ffa559;
+  --red: #ff6b6b;
+  --radius: 12px;
+  --max: 1100px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+code, .mono { font-family: 'JetBrains Mono', monospace; }
+
+.container { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+/* ---- NAV ---- */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10, 14, 20, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+}
+nav .container { display: flex; justify-content: space-between; align-items: center; }
+nav .logo { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
+nav .logo .dot { color: var(--accent); }
+nav ul { list-style: none; display: flex; gap: 28px; }
+nav ul a { color: var(--text-dim); text-decoration: none; font-size: 14px; font-weight: 500; transition: color .15s; }
+nav ul a:hover { color: var(--accent); }
+@media (max-width: 640px) { nav ul { display: none; } }
+
+/* ---- HERO ---- */
+header {
+  padding: 90px 0 70px;
+  position: relative;
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  width: 900px; height: 600px;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(0,230,118,0.1) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+header .container { position: relative; z-index: 1; }
+.tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent-bg); border: 1px solid rgba(0,230,118,0.25);
+  color: var(--accent); padding: 6px 14px; border-radius: 999px;
+  font-size: 13px; font-weight: 500; margin-bottom: 24px;
+}
+.tag .pulse {
+  width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+h1 {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 20px;
+}
+h1 .accent { color: var(--accent); }
+.lead {
+  font-size: clamp(17px, 2vw, 20px);
+  color: var(--text-dim);
+  max-width: 680px;
+  margin-bottom: 36px;
+}
+.cta {
+  display: flex; gap: 14px; flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 22px; border-radius: 10px; font-weight: 600; font-size: 15px;
+  text-decoration: none; transition: all .15s; cursor: pointer; border: none;
+}
+.btn-primary {
+  background: var(--accent); color: #0a0e14;
+}
+.btn-primary:hover { background: #00ff83; transform: translateY(-1px); }
+.btn-secondary {
+  background: transparent; color: var(--text); border: 1px solid var(--border);
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---- SECTIONS ---- */
+section { padding: 80px 0; border-top: 1px solid var(--border); }
+section h2 {
+  font-size: clamp(26px, 3.5vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+section h2 .num {
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55em;
+  vertical-align: middle;
+  margin-right: 12px;
+}
+section .subtitle { color: var(--text-dim); margin-bottom: 40px; max-width: 720px; }
+
+/* ---- RELATO ---- */
+.relato { font-size: 17px; max-width: 760px; }
+.relato p { margin-bottom: 20px; color: #c5cdd9; }
+.relato strong { color: var(--text); }
+.relato .quote {
+  border-left: 3px solid var(--accent);
+  padding: 4px 0 4px 20px;
+  font-style: italic;
+  color: var(--text-dim);
+  margin: 28px 0;
+}
+
+/* ---- SKILLS ---- */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 24px;
+}
+@media (max-width: 800px) { .skills-grid { grid-template-columns: 1fr; } }
+.skill-group {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+.skill-group h3 {
+  font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); margin-bottom: 14px; font-weight: 600;
+}
+.skill-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.skill-list span {
+  background: var(--bg-elevated); padding: 6px 12px; border-radius: 6px;
+  font-size: 13px; color: #c5cdd9;
+  border: 1px solid transparent;
+  transition: border-color .15s;
+}
+.skill-list span:hover { border-color: var(--accent); }
+
+/* ---- PROYECTOS ---- */
+.projects { display: grid; gap: 24px; }
+.project {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: border-color .15s, transform .15s;
+  position: relative;
+  overflow: hidden;
+}
+.project:hover { border-color: rgba(0,230,118,0.3); }
+.project .status {
+  position: absolute; top: 20px; right: 24px;
+  font-size: 12px; font-weight: 600;
+  padding: 4px 10px; border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.status-live { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(0,230,118,0.3); }
+.status-building { background: rgba(255,165,89,0.1); color: var(--orange); border: 1px solid rgba(255,165,89,0.3); }
+.status-planned { background: rgba(92,200,255,0.08); color: var(--blue); border: 1px solid rgba(92,200,255,0.25); }
+
+.project h3 { font-size: 22px; font-weight: 700; margin-bottom: 6px; padding-right: 110px; }
+.project .meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: var(--text-dim);
+  margin-bottom: 14px;
+}
+.project p { color: #c5cdd9; margin-bottom: 16px; font-size: 15px; }
+.project .stack { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.project .stack span {
+  background: var(--bg-elevated); padding: 4px 10px; border-radius: 6px;
+  font-size: 12px; color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+.project .links { display: flex; gap: 16px; flex-wrap: wrap; }
+.project .links a {
+  color: var(--accent); text-decoration: none; font-size: 14px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.project .links a:hover { text-decoration: underline; }
+.project .links .disabled { color: var(--text-dim); cursor: not-allowed; }
+
+/* ---- CERTIFICACIONES ---- */
+.certs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+@media (max-width: 700px) { .certs { grid-template-columns: 1fr; } }
+.cert {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px;
+}
+.cert .info h4 { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.cert .info p { font-size: 13px; color: var(--text-dim); }
+.cert .badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 4px 8px; border-radius: 4px;
+  white-space: nowrap;
+}
+.badge-done { background: var(--accent-bg); color: var(--accent); }
+.badge-progress { background: rgba(255,165,89,0.1); color: var(--orange); }
+
+/* ---- CONTACTO ---- */
+.contact-card {
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px;
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.contact-card h2 { margin-bottom: 14px; }
+.contact-card p { color: var(--text-dim); margin-bottom: 28px; max-width: 520px; margin-left: auto; margin-right: auto; }
+.contact-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+/* ---- FOOTER ---- */
+footer {
+  padding: 40px 0 60px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+}
+footer a { color: var(--text-dim); }
+
+/* ---- TIMELINE BAR ---- */
+.progress-bar {
+  margin: 32px 0;
+  padding: 20px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.progress-bar .header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+.progress-bar .header strong { color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+.progress-bar .bar { height: 8px; background: var(--bg-elevated); border-radius: 4px; overflow: hidden; }
+.progress-bar .bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+  width: 9%;
+  border-radius: 4px;
+  transition: width 1s ease-out;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="logo">juanquerol<span class="dot">.</span></div>
+    <ul>
+      <li><a href="#relato">Relato</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#proyectos">Proyectos</a></li>
+      <li><a href="#certificaciones">Certificaciones</a></li>
+      <li><a href="#aprendiendo">Aprendiendo</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header>
+  <div class="container">
+    <div class="tag"><span class="pulse"></span> Disponible para posiciones junior</div>
+    <h1>Frontend, experiencias inmersivas<br>y ahora <span class="accent">un montón de IA</span>.</h1>
+    <p class="lead">Soy Juan Querol León. 22 años, de Madrid. FP Superior en U-TAD y Programa Experto en VR/AR/MR. Ahora mismo estoy metido en un plan de IA que me he montado yo solo. Aquí está lo que he hecho hasta ahora, lo que tengo entre manos y lo que viene.</p>
+    <div class="cta">
+      <a href="#proyectos" class="btn btn-primary">Ver proyectos →</a>
+      <a href="#contacto" class="btn btn-secondary">Escríbeme</a>
+    </div>
+  </div>
+</header>
+
+<section id="relato">
+  <div class="container">
+    <h2><span class="num">01</span>El relato</h2>
+    <p class="subtitle">Por qué me he montado mi propio plan de IA en vez de apuntarme a un máster.</p>
+    <div class="relato">
+      <p>Cuando terminé el FP Superior de Desarrollo Web y después el Programa Experto de VR/AR/MR en U-TAD, el paso lógico parecía ser un máster de IA. Lo miré. Hablé con mi familia (trabajan en tech), con amigos del ciclo y con gente que ya está currando en el sector.</p>
+
+      <p class="quote">«Esto cambia tan rápido que lo que te enseñan en un máster casi se queda corto cuando sales.»</p>
+
+      <p>Miré temarios. Muchos siguen empezando por cosas que ya no se usan igual que hace dos años, y se dejan fuera lo que más ganas tenía yo de aprender: cómo se conecta una IA con datos propios, cómo se construye un agente, MCP, context engineering... O sea, justo lo que estaba descubriendo por mi cuenta y me flipaba.</p>
+
+      <p>Así que decidí otra cosa: <strong>montarme mi propio plan de 12 semanas</strong>. 3 proyectos para GitHub, 5 certificaciones gratuitas (CS50P de Harvard, Elements of AI, Google AI Essentials, DeepLearning.AI con Andrew Ng, IBM) y un temario con las cosas que me apetecía aprender de verdad: APIs de OpenAI y Anthropic, agentes con Claude Agent SDK, MCP, context engineering, evals, RAG.</p>
+
+      <p>Esta página es mi portfolio, pero también es una bitácora del proceso. Lo que hay abajo es real: lo que ya está hecho, lo que estoy construyendo esta semana y lo que llegará en las próximas.</p>
+    </div>
+
+    <div class="progress-bar">
+      <div class="header">
+        <span>Progreso del curso autodidacta</span>
+        <strong id="progress-text">Semana 1 / 11</strong>
+      </div>
+      <div class="bar"><div class="bar-fill" id="progress-fill"></div></div>
+      <p style="margin-top:14px;font-size:13px;color:var(--text-dim);">
+        ¿Quieres ver el plan completo? <a href="temario.html" style="color:var(--accent);text-decoration:none;font-weight:500;">Consulta el temario →</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="container">
+    <h2><span class="num">02</span>Skills</h2>
+    <p class="subtitle">Frontend como base, VR porque me encanta, IA porque es lo que estoy aprendiendo ahora.</p>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <h3>Frontend &amp; Web</h3>
+        <div class="skill-list">
+          <span>JavaScript</span><span>TypeScript</span><span>HTML5</span><span>CSS3</span>
+          <span>Vue.js</span><span>React</span><span>Angular</span><span>Node.js</span>
+          <span>Firebase</span><span>Git / GitHub</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3>VR / Inmersivo</h3>
+        <div class="skill-list">
+          <span>Unity</span><span>Unreal Engine</span><span>C#</span>
+          <span>AR / Realidad Mixta</span><span>Three.js (base)</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3>IA &amp; Backend <small style="color:var(--orange);font-weight:400;">(en curso)</small></h3>
+        <div class="skill-list">
+          <span>Python</span><span>Flask</span>
+          <span>OpenAI API</span><span>Anthropic API</span>
+          <span>Claude Agent SDK</span><span>MCP</span>
+          <span>RAG / ChromaDB</span><span>Context Engineering</span>
+          <span>Evals (Ragas)</span><span>Vercel AI SDK</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="proyectos">
+  <div class="container">
+    <h2><span class="num">03</span>Proyectos</h2>
+    <p class="subtitle">Lo que ya está terminado, lo que estoy construyendo esta semana y lo que llegará antes de julio. Todo termina con código público en GitHub.</p>
+
+    <div class="projects">
+
+      <div class="project">
+        <div class="status status-live">LIVE</div>
+        <h3>Red social de ideas</h3>
+        <p class="meta">Proyecto Fin de Ciclo · U-TAD · 2024</p>
+        <p>Red social donde los usuarios publican, votan y comentan ideas. 100% Vue.js con Firebase como backend (auth, realtime DB, storage). Bulma CSS para una interfaz rápida y consistente.</p>
+        <div class="stack">
+          <span>Vue.js</span><span>Firebase</span><span>Bulma</span>
+        </div>
+        <div class="links">
+          <a href="https://github.com/juanquerol" target="_blank" rel="noopener">GitHub →</a>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="status status-live">LIVE</div>
+        <h3>Gestión de cuenta para cerraduras inteligentes accesibles</h3>
+        <p class="meta">OMKROM · Prácticas FP · 2024</p>
+        <p>Panel web para que usuarios con discapacidad gestionen sus cerraduras inteligentes de forma accesible. Angular + Material Design siguiendo pautas WCAG. Foco en claridad visual y navegación por teclado.</p>
+        <div class="stack">
+          <span>Angular</span><span>TypeScript</span><span>Material Design</span><span>Accesibilidad (WCAG)</span>
+        </div>
+        <div class="links">
+          <a href="https://www.linkedin.com/in/juan-querol-leon/" target="_blank" rel="noopener">Ver en LinkedIn →</a>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="status status-live">LIVE</div>
+        <h3>Mini API REST en Flask</h3>
+        <p class="meta">Final del Módulo 1 · Curso autodidacta · Semanas 1-2 (terminado)</p>
+        <p>Primer proyecto del plan. API REST en Flask que devuelve datos en JSON, con endpoints, manejo de errores y una estructura limpia. El objetivo era saltar de JavaScript a Python en dos semanas y acabar con algo que funcione de verdad. Lo conseguí.</p>
+        <div class="stack">
+          <span>Python</span><span>Flask</span><span>JSON</span><span>REST</span>
+        </div>
+        <div class="links">
+          <a href="temario.html">Ver temario del curso →</a>
+          <a href="https://github.com/juanquerol" target="_blank" rel="noopener">GitHub →</a>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="status status-building">BUILDING</div>
+        <h3>Chatbot con Flask + OpenAI</h3>
+        <p class="meta">Módulo 3 · Curso autodidacta · Semana 5 (próxima)</p>
+        <p>Chatbot web con memoria de conversación, desplegado en Render y conectado a las APIs de OpenAI y Anthropic. Con protección básica contra prompt injection y moderación de contenido. Este es el primer proyecto "de verdad" para el portfolio.</p>
+        <div class="stack">
+          <span>Python</span><span>Flask</span><span>OpenAI API</span><span>Anthropic API</span><span>Render</span>
+        </div>
+        <div class="links">
+          <a class="disabled">Demo próximamente</a>
+          <a class="disabled">Repo próximamente</a>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="status status-planned">PLANNED</div>
+        <h3>Pregúntale a mis apuntes — 3 arquitecturas comparadas</h3>
+        <p class="meta">Módulo 5 · Curso autodidacta · Semana 7-8 · <strong style="color:var(--accent)">El que más ganas tengo</strong></p>
+        <p>Sobre los mismos datos (apuntes míos de la U-TAD) quiero probar tres maneras distintas de que una IA responda preguntas: <strong>context stuffing, agentic search con tool use y RAG clásico</strong> con ChromaDB. Al final: una comparativa de coste, latencia y calidad usando Ragas, y mi conclusión de qué usaría yo. Más que hacer algo, quiero entender por qué elijo una u otra.</p>
+        <div class="stack">
+          <span>Python</span><span>ChromaDB</span><span>Claude SDK</span><span>Next.js</span><span>Ragas</span><span>Langfuse</span>
+        </div>
+        <div class="links">
+          <a class="disabled">Demo próximamente</a>
+          <a class="disabled">Informe comparativo próximamente</a>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="status status-planned">PLANNED</div>
+        <h3>Agente autónomo con MCP</h3>
+        <p class="meta">Módulo 6 · Curso autodidacta · Semana 9</p>
+        <p>Un agente construido desde cero con Claude Agent SDK que busca en web, lee archivos, razona y escribe un informe. Por lo menos una herramienta externa conectada por MCP, que es el estándar al que se está yendo todo el mundo.</p>
+        <div class="stack">
+          <span>Python</span><span>Claude Agent SDK</span><span>MCP</span><span>Tool use</span>
+        </div>
+        <div class="links">
+          <a class="disabled">Llegada estimada: junio 2026</a>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="status status-planned">PLANNED</div>
+        <h3>App full-stack con IA y streaming</h3>
+        <p class="meta">Módulo 7 · Curso autodidacta · Semana 10</p>
+        <p>App completa: Next.js + Vercel AI SDK con respuestas en streaming, login, rate limiting y RAG. Quiero que sea algo usable, no una demo de juguete. El tercero para el portfolio.</p>
+        <div class="stack">
+          <span>Next.js</span><span>Vercel AI SDK</span><span>TypeScript</span><span>RAG</span>
+        </div>
+        <div class="links">
+          <a class="disabled">Llegada estimada: junio 2026</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="certificaciones">
+  <div class="container">
+    <h2><span class="num">04</span>Certificaciones</h2>
+    <p class="subtitle">Todas gratis, todas reconocidas. Las voy sacando en paralelo al curso.</p>
+    <div class="certs">
+      <div class="cert">
+        <div class="info"><h4>Generación con IA</h4><p>Founderz + Microsoft · 7,5 h</p></div>
+        <span class="badge badge-done">CONSEGUIDA</span>
+      </div>
+      <div class="cert">
+        <div class="info"><h4>Elements of AI</h4><p>Universidad de Helsinki · 1M+ alumnos</p></div>
+        <span class="badge badge-progress">EN CURSO</span>
+      </div>
+      <div class="cert">
+        <div class="info"><h4>Google AI Essentials</h4><p>Google Cloud Skills Boost</p></div>
+        <span class="badge badge-progress">EN CURSO</span>
+      </div>
+      <div class="cert">
+        <div class="info"><h4>ChatGPT Prompt Engineering</h4><p>DeepLearning.AI · Andrew Ng</p></div>
+        <span class="badge badge-progress">EN CURSO</span>
+      </div>
+      <div class="cert">
+        <div class="info"><h4>IBM AI Fundamentals</h4><p>IBM / Coursera</p></div>
+        <span class="badge badge-progress">EN CURSO</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="aprendiendo">
+  <div class="container">
+    <h2><span class="num">05</span>Aprendiendo de</h2>
+    <p class="subtitle">Los vídeos y recursos que estoy viendo en el curso. Solo los que entran en el plan, nada de listados para quedar bien.</p>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <h3>Intuición &amp; fundamentos</h3>
+        <div class="skill-list" style="flex-direction:column;gap:6px;">
+          <span><strong style="color:var(--text);">3Blue1Brown</strong> — «But what is a neural network?». El que por fin me hizo entender qué hace un LLM por dentro.</span>
+          <span><strong style="color:var(--text);">Elements of AI</strong> (Universidad de Helsinki) — gratis, clarísimo, sin hype.</span>
+          <span><strong style="color:var(--text);">Google AI Essentials</strong> — repaso corto para afianzar conceptos antes de cada módulo.</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3>IA aplicada</h3>
+        <div class="skill-list" style="flex-direction:column;gap:6px;">
+          <span><strong style="color:var(--text);">Anthropic Academy</strong> — la documentación oficial de Claude, tool use y agentes.</span>
+          <span><strong style="color:var(--text);">DeepLearning.AI</strong> — cursos cortos de Andrew Ng. El de Prompt Engineering es oro.</span>
+          <span><strong style="color:var(--text);">Vercel AI SDK docs</strong> — para el streaming y la parte frontend de las apps de IA.</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3>Python y práctica</h3>
+        <div class="skill-list" style="flex-direction:column;gap:6px;">
+          <span><strong style="color:var(--text);">freeCodeCamp</strong> — tutoriales largos de Python y Flask. Se pica mucho código.</span>
+          <span><strong style="color:var(--text);">Tech With Tim</strong> — vídeos cortos de Python que voy mezclando con lo anterior.</span>
+          <span><strong style="color:var(--text);">IBM AI Fundamentals</strong> — lo voy haciendo en paralelo al módulo de agentes.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contacto">
+  <div class="container">
+    <div class="contact-card">
+      <h2>¿Hablamos?</h2>
+      <p>Busco una primera oportunidad como desarrollador junior con foco en IA, web o VR. Disponible para posiciones presenciales en Madrid, híbridas o 100% remoto. También para colaboraciones y proyectos freelance.</p>
+      <div class="contact-links">
+        <a href="mailto:juan.querol.leon@gmail.com" class="btn btn-primary">juan.querol.leon@gmail.com</a>
+        <a href="https://www.linkedin.com/in/juan-querol-leon/" target="_blank" rel="noopener" class="btn btn-secondary">LinkedIn</a>
+        <a href="https://github.com/juanquerol" target="_blank" rel="noopener" class="btn btn-secondary">GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Juan Querol León · Madrid · <span id="year"></span></p>
+    <p style="margin-top:6px;">Hecho a mano. Lo voy actualizando cada semana según avanzo.</p>
+  </div>
+</footer>
+
+<script>
+  // Dynamic year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Progress (edit these 2 lines each week)
+  const currentWeek = 3;
+  const totalWeeks = 12;
+  const pct = (currentWeek / totalWeeks) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `Semana ${currentWeek} / ${totalWeeks}`;
+
+  // Smooth anchor scroll with offset for sticky nav
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        const y = target.getBoundingClientRect().top + window.pageYOffset - 70;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
