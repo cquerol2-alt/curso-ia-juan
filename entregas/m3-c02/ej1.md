@@ -1,5 +1,5 @@
 ---
-status: pendiente
+status: aprobado
 classId: m3-c02
 exerciseNum: 1
 type: B
@@ -8,8 +8,9 @@ title: "Laboratorio de temperature"
 module: 3
 moduleName: "APIs de IA — Tu Primer Chatbot"
 submittedAt: 2026-04-30T16:19:52.577Z
-lastUpdated: 2026-04-30T16:19:52.577Z
+lastUpdated: 2026-04-30T18:11:02.000Z
 xpAwarded: 5
+reviewedAt: 2026-04-30T18:11:02.000Z
 ---
 
 # Mini-Reto: Laboratorio de temperature
@@ -108,4 +109,30 @@ El atardecer es un espectáculo natural que transforma el cielo en un lienzo vib
 
 ## Feedback
 
-_(pendiente de revisión automática)_
+**Resultado: ✅ APROBADO** — *revisado el 30/04/2026 20:11 (revisión automática)*
+
+### Lo que está bien
+- Has probado las **tres temperaturas pedidas (0, 0.7, 1.5)** con el mismo prompt — eso es justo lo que pide el reto y permite comparar bien.
+- Usas `load_dotenv()` para cargar la API key desde un `.env` en lugar de hardcodearla en el código. Buen hábito de seguridad desde el principio.
+- Has fijado `max_tokens=200` para acotar la respuesta. Útil para no quemar tokens innecesariamente cuando solo quieres comparar estilos.
+- Has incluido tu observación de cada salida — eso es lo que diferencia un experimento de "ejecutar código y ya está".
+
+### Sugerencias para mejorar
+- **DRY (Don't Repeat Yourself):** estás copiando el mismo bloque tres veces cambiando solo `temperature`. Sería más elegante una función:
+  ```python
+  def generar(prompt, temp):
+      return client.chat.completions.create(
+          model="gpt-4o-mini",
+          messages=[{"role": "user", "content": prompt}],
+          temperature=temp,
+          max_tokens=200,
+      ).choices[0].message.content
+
+  for t in [0, 0.7, 1.5]:
+      print(f"--- temp={t} ---")
+      print(generar("Escribe un párrafo sobre la belleza del atardecer", t))
+  ```
+- **Análisis más fino:** entre `temp=0` y `temp=0.7` los textos son muy parecidos porque el prompt es bastante "literario" y el modelo ya tiende a esa salida. La diferencia se nota mucho más con prompts ambiguos o creativos. Prueba el mismo experimento con un prompt como *"Inventa el nombre de un planeta y descríbelo en una frase"* — verás cómo `1.5` se vuelve realmente impredecible.
+- Detalle pequeño: `load_dotenv()` y `client = OpenAI()` solo hacen falta una vez por script.
+
+### XP: +5 XP (aprobado)
