@@ -346,7 +346,7 @@
     </div>
 
     <!-- Cargamos progress.js para reutilizar fetchEntregas (parser de frontmatter centralizado) -->
-    <script src="js/progress.js?v=20260505-progreso-fix"></script>
+    <script src="js/progress.js?v=20260508-debug-entregas"></script>
     <script>
     const GITHUB_REPO = 'cquerol2-alt/curso-ia-juan';
     const PROGRESS_FILE = 'progress-data.json';
@@ -493,9 +493,21 @@
     // de la revisión automática. Toda la lógica de fetch+parseo está centralizada en
     // CourseProgress.fetchEntregas(); aquí sólo adaptamos el shape para el render.
     async function fetchEntregas() {
-        if (!window.CourseProgress || typeof CourseProgress.fetchEntregas !== 'function') return [];
-        const raw = await CourseProgress.fetchEntregas();
-        return raw.map(e => {
+        console.log('[progreso] fetchEntregas wrapper: typeof CourseProgress.fetchEntregas =', typeof (window.CourseProgress && CourseProgress.fetchEntregas));
+        if (!window.CourseProgress || typeof CourseProgress.fetchEntregas !== 'function') {
+            console.warn('[progreso] fetchEntregas wrapper: CourseProgress.fetchEntregas no disponible → []');
+            return [];
+        }
+        let raw;
+        try {
+            raw = await CourseProgress.fetchEntregas();
+        } catch (e) {
+            console.error('[progreso] fetchEntregas wrapper: CourseProgress.fetchEntregas TIRÓ:', e);
+            return [];
+        }
+        console.log('[progreso] fetchEntregas wrapper: raw.length =', Array.isArray(raw) ? raw.length : '(no array)', raw);
+        if (!Array.isArray(raw)) return [];
+        const mapped = raw.map(e => {
             let feedback = null;
             const body = (e.feedback || '').trim();
             if (body) {
@@ -539,6 +551,8 @@
                 feedback,
             };
         });
+        console.log('[progreso] fetchEntregas wrapper: mapped.length =', mapped.length);
+        return mapped;
     }
 
     // Wrapper de fetch con timeout para que no se quede colgado infinito
@@ -688,6 +702,7 @@
     }
 
     async function renderEntregas() {
+        console.log('[progreso] renderEntregas: empezando');
         // Insert placeholder
         const app = document.getElementById('app');
         const refreshBtn = app.querySelector('.refresh-btn');
@@ -698,8 +713,10 @@
 
         try {
             const entregas = await fetchEntregas();
+            console.log('[progreso] renderEntregas: entregas.length =', entregas.length);
             let html = `<div class="section-title">📤 Entregas de Ejercicios</div>`;
             if (entregas.length === 0) {
+                console.warn('[progreso] renderEntregas: 0 entregas → pintando vacío');
                 html += `<div class="entrega-empty">Aún no hay ejercicios entregados. ¡Ánimo! 💪</div>`;
             } else {
                 html += `<div class="entregas">`;
@@ -743,29 +760,4 @@
                 app.innerHTML = '<div class="no-data"><p>Juan aún no ha empezado o la sincronización no está activada.</p><button class="refresh-btn" onclick="loadProgress()">Reintentar</button></div>';
             } else {
                 console.log('[progreso] loadProgress: pintando render(data)');
-                render(data);
-                console.log('[progreso] loadProgress: render() terminó OK');
-            }
-        } catch (e) {
-            console.error('[progreso] ERROR en loadProgress:', e);
-            const errMsg = e && e.name === 'AbortError'
-                ? 'La API de GitHub no respondió en 8s. Recarga en 1 min (puede ser rate limit).'
-                : (e && e.message) || 'Error desconocido';
-            app.innerHTML = `<div class="error">
-                <p>No se pudo cargar el progreso.</p>
-                <p style="font-size:0.8rem;margin-top:0.5rem;color:#ff6b00;">${errMsg}</p>
-                <button class="refresh-btn" onclick="loadProgress()">Reintentar</button>
-            </div>`;
-        }
-    }
-
-    // Esperar a que progress.js esté cargado antes de arrancar
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        loadProgress();
-    } else {
-        document.addEventListener('DOMContentLoaded', loadProgress);
-    }
-    </script>
-</body>
-</html>
-
+                render(da
