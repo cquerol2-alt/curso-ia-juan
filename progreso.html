@@ -346,7 +346,7 @@
     </div>
 
     <!-- Cargamos progress.js para reutilizar fetchEntregas (parser de frontmatter centralizado) -->
-    <script src="js/progress.js?v=20260429-entregas-files"></script>
+    <script src="js/progress.js?v=20260505-progreso-fix"></script>
     <script>
     const GITHUB_REPO = 'cquerol2-alt/curso-ia-juan';
     const PROGRESS_FILE = 'progress-data.json';
@@ -541,14 +541,28 @@
         });
     }
 
+    // Wrapper de fetch con timeout para que no se quede colgado infinito
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), timeoutMs);
+        try {
+            return await fetch(url, { ...options, signal: ctrl.signal });
+        } finally {
+            clearTimeout(t);
+        }
+    }
+
     async function fetchProgress() {
-        // Use API (not raw) to avoid CDN cache
+        console.log('[progreso] fetchProgress: pidiendo a GitHub API...');
         const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${PROGRESS_FILE}?ref=main&t=${Date.now()}`;
-        const res = await fetch(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const res = await fetchWithTimeout(url, { headers: { 'Accept': 'application/vnd.github.v3+json' } }, 8000);
+        console.log('[progreso] fetchProgress: respuesta HTTP', res.status);
+        if (!res.ok) throw new Error(`HTTP ${res.status} al pedir progress-data.json`);
         const file = await res.json();
         const decoded = decodeURIComponent(escape(atob(file.content)));
-        return JSON.parse(decoded);
+        const parsed = JSON.parse(decoded);
+        console.log('[progreso] fetchProgress: OK · clases=' + (parsed.completedClasses?.length ?? 0) + ' · XP=' + (parsed.xp ?? 0));
+        return parsed;
     }
 
     function timeAgo(iso) {
@@ -722,13 +736,36 @@
     async function loadProgress() {
         const app = document.getElementById('app');
         app.innerHTML = '<div class="loading"><div class="spinner"></div><p>Cargando progreso...</p></div>';
+        console.log('[progreso] loadProgress: empezando');
         try {
             const data = await fetchProgress();
             if (!data.lastSync && (!data.completedClasses || data.completedClasses.length === 0)) {
                 app.innerHTML = '<div class="no-data"><p>Juan aún no ha empezado o la sincronización no está activada.</p><button class="refresh-btn" onclick="loadProgress()">Reintentar</button></div>';
             } else {
+                console.log('[progreso] loadProgress: pintando render(data)');
                 render(data);
+                console.log('[progreso] loadProgress: render() terminó OK');
             }
         } catch (e) {
-            console.error(e);
-            app.innerHTML = '<div class="error"><p>No se pudo cargar el progreso.</p><p style="font-size:0.8rem;margin-top:0.5rem;">
+            console.error('[progreso] ERROR en loadProgress:', e);
+            const errMsg = e && e.name === 'AbortError'
+                ? 'La API de GitHub no respondió en 8s. Recarga en 1 min (puede ser rate limit).'
+                : (e && e.message) || 'Error desconocido';
+            app.innerHTML = `<div class="error">
+                <p>No se pudo cargar el progreso.</p>
+                <p style="font-size:0.8rem;margin-top:0.5rem;color:#ff6b00;">${errMsg}</p>
+                <button class="refresh-btn" onclick="loadProgress()">Reintentar</button>
+            </div>`;
+        }
+    }
+
+    // Esperar a que progress.js esté cargado antes de arrancar
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        loadProgress();
+    } else {
+        document.addEventListener('DOMContentLoaded', loadProgress);
+    }
+    </script>
+</body>
+</html>
+
