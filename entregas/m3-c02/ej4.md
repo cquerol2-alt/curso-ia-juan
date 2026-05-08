@@ -1,5 +1,5 @@
 ---
-status: pendiente
+status: aprobado
 classId: m3-c02
 exerciseNum: 4
 type: B
@@ -8,8 +8,9 @@ title: "El generador de historias"
 module: 3
 moduleName: "APIs de IA — Tu Primer Chatbot"
 submittedAt: 2026-05-08T15:54:32.351Z
-lastUpdated: 2026-05-08T15:54:32.351Z
+lastUpdated: 2026-05-08T17:43:36.000Z
 xpAwarded: 5
+reviewedAt: 2026-05-08T17:43:36.000Z
 ---
 
 # Mini-Reto: El generador de historias
@@ -81,4 +82,17 @@ Rafael estaba dedicado, casi obsesionado, con la idea de crear estructuras basad
 
 ## Feedback
 
-_(pendiente de revisión automática)_
+**Resultado: ✅ APROBADO** — *revisado el 08/05/2026 17:43 (revisión automática)*
+
+### Lo que está bien
+- Estructura limpia: una sola función `generate_story(genre, length, creativity)` con una firma clara que es exactamente lo que pedía el reto. Bien.
+- Muy buena decisión usar **diccionarios** (`token_map`, `temp_map`) para traducir las palabras "corta/media/larga" y "baja/media/alta" a valores reales. Es más legible que un `if/elif/else` y se amplía sin tocar la lógica.
+- El `system` prompt y el `user` prompt están bien separados: uno define el rol del modelo (escritor), el otro le da la tarea concreta. Ese reparto es el correcto.
+- El uso de **f-string** en el prompt para inyectar `{genre}` está perfecto y es más limpio que concatenar con `+`.
+
+### Sugerencias para mejorar
+- Mira el output que has pegado: hacia el final aparecen palabras inventadas ("αρχές", "tratanudo", "ambiling Squares"). Eso es exactamente lo que produce `temperature=1.5`: el modelo se vuelve creativo de más y empieza a alucinar palabras. Para "alta creatividad" suele bastar con **1.0–1.2**. Por encima de 1.3 ya entras en zona de tonterías.
+- Si alguien llama a la función con un valor que no esté en los diccionarios (`generate_story("aventura", "extra-larga", "media")`), te peta con `KeyError`. Para hacerlo robusto, comprueba antes con `if length not in token_map: raise ValueError(...)` o usa `.get(length, 250)` con un default.
+- Detalle de tipado: ahora mismo la función no documenta qué valores acepta. Un mini docstring (3 líneas) explicando que `length` ∈ {"corta","media","larga"} y `creativity` ∈ {"baja","media","alta"} le ahorra dolores de cabeza al siguiente que la use (que va a ser tu yo del futuro).
+
+### XP: +5 XP (aprobado)
