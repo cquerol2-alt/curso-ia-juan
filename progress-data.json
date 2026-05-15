@@ -1,7 +1,7 @@
 {
-  "lastSync": "2026-05-15T11:21:45.968Z",
+  "lastSync": "2026-05-15T15:42:04.077Z",
   "student": "Juan Querol León",
-  "xp": 475,
+  "xp": 490,
   "level": 6,
   "levelTitle": "Guerrero del Código",
   "badges": [
@@ -33,7 +33,8 @@
     "m3-c04",
     "m3-c05",
     "m3-c06",
-    "m4-c01"
+    "m4-c01",
+    "m4-c02"
   ],
   "testScores": {
     "m1-c01": 10,
@@ -56,10 +57,11 @@
     "m3-c04": 10,
     "m3-c05": 9,
     "m3-c06": 8,
-    "m4-c01": 8
+    "m4-c01": 8,
+    "m4-c02": 9
   },
-  "streak": 1,
-  "lastStudyDate": "2026-05-14",
+  "streak": 2,
+  "lastStudyDate": "2026-05-15",
   "startDate": "2026-04-07",
   "totalRewardsEarned": 15,
   "highestCombo": 2,
@@ -89,10 +91,10 @@
       "color": "#ff00e5"
     },
     "AI Tools": {
-      "mastery": 44,
-      "completed": 1,
+      "mastery": 58,
+      "completed": 2,
       "total": 5,
-      "avgScore": 8,
+      "avgScore": 8.5,
       "icon": "🤖",
       "color": "#ffe600"
     },
