@@ -1,5 +1,5 @@
 ---
-status: pendiente
+status: aprobado
 classId: m4-c04
 exerciseNum: 4
 type: A
@@ -9,7 +9,8 @@ module: 4
 moduleName: "AI Coding Tools"
 submittedAt: 2026-05-20T16:05:11.971Z
 lastUpdated: 2026-05-20T16:05:11.971Z
-xpAwarded: 5
+xpAwarded: 0
+reviewedAt: "2026-05-21T18:00:00.000Z"
 ---
 
 # Práctica Guiada: Crear AGENTS.md
@@ -67,4 +68,15 @@ def _calculate_total(self):
 
 ## Feedback
 
-_(pendiente de revisión automática)_
+**Resultado: ✅ APROBADO** — *revisado el 21/05/2026 18:00 (revisión automática)*
+
+### Lo que está bien
+- AGENTS.md con la estructura correcta: nombre, descripción, stack, convenciones de naming y estilo. Eso es lo que un agente IA necesita para no improvisar.
+- Buena distinción entre `snake_case` para funciones/variables y `PascalCase` para clases, con ejemplos concretos (`add_product`, `_calculate_total`).
+- La regla de "métodos privados con guion bajo" la has aplicado de verdad en el ej1 (`_calculate_total`). Eso demuestra que el AGENTS.md no es decoración.
+
+### Sugerencias para mejorar
+- Falta una sección de **comandos** (`pytest`, `python -m pytest tests/`, etc.) para que el agente sepa cómo ejecutar tests sin preguntar. Es lo más útil del AGENTS.md en el día a día.
+- Añade una sección corta de **qué NO hacer** (ejemplo: "no usar prints para debug, usar logging") — la mayoría de problemas vienen de ahí.
+
+### XP: +0 XP (práctica guiada — XP otorgado al entregar)
