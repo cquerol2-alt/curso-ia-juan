@@ -1,5 +1,5 @@
 ---
-status: pendiente
+status: aprobado
 classId: m4-c04
 exerciseNum: 2
 type: A
@@ -9,7 +9,8 @@ module: 4
 moduleName: "AI Coding Tools"
 submittedAt: 2026-05-20T15:56:29.130Z
 lastUpdated: 2026-05-20T15:56:29.130Z
-xpAwarded: 5
+xpAwarded: 0
+reviewedAt: "2026-05-21T18:00:00.000Z"
 ---
 
 # Práctica Guiada: Refactoring Challenge
@@ -63,4 +64,15 @@ def process_data(records: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 ## Feedback
 
-_(pendiente de revisión automática)_
+**Resultado: ✅ APROBADO** — *revisado el 21/05/2026 18:00 (revisión automática)*
+
+### Lo que está bien
+- Refactor limpio: has roto la función original en 3 piezas con responsabilidad clara (`is_active_adult_verified`, `calculate_adjusted_salary`, `build_compensation_record`). Eso es exactamente lo que pide un refactoring challenge.
+- Usas type hints (`Dict[str, Any]`, `Iterable`, `List`). Bien, ahí ganas legibilidad y autocompletado.
+- Docstrings cortas y al grano en cada función.
+- En `process_data` usas `continue` para early-return de cada caso. Mucho más legible que un `if` anidado.
+
+### Sugerencias para mejorar
+- `employee['name']` y `employee['salary']` lanzan `KeyError` si el campo falta. Si los datos vienen de un CSV poco fiable, usa `employee.get('name')` o valida con un guard al principio.
+
+### XP: +0 XP (práctica guiada — XP otorgado al entregar)
