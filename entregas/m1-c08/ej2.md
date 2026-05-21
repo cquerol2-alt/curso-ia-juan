@@ -1,5 +1,5 @@
 ---
-status: pendiente
+status: aprobado
 classId: m1-c08
 exerciseNum: 2
 type: B
@@ -10,6 +10,7 @@ moduleName: "Python para Devs Web"
 submittedAt: 2026-05-20T12:19:59.390Z
 lastUpdated: 2026-05-20T12:19:59.390Z
 xpAwarded: 5
+reviewedAt: "2026-05-21T18:00:00.000Z"
 ---
 
 # Mini-Reto: Top 10 Repos de GitHub scraper
@@ -330,8 +331,18 @@ if __name__ == "__main__":
 ]
 ```
 
-
-
 ## Feedback
 
-_(pendiente de revisión automática)_
+**Resultado: ✅ APROBADO** — *revisado el 21/05/2026 18:00 (revisión automática)*
+
+### Lo que está bien
+- Has separado el scraping en funciones pequeñas (`obtener_repos`, `guardar_json`, `guardar_html`, `limpiar_numero`) en vez de meterlo todo en un solo bloque. Eso es exactamente lo que un mini-reto de scraping pide.
+- `limpiar_numero` está bien pensada: lee dígitos uno a uno y se detiene en el primer separador. Maneja casos como "1,850 stars today" sin romperse.
+- Usas `argparse` con `--lang`, `--limit` y `--html`. La interfaz CLI es limpia y la salida JSON está bien indentada y con `ensure_ascii=False` para que respete acentos.
+- `response.raise_for_status()` y `timeout=10` están bien puestos: no te quedas colgado y notas si GitHub devuelve 4xx/5xx.
+
+### Sugerencias para mejorar
+- `estrellas_hoy` te ha salido 0 en los 10 resultados. El selector `span.d-inline-block` con texto "stars today" se rompe si GitHub cambia mínimamente el HTML (ahora hay días que no marca "stars today" si el repo no tiene tendencia diaria). Para la próxima, prueba a localizar el `<span>` por la clase `float-sm-right` o filtra cualquier `<span>` cuyo texto contenga "stars today" — más tolerante.
+- El `User-Agent: Mozilla/5.0` es muy genérico. Mejor algo como `"top10-scraper/1.0 (juan querol — curso ia)"`. Es buena costumbre identificarte cuando scrapeas.
+
+### XP: +5 XP (aprobado)
