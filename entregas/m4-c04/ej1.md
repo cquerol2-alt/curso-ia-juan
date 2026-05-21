@@ -1,5 +1,5 @@
 ---
-status: pendiente
+status: aprobado
 classId: m4-c04
 exerciseNum: 1
 type: A
@@ -9,7 +9,8 @@ module: 4
 moduleName: "AI Coding Tools"
 submittedAt: 2026-05-20T12:36:51.327Z
 lastUpdated: 2026-05-20T12:36:51.327Z
-xpAwarded: 5
+xpAwarded: 0
+reviewedAt: "2026-05-21T18:00:00.000Z"
 ---
 
 # Práctica Guiada: TDD con Copilot
@@ -94,4 +95,14 @@ def test_negative_quantity_is_not_allowed():
 
 ## Feedback
 
-_(pendiente de revisión automática)_
+**Resultado: ✅ APROBADO** — *revisado el 21/05/2026 18:00 (revisión automática)*
+
+### Lo que está bien
+- Has seguido el ciclo TDD: tests primero, implementación después. Los 5 tests cubren los casos pedidos (add, remove, descuento, vacío, cantidad negativa).
+- Bien separar `_calculate_total` como método privado (guion bajo). Eso ya lo verás formalizado en el AGENTS.md del ej4.
+- Usar `pytest.raises(ValueError)` para validar la excepción es lo correcto, no un `try/except` casero.
+
+### Sugerencias para mejorar
+- En `remove`, si el producto no existe simplemente no hace nada. Para v2 podrías lanzar `ValueError` o devolver un booleano para que el usuario sepa que la operación no se aplicó.
+
+### XP: +0 XP (práctica guiada — XP otorgado al entregar)
