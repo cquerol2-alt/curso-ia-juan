@@ -509,8 +509,10 @@ const CourseProgress = (() => {
     if (!container) return;
 
     let html = '';
+    // Acepta indice numerico (1) o letra ("b") como respuesta correcta
+    const toIndex = c => (typeof c === 'number') ? c : 'abcdefgh'.indexOf(String(c).trim().toLowerCase().charAt(0));
     questions.forEach((q, i) => {
-      html += `<div class="quiz-question" data-question="${i}" data-correct="${q.correct}">
+      html += `<div class="quiz-question" data-question="${i}" data-correct="${toIndex(q.correct)}">
         <p>${i + 1}. ${q.question}</p>`;
       q.options.forEach((opt, j) => {
         html += `<label>
@@ -550,10 +552,10 @@ const CourseProgress = (() => {
           labels[selectedVal].classList.add('correct');
         } else {
           labels[selectedVal].classList.add('incorrect');
-          labels[correctAnswer].classList.add('correct');
+          if (labels[correctAnswer]) labels[correctAnswer].classList.add('correct');
         }
       } else {
-        labels[correctAnswer].classList.add('correct');
+        if (labels[correctAnswer]) labels[correctAnswer].classList.add('correct');
       }
 
       qEl.querySelectorAll('input').forEach(inp => inp.disabled = true);
