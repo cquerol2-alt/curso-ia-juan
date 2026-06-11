@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 4: AI Coding Tools</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="breadcrumb clase-nav">
+            <a href="../index.html">Dashboard</a>
+            <span class="separator">/</span>
+            <span class="current">Módulo 4</span>
+        </nav>
+
+        <!-- Module Header -->
+        <header class="course-header">
+            <div class="header-content">
+                <h1>Módulo 4: AI Coding Tools</h1>
+                <div class="module-tag">
+                    <span>Semanas 5-6 · 10 horas · 5 clases</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Description Card -->
+        <section class="card description-card">
+            <h2>Objetivo del módulo</h2>
+            <p>
+                Aprender a <strong>programar 3-5x más rápido</strong> usando herramientas de IA. GitHub Copilot, Cursor, Claude Code y Windsurf
+                son las herramientas que usan TODAS las empresas tech hoy.
+            </p>
+            <p style="margin-top: 12px; font-size: 0.95em; color: var(--text-muted);">
+                De escribir código línea a línea a tener un copiloto que te entiende: esta semana cambias tu forma de programar para siempre.
+            </p>
+        </section>
+
+        <!-- Progress Section -->
+        <section class="card progress-section">
+            <h2>Progreso del módulo</h2>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span class="progress-text" id="progress-text">0/5 clases completadas</span>
+                    <span class="progress-percentage" id="progress-percentage">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- XP Bar -->
+            <div class="xp-bar-container" style="margin-top: 24px;">
+                <div class="xp-header">
+                    <span>Experiencia del módulo</span>
+                    <span class="xp-value" id="xp-value">0 XP</span>
+                </div>
+                <div class="xp-bar">
+                    <div class="xp-fill" id="xp-fill" style="width: 0%"></div>
+                </div>
+                <div class="xp-milestone" style="margin-top: 8px; font-size: 0.85em; color: var(--text-muted);">
+                    <span id="xp-milestone">Siguiente hito: 200 XP</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Antes de empezar -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">🔧</span> Antes de empezar: herramientas necesarias</h2>
+            <p style="margin-bottom: 1em;">Descarga e instala estas herramientas <strong>antes del lunes</strong>. No necesitas pagar por nada.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Herramienta</th>
+                        <th>Para qué</th>
+                        <th>Acceso</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>GitHub Copilot</strong></td>
+                        <td>AI pair programmer en VS Code. Autocompletado inteligente (Clase 01)</td>
+                        <td><a href="https://github.com/features/copilot" target="_blank">github.com/features/copilot ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cursor IDE</strong></td>
+                        <td>Editor nativo de IA basado en VS Code. Gratis: 2000 completions/mes (Clase 02)</td>
+                        <td><a href="https://cursor.com/" target="_blank">cursor.com ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Claude Code</strong></td>
+                        <td>Agente de código de Anthropic en terminal. Gratis con cuenta Claude (Clase 03)</td>
+                        <td><a href="https://claude.ai/" target="_blank">claude.ai ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Windsurf</strong></td>
+                        <td>IDE con Cascade (editor agentico). Tier gratuito disponible (Clase 03)</td>
+                        <td><a href="https://windsurf.com/" target="_blank">windsurf.com ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>VS Code</strong></td>
+                        <td>Editor base. Ya lo tienes del Módulo 1. Extensión de Python + GitHub Copilot.</td>
+                        <td><a href="https://code.visualstudio.com/" target="_blank">code.visualstudio.com ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>No necesitas pagar por estas herramientas.</strong> Todas tienen plan gratuito suficiente para este módulo. Copilot es gratuito para estudiantes.
+            </div>
+
+            <div class="warning" style="margin-top: 1em;">
+                <strong>Coste estimado: 0€</strong> Todas las herramientas tienen plan gratuito.
+            </div>
+        </section>
+
+        <!-- Classes List -->
+        <section class="card">
+            <h2>Clases del módulo</h2>
+            <div class="clase-list">
+                <!-- Semanas 5-6 Header -->
+                <div class="semana-header">
+                    <h3>Semanas 5-6: Programar con IA como copiloto</h3>
+                </div>
+
+                <!-- Clase 1 -->
+                <a href="clase-01.html" class="clase-item" data-clase-id="1">
+                    <div class="clase-number">01</div>
+                    <div class="clase-info">
+                        <h3>GitHub Copilot: Setup y Autocompletado con IA</h3>
+                        <p class="clase-meta">Miércoles · Semana 5</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-1">☐</span>
+                    </div>
+                </a>
+
+                <!-- Clase 2 -->
+                <a href="clase-02.html" class="clase-item" data-clase-id="2">
+                    <div class="clase-number">02</div>
+                    <div class="clase-info">
+                        <h3>Cursor IDE: El Editor que Programa por Ti</h3>
+                        <p class="clase-meta">Jueves · Semana 5</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-2">☐</span>
+                    </div>
+                </a>
+
+                <!-- Clase 3 -->
+                <a href="clase-03.html" class="clase-item" data-clase-id="3">
+                    <div class="clase-number">03</div>
+                    <div class="clase-info">
+                        <h3>Claude Code y Windsurf: Agentes de Código</h3>
+                        <p class="clase-meta">Viernes · Semana 5</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-3">☐</span>
+                    </div>
+                </a>
+
+                <!-- Clase 4 -->
+                <a href="clase-04.html" class="clase-item" data-clase-id="4">
+                    <div class="clase-number">04</div>
+                    <div class="clase-info">
+                        <h3>Técnicas: TDD con IA, Refactoring y Prompts</h3>
+                        <p class="clase-meta">Lunes · Semana 6</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-4">☐</span>
+                    </div>
+                </a>
+
+                <!-- Clase 5 - Boss Battle -->
+                <a href="clase-05-boss-battle.html" class="clase-item boss-battle" data-clase-id="5">
+                    <div class="clase-number boss-number">🎯</div>
+                    <div class="clase-info">
+                        <h3>Boss Battle: Reconstruye tu Proyecto con AI Tools</h3>
+                        <p class="clase-meta">Martes · Semana 6 · Proyecto portfolio #2</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-5">☐</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Badge Card -->
+        <section class="card" style="text-align: center;">
+            <h2>🏅 Badge del módulo</h2>
+            <p style="font-size: 3em; margin: 0.3em 0;">🤖</p>
+            <p><strong>AI-Augmented Dev</strong></p>
+            <p style="color: var(--text-muted); font-size: 0.9em;">Completa las 5 clases para desbloquear este badge</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="module-footer">
+            <a href="../index.html" class="footer-link">← Volver al Dashboard</a>
+            <p class="footer-text">Módulo 4 de 9 · AI Coding Tools</p>
+        </footer>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        function initializeModuleProgress() {
+            const moduleProgress = CourseProgress.getModuleProgress(4);
+            const completedClasses = moduleProgress.completed;
+            const totalClasses = 5;
+            const progressPercentage = (completedClasses / totalClasses) * 100;
+
+            document.getElementById('progress-text').textContent = `${completedClasses}/${totalClasses} clases completadas`;
+            document.getElementById('progress-percentage').textContent = `${Math.round(progressPercentage)}%`;
+            document.getElementById('progress-fill').style.width = `${progressPercentage}%`;
+
+            const currentXP = moduleProgress.xp;
+            const maxXP = 200;
+            const xpPercentage = Math.min((currentXP / maxXP) * 100, 100);
+            document.getElementById('xp-value').textContent = `${currentXP} XP`;
+            document.getElementById('xp-fill').style.width = `${xpPercentage}%`;
+
+            const nextMilestone = Math.ceil((currentXP + 1) / 50) * 50;
+            document.getElementById('xp-milestone').textContent = `Siguiente hito: ${nextMilestone} XP`;
+
+            for (let i = 1; i <= 5; i++) {
+                const classId = i === 5 ? 'm4-c05' : `m4-c0${i}`;
+                const isCompleted = CourseProgress.isClassCompleted(classId);
+                const checkIcon = document.getElementById(`check-${i}`);
+
+                if (isCompleted) {
+                    checkIcon.textContent = '✓';
+                    checkIcon.style.color = '#39ff14';
+                    checkIcon.style.fontWeight = 'bold';
+                } else {
+                    checkIcon.textContent = '☐';
+                    checkIcon.style.color = '#666';
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeModuleProgress();
+            CourseProgress.initToolChecklist(4);
+        });
+    </script>
+</body>
+</html>

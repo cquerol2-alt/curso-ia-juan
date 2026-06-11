@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 04: Técnicas — TDD con IA, Refactoring y Prompts — Módulo 4</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a><span> > </span>
+            <a href="index.html">Módulo 4</a><span> > </span>
+            <strong>Clase 04</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 04: Técnicas — TDD con IA, Refactoring y Prompts</h1>
+            <div class="subtitle">📅 Semana 6 — Lunes | 🎬 30 min vídeo + 💻 50 min práctica + 🧪 15 min test</div>
+        </header><section class="content">
+            <h2>📖 Resumen de la clase</h2>
+
+            <h3>a) TDD con IA (Test-Driven Development)</h3>
+            <p><strong>Ciclo Red-Green-Refactor:</strong></p>
+            <ul>
+                <li><strong>RED:</strong> Tú escribes un test que falla (porque la función no existe aún)</li>
+                <li><strong>GREEN:</strong> Escribes el mínimo código para que el test pase (o dejas que la IA lo genere)</li>
+                <li><strong>REFACTOR:</strong> Mejoras el código manteniendo los tests en verde</li>
+            </ul>
+            <p><strong>Por qué TDD + IA es una combinación poderosa:</strong></p>
+            <ul>
+                <li>El test <strong>es la especificación</strong> — no necesitas explicar qué debe hacer, el test lo dice</li>
+                <li>La IA sabe exactamente qué construir porque tiene un objetivo claro</li>
+                <li>Reduces refactoring manual: dejas que la IA genere y luego validas con los tests</li>
+                <li>Confianza: si todos los tests pasan, el código funciona como esperado</li>
+            </ul>
+            <p><strong>Ejemplo en Python:</strong></p>
+            <pre><code># 1. RED: Tú escribes el test
+def test_is_palindrome():
+    assert is_palindrome("aba") == True
+    assert is_palindrome("abc") == False
+    assert is_palindrome("") == True
+    assert is_palindrome("A") == True
+
+# 2. GREEN: Copilot/Cursor genera la función
+# Escribe en la siguiente línea: "def is_palindrome(s):"
+# Opción 1: Déjalo que autocomplete
+# Opción 2: Con Cmd+K: "Genera una función que verifique si s es un palíndromo (ignorando mayúsculas)"
+
+# 3. REFACTOR: Pide a la IA que optimice
+# Con Cmd+K: "Refactoriza esto para usar un one-liner"</code></pre>
+
+            <h3>b) Prompts en Comentarios</h3>
+            <p><strong>Regla de oro:</strong> Escribe comentarios detallados <strong>ANTES</strong> del código. Cuanto más específico, mejor la sugerencia.</p>
+            <p><strong>Ejemplos:</strong></p>
+            <pre><code>// Función que recibe un array de objetos {nombre, edad, ciudad}
+// y devuelve solo los mayores de 18 ordenados alfabéticamente por nombre
+// Si no hay resultados, devuelve un array vacío
+
+// Recibe una lista de strings con formatos de teléfono mixtos
+// (+34 123 456 789, 123456789, (123) 456-7890)
+// Normaliza a formato internacional +34 y devuelve array
+// Ignora números inválidos sin lanzar error
+
+// Esta función es performance-critical:
+// debe procesar 1M de registros en menos de 100ms
+// Prefiere arrays sobre objetos, evita loops anidados</code></pre>
+            <p><strong>Tips:</strong></p>
+            <ul>
+                <li>Usa anotaciones de tipo (type hints en Python/TypeScript)</li>
+                <li>Sé específico sobre <strong>edge cases</strong> (vacío, null, valores negativos)</li>
+                <li>Menciona el idioma/framework si es poco obvio</li>
+                <li>Si el código es crítico (seguridad, performance), dilo en el comentario</li>
+            </ul>
+
+            <h3>c) Refactoring con IA</h3>
+            <p><strong>Flujo estándar:</strong></p>
+            <ul>
+                <li>Selecciona el código → Presiona <code>Cmd+K</code> (Mac) o <code>Ctrl+K</code> (Windows) en Copilot/Cursor</li>
+                <li>Escribe: "Refactoriza esto para que sea más legible" o "Extrae una función para..." o "Simplifica estos condicionales"</li>
+            </ul>
+            <p><strong>Patrones comunes:</strong></p>
+            <ul>
+                <li><strong>Extract Function:</strong> "Extrae la lógica de validación en una función separada"</li>
+                <li><strong>Simplify Conditionals:</strong> "Reemplaza estos 5 ifs anidados con un switch o guard clauses"</li>
+                <li><strong>Add Error Handling:</strong> "Añade manejo de errores para null checks y excepciones"</li>
+                <li><strong>Performance:</strong> "Optimiza esto para O(n) en lugar de O(n²)"</li>
+                <li><strong>/fix:</strong> Comando especial para arreglar bugs automáticamente</li>
+                <li><strong>/doc:</strong> Genera documentación/docstrings</li>
+            </ul>
+
+            <h3>d) Debugging con IA</h3>
+            <p><strong>Flujo:</strong></p>
+            <ol>
+                <li>Copia el mensaje de error completo → Pégalo en el Chat de Copilot/Claude</li>
+                <li>Pregunta: "Explícame este error y cómo solucionarlo"</li>
+                <li>La IA te da: qué está mal, por qué ocurre, y la solución paso a paso</li>
+            </ol>
+            <p><strong>Variantes:</strong></p>
+            <ul>
+                <li><strong>@terminal:</strong> En Copilot, escribe <code>@terminal</code> para pedirle que analice errores de terminal</li>
+                <li><strong>Con contexto:</strong> "Aquí está el código: [código]. Aquí está el error: [error]. ¿Qué está mal?"</li>
+                <li><strong>Debugging profundo:</strong> "¿Por qué mi loop infinito no termina? Aquí está el código..."</li>
+            </ul>
+
+            <h3>e) Code Review con IA</h3>
+            <p><strong>Cómo hacer un self-review antes de commit:</strong></p>
+            <pre><code>// En el Chat de la IA, pega el código y escribe:
+"Revisa este código y señala problemas de:
+1. Seguridad (inyecciones, validaciones)
+2. Rendimiento (loops, queries, complejidad)
+3. Legibilidad (nombres, estructura, patrones)
+4. Mantenibilidad (errores potenciales, edge cases)"</code></pre>
+            <p>La IA te dará un análisis estructurado y sugerencias de mejora antes de que lo suban.</p>
+
+            <h3>f) AGENTS.md y CLAUDE.md</h3>
+            <p><strong>¿Qué son?</strong> Archivos que dan contexto a la IA sobre tu proyecto:</p>
+            <ul>
+                <li><strong>.cursorrules:</strong> Reglas para Cursor IDE (formato estándar de Cursor)</li>
+                <li><strong>CLAUDE.md:</strong> Instrucciones para Claude Code (formato usado por Anthropic)</li>
+                <li><strong>AGENTS.md:</strong> Nuevo estándar, más genérico para cualquier agente IA</li>
+            </ul>
+            <p><strong>Ejemplo AGENTS.md:</strong></p>
+            <pre><code># AGENTS.md - Contexto del proyecto
+
+## Convenciones de código
+- Variables en snake_case
+- Funciones en camelCase
+- Clases en PascalCase
+- Máximo 80 caracteres por línea
+
+## Estructura de carpetas
+- src/ → código fuente
+- tests/ → tests unitarios
+- docs/ → documentación
+- scripts/ → scripts de utilidad
+
+## Estándares
+- Todos los tests deben pasar antes de commit
+- Usar type hints en todas las funciones
+- Documentar funciones públicas con docstrings
+- No subir .env o archivos con secretos</code></pre>
+
+            <hr style="margin: 2em 0; border: none; border-top: 1px solid #555;">
+
+            <h2>🎬 Vídeo Principal</h2>
+            <p><strong>How Copilot helps with test-driven development</strong> — GitHub</p>
+            <div class="video-wrapper">
+                <iframe width="100%" height="400" src="https://www.youtube.com/embed/94ATR5k939U"
+                        title="How Copilot helps with test-driven development"
+                        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                </iframe>
+            </div>
+
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-04.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+
+            <hr style="margin: 2em 0; border: none; border-top: 1px solid #555;">
+        <aside class="workshop-ref">
+                <h4>📚 Profundiza con el workshop de hola.dev</h4>
+                <p style="margin:0;">Filosofía y disciplina de programar con IA: qué es vibe coding bien hecho, cómo gestionar prompts como código, y el cambio de paradigma:</p>
+                <ul>
+                    <li><a href="https://workshop-ia-2026.686f6c61.dev/#prompt-como-codigo" target="_blank" rel="noopener">Sección 117 — Gestión de prompts como código</a></li>
+                    <li><a href="https://workshop-ia-2026.686f6c61.dev/#testing-codigo-ia" target="_blank" rel="noopener">Sección 119 — Testing de código generado por IA</a></li>
+                    <li><a href="https://workshop-ia-2026.686f6c61.dev/#vibe-coding" target="_blank" rel="noopener">Sección 120 — Vibe coding: programar por intención</a></li>
+                    <li><a href="https://workshop-ia-2026.686f6c61.dev/#cambio-paradigma" target="_blank" rel="noopener">Sección 121 — Cambio de paradigma + Exponential Programming</a></li>
+                    <li><a href="https://workshop-ia-2026.686f6c61.dev/#workflow-patterns" target="_blank" rel="noopener">Sección 122 — Patrones de trabajo con IA</a></li>
+                </ul>
+                <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+            </aside>
+
+
+
+
+<h2>📹 Vídeo Complementario</h2>
+            <p><strong>Copilot Best Practices (What Not To Do)</strong> — Visual Studio Code</p>
+            <p><a href="https://www.youtube.com/watch?v=2q0BoioYSxQ" target="_blank" class="btn" style="display: inline-block; margin: 1em 0;">Ver en YouTube ↗</a></p>
+            <p style="font-size: 0.9em; color: var(--text-muted);">Este vídeo cubre antipatrones comunes y cómo evitarlos cuando usas Copilot. Útil para entender qué NO hacer.</p>
+
+            <hr style="margin: 2em 0; border: none; border-top: 1px solid #555;">
+
+            <h2>💻 Prácticas (50 minutos)</h2>
+
+            <h3>Ejercicio 1: TDD con Copilot (15 min)</h3>
+            <p><strong>Objetivo:</strong> Escribir tests primero, dejar que Copilot genere la implementación.</p>
+            <ol>
+                <li>Crea un archivo <code>shopping_cart.py</code></li>
+                <li>Escribe 5 test cases para una clase <code>ShoppingCart</code>:
+                    <ul>
+                        <li>Añadir un producto (aumenta total)</li>
+                        <li>Remover un producto (disminuye total)</li>
+                        <li>Aplicar descuento (reduce precio final)</li>
+                        <li>Carrito vacío devuelve 0</li>
+                        <li>Cantidad negativa no se permite (excepción)</li>
+                    </ul>
+                </li>
+                <li>Escribe solo los tests. Ejecuta: <code>pytest shopping_cart.py</code> — todos fallan (RED)</li>
+                <li>Abre Copilot/Cursor y escribe en comentario: "Clase que gestiona un carrito de compra con métodos add, remove, apply_discount"</li>
+                <li>Deja que la IA genere la clase (GREEN)</li>
+                <li>Ejecuta tests nuevamente — todos pasan</li>
+                <li>Pide a la IA que refactorice: "Extrae la lógica de cálculo de total en una función private"</li>
+            </ol>
+
+            <h3>Ejercicio 2: Refactoring Challenge (15 min)</h3>
+            <p><strong>Código legible vs. Código legible:</strong></p>
+            <p>Aquí hay código desordenado. Tu trabajo: refactorizar usando Cmd+K</p>
+            <pre><code>def process_data(data):
+    result = []
+    for i in range(len(data)):
+        if data[i]['status'] == 'active' and data[i]['age'] > 18:
+            if data[i]['verified'] == True:
+                temp = data[i]['salary'] * 1.1
+                if temp > 50000:
+                    result.append({
+                        'name': data[i]['name'],
+                        'new_salary': temp,
+                        'bonus': temp * 0.15
+                    })
+    return result</code></pre>
+            <ol>
+                <li>Copia este código en tu IDE</li>
+                <li>Selecciona todo → Cmd+K → "Refactoriza: extrae funciones, simplifica condicionales, mejora nombres"</li>
+                <li>Compara resultado con el original — ¿es más claro?</li>
+                <li>Pide refactoring adicional: "Usa type hints y docstring"</li>
+            </ol>
+
+            <h3>Ejercicio 3: Debug con IA (10 min)</h3>
+            <p><strong>Introduce un bug deliberadamente:</strong></p>
+            <pre><code>def calculate_discount(price, discount_percent):
+    return price * discount_percent  # BUG: debería ser (1 - discount_percent/100)
+
+# Resultado: calculate_discount(100, 20) = 2000 en lugar de 80</code></pre>
+            <ol>
+                <li>Copia el código con el bug</li>
+                <li>Abre Claude/Copilot Chat y pega: "Aquí está el código, ejecuto calculate_discount(100, 20) y obtengo 2000 en lugar de 80. ¿Qué está mal?"</li>
+                <li>La IA te explicará el bug y cómo solucionarlo</li>
+                <li>Aplica la corrección y verifica que funcione</li>
+            </ol>
+
+            <h3>Ejercicio 4: Crear AGENTS.md (10 min)</h3>
+            <p><strong>Documenta tu proyecto para que la IA lo entienda:</strong></p>
+            <ol>
+                <li>En la raíz de tu proyecto, crea <code>AGENTS.md</code></li>
+                <li>Incluye:
+                    <ul>
+                        <li>Nombre y descripción del proyecto</li>
+                        <li>Convenciones de código (naming, estructura)</li>
+                        <li>Stack tecnológico</li>
+                        <li>Estructura de carpetas</li>
+                        <li>Estándares de testing</li>
+                        <li>Cualquier regla especial (no usar ciertos métodos, logging requerido, etc.)</li>
+                    </ul>
+                </li>
+                <li>Sube el archivo a tu repo</li>
+                <li>De ahora en adelante, cuando trabajes con IA, ésta tendrá contexto de tu proyecto</li>
+            </ol>
+
+            <hr style="margin: 2em 0; border: none; border-top: 1px solid #555;">
+
+            <h2>🎯 Mini-reto: TDD Speed Run (Opcional, 15 min)</h2>
+            <p><strong>¿Puedes hacer esto en 15 minutos?</strong></p>
+            <ol>
+                <li>Escribe tests para 5 funciones:
+                    <ul>
+                        <li><code>validate_password(pwd)</code> — mínimo 8 caracteres, 1 mayúscula, 1 número</li>
+                        <li><code>calculate_discount(price, customer_type)</code> — premium 20%, silver 10%, regular 0%</li>
+                        <li><code>format_currency(amount)</code> — $1,234.56 format</li>
+                        <li><code>parse_date(date_str)</code> — "2024-01-15" → datetime object</li>
+                        <li><code>sort_by_multiple_criteria(list, criteria)</code> — sort por edad DESC, luego nombre ASC</li>
+                    </ul>
+                </li>
+                <li>Usa <strong>SOLO</strong> IA para generar las implementaciones</li>
+                <li>Ejecuta los tests — ¿todos pasan?</li>
+                <li>Si falla alguno, pide a la IA que lo arregle con /fix</li>
+                <li>Tiempo final: ¿cuánto te tardó?</li>
+            </ol>
+
+            <hr style="margin: 2em 0; border: none; border-top: 1px solid #555;">
+
+            <!-- Entrega de ejercicios -->
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: TDD con Copilot</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c04', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="code-along">
+                <h4>📤 Entregar práctica: Refactoring Challenge</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c04', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-3" data-type="code-along">
+                <h4>📤 Entregar práctica: Debug con IA</h4>
+                <textarea id="code-ejercicio-3" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-3" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c04', 3, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-3" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-4" data-type="code-along">
+                <h4>📤 Entregar práctica: Crear AGENTS.md</h4>
+                <textarea id="code-ejercicio-4" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-4" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c04', 4, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-4" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-5" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: TDD Speed Run</h4>
+                <textarea id="code-ejercicio-5" rows="12" placeholder="Pega aquí tu código..."></textarea>
+                <textarea id="output-ejercicio-5" rows="4" placeholder="Pega aquí el output de tu programa..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-5" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c04', 5, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-5" class="submit-status"></div>
+            </div>
+
+            <hr style="margin: 2em 0; border: none; border-top: 1px solid #555;">
+
+            <h2>🧪 Test de Comprensión (10 preguntas)</h2>
+            <p style="font-style: italic;">Haz clic en "Iniciar Quiz" para evaluar tu conocimiento.</p>
+            <div id="quiz-container"></div>
+            <script src="../js/progress.js"></script>
+            <script>
+                const quizQuestions = [
+                    {
+                        question: "¿Cuál es el orden correcto del ciclo TDD?",
+                        options: [
+                            "Refactor → Red → Green",
+                            "Red → Green → Refactor",
+                            "Green → Red → Refactor",
+                            "Refactor → Green → Red"
+                        ],
+                        correct: 1,
+                        explanation: "Red (escribir test que falla) → Green (hacer que pase) → Refactor (mejorar código)."
+                    },
+                    {
+                        question: "¿Por qué TDD + IA es poderoso?",
+                        options: [
+                            "Porque la IA es inteligente",
+                            "Porque el test es la especificación clara de qué construir",
+                            "Porque es rápido",
+                            "Porque no necesitas escribir tests"
+                        ],
+                        correct: 1,
+                        explanation: "El test define exactamente qué debe hacer el código. La IA solo necesita cumplir ese objetivo."
+                    },
+                    {
+                        question: "¿Cuándo debes escribir el comentario detallado?",
+                        options: [
+                            "Después de escribir el código",
+                            "Mientras escribes el código",
+                            "Antes del código, en un comentario",
+                            "En el commit message"
+                        ],
+                        correct: 2,
+                        explanation: "Los comentarios detallados ANTES del código permiten que la IA los vea y genere código acorde."
+                    },
+                    {
+                        question: "¿Qué atajo usas para Refactoring en Copilot?",
+                        options: [
+                            "Cmd+J",
+                            "Cmd+K",
+                            "Cmd+Shift+R",
+                            "Cmd+Alt+K"
+                        ],
+                        correct: 1,
+                        explanation: "Cmd+K (Mac) o Ctrl+K (Windows) abre el cuadro de refactoring en Copilot/Cursor."
+                    },
+                    {
+                        question: "¿Qué comando usa /fix?",
+                        options: [
+                            "Extrae funciones",
+                            "Arregla bugs automáticamente",
+                            "Añade documentación",
+                            "Optimiza rendimiento"
+                        ],
+                        correct: 1,
+                        explanation: "/fix es un comando especial en Copilot para detectar y arreglar bugs automáticamente."
+                    },
+                    {
+                        question: "¿Cómo debugeas con IA?",
+                        options: [
+                            "Ejecutas el código y esperas que la IA lo vea",
+                            "Copias el mensaje de error y lo pegas en el Chat de la IA",
+                            "Usas el debugger integrado",
+                            "Escribes logs hasta encontrar el error"
+                        ],
+                        correct: 1,
+                        explanation: "Copia el error → Pégalo en Chat → Pregunta 'Explícame y ayuda a arreglar' → IA responde con solución."
+                    },
+                    {
+                        question: "¿Qué hace un buen comentario para prompts de IA?",
+                        options: [
+                            "Corto y vago",
+                            "Específico, con tipos, edge cases y contexto",
+                            "Solo el nombre de la función",
+                            "Un párrafo sin estructura"
+                        ],
+                        correct: 1,
+                        explanation: "Cuanto más específico (tipos, edge cases, rendimiento crítico), mejor la sugerencia de la IA."
+                    },
+                    {
+                        question: "¿Para qué sirve AGENTS.md?",
+                        options: [
+                            "Para hacer tests",
+                            "Para subir a GitHub",
+                            "Para dar contexto al agente IA sobre convenciones y estructura del proyecto",
+                            "Para documentación de usuarios"
+                        ],
+                        correct: 2,
+                        explanation: "AGENTS.md contiene reglas del proyecto para que cualquier IA entienda tus convenciones."
+                    },
+                    {
+                        question: "¿Cuál es la diferencia entre .cursorrules y CLAUDE.md?",
+                        options: [
+                            "No hay diferencia",
+                            ".cursorrules es para Cursor, CLAUDE.md es para Claude Code",
+                            "CLAUDE.md es más nuevo",
+                            "Se usan juntos siempre"
+                        ],
+                        correct: 1,
+                        explanation: ".cursorrules es estándar de Cursor IDE. CLAUDE.md es para Claude Code. AGENTS.md es genérico."
+                    },
+                    {
+                        question: "¿Qué debe incluir un Code Review con IA?",
+                        options: [
+                            "Solo errores de sintaxis",
+                            "Seguridad, rendimiento, legibilidad y mantenibilidad",
+                            "Solo nombres de variables",
+                            "Líneas de código"
+                        ],
+                        correct: 1,
+                        explanation: "Un buen code review cubre seguridad, performance, legibilidad y mantenibilidad a futuro."
+                    }
+                ];
+
+                if (typeof CourseProgress !== 'undefined') {
+                    CourseProgress.initQuiz('quiz-container', quizQuestions, 'm4-c04');
+                }
+
+                if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+                    CourseProgress.initSubmissionIndicators('m4-c04');
+                }
+            </script>
+
+            <hr style="margin: 2em 0; border: none; border-top: 1px solid #555;">
+
+            <div class="navigation" style="display: flex; justify-content: space-between; margin-top: 2em;">
+                <a href="clase-03.html" class="btn">← Clase 03</a>
+                <a href="clase-05-boss-battle.html" class="btn">Boss Battle →</a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

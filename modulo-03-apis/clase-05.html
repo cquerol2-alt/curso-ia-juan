@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 05: Structured Outputs — JSON Fiable del LLM — Módulo 3</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a><span> > </span>
+            <a href="index.html">Módulo 3</a><span> > </span>
+            <strong>Clase 05</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 05: Structured Outputs — JSON Fiable del LLM</h1>
+            <div class="subtitle">📅 Semana 4 — Viernes | 🎬 30 min vídeo + 💻 50 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <!-- ===== 🎬 VÍDEO DE LA LECCIÓN ===== -->
+        <section class="section">
+            <h2>🎬 Vídeo de la Lección</h2>
+            <div class="card">
+                <h3>OpenAI + Pydantic: Respuestas Estructuradas en Python (en español 🇪🇸)</h3>
+                <div class="video-wrapper">
+                    <iframe width="100%" height="400" src="https://www.youtube.com/embed/5NYknSvFM0U"
+                            title="Cómo Usar OpenAI y Pydantic para Generar Respuestas Estructuradas en Python" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                </div>
+                <div class="tip" style="margin-top: 1em;">
+                    <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                    <a href="mindmap-05.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 📖 RESUMEN: PARTE A — EL PROBLEMA ===== -->
+        <aside class="workshop-ref">
+            <h4>📚 Profundiza con el workshop de hola.dev</h4>
+            <p style="margin:0;">El workshop explica los 3 niveles de control sobre la salida del modelo (prompting → schema validation → tool use con schema):</p>
+            <ul>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#structured-output" target="_blank" rel="noopener">Sección 40 — Structured output: que el modelo devuelva datos parseables</a></li>
+            </ul>
+            <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+        </aside>
+
+
+
+
+<section class="section">
+            <h2>📖 Parte A: El Problema — Por Qué No Basta con Texto Libre</h2>
+
+            <div class="card">
+                <h3>A.1 — LLMs Devuelven Texto, Pero Necesitas JSON</h3>
+                <p>Cuando llamas a un LLM (ChatGPT, Claude, Llama), obtienes texto <strong>sin estructura</strong>. Pero las aplicaciones necesitan datos estructurados (JSON, objetos de datos) para procesar automáticamente.</p>
+                <p><strong>Ejemplo:</strong> Quieres extraer información de una factura en texto libre.</p>
+
+                <h4 style="margin-top: 1em;">Problema 1: JSON Malformado</h4>
+                <div class="code-block">
+                    <pre><code>Prompt: "Extrae los datos de esta factura en JSON:
+Invoice #001, Amount: €45.99, Items: 3 widgets"
+
+Respuesta del modelo:
+"Aquí está el JSON:
+{
+  "invoice_number": "001"
+  "amount": 45.99,
+  "items": 3
+}
+
+¡Error de sintaxis! Falta una coma tras "001""</code></pre>
+                </div>
+
+                <h4 style="margin-top: 1em;">Problema 2: Llaves Inesperadas o Faltantes</h4>
+                <div class="code-block">
+                    <pre><code>Esperas:
+{
+  "invoice_number": "001",
+  "amount": 45.99,
+  "items": 3
+}
+
+Pero el modelo devuelve:
+{
+  "factura_numero": "001",       ← Nombre diferente
+  "precio": 45.99,               ← Nombre diferente
+  "cantidad_articulos": 3,       ← Nombre diferente
+  "nota_adicional": "..."        ← Campo no esperado
+}</code></pre>
+                </div>
+
+                <h4 style="margin-top: 1em;">Problema 3: Texto Extra Alrededor del JSON</h4>
+                <div class="code-block">
+                    <pre><code>Respuesta del modelo:
+"Perfecto, aquí está la información extraída en JSON:
+
+{
+  "invoice_number": "001",
+  "amount": 45.99,
+  "items": 3
+}
+
+Espero que te sea útil."
+
+Tu parser JSON falla porque hay texto antes y después.</code></pre>
+                </div>
+
+                <div class="warning">
+                    <strong>⚠️ El Resultado:</strong>
+                    <ul style="margin: 0.5em 0 0 0;">
+                        <li>Tu código se rompe porque el JSON no es válido</li>
+                        <li>Tienes que parsear manualmente, filtrar datos, validar tipos</li>
+                        <li>Pierdes tiempo en "limpiar" la respuesta del modelo</li>
+                        <li>Sin validación, datos incorrectos entran en tu base de datos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>A.2 — Casos Reales Donde Falla</h3>
+                <ul>
+                    <li><strong>Extracción de datos:</strong> Convertir facturas, contratos, o recibos en JSON estructurado</li>
+                    <li><strong>Análisis de sentimientos:</strong> Clasificar un review en rating, pros, cons, etc.</li>
+                    <li><strong>Extracción de entidades:</strong> De un párrafo, extraer nombres, fechas, dinero</li>
+                    <li><strong>Búsqueda y filtrado:</strong> Un usuario describe lo que quiere, el LLM lo convierte en una consulta SQL</li>
+                    <li><strong>Validación de datos:</strong> Asegurar que las respuestas cumplen con tipos, rangos, y restricciones</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ===== 📖 RESUMEN: PARTE B — PYDANTIC ===== -->
+        <section class="section">
+            <h2>📖 Parte B: Pydantic — Tu Esquema de Datos en Python</h2>
+
+            <div class="card">
+                <h3>B.1 — ¿Qué es Pydantic?</h3>
+                <p><strong>Pydantic</strong> es una librería Python que valida datos usando modelos tipados. Define la estructura esperada de tus datos (esquema) y Pydantic se asegura de que los datos cumplen con esa estructura.</p>
+                <p>La idea es simple: <strong>defines una clase, Pydantic valida los datos contra esa clase</strong>.</p>
+                <p>Instalación:</p>
+                <div class="code-block">
+                    <pre><code>pip install pydantic</code></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>B.2 — Definir un Modelo Pydantic</h3>
+                <p>Aquí está lo fundamental: un modelo Pydantic es una clase que hereda de <code>BaseModel</code>.</p>
+                <div class="code-block">
+                    <pre><code>from pydantic import BaseModel, Field
+from typing import List
+from datetime import date
+
+# Definir el modelo
+class Invoice(BaseModel):
+    invoice_number: str
+    amount: float
+    items: int
+    due_date: date = None  # Campo opcional
+    description: str = Field(..., description="Descripción de la factura")
+
+# Usar el modelo
+invoice_data = {
+    "invoice_number": "001",
+    "amount": 45.99,
+    "items": 3,
+    "due_date": "2026-04-30"
+}
+
+invoice = Invoice(**invoice_data)
+print(invoice.invoice_number)  # Output: 001
+print(invoice.amount)           # Output: 45.99
+print(invoice.model_dump_json()) # Output: JSON válido</code></pre>
+                </div>
+
+                <h4 style="margin-top: 1em;">Qué Hace Pydantic Automáticamente:</h4>
+                <ul>
+                    <li>✅ Valida que <code>invoice_number</code> es string</li>
+                    <li>✅ Valida que <code>amount</code> es float</li>
+                    <li>✅ Valida que <code>items</code> es int</li>
+                    <li>✅ Convierte <code>"2026-04-30"</code> (string) a objeto <code>date</code></li>
+                    <li>✅ Levanta error si faltan campos obligatorios</li>
+                    <li>✅ Rechaza campos extra inesperados</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>B.3 — Validación Avanzada: Restricciones y Valores por Defecto</h3>
+                <div class="code-block">
+                    <pre><code>from pydantic import BaseModel, Field
+from typing import List, Optional
+
+class MovieReview(BaseModel):
+    title: str = Field(..., min_length=1, max_length=100)
+    rating: int = Field(..., ge=1, le=10)  # ge=greater/equal, le=less/equal
+    sentiment: str = Field(..., pattern="^(positive|neutral|negative)$")
+    pros: List[str] = Field(default_factory=list)
+    cons: List[str] = Field(default_factory=list)
+
+# Válido
+review = MovieReview(
+    title="Inception",
+    rating=9,
+    sentiment="positive",
+    pros=["Trama compleja", "Actores geniales"],
+    cons=["Confusa al principio"]
+)
+print(review)
+
+# INVÁLIDO — Pydantic levanta error
+try:
+    bad_review = MovieReview(
+        title="",  # ❌ min_length=1
+        rating=11,  # ❌ rating > 10
+        sentiment="awesome"  # ❌ no coincide pattern
+    )
+except Exception as e:
+    print(f"Error de validación: {e}")</code></pre>
+                </div>
+
+                <div class="tip">
+                    <strong>💡 Field():</strong> Especifica restricciones detalladas: min_length, max_length, ge (>=), le (<=), pattern (regex), description, etc.
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>B.4 — Convertir a JSON y Leer desde JSON</h3>
+                <div class="code-block">
+                    <pre><code>from pydantic import BaseModel
+import json
+
+class Invoice(BaseModel):
+    invoice_number: str
+    amount: float
+
+# Crear objeto
+invoice = Invoice(invoice_number="001", amount=45.99)
+
+# Convertir a JSON
+json_string = invoice.model_dump_json()
+print(json_string)
+# Output: {"invoice_number":"001","amount":45.99}
+
+# Convertir a diccionario
+dict_data = invoice.model_dump()
+print(dict_data)
+# Output: {'invoice_number': '001', 'amount': 45.99}
+
+# Leer desde JSON
+json_input = '{"invoice_number":"002","amount":99.99}'
+invoice2 = Invoice.model_validate_json(json_input)
+print(invoice2.invoice_number)  # Output: 002</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 📖 RESUMEN: PARTE C — STRUCTURED OUTPUTS CON OPENAI ===== -->
+        <section class="section">
+            <h2>📖 Parte C: Structured Outputs con OpenAI</h2>
+
+            <div class="card">
+                <h3>C.1 — JSON Schema: El Esquema Que Controla el Modelo</h3>
+                <p>OpenAI permite pasar un <strong>JSON Schema</strong> al modelo. El modelo es FORZADO a devolver datos que coincidan exactamente con ese esquema.</p>
+                <p>El flujo es:</p>
+                <ol>
+                    <li>Defines un modelo Pydantic</li>
+                    <li>Extraes su JSON Schema</li>
+                    <li>Se lo pasas a la API con <code>response_format</code></li>
+                    <li>El modelo responde con JSON válido que coincide</li>
+                    <li>Parseamos y usamos directamente (sin validación manual)</li>
+                </ol>
+            </div>
+
+            <div class="card">
+                <h3>C.2 — Código Completo: Structured Outputs en OpenAI</h3>
+                <div class="code-block">
+                    <pre><code>from pydantic import BaseModel, Field
+from openai import OpenAI
+import json
+
+# 1. Definir modelo Pydantic
+class Invoice(BaseModel):
+    invoice_number: str = Field(..., description="Número de factura")
+    amount: float = Field(..., description="Monto total en EUR")
+    items: int = Field(..., description="Cantidad de artículos")
+    due_date: str = Field(..., description="Fecha de vencimiento")
+
+# 2. Crear cliente OpenAI
+client = OpenAI(api_key="sk-...")
+
+# 3. Extraer schema de Pydantic
+schema = Invoice.model_json_schema()
+
+# 4. Llamar a OpenAI con response_format
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {
+            "role": "user",
+            "content": """Extrae los datos de esta factura en JSON:
+
+Factura #ABC123
+Monto: €199.99
+Artículos: 5
+Vence: 30 de junio de 2026"""
+        }
+    ],
+    response_format={
+        "type": "json_schema",
+        "json_schema": {
+            "name": "Invoice",
+            "schema": schema
+        }
+    }
+)
+
+# 5. Parsear respuesta
+json_str = response.choices[0].message.content
+invoice = Invoice.model_validate_json(json_str)
+
+print(f"Número: {invoice.invoice_number}")
+print(f"Monto: {invoice.amount}")
+print(f"Fecha vencimiento: {invoice.due_date}")</code></pre>
+                </div>
+
+                <div class="warning">
+                    <strong>⚠️ Importante:</strong>
+                    <ul style="margin: 0.5em 0 0 0;">
+                        <li><code>response_format</code> es un parámetro de OpenAI que FUERZA al modelo a devolver JSON válido</li>
+                        <li>El modelo NO puede devolver texto libre — SOLO JSON que coincide con el schema</li>
+                        <li>Esto elimina 90% de los errores de parsing</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>C.3 — Diferencias: OpenAI vs Anthropic (Claude)</h3>
+                <p>OpenAI tiene <code>response_format</code> con JSON schema. Anthropic no tiene este parámetro nativo, pero podemos lograr lo mismo con <strong>Instructor</strong>.</p>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 1em;">
+                    <thead>
+                        <tr style="background-color: rgba(0, 240, 255, 0.15); color: white;">
+                            <th style="padding: 10px; text-align: left;">Aspecto</th>
+                            <th style="padding: 10px; text-align: left;">OpenAI</th>
+                            <th style="padding: 10px; text-align: left;">Anthropic</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #333;">
+                            <td style="padding: 10px;"><strong>Structured Output</strong></td>
+                            <td style="padding: 10px;">response_format (nativo)</td>
+                            <td style="padding: 10px;">Instructor (librería)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #333;">
+                            <td style="padding: 10px;"><strong>JSON Schema Obligatorio</strong></td>
+                            <td style="padding: 10px;">Sí, fuerza el modelo</td>
+                            <td style="padding: 10px;">Sí, con Instructor</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #333;">
+                            <td style="padding: 10px;"><strong>Validación</strong></td>
+                            <td style="padding: 10px;">Automática en API</td>
+                            <td style="padding: 10px;">Automática con Instructor</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===== 📖 RESUMEN: PARTE D — INSTRUCTOR ===== -->
+        <section class="section">
+            <h2>📖 Parte D: Instructor — Simplifica Todo</h2>
+
+            <div class="card">
+                <h3>D.1 — ¿Qué es Instructor?</h3>
+                <p><strong>Instructor</strong> es una librería que envuelve cualquier API de LLM (OpenAI, Anthropic, Llama, etc.) y la combina con Pydantic para devolver objetos validados directamente.</p>
+                <p>En vez de parsear JSON manualmente, Instructor se encarga de TODO.</p>
+                <p>Instalación:</p>
+                <div class="code-block">
+                    <pre><code>pip install instructor</code></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>D.2 — Instructor + OpenAI</h3>
+                <div class="code-block">
+                    <pre><code>import instructor
+from openai import OpenAI
+from pydantic import BaseModel
+
+# Envolver el cliente OpenAI con Instructor
+client = instructor.from_openai(OpenAI())
+
+class Invoice(BaseModel):
+    invoice_number: str
+    amount: float
+    items: int
+
+# Hacer llamada — Instructor valida automáticamente
+invoice = client.chat.completions.create(
+    model="gpt-4o-mini",
+    response_model=Invoice,  # ← Especificar modelo Pydantic
+    messages=[
+        {
+            "role": "user",
+            "content": """Extrae los datos en JSON:
+Factura #ABC123, Monto: €199.99, Artículos: 5"""
+        }
+    ]
+)
+
+# ¡LISTO! invoice es un objeto Invoice válido
+print(f"Número: {invoice.invoice_number}")
+print(f"Monto: {invoice.amount}")
+print(type(invoice))  # Output: <class '__main__.Invoice'></code></pre>
+                </div>
+
+                <div class="tip">
+                    <strong>🎯 Lo Mágico:</strong> Instructor convierte automáticamente el modelo Pydantic a JSON schema, se lo pasa a OpenAI, valida la respuesta, y te devuelve un objeto Python listo para usar.
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>D.3 — Instructor + Claude (Anthropic)</h3>
+                <div class="code-block">
+                    <pre><code>import instructor
+from anthropic import Anthropic
+from pydantic import BaseModel
+
+# Envolver el cliente Anthropic con Instructor
+client = instructor.from_anthropic(Anthropic())
+
+class MovieReview(BaseModel):
+    title: str
+    rating: int
+    sentiment: str
+    pros: list[str]
+    cons: list[str]
+
+# Llamada con Instructor
+review = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=512,
+    response_model=MovieReview,
+    messages=[
+        {
+            "role": "user",
+            "content": """Analiza esta reseña y extrae los datos:
+"Inception es una obra maestra. La trama es brillante y los actores
+son excepcionales. La única crítica es que puede ser confusa al principio."
+
+Extrae: título, rating (1-10), sentimiento (positive/neutral/negative),
+pros y cons."""
+        }
+    ]
+)
+
+# review es un objeto MovieReview completamente validado
+print(f"Película: {review.title}")
+print(f"Rating: {review.rating}")
+print(f"Pros: {review.pros}")
+print(f"Cons: {review.cons}")</code></pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>D.4 — Instructor vs Llamadas Manuales</h3>
+                <p>Con Instructor, el código es mucho más limpio:</p>
+
+                <h4 style="margin-top: 1em;">SIN Instructor (manual, más código):</h4>
+                <div class="code-block">
+                    <pre><code>import json
+from openai import OpenAI
+
+client = OpenAI()
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": "Extrae JSON..."}]
+)
+
+# Tienes que:
+# 1. Extraer el texto
+text = response.choices[0].message.content
+
+# 2. Limpiar (si tiene prefijo/sufijo)
+json_str = text.split("```json")[1].split("```")[0]  # Hack
+
+# 3. Parsear
+data = json.loads(json_str)
+
+# 4. Validar manualmente cada campo
+if not isinstance(data.get("amount"), (int, float)):
+    raise ValueError("amount debe ser número")
+
+# 5. Convertir a objeto
+invoice = Invoice(**data)</code></pre>
+                </div>
+
+                <h4 style="margin-top: 1em;">CON Instructor (una línea):</h4>
+                <div class="code-block">
+                    <pre><code>import instructor
+from openai import OpenAI
+from pydantic import BaseModel
+
+client = instructor.from_openai(OpenAI())
+
+class Invoice(BaseModel):
+    amount: float
+
+# ¡Todo hecho automáticamente!
+invoice = client.chat.completions.create(
+    model="gpt-4o-mini",
+    response_model=Invoice,
+    messages=[{"role": "user", "content": "Extrae..."}]
+)</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 💻 PRÁCTICA GUIADA ===== -->
+        <section class="section">
+            <h2>💻 Práctica Guiada</h2>
+
+            <div class="card">
+                <h3>Exercise 1: Construir un Invoice Parser (Code-Along)</h3>
+                <p><strong>Objetivo:</strong> Desde cero, definir un modelo Pydantic, validar datos, y extraer una factura de texto natural.</p>
+                <p><strong>Pasos:</strong></p>
+                <ol>
+                    <li>Crea una carpeta <code>clase-05-practica/</code></li>
+                    <li>Crea <code>ex1_invoice_parser.py</code>:</li>
+                </ol>
+                <div class="code-block">
+                    <pre><code>from pydantic import BaseModel, Field
+from datetime import date
+
+# Paso 1: Definir modelo
+class Invoice(BaseModel):
+    invoice_number: str = Field(..., description="Número de factura")
+    amount: float = Field(..., gt=0, description="Monto en EUR")
+    items: int = Field(..., ge=1, description="Cantidad de artículos")
+    due_date: date = Field(..., description="Fecha de vencimiento")
+
+# Paso 2: Crear datos de prueba (como si viniera del LLM)
+raw_data = {
+    "invoice_number": "FAC-2026-001",
+    "amount": 250.50,
+    "items": 5,
+    "due_date": "2026-05-15"
+}
+
+# Paso 3: Validar con Pydantic
+try:
+    invoice = Invoice(**raw_data)
+    print("✅ Factura válida:")
+    print(f"  Número: {invoice.invoice_number}")
+    print(f"  Monto: €{invoice.amount}")
+    print(f"  Items: {invoice.items}")
+    print(f"  Vence: {invoice.due_date}")
+    print(f"\nJSON: {invoice.model_dump_json()}")
+except Exception as e:
+    print(f"❌ Error: {e}")
+
+# Paso 4: Intentar datos inválidos
+print("\n--- Intentando con datos inválidos ---")
+bad_data = {
+    "invoice_number": "FAC-001",
+    "amount": -50,  # ❌ Negativo
+    "items": 0,     # ❌ Menor que 1
+    "due_date": "15/05/2026"  # ❌ Formato incorrecto
+}
+
+try:
+    bad_invoice = Invoice(**bad_data)
+except Exception as e:
+    print(f"❌ Validación falla (como esperado): {type(e).__name__}")</code></pre>
+                </div>
+                <p><strong>Ejecuta:</strong> <code>python ex1_invoice_parser.py</code></p>
+                <p>Verás cómo Pydantic rechaza datos inválidos automáticamente.</p>
+            </div>
+
+            <div class="card">
+                <h3>Exercise 2: Instructor + OpenAI — El Flujo Completo</h3>
+                <p><strong>Objetivo:</strong> Usar Instructor para extraer datos de texto natural con OpenAI.</p>
+                <p>Crea <code>ex2_instructor_openai.py</code>:</p>
+                <div class="code-block">
+                    <pre><code>import instructor
+from openai import OpenAI
+from pydantic import BaseModel, Field
+from datetime import date
+
+# Definir modelo
+class Invoice(BaseModel):
+    invoice_number: str = Field(..., description="Número de factura")
+    amount: float = Field(..., description="Monto total en EUR")
+    items: int = Field(..., description="Cantidad de artículos")
+    due_date: date = Field(..., description="Fecha de vencimiento")
+
+# Envolver OpenAI con Instructor
+client = instructor.from_openai(OpenAI(api_key="sk-..."))
+
+# Texto de entrada (como si viniera de un OCR o usuario)
+invoice_text = """
+FACTURA ELECTRÓNICA
+Número: INV-2026-4521
+Monto Total: €599.99
+Cantidad de artículos: 12
+Vencimiento: 30 de junio de 2026
+"""
+
+# Llamada con Instructor
+invoice = client.chat.completions.create(
+    model="gpt-4o-mini",
+    response_model=Invoice,
+    messages=[
+        {
+            "role": "user",
+            "content": f"Extrae los datos de esta factura en JSON:\n\n{invoice_text}"
+        }
+    ]
+)
+
+# ¡invoice es un objeto validado listo para usar!
+print(f"Factura: {invoice.invoice_number}")
+print(f"Monto: €{invoice.amount}")
+print(f"Items: {invoice.items}")
+print(f"Vence: {invoice.due_date}")
+print(f"\nTipo: {type(invoice)}")  # Verás que es Invoice</code></pre>
+                </div>
+                <div class="tip">
+                    <strong>💡 Nota:</strong> Reemplaza <code>"sk-..."</code> con tu clave de OpenAI. Instructor maneja todo: validación, conversión de tipos, manejo de errores.
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Exercise 3: Instructor + Claude — Lo Mismo, Pero Mejor</h3>
+                <p><strong>Objetivo:</strong> Usar Instructor con Claude en lugar de OpenAI.</p>
+                <p>Crea <code>ex3_instructor_claude.py</code>:</p>
+                <div class="code-block">
+                    <pre><code>import instructor
+from anthropic import Anthropic
+from pydantic import BaseModel, Field
+from typing import List
+
+# Definir modelo más complejo
+class MovieReview(BaseModel):
+    title: str = Field(..., description="Título de la película", min_length=1)
+    rating: int = Field(..., description="Rating 1-10", ge=1, le=10)
+    sentiment: str = Field(..., description="positive/neutral/negative")
+    pros: List[str] = Field(default_factory=list, description="Puntos positivos")
+    cons: List[str] = Field(default_factory=list, description="Puntos negativos")
+
+# Envolver Anthropic con Instructor
+client = instructor.from_anthropic(Anthropic(api_key="sk-ant-..."))
+
+# Reseña de ejemplo
+review_text = """
+'Dune: Part Two' es una continuación épica. La cinematografía es
+impresionante y la dirección de Denis Villeneuve es magistral.
+Los actores (Timothée Chalamet, Zendaya) entregan actuaciones sólidas.
+Sin embargo, la trama puede sentirse lenta en algunos momentos,
+y algunos fans del libro podrían sentir que se saltan detalles importantes.
+"""
+
+# Extraer datos
+review = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=512,
+    response_model=MovieReview,
+    messages=[
+        {
+            "role": "user",
+            "content": f"Analiza esta reseña:\n\n{review_text}\n\nExtrae: título, rating (1-10), sentimiento, pros y cons."
+        }
+    ]
+)
+
+# Imprimir resultados
+print(f"Película: {review.title}")
+print(f"Rating: {review.rating}/10")
+print(f"Sentimiento: {review.sentiment}")
+print(f"Pros:")
+for pro in review.pros:
+    print(f"  - {pro}")
+print(f"Cons:")
+for con in review.cons:
+    print(f"  - {con}")</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 🎯 MINI-RETO DEL DÍA ===== -->
+        <section class="section">
+            <h2>🎯 Mini-Reto del Día: Multi-Item Product Extractor</h2>
+            <div class="card">
+                <h3>Challenge: Extrae Todos los Productos</h3>
+                <p><strong>Objetivo:</strong> Dado un párrafo con múltiples productos mencionados, extrae TODOS en una lista estructurada.</p>
+                <p><strong>Especificación:</strong></p>
+                <p>Cada producto debe tener:</p>
+                <ul>
+                    <li><code>name</code> (nombre del producto)</li>
+                    <li><code>price</code> (precio en EUR, puede ser None si no se menciona)</li>
+                    <li><code>quantity</code> (cantidad, default 1)</li>
+                    <li><code>category</code> (categoría: electrónica, ropa, hogar, etc.)</li>
+                </ul>
+                <p><strong>Entrada de ejemplo:</strong></p>
+                <div class="code-block">
+                    <pre><code>"Compré un laptop por €899, 3 camisetas a €15 cada una,
+y una lámpara LED sin especificar precio. También necesito
+2 auriculares inalámbricos a €45."</code></pre>
+                </div>
+                <p><strong>Salida esperada:</strong> Una lista con 5 productos (laptop, camiseta x3, lámpara, auriculares x2) con estructura validada por Pydantic.</p>
+                <p><strong>Entregable:</strong> Fichero <code>reto_product_extractor.py</code> que:</p>
+                <ol>
+                    <li>Define un modelo Pydantic para <code>Product</code></li>
+                    <li>Define un modelo para <code>ProductList</code> (contiene lista de productos)</li>
+                    <li>Usa Instructor + Claude (o OpenAI) para extraer</li>
+                    <li>Imprime los resultados en formato legible</li>
+                </ol>
+                <div class="tip">
+                    <strong>💡 Pista de estructura:</strong>
+                    <div class="code-block" style="margin-top: 0.5em;">
+                        <pre><code>from pydantic import BaseModel
+from typing import List, Optional
+
+class Product(BaseModel):
+    name: str
+    price: Optional[float] = None
+    quantity: int = 1
+    category: str
+
+class ProductList(BaseModel):
+    products: List[Product]</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="section">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Invoice Parser con Pydantic</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c05', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr>
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Multi-Item Product Extractor</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí tu código..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Pega aquí el output de tu programa..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c05', 2, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- ===== 🧪 TEST ===== -->
+        <section class="section">
+            <h2>🧪 Test — Evaluación de Conocimientos</h2>
+            <div class="card">
+                <div id="quiz-container" class="quiz-container"></div>
+            </div>
+        </section>
+
+        <!-- ===== NAVEGACIÓN ===== -->
+        <div class="clase-nav">
+            <a href="clase-04.html">← Clase 04</a>
+            <span> | </span>
+            <a href="clase-06.html">Clase 06 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es el principal problema al pedir a un LLM que devuelva JSON sin restricciones?",
+                options: [
+                    "El JSON siempre es perfecto, nunca hay problemas",
+                    "El modelo puede devolver JSON malformado, con llaves inesperadas, o con texto extra alrededor",
+                    "El JSON es demasiado grande para procesar",
+                    "Los LLMs no pueden generar JSON"
+                ],
+                correct: 1,
+                explanation: "Sin restricciones, el modelo puede devolver JSON inválido (comillas mal cerradas), llaves diferentes a las esperadas, o texto que rodea el JSON."
+            },
+            {
+                question: "¿Qué es Pydantic?",
+                options: [
+                    "Un framework web para construir APIs",
+                    "Una librería que valida datos usando modelos tipados y schemas",
+                    "Un banco de datos NoSQL",
+                    "Un lenguaje de programación"
+                ],
+                correct: 1,
+                explanation: "Pydantic valida datos contra esquemas definidos como clases Python (modelos). Si los datos no cumplen, levanta error."
+            },
+            {
+                question: "En Pydantic, ¿qué hace Field(..., ge=1, le=10)?",
+                options: [
+                    "Define que el campo es opcional",
+                    "Define que el campo es una lista",
+                    "Define restricciones: ge (>=) y le (<=), es decir, valor entre 1 y 10",
+                    "Define que el campo debe ser igual a 1 o 10"
+                ],
+                correct: 2,
+                explanation: "ge=greater-or-equal (>=), le=less-or-equal (<=). Así que ge=1, le=10 significa el valor debe estar entre 1 y 10."
+            },
+            {
+                question: "¿Cuál es la ventaja principal de OpenAI's response_format con JSON schema?",
+                options: [
+                    "Hace el código más lento",
+                    "El modelo es FORZADO a devolver JSON válido que coincide exactamente con el esquema",
+                    "Aumenta el costo de las llamadas",
+                    "Solo funciona con modelos antiguos"
+                ],
+                correct: 1,
+                explanation: "response_format fuerza al modelo a devolver JSON válido que cumple con el schema. No hay salida libre."
+            },
+            {
+                question: "¿Qué hace la librería Instructor?",
+                options: [
+                    "Enseña a los LLMs a ser mejores",
+                    "Envuelve APIs de LLM y las combina con Pydantic para devolver objetos validados automáticamente",
+                    "Traduce JSON a otros formatos",
+                    "Comprime respuestas de LLMs"
+                ],
+                correct: 1,
+                explanation: "Instructor automatiza todo: convierte Pydantic a schema, lo pasa al LLM, valida la respuesta, y devuelve un objeto Python tipado."
+            },
+            {
+                question: "Con Instructor, ¿cuál es el parámetro clave para especificar la estructura de salida?",
+                options: [
+                    "response_type",
+                    "schema",
+                    "response_model",
+                    "output_format"
+                ],
+                correct: 2,
+                explanation: "response_model=MiModelo especifica qué modelo Pydantic debe usarse para validar y retornar la respuesta."
+            },
+            {
+                question: "¿Puedo usar Instructor con Claude (Anthropic)?",
+                options: [
+                    "No, Instructor solo funciona con OpenAI",
+                    "Sí, usando instructor.from_anthropic()",
+                    "Sí, pero es muy lento",
+                    "No está soportado todavía"
+                ],
+                correct: 1,
+                explanation: "Instructor soporta múltiples LLMs: from_openai(), from_anthropic(), from_llamacpp(), etc."
+            },
+            {
+                question: "Si quiero un campo que sea una lista de strings, ¿cómo lo defino en Pydantic?",
+                options: [
+                    "strings: str",
+                    "strings: [str]",
+                    "strings: List[str]",
+                    "strings: list(str)"
+                ],
+                correct: 2,
+                explanation: "Usa List[str] (del módulo typing). list[str] es sintaxis de Python 3.9+, pero List es más compatible."
+            },
+            {
+                question: "¿Qué devuelve invoice.model_dump_json() en Pydantic?",
+                options: [
+                    "Un diccionario Python",
+                    "Una cadena JSON válida",
+                    "Un objeto de archivo",
+                    "None"
+                ],
+                correct: 1,
+                explanation: "model_dump_json() serializa el objeto a una cadena JSON válida. model_dump() devuelve diccionario."
+            },
+            {
+                question: "¿Cuál es la diferencia clave entre response_format de OpenAI e Instructor?",
+                options: [
+                    "No hay diferencia, son lo mismo",
+                    "OpenAI usa response_format nativo. Instructor es una librería que funciona con múltiples LLMs",
+                    "response_format es más rápido",
+                    "Instructor solo funciona offline"
+                ],
+                correct: 1,
+                explanation: "OpenAI tiene response_format integrado en su API. Instructor es una librería agnóstica que funciona con OpenAI, Anthropic, Llama, etc."
+            }
+        ];
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm3-c05');
+                if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+                    CourseProgress.initSubmissionIndicators('m3-c05');
+                }
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm3-c05');
+            if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+                CourseProgress.initSubmissionIndicators('m3-c05');
+            }
+        }
+    </script>
+</body>
+</html>

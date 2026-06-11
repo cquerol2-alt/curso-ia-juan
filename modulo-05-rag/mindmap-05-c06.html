@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map — RAG Avanzado: Chunking Strategies y Reranking</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0a0a1a;color:#e8e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+        .topbar{padding:12px 20px;background:linear-gradient(90deg,#00f0ff,#0a6e5c);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+        .topbar a{color:#fff;text-decoration:none;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;font-size:.85em;transition:.3s}
+        .topbar a:hover{background:rgba(255,255,255,.3)}
+        .topbar h1{font-size:1.1em;color:#fff;text-align:center;flex:1;margin:0 12px}
+        .map{max-width:900px;margin:30px auto;padding:0 16px}
+        .center{text-align:center;margin-bottom:32px}
+        .center .pill{display:inline-block;background:linear-gradient(135deg,#00f0ff,#ff00e5);padding:16px 32px;border-radius:60px;font-size:1.4em;font-weight:800;color:#0a0a1a;box-shadow:0 0 30px rgba(0,240,255,.3)}
+        .center .sub{color:#8888aa;margin-top:8px;font-size:.95em}
+        .branch{margin-bottom:16px;border:1px solid rgba(0,240,255,.15);border-radius:12px;overflow:hidden;transition:.3s}
+        .branch:hover{border-color:rgba(0,240,255,.4);box-shadow:0 0 15px rgba(0,240,255,.08)}
+        .branch-head{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;background:#12122a;user-select:none;transition:.2s}
+        .branch-head:hover{background:#1a1a3e}
+        .branch-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2em;flex-shrink:0}
+        .b1 .branch-icon{background:rgba(0,240,255,.15);border:2px solid #00f0ff}
+        .b2 .branch-icon{background:rgba(255,0,229,.15);border:2px solid #ff00e5}
+        .b3 .branch-icon{background:rgba(57,255,20,.15);border:2px solid #39ff14}
+        .b4 .branch-icon{background:rgba(255,230,0,.15);border:2px solid #ffe600}
+        .b5 .branch-icon{background:rgba(255,107,0,.15);border:2px solid #ff6b00}
+        .branch-title{flex:1;font-weight:700;font-size:1.05em}
+        .b1 .branch-title{color:#00f0ff}
+        .b2 .branch-title{color:#ff00e5}
+        .b3 .branch-title{color:#39ff14}
+        .b4 .branch-title{color:#ffe600}
+        .b5 .branch-title{color:#ff6b00}
+        .toggle{color:#8888aa;font-size:1.4em;transition:transform .3s}
+        .branch.open .toggle{transform:rotate(45deg)}
+        .branch-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+        .branch.open .branch-body{max-height:600px}
+        .sub-list{padding:8px 20px 16px 72px;display:flex;flex-direction:column;gap:8px}
+        .sub-item{padding:10px 16px;background:#1a1a2e;border-radius:8px;border-left:3px solid;font-size:.93em;line-height:1.5}
+        .b1 .sub-item{border-color:#00f0ff}
+        .b2 .sub-item{border-color:#ff00e5}
+        .b3 .sub-item{border-color:#39ff14}
+        .b4 .sub-item{border-color:#ffe600}
+        .b5 .sub-item{border-color:#ff6b00}
+        .sub-item strong{color:#fff}
+        .sub-item code{background:#12122a;padding:2px 6px;border-radius:4px;font-size:.88em;color:#39ff14;font-family:'Fira Code',monospace}
+        @media(max-width:600px){.topbar h1{font-size:.9em}.center .pill{font-size:1.1em;padding:12px 24px}.sub-list{padding-left:52px}}
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="clase-06.html">← Volver a la clase</a>
+        <h1>Mind Map — Clase 06</h1>
+        <div style="width:80px"></div>
+    </div>
+
+    <div class="map">
+        <div class="center">
+            <div class="pill">RAG Avanzado: Chunking Strategies y Reranking</div>
+            <p class="sub">Mejora dramáticamente la calidad de respuestas RAG</p>
+        </div>
+
+        <!-- Rama 1 -->
+        <div class="branch b1">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">⚠️</div>
+                <div class="branch-title">Por qué RAG básico falla</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Chunks demasiado grandes:</strong> incluyen información irrelevante, diluyendo contexto clave</div>
+                    <div class="sub-item"><strong>Chunks demasiado pequeños:</strong> pierden contexto, el LLM no entiende la idea completa</div>
+                    <div class="sub-item"><strong>Retrieval trae documentos irrelevantes</strong> — el ranking de similitud puede fallar con preguntas parafrasea­das</div>
+                    <div class="sub-item"><strong>El LLM alucina:</strong> si el contexto no es lo bastante preciso, inventa información</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 2 -->
+        <div class="branch b2">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">✂️</div>
+                <div class="branch-title">Estrategias de chunking</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Fixed-size:</strong> simple pero corta frases a mitad, pierde contexto</div>
+                    <div class="sub-item"><strong>Recursive:</strong> divide respetando párrafos y frases, mantiene coherencia local</div>
+                    <div class="sub-item"><strong>Semantic:</strong> agrupa por significado usando embeddings (costoso pero preciso)</div>
+                    <div class="sub-item"><strong>Document-based:</strong> respeta estructura del documento (secciones, capítulos)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 3 -->
+        <div class="branch b3">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🎯</div>
+                <div class="branch-title">Tuning de parámetros</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>chunk_size:</strong> 256 para precisión quirúrgica, 1024 para contexto amplio, experimenta con tu contenido</div>
+                    <div class="sub-item"><strong>chunk_overlap:</strong> 10-20% del chunk_size, evita perder información entre trozos</div>
+                    <div class="sub-item"><strong>Mide la calidad:</strong> haz preguntas de prueba, ve si obtiene respuestas correctas</div>
+                    <div class="sub-item"><strong>Punto dulce:</strong> empieza con 512 caracteres y 50 de overlap, después ajusta según resultados</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 4 -->
+        <div class="branch b4">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">📊</div>
+                <div class="branch-title">Reranking</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Primer retrieval trae k=20 candidatos</strong> rápidamente con similitud coseno</div>
+                    <div class="sub-item"><strong>Cross-encoder re-ordena</strong> esos 20 según relevancia REAL (no solo embeddings)</div>
+                    <div class="sub-item"><strong>Devuelve solo top 4-5 más relevantes</strong> al LLM, filtro de ruido</div>
+                    <div class="sub-item"><strong>Mejora dramática:</strong> la precisión se dispara, menos alucinaciones, respuestas más acertadas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 5 -->
+        <div class="branch b5">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🚀</div>
+                <div class="branch-title">Técnicas avanzadas</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Multi-query:</strong> reformular la pregunta de varias formas, buscar con todas, combinar resultados</div>
+                    <div class="sub-item"><strong>Hybrid search:</strong> combina BM25 (keywords, SQL) + semántico (embeddings), obtiene lo mejor de ambos mundos</div>
+                    <div class="sub-item"><strong>Parent document retriever:</strong> busca chunk pequeño (preciso) pero devuelve contexto grande (completo)</div>
+                    <div class="sub-item"><strong>Query expansion:</strong> añadir sinónimos y conceptos relacionados a la búsqueda</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

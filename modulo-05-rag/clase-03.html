@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 03: Agentic search — el modelo decide qué buscar</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <a href="index.html">Módulo 5</a>
+            <span> > </span>
+            <strong>Clase 03</strong>
+        </nav>
+
+        <!-- Header -->
+        <header class="module-header">
+            <h1>Clase 03: Agentic search — el modelo decide qué buscar</h1>
+            <p class="subtitle">📅 Semana 6 — Viernes | ⏱️ 55 minutos</p>
+        </header>
+
+        <!-- Intro: por qué agentic search -->
+        <div class="card" style="border-left: 4px solid #ff00e5;">
+            <h2>🤖 Por qué agentic search es la arquitectura que más usa la industria en 2026</h2>
+            <p>
+                En la clase 02 viste que el <strong>context stuffing</strong> gana cuando el documento cabe en la ventana. Pero, ¿qué pasa cuando tienes <em>100 PDFs</em>, o cuando los datos cambian cada hora, o cuando no sabes de antemano qué parte necesitas?
+            </p>
+            <p>
+                La respuesta moderna no es RAG clásico por defecto. Es <strong>agentic search</strong>: le das al modelo un puñado de <em>tools</em> (<code>search_docs</code>, <code>read_file</code>, <code>web_search</code>, <code>run_sql</code>) y él decide qué invocar, con qué argumentos, y cuándo parar. Así funcionan <strong>Claude Code, Cursor, Perplexity</strong> y la gran mayoría de agentes serios que estás usando en 2026.
+            </p>
+            <p>
+                En esta clase montarás tu primer agente con <strong>tool use nativo de Anthropic</strong> — sin LangChain, sin wrappers, sin magia. Solo el SDK oficial, un bucle <code>while</code>, y funciones Python normales. Al final tendrás un agente que busca respuestas en los apuntes de clase de Juan por iniciativa propia.
+            </p>
+            <div class="tip" style="margin-top: 16px;">
+                <strong>📖 Lectura complementaria (15 min):</strong>
+                <a href="https://docs.claude.com/en/docs/build-with-claude/tool-use" target="_blank" style="color: #00f0ff;">Tool use with Claude — Anthropic Docs</a>.
+                Es la referencia oficial. Entiende <code>tool_use</code>, <code>tool_result</code> y el bucle <code>stop_reason == "tool_use"</code> antes de escribir código.
+            </div>
+        </div>
+
+        <!-- Vídeo -->
+        <div class="card">
+            <h2>📹 Vídeo principal (20 min)</h2>
+            <div class="video-wrapper">
+                <iframe width="100%" height="450" src="https://www.youtube.com/embed/6wkFb2_cUik" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <a href="https://www.youtube.com/watch?v=6wkFb2_cUik" target="_blank" class="btn" style="background:#ff0000;">▶ Ver en YouTube ↗</a>
+                <p style="font-size:.85em; color:#b0b0cc; margin-top:6px;">Si el reproductor de arriba sale en blanco (pasa al abrir el HTML con doble-click por política de YouTube), usa este botón.</p>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+            <div class="warning" style="margin-top: 12px; border-left: 3px solid #ffe600;">
+                <strong>⚠️ Nota de modelo:</strong> el vídeo usa Claude 3.5, pero en el código canónico de esta clase usamos <code>claude-sonnet-4-6</code> (modelo actual). La API de tool use es idéntica — solo cambia el nombre del modelo en <code>client.messages.create(model=...)</code>.
+            </div>
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Resumen visual de los conceptos de la clase en español.
+                <a href="mindmap-05-c03.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </div>
+
+        <!-- Conceptos clave -->
+        <aside class="workshop-ref">
+            <h4>📚 Profundiza con el workshop de hola.dev</h4>
+            <p style="margin:0;">Agentic search se construye sobre tool use. El workshop lo explica con el bucle ReAct y patrones de agentic RAG:</p>
+            <ul>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#agentic-rag" target="_blank" rel="noopener">Sección 67 — Agentic RAG: la evolución del retrieval</a></li>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#function-calling" target="_blank" rel="noopener">Sección 86 — Function calling (tool use)</a></li>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#arquitecturas-agentes" target="_blank" rel="noopener">Sección 87 — Bucle ReAct (Reason + Act)</a></li>
+            </ul>
+            <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+        </aside>
+
+
+
+
+<div class="card">
+            <h2>🧠 Conceptos clave</h2>
+
+            <h3 style="color:#ff00e5;">1. Tool use: el modelo pide, tu código ejecuta</h3>
+            <p>
+                Tool use (también llamado <em>function calling</em>) es un contrato muy simple:
+            </p>
+            <ol>
+                <li>Le mandas al modelo una <strong>descripción</strong> de qué herramientas tiene disponibles (nombre, qué hace, qué parámetros acepta).</li>
+                <li>Si el modelo decide que necesita llamar una herramienta, no la ejecuta él — devuelve un bloque <code>tool_use</code> con el nombre y los argumentos.</li>
+                <li><strong>Tu código</strong> ejecuta la función real y le devuelve el resultado en un mensaje <code>tool_result</code>.</li>
+                <li>El modelo ve el resultado y continúa: puede volver a llamar otra tool, o responder al usuario.</li>
+            </ol>
+            <p>Este bucle se llama <strong>patrón ReAct</strong> (Reason + Act). Es la base de cualquier agente LLM serio.</p>
+
+            <h3 style="color:#ff00e5;">2. Anatomía de una tool</h3>
+            <p>Una tool para la API de Anthropic es un dict con 3 campos:</p>
+            <pre><code>tool_buscar = {
+    "name": "search_docs",                    # identificador único
+    "description": (
+        "Busca en los apuntes de Juan. Devuelve los 3 fragmentos más "
+        "relevantes con su archivo de origen. Usa esta tool SIEMPRE "
+        "que la pregunta mencione clase, módulo o concepto del curso."
+    ),                                        # lo más importante del dict
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "query": {
+                "type": "string",
+                "description": "Texto libre a buscar (p. ej. 'tool use')"
+            }
+        },
+        "required": ["query"]
+    }
+}</code></pre>
+            <div class="warning" style="margin-top: 8px;">
+                <strong>⚠️ La <code>description</code> es el 80% del trabajo.</strong>
+                Si es vaga, el modelo llamará a la tool cuando no toca o con argumentos raros. Escríbela como si se la dieras a un becario: "haz X, devuelve Y, úsala cuando Z".
+            </div>
+
+            <h3 style="color:#ff00e5;">3. Bucle agéntico (pseudocódigo)</h3>
+            <pre><code>messages = [{"role": "user", "content": pregunta}]
+while True:
+    resp = client.messages.create(model=MODEL, tools=TOOLS, messages=messages, ...)
+    if resp.stop_reason != "tool_use":
+        return resp.content[0].text            # respuesta final
+
+    # 1) guarda lo que dijo el modelo (puede incluir varios tool_use a la vez)
+    messages.append({"role": "assistant", "content": resp.content})
+
+    # 2) ejecuta cada tool_use y añade su tool_result
+    tool_results = []
+    for block in resp.content:
+        if block.type == "tool_use":
+            resultado = TOOL_IMPL[block.name](**block.input)
+            tool_results.append({
+                "type": "tool_use_id",           # ⚠️ es tool_use_id, no id
+                "tool_use_id": block.id,
+                "content": resultado
+            })
+    messages.append({"role": "user", "content": tool_results})</code></pre>
+            <div class="info" style="margin-top: 8px;">
+                Pon siempre un <code>max_turnos</code> (8–12) — si no, una tool rota puede hacer loop infinito y te arruina la API bill.
+            </div>
+
+            <h3 style="color:#ff00e5;">4. Agentic search vs context stuffing</h3>
+            <table style="width:100%; border-collapse: collapse; margin-top: 12px;">
+                <thead style="background: rgba(255,0,229,.12);">
+                    <tr>
+                        <th style="padding:10px; border:1px solid #333; text-align:left;">Criterio</th>
+                        <th style="padding:10px; border:1px solid #333; text-align:left;">Context stuffing</th>
+                        <th style="padding:10px; border:1px solid #333; text-align:left;">Agentic search</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="padding:10px; border:1px solid #333;">Tamaño del corpus</td><td style="padding:10px; border:1px solid #333;">&lt; 200K tokens</td><td style="padding:10px; border:1px solid #333;">Ilimitado</td></tr>
+                    <tr><td style="padding:10px; border:1px solid #333;">Frescura de los datos</td><td style="padding:10px; border:1px solid #333;">Estática (lo que metes)</td><td style="padding:10px; border:1px solid #333;">Dinámica (tools en vivo)</td></tr>
+                    <tr><td style="padding:10px; border:1px solid #333;">Coste por query</td><td style="padding:10px; border:1px solid #333;">Paga doc entero siempre</td><td style="padding:10px; border:1px solid #333;">Paga solo lo que lee</td></tr>
+                    <tr><td style="padding:10px; border:1px solid #333;">Latencia</td><td style="padding:10px; border:1px solid #333;">1 turno (1–2 s con caché)</td><td style="padding:10px; border:1px solid #333;">N turnos (3–15 s)</td></tr>
+                    <tr><td style="padding:10px; border:1px solid #333;">Debug</td><td style="padding:10px; border:1px solid #333;">Fácil (un solo prompt)</td><td style="padding:10px; border:1px solid #333;">Complejo (pasos encadenados)</td></tr>
+                    <tr><td style="padding:10px; border:1px solid #333;">Úsalo cuando</td><td style="padding:10px; border:1px solid #333;">Un doc, muchas queries</td><td style="padding:10px; border:1px solid #333;">Corpus vivo, info no predecible</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Práctica guiada -->
+        <div class="card">
+            <h2>🛠️ Práctica guiada (30 min)</h2>
+            <p>Vas a montar un agente de 3 tools sobre los apuntes del curso. Empezamos por lo mínimo y lo vamos escalando.</p>
+
+            <h3>Paso 1 — Entorno</h3>
+            <pre><code>pip install anthropic python-dotenv</code></pre>
+            <p>Crea <code>.env</code> con <code>ANTHROPIC_API_KEY=sk-ant-...</code></p>
+
+            <h3>Paso 2 — Tu primera tool: <code>get_current_time</code></h3>
+            <p>Empieza por la tool más tonta del mundo — una que no necesita argumentos — para ver el bucle funcionando.</p>
+            <pre><code>import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
+from dotenv import load_dotenv
+import anthropic
+
+load_dotenv()
+client = anthropic.Anthropic()
+MODEL = "claude-sonnet-4-6"
+
+def get_current_time():
+    return datetime.now(ZoneInfo("Europe/Madrid")).isoformat(timespec="seconds")
+
+TOOLS = [{
+    "name": "get_current_time",
+    "description": "Devuelve la fecha y hora actual en Madrid en formato ISO.",
+    "input_schema": {"type": "object", "properties": {}}
+}]
+
+resp = client.messages.create(
+    model=MODEL,
+    max_tokens=512,
+    tools=TOOLS,
+    messages=[{"role": "user", "content": "¿Qué hora es ahora mismo en Madrid?"}]
+)
+print(resp.stop_reason)    # 'tool_use'
+print(resp.content)</code></pre>
+            <div class="info" style="margin-top: 8px;">
+                En esta primera llamada el modelo <strong>no responde</strong> — te pide que ejecutes la tool. Ese es el punto.
+            </div>
+
+            <h3>Paso 3 — Cerrar el bucle</h3>
+            <pre><code>from anthropic.types import ToolUseBlock
+
+def run_once(pregunta: str, max_turnos: int = 6) -> str:
+    messages = [{"role": "user", "content": pregunta}]
+    for _ in range(max_turnos):
+        resp = client.messages.create(
+            model=MODEL, max_tokens=1024, tools=TOOLS, messages=messages
+        )
+        if resp.stop_reason != "tool_use":
+            # respuesta final: saca el primer bloque de texto
+            return next(b.text for b in resp.content if getattr(b, "text", None))
+
+        messages.append({"role": "assistant", "content": resp.content})
+        tool_results = []
+        for block in resp.content:
+            if isinstance(block, ToolUseBlock) and block.name == "get_current_time":
+                tool_results.append({
+                    "type": "tool_result",
+                    "tool_use_id": block.id,
+                    "content": get_current_time()
+                })
+        messages.append({"role": "user", "content": tool_results})
+    return "[agente agotó max_turnos]"
+
+print(run_once("¿Qué día es hoy?"))</code></pre>
+
+            <h3>Paso 4 — Tool <code>search_docs</code> sobre los apuntes</h3>
+            <p>Crea una carpeta <code>apuntes/</code> con 3-5 ficheros <code>.md</code> (puedes copiar texto de esta clase y de la clase 02). Luego añade esta tool:</p>
+            <pre><code>from pathlib import Path
+
+APUNTES_DIR = Path("apuntes")
+
+def search_docs(query: str, max_results: int = 3) -> str:
+    """Búsqueda por substring case-insensitive. Rudimentaria, pero suficiente."""
+    q = query.lower()
+    hits = []
+    for p in APUNTES_DIR.rglob("*.md"):
+        for i, line in enumerate(p.read_text(encoding="utf-8").splitlines(), 1):
+            if q in line.lower():
+                hits.append(f"[{p.name}:L{i}] {line.strip()}")
+                if len(hits) >= max_results:
+                    return "\n".join(hits)
+    return "\n".join(hits) or "Sin resultados."
+
+TOOLS.append({
+    "name": "search_docs",
+    "description": (
+        "Busca por substring en los apuntes del curso (carpeta ./apuntes). "
+        "Devuelve hasta `max_results` líneas con formato [archivo:Lnn]. "
+        "Úsala SIEMPRE que la pregunta hable de clase, módulo, concepto o "
+        "técnica del curso."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "query": {"type": "string", "description": "Texto a buscar"},
+            "max_results": {"type": "integer", "default": 3}
+        },
+        "required": ["query"]
+    }
+})</code></pre>
+
+            <h3>Paso 5 — Dispatcher genérico y <code>run_agent</code></h3>
+            <p>Hasta ahora el bucle sabía ejecutar una tool hardcodeada. Generalízalo:</p>
+            <pre><code>TOOL_IMPL = {
+    "get_current_time": lambda **_: get_current_time(),
+    "search_docs": lambda query, max_results=3: search_docs(query, max_results),
+}
+
+def run_agent(pregunta: str, max_turnos: int = 8) -> str:
+    messages = [{"role": "user", "content": pregunta}]
+    for turno in range(max_turnos):
+        resp = client.messages.create(
+            model=MODEL, max_tokens=1024, tools=TOOLS, messages=messages
+        )
+        if resp.stop_reason != "tool_use":
+            return next((b.text for b in resp.content if getattr(b, "text", None)), "")
+
+        messages.append({"role": "assistant", "content": resp.content})
+        results = []
+        for block in resp.content:
+            if isinstance(block, ToolUseBlock):
+                try:
+                    out = str(TOOL_IMPL[block.name](**block.input))
+                except Exception as e:
+                    out = f"ERROR: {e}"
+                results.append({
+                    "type": "tool_result",
+                    "tool_use_id": block.id,
+                    "content": out
+                })
+                print(f"  [turno {turno}] {block.name}({block.input}) → {out[:80]}…")
+        messages.append({"role": "user", "content": results})
+    return "[agente agotó max_turnos sin respuesta final]"
+
+print(run_agent("¿En qué clase explicamos prompt caching y qué multiplicador tiene la primera llamada?"))</code></pre>
+            <div class="success" style="margin-top: 8px;">
+                Observa los prints: el modelo llamará a <code>search_docs("prompt caching")</code> por sí solo, leerá los fragmentos, y te responderá citando la clase. <strong>Tú no le dijiste qué buscar.</strong> Eso es agentic search.
+            </div>
+        </div>
+
+        <!-- Mini-reto -->
+        <div class="card" style="border-left: 4px solid #39ff14;">
+            <h2>🎯 Mini-reto: agente con 3 tools</h2>
+            <p>Añade dos tools más para completar el agente:</p>
+            <ol>
+                <li><code>list_files()</code> — devuelve los nombres de <code>.md</code> dentro de <code>apuntes/</code>.</li>
+                <li><code>read_file(filename)</code> — devuelve el contenido entero de un archivo concreto.</li>
+            </ol>
+            <div class="warning" style="margin-top: 8px;">
+                <strong>⚠️ Seguridad:</strong> en <code>read_file</code> <em>valida</em> que la ruta no se escapa de <code>apuntes/</code>. Si no lo haces, el agente podría pedir <code>../../etc/passwd</code>. Usa:
+                <pre style="margin-top: 8px;"><code>ruta = (APUNTES_DIR / filename).resolve()
+if not ruta.is_relative_to(APUNTES_DIR.resolve()):
+    return "ERROR: ruta fuera de apuntes/"</code></pre>
+            </div>
+            <p>Prueba el agente con preguntas que obliguen a usar varias tools en cadena:</p>
+            <ul>
+                <li>"¿Qué archivos tenemos en apuntes? Dame un resumen de cada uno."</li>
+                <li>"Busca 'prompt caching' y después ábreme el archivo donde aparezca."</li>
+            </ul>
+        </div>
+
+        <!-- Ejercicios entregables -->
+        <div class="card">
+            <h2>📝 Ejercicios entregables</h2>
+
+            <!-- Ejercicio 1 -->
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h3>Ejercicio 1 (A) — Primera tool con Anthropic SDK</h3>
+                <p>Pega tu código del <strong>Paso 3</strong>: bucle completo que ejecuta <code>get_current_time</code> y devuelve la hora al usuario. Debe imprimir la respuesta final del modelo.</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí tu código Python..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales (dudas, qué te costó...)"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c03', 1, this)">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <!-- Ejercicio 2 -->
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="code-along">
+                <h3>Ejercicio 2 (A) — Tool <code>search_docs</code> sobre directorio local</h3>
+                <p>Pega el código del <strong>Paso 4 + 5</strong>: definición de <code>search_docs</code>, registro en <code>TOOLS</code>, dispatcher, y una llamada de ejemplo a <code>run_agent</code> con su respuesta final pegada como comentario al final.</p>
+                <textarea id="code-ejercicio-2" rows="14" placeholder="# Código + respuesta del agente en comentario"></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c03', 2, this)">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+
+            <!-- Ejercicio 3 -->
+            <div class="exercise-submit" id="submit-ejercicio-3" data-type="mini-reto">
+                <h3>Ejercicio 3 (B) — Agente agentic search con 3 tools</h3>
+                <p>Entrega el agente completo del mini-reto: <code>get_current_time</code>, <code>search_docs</code>, <code>list_files</code>, <code>read_file</code> (con validación de ruta). Pega además el <strong>log de una sesión</strong> donde una sola pregunta dispare ≥2 tools distintas.</p>
+                <textarea id="code-ejercicio-3" rows="16" placeholder="# Código del agente + log de sesión"></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-3" rows="2" placeholder="¿Qué fue lo más difícil del mini-reto?"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c03', 3, this)">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-3" class="submit-status"></div>
+            </div>
+        </div>
+
+        <!-- Quiz -->
+        <div class="card">
+            <h2>🧩 Mini-quiz (10 preguntas)</h2>
+            <div id="quiz-container"></div>
+        </div>
+
+        <!-- Siguientes pasos -->
+        <div class="card" style="border-left: 4px solid #ffe600;">
+            <h2>🎓 Resumen y siguientes pasos</h2>
+            <ul>
+                <li>El modelo <strong>no ejecuta</strong> tools: pide, tu código ejecuta, tú devuelves <code>tool_result</code>.</li>
+                <li>La calidad del agente depende un 80% de las <strong>descriptions</strong> de las tools.</li>
+                <li>Siempre pon <code>max_turnos</code> y valida rutas/inputs de tools con efectos reales.</li>
+                <li>Agentic search gana a stuffing cuando el corpus es grande o dinámico.</li>
+            </ul>
+            <p><strong>Próxima clase:</strong> <a href="clase-04.html" style="color:#00f0ff;">Embeddings y vector stores desde cero (sin LangChain)</a> — montamos la pieza que falta para cuando agentic search no basta y necesitas búsqueda semántica a escala.</p>
+        </div>
+
+        <!-- Navegación -->
+        <div class="nav-buttons">
+            <a href="clase-02.html" class="btn btn-secondary">← Clase 02</a>
+            <a href="index.html" class="btn btn-secondary">📚 Módulo 5</a>
+            <a href="clase-04.html" class="btn">Clase 04 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "Cuando el modelo decide usar una tool, ¿quién ejecuta realmente la función?",
+                options: [
+                    "El modelo la ejecuta internamente y devuelve el resultado",
+                    "Tu código Python la ejecuta; el modelo solo pide los argumentos",
+                    "Lo hace la API de Anthropic en su servidor",
+                    "Depende del <code>stop_reason</code>"
+                ],
+                correct: 1,
+                explanation: "Tool use es un contrato: el modelo emite un bloque <code>tool_use</code> con nombre + argumentos, y tu código ejecuta y devuelve <code>tool_result</code>."
+            },
+            {
+                question: "¿Qué valor toma <code>resp.stop_reason</code> cuando el modelo quiere invocar una tool?",
+                options: [
+                    "<code>end_turn</code>",
+                    "<code>max_tokens</code>",
+                    "<code>tool_use</code>",
+                    "<code>stop_sequence</code>"
+                ],
+                correct: 2,
+                explanation: "Exactamente <code>tool_use</code>. Ese es el check que usas en el <code>while</code> para seguir iterando."
+            },
+            {
+                question: "¿Cuál es la parte MÁS importante de una definición de tool?",
+                options: [
+                    "El <code>name</code>",
+                    "El <code>input_schema</code>",
+                    "La <code>description</code>",
+                    "El orden dentro de la lista <code>TOOLS</code>"
+                ],
+                correct: 2,
+                explanation: "La description le dice al modelo <em>cuándo</em> usar la tool. Si es vaga, el modelo la llama mal o no la llama. Nombre y schema son secundarios."
+            },
+            {
+                question: "¿Cómo se llama el patrón de razonamiento + acción que siguen los agentes LLM?",
+                options: [
+                    "CoT (Chain of Thought)",
+                    "ReAct (Reason + Act)",
+                    "MRKL",
+                    "ToT (Tree of Thought)"
+                ],
+                correct: 1,
+                explanation: "ReAct: el modelo razona, actúa (invoca tool), observa el resultado, y repite. Es la base de Claude Code, Cursor, Perplexity, etc."
+            },
+            {
+                question: "¿Qué ventaja principal tiene agentic search sobre context stuffing?",
+                options: [
+                    "Siempre responde más rápido",
+                    "Escala a corpus ilimitado y paga solo los tokens que necesita",
+                    "No necesita API key",
+                    "Es más fácil de debuggear"
+                ],
+                correct: 1,
+                explanation: "Stuffing paga el doc entero siempre; agentic search solo lee lo que el modelo decide abrir. Por eso escala a corpus enormes o dinámicos."
+            },
+            {
+                question: "¿Cuál NO es una desventaja típica de agentic search?",
+                options: [
+                    "Más latencia (varios turnos)",
+                    "Debug más complejo (cadena de pasos)",
+                    "Coste impredecible si el agente hace loop",
+                    "Ventana de contexto limitada a 200K tokens"
+                ],
+                correct: 3,
+                explanation: "La ventana es la misma — eso no es problema en agentic, porque precisamente no cargas el doc entero. Los otros tres sí son desventajas reales."
+            },
+            {
+                question: "Tras recibir un <code>tool_use</code>, ¿qué estructura debe tener el mensaje de respuesta del <em>usuario</em>?",
+                options: [
+                    "<code>{\"role\":\"tool\", \"content\": ...}</code>",
+                    "<code>{\"role\":\"user\", \"content\":[{\"type\":\"tool_result\", \"tool_use_id\":..., \"content\":...}]}</code>",
+                    "<code>{\"role\":\"assistant\", \"content\": resultado}</code>",
+                    "<code>{\"role\":\"system\", \"content\": resultado}</code>"
+                ],
+                correct: 1,
+                explanation: "El rol es <code>user</code> y el content es una lista con bloques <code>tool_result</code> que llevan <code>tool_use_id</code> (el id que te dio el modelo) + el resultado."
+            },
+            {
+                question: "¿Por qué pones un <code>max_turnos</code> en el bucle?",
+                options: [
+                    "Lo exige la API — si no, rechaza la petición",
+                    "Para evitar bucles infinitos si una tool devuelve errores y el modelo se obsesiona",
+                    "Para que el modelo responda siempre en 2 turnos",
+                    "Para reducir latencia de la primera llamada"
+                ],
+                correct: 1,
+                explanation: "Si una tool falla silenciosamente o devuelve vacío, el modelo puede seguir reintentando hasta quemarte la cuota. Un corte duro de 8–12 turnos te protege."
+            },
+            {
+                question: "¿Cuál de estas herramientas está construida con agentic search como arquitectura central?",
+                options: [
+                    "Claude Code",
+                    "Cursor",
+                    "Perplexity",
+                    "Las tres"
+                ],
+                correct: 3,
+                explanation: "Las tres son agentes con tools: buscan, leen, editan archivos, ejecutan comandos. Es la arquitectura dominante en productos LLM de 2026."
+            },
+            {
+                question: "En la tool <code>read_file(filename)</code>, ¿qué debes comprobar SIEMPRE antes de leer?",
+                options: [
+                    "Que el archivo existe",
+                    "Que la ruta resuelta sigue dentro de la carpeta <code>apuntes/</code> (no hay <code>../</code>)",
+                    "Que el archivo pesa menos de 1 MB",
+                    "Que la query del usuario es en español"
+                ],
+                correct: 1,
+                explanation: "Path traversal: si no validas, un prompt puede colar <code>../../.env</code>. Usa <code>ruta.resolve().is_relative_to(APUNTES_DIR.resolve())</code>."
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            CourseProgress.initSubmissionIndicators('m5-c03');
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm5-c03');
+        });
+    </script>
+</body>
+</html>

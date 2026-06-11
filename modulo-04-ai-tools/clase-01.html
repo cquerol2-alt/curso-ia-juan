@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 01: GitHub Copilot — Setup y Autocompletado con IA — Módulo 4</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a><span> > </span>
+            <a href="index.html">Módulo 4</a><span> > </span>
+            <strong>Clase 01</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 01: GitHub Copilot — Setup y Autocompletado con IA</h1>
+            <div class="subtitle">📅 Semana 5 — Miércoles | 🎬 30 min vídeo + 💻 50 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <!-- SECCIÓN 1: Vídeo de la lección -->
+        <div class="card">
+            <h2>🎬 Vídeo de la lección</h2>
+            <p>En este vídeo, <strong>Vida MRR</strong> te enseña todo lo que necesitas saber sobre GitHub Copilot: qué es, cómo instalarlo, cómo usar las sugerencias inline, Copilot Chat, y modos avanzados para potenciar tu productividad en VS Code.</p>
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/E_mEnW7VXAU" title="Aprende GitHub Copilot en 1 hora" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <div class="info-box" style="margin-top: 15px;">
+                <strong>📚 Lectura complementaria:</strong><br>
+                Después del vídeo, consulta la <a href="https://code.visualstudio.com/docs/copilot/overview" target="_blank">documentación oficial de GitHub Copilot en VS Code</a> para conocer todos los shortcuts y características avanzadas.
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: Resumen de conceptos -->
+        <aside class="workshop-ref">
+            <h4>📚 Profundiza con el workshop de hola.dev</h4>
+            <p style="margin:0;">Para situar Copilot dentro del mapa completo de AI coding assistants y elegir cuándo usar IDE vs terminal:</p>
+            <ul>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#ide-terminal" target="_blank" rel="noopener">Sección 105 — IDE web vs terminal: ¿dónde usar la IA?</a></li>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#comparativa-coding" target="_blank" rel="noopener">Sección 106 — Comparativa de AI coding assistants (mayo 2026)</a></li>
+            </ul>
+            <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+        </aside>
+
+
+
+
+<div class="card">
+            <h2>📖 Resumen de conceptos</h2>
+
+            <h3>a) ¿Qué es GitHub Copilot?</h3>
+            <p><strong>GitHub Copilot = Tu asistente de programación con IA.</strong> Es un servicio de GitHub y OpenAI que usa modelos de IA para sugerirte código mientras escribes. Piensa en él como un "autocomplete sobreesteroides".</p>
+            <ul>
+                <li><strong>Integrado en VS Code:</strong> Funciona directamente en tu editor</li>
+                <li><strong>Basado en GPT:</strong> Entiende contexto, nombres de variables, y patrones</li>
+                <li><strong>Plan gratuito disponible:</strong> 2,000 autocompletados/mes + 50 mensajes de chat/mes (limitado pero útil para empezar)</li>
+                <li><strong>Plan pro:</strong> Acceso ilimitado, $10/mes o gratis si eres estudiante universitario</li>
+            </ul>
+
+            <div class="info-box">
+                <strong>💡 Consejo:</strong> Como estudiante, puedes obtener GitHub Copilot gratis si verificas tu email universitario en <a href="https://github.com/student" target="_blank">GitHub Student Developer Pack</a>.
+            </div>
+
+            <h3>b) Setup paso a paso en VS Code</h3>
+            <p><strong>Paso 1: Tener una cuenta de GitHub</strong></p>
+            <ol>
+                <li>Ve a <a href="https://github.com/signup" target="_blank">github.com/signup</a></li>
+                <li>Crea tu cuenta si aún no tienes (es gratis)</li>
+                <li>Verifica tu email</li>
+            </ol>
+
+            <p><strong>Paso 2: Instalar la extensión en VS Code</strong></p>
+            <ol>
+                <li>Abre VS Code</li>
+                <li>Ve a "Extensions" (icono de bloques a la izquierda o Ctrl+Shift+X)</li>
+                <li>Busca "GitHub Copilot"</li>
+                <li>Haz clic en "Install" (la versión oficial, con el logo de GitHub)</li>
+                <li>Espera a que termine la instalación</li>
+            </ol>
+
+            <p><strong>Paso 3: Iniciar sesión con GitHub</strong></p>
+            <ol>
+                <li>VS Code te pedirá que inicies sesión. Haz clic en "Sign in with GitHub"</li>
+                <li>Se abrirá una pestaña en el navegador</li>
+                <li>Autoriza la extensión para acceder a tu cuenta</li>
+                <li>Volverá a VS Code y verás un ✓ verde indicando que está conectado</li>
+            </ol>
+
+            <p><strong>Paso 4: Activar el plan gratuito (o Student)</strong></p>
+            <ol>
+                <li>Ve a <a href="https://github.com/copilot" target="_blank">github.com/copilot</a></li>
+                <li>Haz clic en "Get access to Copilot" o "Start free trial"</li>
+                <li>Elige "Free" (limitado) o sigue el flujo de Estudiante si tienes email universitario</li>
+                <li>Confirma tu plan</li>
+                <li>¡Listo! VS Code ya debería mostrar sugerencias de Copilot</li>
+            </ol>
+
+            <div class="warning">
+                <strong>⚠️ Nota importante:</strong> Si el plan de prueba expira o usas los 2,000 autocompletados/mes, Copilot seguirá funcionando pero sin sugerencias hasta que renueves. No hay sorpresas de facturación.
+            </div>
+
+            <h3>c) Tipos de sugerencias: Inline, Chat, y Slash Commands</h3>
+            <p><strong>1. Sugerencias Inline (el uso más común)</strong></p>
+            <p>Mientras escribes código, Copilot te sugiere automáticamente. Ejemplo:</p>
+            <pre><code>// Escribes un comentario descriptivo:
+// función que valida un email
+
+// Copilot sugiere automáticamente:
+function validarEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}</code></pre>
+            <p><strong>Controles:</strong></p>
+            <ul>
+                <li><strong>Tab:</strong> Aceptar la sugerencia</li>
+                <li><strong>Esc:</strong> Rechazar la sugerencia</li>
+                <li><strong>Alt + [/]:</strong> Navegar entre sugerencias alternativas (si hay varias)</li>
+                <li><strong>Ctrl+Alt+[/]:</strong> Ver sugerencias alternativas en el editor</li>
+            </ul>
+
+            <p><strong>2. Copilot Chat (preguntas dentro de VS Code)</strong></p>
+            <p>Abre el panel de chat para hacer preguntas o pedir ayuda sin dejar el editor.</p>
+            <ul>
+                <li><strong>Ctrl+I:</strong> Abrir Copilot Chat inline (pregunta rápida)</li>
+                <li><strong>Ctrl+L:</strong> Limpiar el chat</li>
+                <li>O usa el panel lateral: icono de chat en la izquierda (debajo de Extensions)</li>
+            </ul>
+
+            <p><strong>Ejemplo de uso:</strong></p>
+            <pre><code>// Abre Chat (Ctrl+I) y pregunta:
+"Explícame qué hace esta función"
+"Refactoriza este código para hacerlo más eficiente"
+"Escribe tests para esta función"</code></pre>
+
+            <p><strong>3. Slash Commands (órdenes especiales en Chat)</strong></p>
+            <ul>
+                <li><strong>/explain:</strong> Explica el código seleccionado</li>
+                <li><strong>/fix:</strong> Sugiere correcciones al código</li>
+                <li><strong>/tests:</strong> Genera tests automáticos</li>
+                <li><strong>/doc:</strong> Añade documentación</li>
+                <li><strong>/optimize:</strong> Mejora el rendimiento</li>
+            </ul>
+
+            <p><strong>Ejemplo:</strong></p>
+            <pre><code>// Selecciona el código, abre Chat y escribe:
+/explain
+// Copilot te explicará línea por línea</code></pre>
+
+            <h3>d) Modos de Copilot (2025+): Ask, Edit, Agent</h3>
+            <p>GitHub Copilot ha evolucionado con varios modos de interacción:</p>
+            <ul>
+                <li><strong>Ask Mode:</strong> Haces preguntas sobre el código. Copilot responde con explicaciones o sugerencias</li>
+                <li><strong>Edit Mode:</strong> Seleccionas código y pides cambios directos ("hazlo 30% más rápido", "añade validación")</li>
+                <li><strong>Agent Mode:</strong> Copilot puede trabajar en múltiples archivos, entender el contexto del proyecto, hacer cambios complejos</li>
+            </ul>
+
+            <p>Los modos se activan según el contexto. En desarrollo temprano usarás Ask y Edit principalmente.</p>
+
+            <h3>e) @workspace y participantes: Contexto avanzado</h3>
+            <p>En Copilot Chat, puedes usar <strong>@mentions</strong> para darle más contexto:</p>
+            <ul>
+                <li><strong>@workspace:</strong> Copilot analiza tu proyecto entero (archivos, estructura, dependencias)</li>
+                <li><strong>@terminal:</strong> Proporciona contexto de lo que ejecutaste en la terminal</li>
+                <li><strong>@vscode:</strong> Información sobre la configuración de VS Code</li>
+            </ul>
+
+            <p><strong>Ejemplo:</strong></p>
+            <pre><code>// En Copilot Chat, escribe:
+"@workspace, cómo puedo mejorar la estructura de carpetas de este proyecto?"
+
+// Copilot analiza todo y da recomendaciones contextualizadas</code></pre>
+
+            <h3>f) Ejemplo práctico: Generar una función con Copilot</h3>
+            <p><strong>Paso 1:</strong> Abre un archivo nuevo (main.py o main.js)</p>
+            <p><strong>Paso 2:</strong> Escribe un comentario descriptivo:</p>
+            <pre><code>// función que ordena un array de números de mayor a menor</code></pre>
+            <p><strong>Paso 3:</strong> Presiona Enter y espera a que Copilot sugiera</p>
+            <p><strong>Resultado esperado:</strong></p>
+            <pre><code>function ordenarDescendente(arr) {
+    return arr.sort((a, b) => b - a);
+}</code></pre>
+            <p><strong>Paso 4:</strong> Presiona Tab para aceptar o Esc para rechazar</p>
+
+            <p>Eso es todo. Copilot entiende la intención del comentario y genera código válido. ¡Así es la programación 2025!</p>
+
+            <div class="info-box">
+                <strong>💡 Consejo de productividad:</strong> Cuanto más específico es el comentario, mejor es la sugerencia. "función que valida un email con regex y retorna true/false" genera código mejor que solo "función".
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: Práctica guiada -->
+        <div class="card">
+            <h2>💻 Práctica guiada</h2>
+
+            <h3>Ejercicio 1: Instalar y configurar GitHub Copilot (15 min)</h3>
+            <p><strong>Objetivo:</strong> Tener Copilot funcionando en VS Code con acceso activo.</p>
+
+            <ol>
+                <li>
+                    <strong>Crear/verificar cuenta GitHub</strong>
+                    <ul>
+                        <li>Si no tienes cuenta, ve a <a href="https://github.com/signup" target="_blank">github.com/signup</a></li>
+                        <li>Crea tu cuenta y verifica el email</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <strong>Instalar extensión en VS Code</strong>
+                    <ul>
+                        <li>Abre VS Code</li>
+                        <li>Presiona Ctrl+Shift+X (Extensions)</li>
+                        <li>Busca "GitHub Copilot" (oficial, con logo de GitHub)</li>
+                        <li>Haz clic en "Install"</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <strong>Autorizar con GitHub</strong>
+                    <ul>
+                        <li>VS Code abrirá un diálogo de login</li>
+                        <li>Haz clic en "Sign in with GitHub"</li>
+                        <li>Completa el flujo en el navegador</li>
+                        <li>Autoriza la extensión</li>
+                        <li>Vuelve a VS Code (debería ver el ✓ verde)</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <strong>Activar plan gratuito</strong>
+                    <ul>
+                        <li>Ve a <a href="https://github.com/copilot" target="_blank">github.com/copilot</a></li>
+                        <li>Haz clic en "Get access to Copilot" o "Start free trial"</li>
+                        <li>Elige "Free plan" (2,000 completados/mes)</li>
+                        <li>O si eres estudiante, verifica tu email universitario en <a href="https://github.com/student" target="_blank">GitHub Student Pack</a> para acceso ilimitado gratis</li>
+                        <li>Confirma y ¡listo!</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <strong>Verificación:</strong> Abre VS Code y escribe un comentario. Copilot debería sugerir código. Si ves las sugerencias grisáceas, ¡funciona!
+                </li>
+            </ol>
+
+            <h3>Ejercicio 2: Usar sugerencias inline (20 min)</h3>
+            <p><strong>Objetivo:</strong> Escribir un proyecto pequeño usando SOLO comentarios, dejando que Copilot genere el código.</p>
+
+            <p><strong>Proyecto: Calculadora Simple</strong></p>
+            <p>Crea un archivo <code>calculadora.py</code> (o .js):</p>
+            <pre><code># Proyecto: Calculadora con funciones básicas
+# Descripción: suma, resta, multiplicación, división
+
+# función que suma dos números y retorna el resultado
+def suma(a, b):
+    return a + b
+
+# función que resta dos números
+def resta(a, b):
+    return a - b
+
+# función que multiplica dos números
+def multiplica(a, b):
+    return a * b
+
+# función que divide dos números (con manejo de división por cero)
+def divide(a, b):
+    if b == 0:
+        return "Error: no se puede dividir entre cero"
+    return a / b
+
+# función principal que pide números al usuario y muestra opciones
+def main():
+    print("=== Calculadora Simple ===")
+    print("1. Suma")
+    print("2. Resta")
+    print("3. Multiplicación")
+    print("4. División")
+
+    opcion = input("Elige una opción (1-4): ")
+    num1 = float(input("Primer número: "))
+    num2 = float(input("Segundo número: "))
+
+    if opcion == "1":
+        print(f"Resultado: {suma(num1, num2)}")
+    elif opcion == "2":
+        print(f"Resultado: {resta(num1, num2)}")
+    elif opcion == "3":
+        print(f"Resultado: {multiplica(num1, num2)}")
+    elif opcion == "4":
+        print(f"Resultado: {divide(num1, num2)}")
+    else:
+        print("Opción inválida")
+
+# llamar a la función principal
+if __name__ == "__main__":
+    main()</code></pre>
+
+            <p><strong>¿Cómo hacerlo con Copilot?</strong></p>
+            <ol>
+                <li>Escribe solo los comentarios descriptivos (las líneas con #)</li>
+                <li>Presiona Enter después de cada comentario</li>
+                <li>Copilot debería sugerir el código (sugerencias grisáceas debajo)</li>
+                <li>Presiona Tab para aceptar, Esc para rechazar</li>
+                <li>Si no te gusta la sugerencia, continúa escribiendo tu código y pide otra</li>
+            </ol>
+
+            <p><strong>Tiempo esperado:</strong> 15-20 minutos si dejas que Copilot genere la mayoría del código.</p>
+
+            <h3>Ejercicio 3: Usar Copilot Chat (15 min)</h3>
+            <p><strong>Objetivo:</strong> Usar /slash commands para mejorar y entender el código.</p>
+
+            <ol>
+                <li>
+                    <strong>Explicar código con /explain</strong>
+                    <ul>
+                        <li>Selecciona la función <code>divide()</code> del ejercicio anterior</li>
+                        <li>Abre Copilot Chat: Ctrl+I (inline) o panel lateral</li>
+                        <li>Escribe: <code>/explain</code></li>
+                        <li>Copilot te explicará línea por línea qué hace</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <strong>Generar tests con /tests</strong>
+                    <ul>
+                        <li>Con la función <code>suma()</code> seleccionada</li>
+                        <li>Abre Chat y escribe: <code>/tests</code></li>
+                        <li>Copilot generará un archivo de tests (pytest si es Python, jest si es JavaScript)</li>
+                        <li>Copia el código generado a un archivo <code>test_calculadora.py</code></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <strong>Refactorizar con /fix</strong>
+                    <ul>
+                        <li>Selecciona la función <code>main()</code></li>
+                        <li>En Chat, escribe: <code>/fix mejora el manejo de errores</code></li>
+                        <li>Copilot te sugerirá mejoras y código refactorizado</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <strong>Bonus: Usar @workspace</strong>
+                    <ul>
+                        <li>En Chat escribe: <code>@workspace, ¿cómo puedo estructurar mejor este proyecto de calculadora?</code></li>
+                        <li>Copilot analizará tu código y sugerirá mejoras de arquitectura</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <div class="timer-note">⏱️ Tiempo total sugerido: 50 minutos</div>
+        </div>
+
+        <!-- SECCIÓN 4: Mini-reto del día -->
+        <div class="card">
+            <h2>🎯 Mini-reto del día: "El generador de funciones"</h2>
+            <p><strong>Objetivo:</strong> Crear un archivo con 10 funciones útiles escribiendo SOLO comentarios descriptivos, dejando que Copilot genere el 100% del código.</p>
+
+            <p><strong>Funciones a crear (como comentarios):</strong></p>
+            <ol>
+                <li>Validar si una cadena es un email válido</li>
+                <li>Formatear una fecha (ej: "01/04/2026" → "1 de abril de 2026")</li>
+                <li>Ordenar un array de objetos por propiedad</li>
+                <li>Convertir camelCase a snake_case</li>
+                <li>Contar palabras en un texto</li>
+                <li>Generar un ID único (UUID simple)</li>
+                <li>Validar si una contraseña es fuerte (mín 8 caracteres, mayúscula, número)</li>
+                <li>Paginar un array (ej: página 2 de 10 elementos por página)</li>
+                <li>Calcular tiempo transcurrido entre dos fechas</li>
+                <li>Hacer un deep clone de un objeto</li>
+            </ol>
+
+            <p><strong>¿Cómo hacerlo?</strong></p>
+            <ol>
+                <li>Crea un archivo <code>utiles.py</code> (o .js)</li>
+                <li>Para cada función, escribe un comentario descriptivo muy específico</li>
+                <li>Presiona Enter y espera la sugerencia de Copilot</li>
+                <li>Tab para aceptar o rechazar</li>
+                <li>Si la sugerencia no es perfecta, ajusta manualmente o pide una nueva</li>
+            </ol>
+
+            <p><strong>Ejemplo de inicio:</strong></p>
+            <pre><code># Archivo: utiles.py
+# Colección de funciones útiles generadas con GitHub Copilot
+
+# función que valida si una cadena es un email válido
+def validar_email(email):
+    # Copilot sugerirá regex + return True/False</code></pre>
+
+            <p><strong>Bonus desafío (opcional):</strong> Después de generar las 10 funciones, usa Copilot Chat con <code>/tests</code> para generar tests automáticos de cada una. ¿Qué aprende Copilot sobre cada función solo viendo el código?</p>
+
+            <div class="info-box">
+                <strong>Reflexión:</strong> ¿Cuánto tiempo tardaste en escribir 10 funciones solo con comentarios? ¿Cuánto hubieras tardado sin Copilot? Esto es el futuro del desarrollo.
+            </div>
+        </div>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Instalar y configurar GitHub Copilot</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí tu código o evidencia de instalación..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c01', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="code-along">
+                <h4>📤 Entregar práctica: Usar sugerencias inline</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c01', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-3" data-type="code-along">
+                <h4>📤 Entregar práctica: Usar Copilot Chat</h4>
+                <textarea id="code-ejercicio-3" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-3" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c01', 3, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-3" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-4" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: El generador de funciones</h4>
+                <textarea id="code-ejercicio-4" rows="12" placeholder="Pega aquí tu código..."></textarea>
+                <textarea id="output-ejercicio-4" rows="4" placeholder="Pega aquí el output de tu programa..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-4" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c01', 4, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-4" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: Test de conocimiento -->
+        <div class="card">
+            <h2>🧪 Test de conocimiento</h2>
+            <p>Contesta las 10 preguntas para evaluar tu comprensión. Necesitas <strong>8/10</strong> para pasar.</p>
+            <div id="quiz-container"></div>
+        </div>
+
+        <!-- Navegación entre clases -->
+        <div class="clase-nav">
+            <a href="index.html">← Módulo 4</a>
+            <span> | </span>
+            <a href="clase-02.html">Clase 02 →</a>
+        </div>
+
+    </div>
+
+    <!-- Script para cargar el sistema de progreso y quiz -->
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Qué es GitHub Copilot?",
+                options: [
+                    "Un servidor de código",
+                    "Un asistente de programación con IA que sugiere código mientras escribes",
+                    "Una herramienta para controlar versiones",
+                    "Un navegador web para código"
+                ],
+                correct: 1,
+                explanation: "GitHub Copilot es un asistente basado en IA (GPT) que vive dentro de VS Code y sugiere código automáticamente según el contexto."
+            },
+            {
+                question: "¿Cuál es el atajo de teclado para aceptar una sugerencia inline en Copilot?",
+                options: [
+                    "Enter",
+                    "Tab",
+                    "Ctrl+Enter",
+                    "Espacio"
+                ],
+                correct: 1,
+                explanation: "Tab acepta la sugerencia. Esc la rechaza. Alt+[ / ] navega entre alternativas."
+            },
+            {
+                question: "¿Qué límites tiene el plan gratuito de Copilot?",
+                options: [
+                    "Sin límites, completamente gratis",
+                    "2,000 autocompletados/mes + 50 mensajes de chat/mes",
+                    "Solo para estudiantes",
+                    "1 hora de uso al día"
+                ],
+                correct: 1,
+                explanation: "El plan free de Copilot incluye 2,000 completados y 50 mensajes de chat mensuales. Estudiantes pueden obtener acceso ilimitado gratis."
+            },
+            {
+                question: "¿Cuál es el comando para abrir Copilot Chat inline?",
+                options: [
+                    "Ctrl+Shift+C",
+                    "Ctrl+L",
+                    "Ctrl+I",
+                    "Alt+C"
+                ],
+                correct: 2,
+                explanation: "Ctrl+I abre Copilot Chat inline para hacer preguntas rápidas. Ctrl+L lo limpia."
+            },
+            {
+                question: "¿Qué hace el comando /explain en Copilot Chat?",
+                options: [
+                    "Explica un error en el código",
+                    "Explica línea por línea el código seleccionado",
+                    "Explica la documentación",
+                    "Genera explicaciones automáticas"
+                ],
+                correct: 1,
+                explanation: "/explain te proporciona un desglose detallado de lo que hace el código seleccionado."
+            },
+            {
+                question: "¿Qué es /tests en Copilot?",
+                options: [
+                    "Un comando para ejecutar tests",
+                    "Un comando que genera tests automáticos para el código",
+                    "Un comando para debuggear",
+                    "Un comando para documentar"
+                ],
+                correct: 1,
+                explanation: "/tests genera una suite de tests completa (pytest para Python, jest para JavaScript) basada en el código."
+            },
+            {
+                question: "¿Para qué sirve @workspace en Copilot Chat?",
+                options: [
+                    "Para cambiar el área de trabajo",
+                    "Para dar contexto del proyecto entero a Copilot (archivos, estructura, dependencias)",
+                    "Para colaborar con otros",
+                    "Para hacer backup del proyecto"
+                ],
+                correct: 1,
+                explanation: "@workspace permite que Copilot analice tu proyecto completo para dar respuestas más contextualizadas."
+            },
+            {
+                question: "¿Cómo puedes obtener GitHub Copilot gratis si eres estudiante?",
+                options: [
+                    "No hay opción gratuita para estudiantes",
+                    "Pidiendo una licencia a Microsoft",
+                    "Verificando tu email universitario en GitHub Student Pack",
+                    "Usando una VPN"
+                ],
+                correct: 2,
+                explanation: "Los estudiantes obtienen Copilot gratis (acceso ilimitado) verificando su email universitario en el GitHub Student Developer Pack."
+            },
+            {
+                question: "¿Cuál es la mejor práctica para obtener buenas sugerencias de Copilot?",
+                options: [
+                    "Escribir código sin comentarios",
+                    "Escribir comentarios muy genéricos",
+                    "Escribir comentarios descriptivos y específicos",
+                    "Usar solo inglés"
+                ],
+                correct: 2,
+                explanation: "Cuanto más específico y descriptivo sea el comentario, mejores serán las sugerencias. Ej: 'función que valida email con regex' > 'función'"
+            },
+            {
+                question: "¿Qué hace el modo Agent de Copilot?",
+                options: [
+                    "Borra archivos automáticamente",
+                    "Ejecuta comandos en la terminal sin permiso",
+                    "Realiza tareas complejas en múltiples archivos",
+                    "Genera documentación HTML"
+                ],
+                correct: 2,
+                explanation: "Agent mode permite que Copilot trabaje en múltiples archivos del proyecto para realizar cambios complejos y contextualizados."
+            }
+        ];
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm4-c01');
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm4-c01');
+        }
+
+        if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+            CourseProgress.initSubmissionIndicators('m4-c01');
+        }
+    </script>
+</body>
+</html>

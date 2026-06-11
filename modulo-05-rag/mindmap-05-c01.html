@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map — El problema: cómo conectas una IA con tus datos</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0a0a1a;color:#e8e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+        .topbar{padding:12px 20px;background:linear-gradient(90deg,#00f0ff,#0a6e5c);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+        .topbar a{color:#fff;text-decoration:none;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;font-size:.85em;transition:.3s}
+        .topbar a:hover{background:rgba(255,255,255,.3)}
+        .topbar h1{font-size:1.1em;color:#fff;text-align:center;flex:1;margin:0 12px}
+        .map{max-width:900px;margin:30px auto;padding:0 16px}
+        .center{text-align:center;margin-bottom:32px}
+        .center .pill{display:inline-block;background:linear-gradient(135deg,#00f0ff,#ff00e5);padding:16px 32px;border-radius:60px;font-size:1.4em;font-weight:800;color:#0a0a1a;box-shadow:0 0 30px rgba(0,240,255,.3)}
+        .center .sub{color:#8888aa;margin-top:8px;font-size:.95em}
+        .branch{margin-bottom:16px;border:1px solid rgba(0,240,255,.15);border-radius:12px;overflow:hidden;transition:.3s}
+        .branch:hover{border-color:rgba(0,240,255,.4);box-shadow:0 0 15px rgba(0,240,255,.08)}
+        .branch-head{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;background:#12122a;user-select:none;transition:.2s}
+        .branch-head:hover{background:#1a1a3e}
+        .branch-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2em;flex-shrink:0}
+        .b1 .branch-icon{background:rgba(255,107,107,.15);border:2px solid #ff6b6b}
+        .b2 .branch-icon{background:rgba(0,240,255,.15);border:2px solid #00f0ff}
+        .b3 .branch-icon{background:rgba(255,0,229,.15);border:2px solid #ff00e5}
+        .b4 .branch-icon{background:rgba(57,255,20,.15);border:2px solid #39ff14}
+        .b5 .branch-icon{background:rgba(255,230,0,.15);border:2px solid #ffe600}
+        .branch-title{flex:1;font-weight:700;font-size:1.05em}
+        .b1 .branch-title{color:#ff6b6b}
+        .b2 .branch-title{color:#00f0ff}
+        .b3 .branch-title{color:#ff00e5}
+        .b4 .branch-title{color:#39ff14}
+        .b5 .branch-title{color:#ffe600}
+        .toggle{color:#8888aa;font-size:1.4em;transition:transform .3s}
+        .branch.open .toggle{transform:rotate(45deg)}
+        .branch-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+        .branch.open .branch-body{max-height:700px}
+        .sub-list{padding:8px 20px 16px 72px;display:flex;flex-direction:column;gap:8px}
+        .sub-item{padding:10px 16px;background:#1a1a2e;border-radius:8px;border-left:3px solid;font-size:.93em;line-height:1.5}
+        .b1 .sub-item{border-color:#ff6b6b}
+        .b2 .sub-item{border-color:#00f0ff}
+        .b3 .sub-item{border-color:#ff00e5}
+        .b4 .sub-item{border-color:#39ff14}
+        .b5 .sub-item{border-color:#ffe600}
+        .sub-item strong{color:#fff}
+        .sub-item code{background:#12122a;padding:2px 6px;border-radius:4px;font-size:.88em;color:#39ff14;font-family:'Fira Code',monospace}
+        @media(max-width:600px){.topbar h1{font-size:.9em}.center .pill{font-size:1.1em;padding:12px 24px}.sub-list{padding-left:52px}}
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="clase-01.html">← Volver a la clase</a>
+        <h1>Mind Map — Clase 01: el problema y las 3 arquitecturas</h1>
+        <div style="width:80px"></div>
+    </div>
+
+    <div class="map">
+        <div class="center">
+            <div class="pill">Context Engineering</div>
+            <p class="sub">3 formas de darle a una IA información que no está en su entrenamiento — aprende a elegir</p>
+        </div>
+
+        <!-- Rama 1 — El problema -->
+        <div class="branch b1">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">⚠️</div>
+                <div class="branch-title">El problema: el "apagón de conocimiento"</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item">Un LLM solo sabe lo que vio en su <strong>entrenamiento</strong> (fecha de corte = <em>knowledge cutoff</em>)</div>
+                    <div class="sub-item">Pregúntale por tus apuntes, manuales internos, tickets recientes → <strong>alucina</strong> con seguridad</div>
+                    <div class="sub-item"><strong>Context engineering</strong> ≠ prompt engineering. No es "cómo le hablo", es "qué datos le doy"</div>
+                    <div class="sub-item">Regla de oro: si el modelo no tiene el dato, <strong>el modelo se lo inventará</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 2 — Context stuffing -->
+        <div class="branch b2">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">📥</div>
+                <div class="branch-title">Opción 1: Context stuffing</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Idea:</strong> meter el documento entero en el prompt antes de preguntar</div>
+                    <div class="sub-item">Claude Sonnet 4.6 tiene ventana de <strong>200K tokens</strong> (≈ un libro); versiones long llegan a <strong>1M</strong></div>
+                    <div class="sub-item">✅ <strong>Cero infra</strong>, latencia baja, el modelo ve todo el contexto</div>
+                    <div class="sub-item">❌ Caro por llamada (pagas todos los tokens siempre) y sufre <em>"lost in the middle"</em></div>
+                    <div class="sub-item"><strong>Úsalo cuando:</strong> &lt; 200K tokens, prototipos, consultas puntuales</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 3 — Agentic search -->
+        <div class="branch b3">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🤖</div>
+                <div class="branch-title">Opción 2: Agentic search (tool use)</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Idea:</strong> darle al modelo <em>tools</em> (<code>search_docs</code>, <code>read_file</code>, <code>web_search</code>) y que él decida qué buscar</div>
+                    <div class="sub-item">Así funcionan Claude Code, Cursor, Perplexity — no tienen "el doc entero" cargado, lo buscan</div>
+                    <div class="sub-item">✅ Escala a cualquier tamaño, solo paga los tokens que necesita, se adapta a la pregunta</div>
+                    <div class="sub-item">❌ Más latencia (varios turnos), tools hay que currárselas, debug más complejo</div>
+                    <div class="sub-item"><strong>Úsalo cuando:</strong> corpus grande dinámico, info no predecible, workflows con búsquedas reales</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 4 — RAG clásico -->
+        <div class="branch b4">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">📚</div>
+                <div class="branch-title">Opción 3: RAG clásico</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Idea:</strong> chunks → embeddings → vector DB → retrieve top-K → prompt aumentado</div>
+                    <div class="sub-item">Pipeline clásico: ChromaDB, Pinecone, Qdrant, Weaviate (sin LangChain)</div>
+                    <div class="sub-item">✅ Escala a millones de docs, coste por query bajo y predecible, búsqueda semántica potente</div>
+                    <div class="sub-item">❌ Pipeline complejo, hay que mantener el índice, calidad depende de chunking/reranking</div>
+                    <div class="sub-item"><strong>Úsalo cuando:</strong> corpus enorme + latencia crítica + coste bajo por query. Si no cumples las 3, empieza por stuffing o agentic</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 5 — Cómo elegir -->
+        <div class="branch b5">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🧭</div>
+                <div class="branch-title">Cómo elegir (la regla de 2026)</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>1.</strong> ¿Cabe en la ventana de contexto? → <strong>stuffing</strong> (lo más simple)</div>
+                    <div class="sub-item"><strong>2.</strong> ¿Necesitas frescura / fuentes externas dinámicas? → <strong>agentic search</strong> con tools</div>
+                    <div class="sub-item"><strong>3.</strong> ¿Corpus masivo + latencia crítica + coste bajo por query? → <strong>RAG clásico</strong></div>
+                    <div class="sub-item"><strong>Trampa típica:</strong> saltar a RAG clásico por defecto. En 2026 eso cuesta tiempo y te da peores resultados que las otras dos en la mayoría de casos</div>
+                    <div class="sub-item"><strong>Lo que vale en tu CV:</strong> "sé cuándo NO montar RAG" &gt; "sé montar RAG con LangChain"</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 02: Parámetros — Temperature, Tokens y Messages — Módulo 3</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a><span> > </span>
+            <a href="index.html">Módulo 3</a><span> > </span>
+            <strong>Clase 02</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 02: Parámetros — Temperature, Tokens y Messages</h1>
+            <div class="subtitle">📅 Semana 4 — Martes | 🎬 30 min vídeo + 💻 50 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <!-- SECCIÓN 1: VÍDEO -->
+        <section class="card">
+            <h2>🎬 Vídeo de la lección</h2>
+            <p>Aprende los parámetros más importantes para controlar el comportamiento de los modelos de IA. Este vídeo cubre temperature, tokens, messages y cómo ajustarlos según tu caso de uso.</p>
+
+            <div class="video-wrapper">
+                <iframe width="100%" height="400" src="https://www.youtube.com/embed/HFYTbGMtqeU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos con el mind map visual en español.
+                <a href="mindmap-02.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: CONCEPTOS CLAVE -->
+        <aside class="workshop-ref">
+            <h4>📚 Profundiza con el workshop de hola.dev</h4>
+            <p style="margin:0;">Para entender en profundidad qué hacen temperature, top_p, top_k, y por qué los contextos largos no siempre funcionan como prometen:</p>
+            <ul>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#parametros" target="_blank" rel="noopener">Sección 27 — Parámetros de configuración de un modelo</a></li>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#context-window-practica" target="_blank" rel="noopener">Sección 76 — Context window en la práctica: lost in the middle</a></li>
+            </ul>
+            <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+        </aside>
+
+
+
+
+<section class="card">
+            <h2>📖 Conceptos clave</h2>
+
+            <!-- 2.1: Messages Array -->
+            <div class="card">
+                <h3>2.1 El array de messages y los 3 roles</h3>
+                <p>Toda llamada a una API de chat usa un array de mensajes. Cada mensaje tiene un <strong>role</strong> que define quién habla:</p>
+
+                <div class="code-block">
+<pre><code>const messages = [
+  {
+    "role": "system",
+    "content": "Eres un experto en Python. Responde de forma clara y concisa."
+  },
+  {
+    "role": "user",
+    "content": "¿Cómo funciona una list comprehension?"
+  },
+  {
+    "role": "assistant",
+    "content": "Una list comprehension es una forma concisa de crear listas..."
+  },
+  {
+    "role": "user",
+    "content": "Dame un ejemplo con números pares"
+  }
+];</code></pre>
+                </div>
+
+                <table style="width: 100%; margin-top: 1em; border-collapse: collapse;">
+                    <tr style="background: rgba(0, 240, 255, 0.15); color: white;">
+                        <th style="padding: 10px; text-align: left;">Role</th>
+                        <th style="padding: 10px; text-align: left;">Propósito</th>
+                        <th style="padding: 10px; text-align: left;">Ejemplo</th>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><code>system</code></td>
+                        <td style="padding: 10px;">Define la personalidad e instrucciones del asistente</td>
+                        <td style="padding: 10px;">«Eres un tutor de programación»</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><code>user</code></td>
+                        <td style="padding: 10px;">Lo que dice el usuario en esta vuelta</td>
+                        <td style="padding: 10px;">«Explica qué es una clase»</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;"><code>assistant</code></td>
+                        <td style="padding: 10px;">Respuestas anteriores (contexto para la siguiente llamada)</td>
+                        <td style="padding: 10px;">«Una clase es un plano para crear objetos...»</td>
+                    </tr>
+                </table>
+
+                <div class="tip" style="margin-top: 1em;">
+                    <strong>💡 El order importa:</strong> El modelo lee los mensajes de arriba abajo. Un system prompt al inicio da instrucciones globales; los mensajes user/assistant alternados forman la conversación.
+                </div>
+            </div>
+
+            <!-- 2.2: Temperature -->
+            <div class="card">
+                <h3>2.2 Temperature (0.0 a 2.0)</h3>
+                <p>Controla la <strong>creatividad y aleatoriedad</strong> de las respuestas.</p>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-left: 3px solid #00e676; border-radius: 4px;">
+                    <strong>Temperature = 0.0 → Determinista</strong><br>
+                    Siempre la misma respuesta. Ideal para: código, cálculos, respuestas de hechos.
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>// PREGUNTA: ¿Cuánto es 2 + 2?
+// Temperature 0.0 → Siempre: "2 + 2 = 4"</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-left: 3px solid #FFD700; border-radius: 4px;">
+                    <strong>Temperature = 0.7 → Balance creativo (DEFAULT)</strong><br>
+                    Buen balance entre consistencia y variación. Ideal para: chatbots, análisis, explicaciones generales.
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>// PREGUNTA: ¿Qué es la programación?
+// Temperature 0.7 → Respuestas variadas pero coherentes
+// Respuesta A: "Es el arte de crear instrucciones..."
+// Respuesta B: "Es un proceso de comunicarse con máquinas..."</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-left: 3px solid #FF00FF; border-radius: 4px;">
+                    <strong>Temperature = 1.5+ → Muy creativo/aleatorio</strong><br>
+                    Respuestas muy variadas, impredecibles. Ideal para: brainstorming, poesía, historias, ideación.
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>// PREGUNTA: Escribe el primer párrafo de una novela de ciencia ficción
+// Temperature 1.5 → Respuestas muy diferentes cada vez
+// Respuesta A: "La nave plateada atravesaba..."
+// Respuesta B: "En el año 3045, los androides descubrieron..."
+// Respuesta C: "Las estrellas lloraban esa noche..."</code></pre>
+                    </div>
+                </div>
+
+                <p style="margin-top: 1em;">
+                    <strong>Comparación lado a lado — Mismo prompt, diferentes temperatures:</strong>
+                </p>
+
+                <div class="code-block">
+<pre><code>// PROMPT: "Completar la frase: 'La IA es...'"
+
+// Temperature 0.0:
+// "La IA es un campo de la informática que..."
+
+// Temperature 0.7:
+// "La IA es una tecnología que permite a las máquinas aprender patrones..."
+
+// Temperature 1.5:
+// "La IA es el pulso del futuro, la sinfonía digital que..."</code></pre>
+                </div>
+            </div>
+
+            <!-- 2.3: Max Tokens -->
+            <div class="card">
+                <h3>2.3 max_tokens / max_completion_tokens</h3>
+                <p>Limita la <strong>longitud máxima</strong> de la respuesta que genera el modelo.</p>
+
+                <ul style="margin: 1em 0;">
+                    <li><strong>¿Qué es un token?</strong> Unidad de texto. Roughly: 1 token ≈ 4 caracteres en inglés, ~3 en español.</li>
+                    <li><strong>Relación con coste:</strong> Pagas por tokens usados. Más tokens = más caro.</li>
+                    <li><strong>Context window:</strong> Cada modelo tiene un máximo total. Ejemplo: gpt-4o-mini = 128K tokens.</li>
+                </ul>
+
+                <div class="info">
+                    <strong>Cálculo rápido:</strong>
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>// Si quieres una respuesta corta (párrafo): max_tokens = 100-150
+// Si quieres una respuesta media (ensayo): max_tokens = 300-500
+// Si quieres una respuesta larga (reporte): max_tokens = 800+
+
+// Coste (aproximado para gpt-4o-mini):
+// 1M input tokens = $0.075
+// 1M output tokens = $0.30
+// Si generas 1000 tokens, cuesta ~$0.0003 (muy barato)</code></pre>
+                    </div>
+                </div>
+
+                <div class="warning">
+                    <strong>⚠️ Atención:</strong> Si pones max_tokens muy bajo, la respuesta se corta a mitad. Siempre deja margen. Para una respuesta "normal", min 100-150.
+                </div>
+            </div>
+
+            <!-- 2.4: Otros parámetros útiles -->
+            <div class="card">
+                <h3>2.4 Otros parámetros útiles</h3>
+
+                <div style="margin: 0.5em 0;">
+                    <strong>top_p (nucleus sampling):</strong><br>
+                    Filtra palabras poco probables. Valores bajos (0.1-0.3) = más enfocado; altos (0.9) = más creativo. Default 1.0.
+                </div>
+
+                <div style="margin: 0.5em 0;">
+                    <strong>frequency_penalty (0 a 2):</strong><br>
+                    Evita repetir palabras. Más alto = menos repetición. Útil para brainstorming largo.
+                </div>
+
+                <div style="margin: 0.5em 0;">
+                    <strong>presence_penalty (0 a 2):</strong><br>
+                    Incentiva mencionar temas nuevos. Más alto = más diversidad temática.
+                </div>
+
+                <div style="margin: 0.5em 0;">
+                    <strong>stop sequences:</strong><br>
+                    Lista de strings donde parar de generar. Ejemplo: <code>["###", "Fin"]</code>
+                </div>
+
+                <div style="margin: 0.5em 0;">
+                    <strong>response_format (JSON mode):</strong><br>
+                    Fuerza respuestas en JSON válido. Súper útil para parsear datos automáticamente.
+                </div>
+            </div>
+
+            <!-- 2.5: Modelos disponibles -->
+            <div class="card">
+                <h3>2.5 Modelos disponibles y cuándo usar cada uno</h3>
+
+                <table style="width: 100%; margin-top: 1em; border-collapse: collapse;">
+                    <tr style="background: rgba(0, 240, 255, 0.15); color: white;">
+                        <th style="padding: 10px; text-align: left;">Modelo</th>
+                        <th style="padding: 10px; text-align: left;">Capacidad</th>
+                        <th style="padding: 10px; text-align: left;">Coste</th>
+                        <th style="padding: 10px; text-align: left;">Cuándo usarlo</th>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><code>gpt-4o</code></td>
+                        <td style="padding: 10px;">Máxima calidad</td>
+                        <td style="padding: 10px;">$$</td>
+                        <td style="padding: 10px;">Tareas críticas, análisis complejos, producción</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;"><code>gpt-4o-mini</code></td>
+                        <td style="padding: 10px;">Muy bueno + rápido</td>
+                        <td style="padding: 10px;">$</td>
+                        <td style="padding: 10px;">90% de casos: chatbots, análisis, generación</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px;"><code>gpt-3.5-turbo</code></td>
+                        <td style="padding: 10px;">Bueno (legacy)</td>
+                        <td style="padding: 10px;">¢</td>
+                        <td style="padding: 10px;">Proyectos antiguos. NO recomendado para nuevos</td>
+                    </tr>
+                </table>
+
+                <div class="tip" style="margin-top: 1em;">
+                    <strong>💡 Recomendación:</strong> Empieza con gpt-4o-mini. Es barato, rápido y suficientemente potente. Solo sube a gpt-4o si necesitas máxima calidad.
+                </div>
+            </div>
+
+            <!-- 2.6: Ejemplos de código completo -->
+            <div class="card">
+                <h3>2.6 Ejemplos de código completo</h3>
+
+                <p><strong>Ejemplo 1: Chat simple con temperature ajustable</strong></p>
+                <div class="code-block">
+<pre><code>const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${API_KEY}`
+  },
+  body: JSON.stringify({
+    model: 'gpt-4o-mini',
+    messages: [
+      {
+        role: 'system',
+        content: 'Eres un chef italiano experto. Responde siempre en español.'
+      },
+      {
+        role: 'user',
+        content: '¿Cuál es el secreto de una buena carbonara?'
+      }
+    ],
+    temperature: 0.7,
+    max_tokens: 200
+  })
+});
+
+const data = await response.json();
+console.log(data.choices[0].message.content);</code></pre>
+                </div>
+
+                <p style="margin-top: 1em;"><strong>Ejemplo 2: JSON mode para datos estructurados</strong></p>
+                <div class="code-block">
+<pre><code>const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${API_KEY}`
+  },
+  body: JSON.stringify({
+    model: 'gpt-4o-mini',
+    messages: [
+      {
+        role: 'user',
+        content: 'Extrae los datos de este texto: "Juan tiene 25 años, trabaja como ingeniero y vive en Madrid"'
+      }
+    ],
+    temperature: 0,
+    max_tokens: 200,
+    response_format: { type: 'json_object' }
+  })
+});
+
+const data = await response.json();
+// Respuesta parseada automáticamente en JSON válido
+const person = JSON.parse(data.choices[0].message.content);
+console.log(person.name, person.age, person.job, person.city);</code></pre>
+                </div>
+
+                <p style="margin-top: 1em;"><strong>Ejemplo 3: Brainstorming creativo</strong></p>
+                <div class="code-block">
+<pre><code>const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${API_KEY}`
+  },
+  body: JSON.stringify({
+    model: 'gpt-4o-mini',
+    messages: [
+      {
+        role: 'system',
+        content: 'Eres un especialista en ideación y brainstorming. Generas ideas creativas y originales.'
+      },
+      {
+        role: 'user',
+        content: '¿Cuáles son 5 ideas de negocios basadas en IA y comida?'
+      }
+    ],
+    temperature: 1.3,  // Creativo
+    max_tokens: 500,
+    frequency_penalty: 0.5,  // Menos repetición
+    presence_penalty: 0.5   // Más diversidad temática
+  })
+});
+
+const ideas = await response.json();
+console.log(ideas.choices[0].message.content);</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: PRÁCTICA GUIADA -->
+        <section class="card">
+            <h2>💻 Práctica guiada</h2>
+            <p>Tres ejercicios para dominar los parámetros. Realiza estos en orden.</p>
+
+            <!-- Ejercicio 1 -->
+            <div class="card">
+                <h3>Ejercicio 1: Laboratorio de temperature</h3>
+                <p><strong>Objetivo:</strong> Ver cómo temperature cambia el comportamiento del modelo.</p>
+
+                <div class="tip">
+                    <strong>Pasos:</strong>
+                    <ol>
+                        <li>Usa un tool como <a href="https://platform.openai.com/playground" target="_blank">OpenAI Playground</a> o escribe un script.</li>
+                        <li>Usa el mismo prompt: <code>"Escribe un párrafo sobre la belleza del atardecer"</code></li>
+                        <li>Llama 3 veces con temperature 0, 0.7 y 1.5</li>
+                        <li>Compara las 3 respuestas. Anota las diferencias.</li>
+                    </ol>
+                </div>
+
+                <div class="info" style="margin-top: 1em;">
+                    <strong>Qué esperar:</strong>
+                    <ul>
+                        <li>Temperature 0: Respuesta científica, técnica, casi la misma cada vez</li>
+                        <li>Temperature 0.7: Respuesta variada pero coherente</li>
+                        <li>Temperature 1.5: Respuestas muy diferentes, poéticas, impredecibles</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ejercicio 2 -->
+            <div class="card">
+                <h3>Ejercicio 2: System prompt designer</h3>
+                <p><strong>Objetivo:</strong> Crear 3 personalidades distintas de asistentes con system prompts diferentes.</p>
+
+                <div class="tip">
+                    <strong>Tarea:</strong> Para cada personalidad, diseña un system prompt y pruébalo con el mismo user prompt.
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-radius: 4px;">
+                    <strong>Personalidad 1: Profesor Formal</strong>
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>system: "Eres un profesor universitario de informática. Responde siempre con rigor académico y referencias a conceptos fundamentales."
+
+user: "¿Qué es un API?"
+
+// Respuesta esperada: Definición formal, referencias a REST, ejemplos académicos</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-radius: 4px;">
+                    <strong>Personalidad 2: Amigo Casual</strong>
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>system: "Eres un amigo programador casual. Hablas con emojis, bromas técnicas y explicaciones simples."
+
+user: "¿Qué es un API?"
+
+// Respuesta esperada: Explicación casual, emojis, analogía con la vida real</code></pre>
+                    </div>
+                </div>
+
+                <div style="margin: 1em 0; padding: 1em; background: #0d1117; border-radius: 4px;">
+                    <strong>Personalidad 3: Consultor de Negocios</strong>
+                    <div class="code-block" style="margin-top: 0.5em;">
+<pre><code>system: "Eres un consultor de tecnología empresarial. Responde enfocándote en ROI, casos de uso y valor de negocio."
+
+user: "¿Qué es un API?"
+
+// Respuesta esperada: Valor de negocio, casos de uso, impacto económico</code></pre>
+                    </div>
+                </div>
+
+                <div class="info" style="margin-top: 1em;">
+                    <strong>Reflexión:</strong> ¿Cómo cambia la respuesta según el role? ¿Cuál es más útil para tu caso de uso?
+                </div>
+            </div>
+
+            <!-- Ejercicio 3 -->
+            <div class="card">
+                <h3>Ejercicio 3: JSON mode</h3>
+                <p><strong>Objetivo:</strong> Obtener respuestas estructuradas en JSON que puedas parsear automáticamente.</p>
+
+                <div class="tip">
+                    <strong>Tarea:</strong> Escribe un prompt que pida respuestas en JSON y usa <code>response_format</code>.
+                </div>
+
+                <div class="code-block">
+<pre><code>const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${API_KEY}`
+  },
+  body: JSON.stringify({
+    model: 'gpt-4o-mini',
+    messages: [
+      {
+        role: 'user',
+        content: `Analiza esta película: "Dune (2021) es una epopeya de ciencia ficción dirigida por Denis Villeneuve."
+
+        Responde en JSON con estos campos:
+        - titulo (string)
+        - genero (string)
+        - director (string)
+        - año (number)
+        - description (string corta)`
+      }
+    ],
+    temperature: 0,
+    max_tokens: 200,
+    response_format: { type: 'json_object' }
+  })
+});
+
+const data = await response.json();
+const movie = JSON.parse(data.choices[0].message.content);
+
+// Ahora puedes acceder a movie.titulo, movie.genero, etc.
+console.log(`Película: ${movie.titulo} (${movie.año}), director: ${movie.director}`);</code></pre>
+                </div>
+
+                <div class="info" style="margin-top: 1em;">
+                    <strong>¿Por qué JSON mode?</strong> Porque garantiza que la respuesta es JSON válido. Sin él, el modelo podría devolver "aquí está el JSON:" seguido de un bloque, lo que rompe el parsing.
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: MINI-RETO DEL DÍA -->
+        <section class="card">
+            <h2>🎯 Mini-reto del día: El generador de historias</h2>
+            <p>Crea un script que genere historias cortas con parámetros ajustables.</p>
+
+            <div class="card">
+                <h3>Especificación</h3>
+                <p>Tu script debe aceptar estos parámetros y ajustar temperature y max_tokens:</p>
+                <ul>
+                    <li><strong>genre:</strong> "ciencia ficción", "romance", "thriller"</li>
+                    <li><strong>length:</strong> "corta" (100 tokens), "media" (250 tokens), "larga" (500 tokens)</li>
+                    <li><strong>creativity:</strong> "baja" (temp 0.3), "media" (temp 0.7), "alta" (temp 1.5)</li>
+                </ul>
+
+                <div class="code-block">
+<pre><code>async function generateStory(genre, length, creativity) {
+  // Mapea los parámetros
+  const tokenMap = { corta: 100, media: 250, larga: 500 };
+  const tempMap = { baja: 0.3, media: 0.7, alta: 1.5 };
+
+  const maxTokens = tokenMap[length];
+  const temperature = tempMap[creativity];
+
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${API_KEY}`
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: 'Eres un escritor de historias cortas. Crea narrativas cautivadoras con personajes vividos.'
+        },
+        {
+          role: 'user',
+          content: `Escribe una historia de ${genre} en español. Debe ser una historia completa con inicio, desarrollo y desenlace.`
+        }
+      ],
+      temperature: temperature,
+      max_tokens: maxTokens
+    })
+  });
+
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
+
+// Uso:
+const story = await generateStory('ciencia ficción', 'media', 'alta');
+console.log(story);</code></pre>
+                </div>
+
+                <div class="info" style="margin-top: 1em;">
+                    <strong>Bonificación:</strong> Añade un parámetro <code>style</code> que cambie el system prompt: "estilo Borges", "estilo Stephen King", "estilo juvenil".
+                </div>
+            </div>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Laboratorio de temperature</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí tu código..."></textarea>
+                <textarea id="output-ejercicio-1" rows="4" placeholder="Pega aquí el output de tu programa..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c02', 1, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr>
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="code-along">
+                <h4>📤 Entregar práctica: System prompt designer</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c02', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+            <hr>
+            <div class="exercise-submit" id="submit-ejercicio-3" data-type="code-along">
+                <h4>📤 Entregar práctica: JSON mode</h4>
+                <textarea id="code-ejercicio-3" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-3" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c02', 3, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-3" class="submit-status"></div>
+            </div>
+            <hr>
+            <div class="exercise-submit" id="submit-ejercicio-4" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: El generador de historias</h4>
+                <textarea id="code-ejercicio-4" rows="12" placeholder="Pega aquí tu código..."></textarea>
+                <textarea id="output-ejercicio-4" rows="4" placeholder="Pega aquí el output de tu programa..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-4" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c02', 4, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-4" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: TEST DE CONOCIMIENTO -->
+        <section class="card">
+            <h2>🧪 Test de conocimiento</h2>
+            <p>Responde estas 10 preguntas para verificar que has entendido el material. Mínimo 7/10 para pasar.</p>
+
+            <div id="quiz-container" class="quiz-container"></div>
+        </section>
+
+        <!-- NAVEGACIÓN ENTRE CLASES -->
+        <div class="clase-nav">
+            <a href="clase-01.html">← Clase 01</a>
+            <span> | </span>
+            <a href="clase-03.html">Clase 03 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es el efecto de una temperature de 0.0?",
+                options: [
+                    "Respuestas completamente aleatorias",
+                    "Siempre la misma respuesta (determinista)",
+                    "Balance entre creatividad y consistencia",
+                    "Muy creativas y poéticas"
+                ],
+                correct: 1,
+                explanation: "Temperature 0.0 elimina la aleatoriedad, haciendo que el modelo siempre genere la misma respuesta. Ideal para código y hechos."
+            },
+            {
+                question: "¿Para qué es ideal una temperature de 1.5?",
+                options: [
+                    "Generar código Python",
+                    "Calcular datos estadísticos",
+                    "Brainstorming, poesía e ideación creativa",
+                    "Respuestas de hechos"
+                ],
+                correct: 2,
+                explanation: "Una temperature alta (1.5) es muy creativa e impredecible, perfecta para brainstorming, creatividad y escritura artística."
+            },
+            {
+                question: "¿Cuáles son los 3 roles en un array de messages?",
+                options: [
+                    "input, process, output",
+                    "system, user, assistant",
+                    "question, answer, context",
+                    "human, ai, system"
+                ],
+                correct: 1,
+                explanation: "Los 3 roles son: system (instrucciones), user (lo que pregunta el usuario), assistant (respuestas previas para contexto)."
+            },
+            {
+                question: "¿Cuánto es aproximadamente 1 token?",
+                options: [
+                    "1 carácter",
+                    "4 caracteres en inglés, ~3 en español",
+                    "1 palabra siempre",
+                    "10 caracteres"
+                ],
+                correct: 1,
+                explanation: "Un token es aproximadamente 4 caracteres en inglés y ~3 en español. Esto varía según el idioma y modelo."
+            },
+            {
+                question: "¿Qué parámetro fuerza respuestas en JSON válido?",
+                options: [
+                    "temperature",
+                    "max_tokens",
+                    "response_format (JSON mode)",
+                    "top_p"
+                ],
+                correct: 2,
+                explanation: "response_format con tipo 'json_object' garantiza que la respuesta sea JSON válido y parseble."
+            },
+            {
+                question: "¿Cuál es el propósito principal de max_tokens?",
+                options: [
+                    "Controlar la creatividad",
+                    "Limitar la longitud de la respuesta",
+                    "Mejorar la precisión",
+                    "Cambiar el idioma de salida"
+                ],
+                correct: 1,
+                explanation: "max_tokens limita la longitud máxima de la respuesta generada. También ayuda a controlar costos."
+            },
+            {
+                question: "¿Cuándo deberías usar gpt-4o en lugar de gpt-4o-mini?",
+                options: [
+                    "Siempre, porque es el mejor",
+                    "Nunca, gpt-4o-mini es mejor",
+                    "Solo cuando necesitas máxima calidad en tareas críticas",
+                    "Para chatbots y tareas simples"
+                ],
+                correct: 2,
+                explanation: "gpt-4o es más potente pero también más caro. Úsalo solo cuando gpt-4o-mini no sea suficiente para tareas críticas."
+            },
+            {
+                question: "¿Cuál es la diferencia entre frequency_penalty y presence_penalty?",
+                options: [
+                    "No hay diferencia, son sinónimos",
+                    "frequency evita repetir palabras; presence incentiva temas nuevos",
+                    "frequency controla temperature; presence controla tokens",
+                    "No existen estos parámetros"
+                ],
+                correct: 1,
+                explanation: "frequency_penalty evita repetir las mismas palabras; presence_penalty incentiva mencionar temas nuevos y diversos."
+            },
+            {
+                question: "¿Cuál es el context window de gpt-4o-mini?",
+                options: [
+                    "4K tokens",
+                    "16K tokens",
+                    "128K tokens",
+                    "Ilimitado"
+                ],
+                correct: 2,
+                explanation: "gpt-4o-mini tiene un context window de 128K tokens, lo que permite conversar con mucho historial."
+            },
+            {
+                question: "¿Cuál debería ser tu temperatura para generar código Python?",
+                options: [
+                    "1.5 (muy creativo)",
+                    "1.0 (balance)",
+                    "0.0-0.3 (determinista)",
+                    "No importa, la temperatura no afecta código"
+                ],
+                correct: 2,
+                explanation: "Para código, usa temperature baja (0.0-0.3) porque quieres respuestas consistentes y correctas, no creativas."
+            }
+        ];
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm3-c02');
+                if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+                    CourseProgress.initSubmissionIndicators('m3-c02');
+                }
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm3-c02');
+            if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+                CourseProgress.initSubmissionIndicators('m3-c02');
+            }
+        }
+    </script>
+</body>
+</html>

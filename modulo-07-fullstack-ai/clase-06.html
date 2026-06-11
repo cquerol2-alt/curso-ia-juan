@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 06: FastAPI — APIs Modernas para IA</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .comparison-table {
+            width: 100%;
+            margin: 1.5em 0;
+            border-collapse: collapse;
+            background: #0a0e27;
+            border: 1px solid rgba(0,240,255,0.15);
+        }
+        .comparison-table th {
+            background: rgba(0, 240, 255, 0.15);
+            color: #00e676;
+            padding: 12px;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(0,240,255,0.15);
+            color: #c8d6e5;
+        }
+        .comparison-table tr:hover {
+            background: #0f1535;
+        }
+        .cheat-sheet {
+            background: #0f1535;
+            border-left: 4px solid #39ff14;
+            padding: 1em;
+            margin: 1em 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+        .code-block {
+            background: #0a0e27;
+            border: 1px solid #39ff14;
+            border-radius: 6px;
+            padding: 1em;
+            margin: 1em 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #00e676;
+        }
+        .endpoint-card {
+            background: #0f1535;
+            border-left: 4px solid #00e676;
+            padding: 1.2em;
+            margin: 1em 0;
+            border-radius: 4px;
+        }
+        .endpoint-card strong {
+            color: #39ff14;
+        }
+        .exercise-box {
+            background: linear-gradient(135deg, #0f1535 0%, #1a1f4d 100%);
+            border: 2px solid #00e676;
+            padding: 1.5em;
+            margin: 1.5em 0;
+            border-radius: 6px;
+        }
+        .exercise-box h4 {
+            color: #39ff14;
+            margin-top: 0;
+        }
+        .comparison-table td:first-child {
+            font-weight: bold;
+            color: #39ff14;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="../index.html">Dashboard</a> > <a href="index.html">Módulo 7</a> > <strong>Clase 06</strong>
+        </nav>
+
+        <!-- Header -->
+        <header class="course-header">
+            <h1>📅 Semana 10 — Jueves</h1>
+            <div class="header-meta">
+                <span>🎬 30 min vídeo</span> | <span>💻 50 min práctica</span> | <span>🧪 15 min test</span>
+            </div>
+        </header>
+
+        <!-- Título Principal -->
+        <h2 style="color: #00e676; margin-top: 2em;">Clase 06: FastAPI — APIs Modernas para IA</h2>
+        <p style="font-size: 1.1em; color: #c8d6e5; margin-bottom: 2em;">
+            Aprenderás a construir APIs profesionales, escalables y con soporte nativo para streaming LLM. FastAPI es el estándar en startups de IA y en ofertas de trabajo como AI Engineer.
+        </p>
+
+        <!-- Video Section -->
+        <section class="section">
+            <h3 style="color: #39ff14;">📺 Vídeo Principal</h3>
+            <div class="video-wrapper">
+                <iframe width="100%" height="400" src="https://www.youtube.com/embed/_y9qQZXE24A"
+                    title="FastAPI Curso COMPLETO desde cero para principiantes"
+                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="margin-top: 1em; color: #8fa3ba;">
+                <strong>Duración:</strong> ~30 min | <strong>Idioma:</strong> Español | <strong>Nivel:</strong> Principiante → Intermedio
+            </p>
+        </section>
+
+        <!-- PARTE A: De Flask a FastAPI -->
+        <section class="section">
+            <h3 style="color: #39ff14;">⚡ Parte A: De Flask a FastAPI — Por Qué Dar el Salto</h3>
+
+            <div class="info">
+                <p>
+                    Ya conoces Flask desde el Módulo 1. FastAPI toma lo mejor de Flask, añade features modernas y optimiza
+                    específicamente para APIs (no para templates HTML). Es el framework elegido en la mayoría de startups de IA.
+                </p>
+            </div>
+
+            <h4 style="color: #00e676;">Ventajas de FastAPI sobre Flask:</h4>
+            <ul style="color: #c8d6e5; line-height: 1.8;">
+                <li><strong>Async nativo:</strong> Flask es sincrónico por defecto. FastAPI es async desde el día uno → mejor concurrencia.</li>
+                <li><strong>/docs automática:</strong> Swagger UI y ReDoc gratis con cero configuración.</li>
+                <li><strong>Pydantic integrado:</strong> Validación automática de request/response, conversión de tipos, documentación.</li>
+                <li><strong>Type hints:</strong> Code hints completos gracias a tipos Python.</li>
+                <li><strong>Performance:</strong> ~3x más rápido que Flask puro (cercano a Go/Node).</li>
+                <li><strong>Streaming:</strong> Soporte nativo para SSE y streaming responses (crítico para LLMs).</li>
+            </ul>
+
+            <h4 style="color: #00e676; margin-top: 1.5em;">Cuándo usar cada uno:</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aspecto</th>
+                        <th>Flask</th>
+                        <th>FastAPI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Prototipo rápido</td>
+                        <td>✅ Excelente (curva rápida)</td>
+                        <td>✅ Muy bueno</td>
+                    </tr>
+                    <tr>
+                        <td>API REST pura</td>
+                        <td>⚠️ Funciona, requiere extra</td>
+                        <td>✅ Hecho para esto</td>
+                    </tr>
+                    <tr>
+                        <td>Streaming/SSE</td>
+                        <td>⚠️ Posible con trabajo</td>
+                        <td>✅ Nativo, simple</td>
+                    </tr>
+                    <tr>
+                        <td>Concurrencia alta</td>
+                        <td>⚠️ Threads, lento</td>
+                        <td>✅ Async event loop</td>
+                    </tr>
+                    <tr>
+                        <td>Documentación automática</td>
+                        <td>❌ Requiere Flasgger/Connexion</td>
+                        <td>✅ Incluida (/docs)</td>
+                    </tr>
+                    <tr>
+                        <td>Validación de datos</td>
+                        <td>⚠️ Marshmallow, marshmallow-jsonschema</td>
+                        <td>✅ Pydantic built-in</td>
+                    </tr>
+                    <tr>
+                        <td>Performance crudo</td>
+                        <td>~1500 req/s (single core)</td>
+                        <td>~4500 req/s (single core)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tip" style="margin-top: 1.5em;">
+                <strong>💡 TL;DR:</strong> Usa Flask para webs tradicionales con Jinja2. Usa FastAPI para APIs modernas y LLM apps. Si buscas trabajo como AI Engineer, FastAPI es <em>el estándar</em>.
+            </div>
+        </section>
+
+        <!-- PARTE B: Tu Primera API -->
+        <section class="section">
+            <h3 style="color: #39ff14;">🚀 Parte B: Tu Primera API con FastAPI</h3>
+
+            <h4 style="color: #00e676;">Paso 1: Instalación</h4>
+            <div class="code-block">
+pip install fastapi uvicorn python-dotenv requests
+            </div>
+
+            <h4 style="color: #00e676; margin-top: 1.5em;">Paso 2: Hello World</h4>
+            <div class="code-block">
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"message": "¡Hola, FastAPI!"}
+
+@app.get("/users/{user_id}")
+async def get_user(user_id: int):
+    return {"user_id": user_id, "name": f"Usuario {user_id}"}
+
+@app.get("/search")
+async def search(q: str, limit: int = 10):
+    return {"query": q, "limit": limit}
+            </div>
+
+            <p style="color: #8fa3ba; margin-top: 1em;">
+                <strong>Notar:</strong> <code>async def</code> es nativo en FastAPI. FastAPI infiere tipos automáticamente (int, str).
+            </p>
+
+            <h4 style="color: #00e676; margin-top: 1.5em;">Paso 3: Ejecutar</h4>
+            <div class="code-block">
+uvicorn main:app --reload
+            </div>
+            <p style="color: #8fa3ba; margin-top: 0.5em;">
+                Ve a <code>http://localhost:8000/docs</code> — ¡Swagger UI automático!
+            </p>
+
+            <h4 style="color: #00e676; margin-top: 1.5em;">Paso 4: Pydantic Models (Validación)</h4>
+            <div class="code-block">
+from pydantic import BaseModel
+
+class Message(BaseModel):
+    text: str
+    user_id: int
+
+@app.post("/chat")
+async def chat(msg: Message):
+    return {"user": msg.user_id, "response": f"Echo: {msg.text}"}
+            </div>
+
+            <div class="tip">
+                <strong>🎯 Pydantic vs Marshmallow:</strong> Pydantic valida automáticamente en el POST.
+                Si envías <code>{"text": "hola", "user_id": "abc"}</code>, FastAPI rechaza con 422 (validation error).
+                El cliente ve un error claro. ¡Cero boilerplate!
+            </div>
+        </section>
+
+        <!-- PARTE C: Streaming -->
+        <section class="section">
+            <h3 style="color: #39ff14;">🌊 Parte C: Streaming de Respuestas LLM</h3>
+
+            <p style="color: #c8d6e5;">
+                Este es el <strong>killer feature</strong> para integrar OpenAI/Claude. El cliente ve tokens en vivo mientras se generan,
+                no espera a que termine toda la respuesta.
+            </p>
+
+            <h4 style="color: #00e676; margin-top: 1.5em;">Endpoint de Streaming</h4>
+            <div class="code-block">
+from fastapi.responses import StreamingResponse
+import openai
+
+@app.post("/chat/stream")
+async def chat_stream(msg: Message):
+    async def generate():
+        response = await openai.ChatCompletion.acreate(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": msg.text}],
+            stream=True
+        )
+        async for chunk in response:
+            token = chunk["choices"][0]["delta"].get("content", "")
+            if token:
+                yield f"data: {token}\n\n"
+
+    return StreamingResponse(generate(), media_type="text/event-stream")
+            </div>
+
+            <h4 style="color: #00e676; margin-top: 1.5em;">Cómo probarlo con curl:</h4>
+            <div class="code-block">
+curl -X POST http://localhost:8000/chat/stream \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Explica qué es la IA", "user_id": 1}'
+            </div>
+
+            <p style="color: #8fa3ba; margin-top: 1em;">
+                Verás tokens llegando en tiempo real: <code>data: Explicar\n\ndata: ía\n\n...</code>
+            </p>
+
+            <div class="tip">
+                <strong>💡 En el navegador:</strong> Usa <code>fetch() + EventSource</code> o librería como <code>eventsource-parser</code>
+                para consumir el stream en JavaScript.
+            </div>
+        </section>
+
+        <!-- PARTE D: Middleware y Producción -->
+        <section class="section">
+            <h3 style="color: #39ff14;">🔧 Parte D: Middleware y Entorno de Producción</h3>
+
+            <h4 style="color: #00e676;">CORS Middleware (necesario para frontend)</h4>
+            <div class="code-block">
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # En prod: ["https://mitio.com"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+            </div>
+
+            <h4 style="color: #00e676; margin-top: 1.5em;">Health Check (obligatorio en producción)</h4>
+            <div class="code-block">
+@app.get("/health")
+async def health():
+    return {"status": "ok", "version": "1.0"}
+            </div>
+
+            <h4 style="color: #00e676; margin-top: 1.5em;">Error Handling Global</h4>
+            <div class="code-block">
+from fastapi import HTTPException
+
+@app.post("/chat")
+async def chat(msg: Message):
+    if not msg.text:
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
+    return {"response": f"Echo: {msg.text}"}
+            </div>
+
+            <h4 style="color: #00e676; margin-top: 1.5em;">Background Tasks (para LLMs lentos)</h4>
+            <div class="code-block">
+from fastapi import BackgroundTasks
+
+@app.post("/process")
+async def process(msg: Message, background_tasks: BackgroundTasks):
+    background_tasks.add_task(slow_operation, msg.user_id)
+    return {"status": "processing"}
+
+def slow_operation(user_id: int):
+    # Esto se ejecuta en background
+    time.sleep(10)
+    print(f"Procesado user {user_id}")
+            </div>
+        </section>
+
+        <!-- PARTE E: Cheat Sheet -->
+        <section class="section">
+            <h3 style="color: #39ff14;">📋 Parte E: FastAPI vs Flask — Cheat Sheet de Migración</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tarea</th>
+                        <th>Flask</th>
+                        <th>FastAPI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>GET simple</td>
+                        <td><code>@app.route('/')</code></td>
+                        <td><code>@app.get('/')</code></td>
+                    </tr>
+                    <tr>
+                        <td>Parámetro path</td>
+                        <td><code>&lt;int:id&gt;</code></td>
+                        <td><code>{id: int}</code></td>
+                    </tr>
+                    <tr>
+                        <td>Query string</td>
+                        <td><code>request.args.get('q')</code></td>
+                        <td><code>def func(q: str)</code></td>
+                    </tr>
+                    <tr>
+                        <td>POST con body JSON</td>
+                        <td><code>request.json</code> + validar</td>
+                        <td><code>class Model(BaseModel):</code></td>
+                    </tr>
+                    <tr>
+                        <td>Async</td>
+                        <td>⚠️ No nativo, requiere extensiones</td>
+                        <td>✅ <code>async def</code></td>
+                    </tr>
+                    <tr>
+                        <td>Documentación</td>
+                        <td>Manual o Flasgger (requiere código extra)</td>
+                        <td>Automática en <code>/docs</code></td>
+                    </tr>
+                    <tr>
+                        <td>Validación</td>
+                        <td>Marshmallow (librería externa)</td>
+                        <td>Pydantic (built-in)</td>
+                    </tr>
+                    <tr>
+                        <td>Streaming</td>
+                        <td><code>stream_with_context</code> (complejo)</td>
+                        <td><code>StreamingResponse</code> (simple)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info" style="margin-top: 1.5em;">
+                <strong>Migración rápida:</strong> 1 ruta Flask = 1 ruta FastAPI en 80% de los casos.
+                Lo que cambia es la validación (antes manual, ahora Pydantic) y el async (ahora nativo).
+            </div>
+        </section>
+
+        <!-- PRACTICE SECTION -->
+        <section class="section">
+            <h3 style="color: #39ff14;">💻 Ejercicios Prácticos</h3>
+
+            <div class="exercise-box">
+                <h4>🎯 Ejercicio 1: Code-Along — API de Chat con Streaming</h4>
+                <p>
+                    Construye paso a paso una API completa. <strong>Tiempo: 30 min</strong>
+                </p>
+                <ol style="color: #c8d6e5; line-height: 1.8;">
+                    <li>Crea <code>main.py</code> con FastAPI + CORS middleware</li>
+                    <li>Define Pydantic model <code>ChatRequest</code> (text: str, user_id: int)</li>
+                    <li>Endpoint GET <code>/health</code> que devuelve <code>{"status": "ok"}</code></li>
+                    <li>Endpoint POST <code>/chat</code> que recibe ChatRequest y devuelve echo</li>
+                    <li>Endpoint POST <code>/chat/stream</code> que simula streaming con <code>yield</code></li>
+                    <li>Ejecuta con <code>uvicorn main:app --reload</code></li>
+                    <li>Prueba en <code>http://localhost:8000/docs</code> — ¡usa Swagger UI para enviar requests!</li>
+                </ol>
+                <div class="code-block" style="margin-top: 1em;">
+# Esqueleto:
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from fastapi.responses import StreamingResponse
+
+app = FastAPI()
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+class ChatRequest(BaseModel):
+    text: str
+    user_id: int
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+@app.post("/chat")
+async def chat(req: ChatRequest):
+    return {"user_id": req.user_id, "response": f"Echo: {req.text}"}
+
+@app.post("/chat/stream")
+async def chat_stream(req: ChatRequest):
+    async def generate():
+        for word in req.text.split():
+            yield f"data: {word}\n\n"
+    return StreamingResponse(generate(), media_type="text/event-stream")
+                </div>
+            </div>
+
+            <div class="exercise-box">
+                <h4>🎯 Ejercicio 2: Mini-Challenge — Migra tu Flask Chatbot a FastAPI</h4>
+                <p>
+                    Toma el chatbot Flask del Módulo 1 y reescríbelo en FastAPI. <strong>Tiempo: 40 min</strong>
+                </p>
+                <ol style="color: #c8d6e5; line-height: 1.8;">
+                    <li>Copia la lógica de chat de tu código Flask</li>
+                    <li>Crea dos Pydantic models: <code>ChatRequest</code> (mensaje) y <code>ChatResponse</code> (respuesta)</li>
+                    <li>Reescribe el endpoint Flask POST → FastAPI POST</li>
+                    <li>Añade async: <code>async def chat(...)</code></li>
+                    <li><strong>EXTRA:</strong> Añade endpoint <code>/chat/stream</code> que devuelva streaming</li>
+                    <li>Documenta tu API en <code>/docs</code></li>
+                    <li>Prueba con <code>curl</code> y en el navegador</li>
+                </ol>
+            </div>
+
+            <div class="exercise-box">
+                <h4>⭐ Reto Extra: API con Autenticación Básica</h4>
+                <p>
+                    Nivel avanzado. <strong>Tiempo: 45 min</strong>
+                </p>
+                <ol style="color: #c8d6e5; line-height: 1.8;">
+                    <li>Crea un middleware que valide un header <code>X-API-Key</code></li>
+                    <li>Rechaza requests sin key válida con 401</li>
+                    <li>Implementa rate limiting: máximo 10 requests por minuto por key</li>
+                    <li>Guarda logs de cada request (timestamp, key, endpoint, status)</li>
+                    <li>Crea endpoint <code>/stats</code> (solo con API key correcta) que muestra estadísticas</li>
+                    <li>Bonus: Usa <code>slowapi</code> (librería para rate limiting en FastAPI)</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Exercise Submission Section -->
+        <section class="section">
+            <h2 class="section-title" style="color: #39ff14;">
+                <span class="section-icon">✅</span>
+                Entrega de ejercicios
+            </h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: FastAPI backend para IA</h4>
+                <p>Crea un backend FastAPI con endpoints para llamar a modelos de IA (Hugging Face, OpenAI, etc.).</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Código principal del FastAPI backend — Pega tu código aquí..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Explicación de los endpoints y cómo interactúan con modelos IA..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c06', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Endpoints FastAPI para LLM</h4>
+                <p>Implementa endpoints completos en FastAPI: procesamiento de texto, autenticación con API keys, rate limiting, y logs de requests.</p>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Código completo con autenticación, rate limiting y logging — Pega tu código aquí..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Prueba: requests autenticados, excesos de rate limiting, endpoint /stats..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m7-c06', 2, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="section">
+            <h3 style="color: #39ff14;">🧪 Quiz de Verificación</h3>
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="margin-top: 3em; padding: 2em 0; border-top: 1px solid rgba(0,240,255,0.15); text-align: center; color: #8fa3ba;">
+            <p>Módulo 7 — Full-Stack AI App | Clase 06: FastAPI</p>
+            <p style="font-size: 0.9em;">
+                <a href="index.html" style="color: #00e676;">← Volver al módulo</a> |
+                <a href="../index.html" style="color: #00e676;">Dashboard →</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es la principal ventaja de FastAPI sobre Flask?",
+                options: [
+                    "Tiene más plugins disponibles",
+                    "Es async nativo y genera documentación automática",
+                    "Usa bases de datos más rápidas",
+                    "Tiene mejor soporte para templates HTML"
+                ],
+                correct: 1,
+                explanation: "FastAPI es async desde el día uno y genera Swagger UI automáticamente en /docs. Flask es sincrónico por defecto y requiere configuración extra para docs."
+            },
+            {
+                question: "¿Cómo defines un parámetro de path en FastAPI?",
+                options: [
+                    "@app.get('/users/<int:id>')",
+                    "@app.get('/users/{id: int}')",
+                    "def get_user(id: int = Path(...))",
+                    "@app.get('/users/{id}')\nasync def get_user(id: int):"
+                ],
+                correct: 3,
+                explanation: "FastAPI infiere automáticamente el tipo. Escribes @app.get('/users/{id}') async def get_user(id: int): y FastAPI convierte 'id' a entero."
+            },
+            {
+                question: "¿Qué hace Pydantic en FastAPI?",
+                options: [
+                    "Gestiona la base de datos",
+                    "Valida automáticamente request/response y convierte tipos",
+                    "Compila el código a Cython",
+                    "Crea interfaces gráficas"
+                ],
+                correct: 1,
+                explanation: "Pydantic valida los datos entrantes contra el model que defines. Si un campo es int y envías string, rechaza automáticamente con 422."
+            },
+            {
+                question: "¿Cuál es el endpoint automático donde ves la documentación Swagger?",
+                options: [
+                    "/api-docs",
+                    "/swagger",
+                    "/docs",
+                    "/openapi.json"
+                ],
+                correct: 2,
+                explanation: "/docs es la URL por defecto para Swagger UI. También existe /redoc para ReDoc. /openapi.json devuelve el spec en JSON."
+            },
+            {
+                question: "¿Qué devuelve StreamingResponse en FastAPI?",
+                options: [
+                    "Un error 500",
+                    "Una respuesta dividida en chunks que se envían al cliente en vivo",
+                    "Un archivo descargable",
+                    "Una conexión WebSocket"
+                ],
+                correct: 1,
+                explanation: "StreamingResponse es para SSE y server-sent events. Perfecta para streaming LLM: el cliente recibe tokens a medida que se generan."
+            },
+            {
+                question: "¿Cómo se ejecuta una aplicación FastAPI en desarrollo?",
+                options: [
+                    "python main.py",
+                    "flask run",
+                    "uvicorn main:app --reload",
+                    "fastapi run main.py"
+                ],
+                correct: 2,
+                explanation: "Uvicorn es el servidor ASGI para FastAPI. --reload detecta cambios y reinicia automáticamente."
+            },
+            {
+                question: "¿Cuál es la sintaxis correcta para un Pydantic model?",
+                options: [
+                    "class User(dict): name: str",
+                    "class User(BaseModel): name: str",
+                    "@dataclass\nclass User: name: str",
+                    "class User: __init__(self, name)"
+                ],
+                correct: 1,
+                explanation: "Hereda de BaseModel para acceso a validación automática, conversion y serialización JSON nativa."
+            },
+            {
+                question: "¿Qué middleware es necesario para que un frontend JavaScript pueda llamar a tu API desde otro dominio?",
+                options: [
+                    "AuthMiddleware",
+                    "CORSMiddleware",
+                    "SecurityMiddleware",
+                    "LoggingMiddleware"
+                ],
+                correct: 1,
+                explanation: "CORS (Cross-Origin Resource Sharing) permite que navegadores de otros dominios hagan requests. Sin él, verás error 'blocked by CORS'."
+            }
+        ];
+
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm7-c06');
+        if (typeof CourseProgress !== 'undefined') {
+            CourseProgress.initSubmissionIndicators('m7-c06');
+        }
+    </script>
+</body>
+</html>

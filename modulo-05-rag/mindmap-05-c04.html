@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map — Vector Stores: ChromaDB y FAISS</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0a0a1a;color:#e8e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+        .topbar{padding:12px 20px;background:linear-gradient(90deg,#00f0ff,#0a6e5c);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+        .topbar a{color:#fff;text-decoration:none;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;font-size:.85em;transition:.3s}
+        .topbar a:hover{background:rgba(255,255,255,.3)}
+        .topbar h1{font-size:1.1em;color:#fff;text-align:center;flex:1;margin:0 12px}
+        .map{max-width:900px;margin:30px auto;padding:0 16px}
+        .center{text-align:center;margin-bottom:32px}
+        .center .pill{display:inline-block;background:linear-gradient(135deg,#00f0ff,#ff00e5);padding:16px 32px;border-radius:60px;font-size:1.4em;font-weight:800;color:#0a0a1a;box-shadow:0 0 30px rgba(0,240,255,.3)}
+        .center .sub{color:#8888aa;margin-top:8px;font-size:.95em}
+        .branch{margin-bottom:16px;border:1px solid rgba(0,240,255,.15);border-radius:12px;overflow:hidden;transition:.3s}
+        .branch:hover{border-color:rgba(0,240,255,.4);box-shadow:0 0 15px rgba(0,240,255,.08)}
+        .branch-head{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;background:#12122a;user-select:none;transition:.2s}
+        .branch-head:hover{background:#1a1a3e}
+        .branch-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2em;flex-shrink:0}
+        .b1 .branch-icon{background:rgba(0,240,255,.15);border:2px solid #00f0ff}
+        .b2 .branch-icon{background:rgba(255,0,229,.15);border:2px solid #ff00e5}
+        .b3 .branch-icon{background:rgba(57,255,20,.15);border:2px solid #39ff14}
+        .b4 .branch-icon{background:rgba(255,230,0,.15);border:2px solid #ffe600}
+        .b5 .branch-icon{background:rgba(255,107,0,.15);border:2px solid #ff6b00}
+        .branch-title{flex:1;font-weight:700;font-size:1.05em}
+        .b1 .branch-title{color:#00f0ff}
+        .b2 .branch-title{color:#ff00e5}
+        .b3 .branch-title{color:#39ff14}
+        .b4 .branch-title{color:#ffe600}
+        .b5 .branch-title{color:#ff6b00}
+        .toggle{color:#8888aa;font-size:1.4em;transition:transform .3s}
+        .branch.open .toggle{transform:rotate(45deg)}
+        .branch-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+        .branch.open .branch-body{max-height:600px}
+        .sub-list{padding:8px 20px 16px 72px;display:flex;flex-direction:column;gap:8px}
+        .sub-item{padding:10px 16px;background:#1a1a2e;border-radius:8px;border-left:3px solid;font-size:.93em;line-height:1.5}
+        .b1 .sub-item{border-color:#00f0ff}
+        .b2 .sub-item{border-color:#ff00e5}
+        .b3 .sub-item{border-color:#39ff14}
+        .b4 .sub-item{border-color:#ffe600}
+        .b5 .sub-item{border-color:#ff6b00}
+        .sub-item strong{color:#fff}
+        .sub-item code{background:#12122a;padding:2px 6px;border-radius:4px;font-size:.88em;color:#39ff14;font-family:'Fira Code',monospace}
+        @media(max-width:600px){.topbar h1{font-size:.9em}.center .pill{font-size:1.1em;padding:12px 24px}.sub-list{padding-left:52px}}
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="clase-04.html">← Volver a la clase</a>
+        <h1>Mind Map — Clase 04</h1>
+        <div style="width:80px"></div>
+    </div>
+
+    <div class="map">
+        <div class="center">
+            <div class="pill">Vector Stores: ChromaDB y FAISS</div>
+            <p class="sub">Bases de datos optimizadas para búsqueda semántica</p>
+        </div>
+
+        <!-- Rama 1 -->
+        <div class="branch b1">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🗄️</div>
+                <div class="branch-title">¿Qué es un Vector Store?</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>BD optimizada para vectores,</strong> no para SQL tradicional</div>
+                    <div class="sub-item">Búsqueda por <strong>similitud (semantic search)</strong> en lugar de coincidencia exacta</div>
+                    <div class="sub-item">Indispensable para RAG: almacena embeddings + metadata, devuelve chunks relevantes rápidamente</div>
+                    <div class="sub-item"><strong>Operación clave:</strong> <code>similarity_search(query, k=4)</code> — busca los 4 vectores más cercanos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 2 -->
+        <div class="branch b2">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">📍</div>
+                <div class="branch-title">ChromaDB</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Open source,</strong> muy fácil de usar, perfecto para prototipado</div>
+                    <div class="sub-item"><code>Chroma.from_documents(documents, embedding_model)</code> — crea el store en memoria</div>
+                    <div class="sub-item"><code>persist_directory="/ruta"</code> — guarda el índice en disco para reutilizarlo</div>
+                    <div class="sub-item"><strong>Metadata nativa:</strong> guarda y filtra por metadatos fácilmente</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 3 -->
+        <div class="branch b3">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">⚡</div>
+                <div class="branch-title">FAISS</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>De Meta/Facebook,</strong> ultra rápido con millones de vectores. Librería Python pura, sin API.</div>
+                    <div class="sub-item"><code>faiss.IndexFlatIP(d)</code> — creas el índice con la dimensión d (1536 para <code>text-embedding-3-small</code>) y le haces <code>add(vectors)</code>.</div>
+                    <div class="sub-item"><code>IndexFlatL2</code> — búsqueda exacta (más lento pero preciso). <code>IndexIVFFlat</code> / <code>IndexHNSW</code> — búsqueda aproximada (rápida, millones).</div>
+                    <div class="sub-item"><strong>Mejor para:</strong> escala grande (producción) cuando necesitas máxima velocidad. Para el curso: ChromaDB es suficiente.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 4 -->
+        <div class="branch b4">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🔍</div>
+                <div class="branch-title">Operaciones clave</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><code>collection.query(query_embeddings=[...], n_results=k)</code> — busca los k chunks más cercanos al embedding de la pregunta.</div>
+                    <div class="sub-item">Devuelve <code>documents</code>, <code>metadatas</code>, <code>distances</code> (distancia coseno) y <code>ids</code> — todo lo que necesitas para montar el prompt y las citas.</div>
+                    <div class="sub-item"><code>collection.add(ids, embeddings, documents, metadatas)</code> — añadir chunks embeados con su fuente y página en metadata.</div>
+                    <div class="sub-item"><code>PersistentClient(path="./chroma")</code> — persiste el índice en disco, no hace falta reindexar en cada ejecución.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 5 -->
+        <div class="branch b5">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">⚖️</div>
+                <div class="branch-title">ChromaDB vs FAISS</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>ChromaDB:</strong> más fácil, metadata nativa, perfecto para MVP y aprendizaje</div>
+                    <div class="sub-item"><strong>FAISS:</strong> más rápido y escalable, mejor para millones de vectores en producción</div>
+                    <div class="sub-item">Ambos son <strong>locales y gratis</strong> — no requieren API key ni suscripción</div>
+                    <div class="sub-item"><strong>Para producción cloud:</strong> Pinecone, Weaviate, Milvus — ofrecen escalado automático y backups</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

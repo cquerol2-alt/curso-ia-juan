@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map: LinkedIn Optimization — Clase 04</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(27, 94, 32, 0.2);
+            border-left: 4px solid #00e676;
+            border-radius: 4px;
+        }
+
+        header h1 {
+            color: #00e676;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        header p {
+            color: #aaa;
+            font-size: 0.95em;
+        }
+
+        .mindmap {
+            background: rgba(45, 45, 45, 0.6);
+            border: 1px solid #00e676;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .node {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #00e676;
+            background: rgba(0, 230, 118, 0.05);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .node:hover {
+            background: rgba(0, 230, 118, 0.15);
+            transform: translateX(5px);
+        }
+
+        .node-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #00e676;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #00e676;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+        }
+
+        .expand-btn.expanded {
+            transform: rotate(90deg);
+        }
+
+        .node-content {
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .node-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .node-content ul {
+            list-style: none;
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .node-content li {
+            color: #ccc;
+            margin: 8px 0;
+            font-size: 0.95em;
+            line-height: 1.5;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .node-content li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #00e676;
+        }
+
+        .node-content strong {
+            color: #fff;
+        }
+
+        .secondary-node {
+            margin-left: 20px;
+            margin-top: 15px;
+            padding: 12px;
+            border-left: 3px solid #00e676;
+            background: rgba(0, 230, 118, 0.03);
+        }
+
+        .secondary-node-title {
+            font-weight: 600;
+            color: #00e676;
+            margin-bottom: 6px;
+            font-size: 0.95em;
+        }
+
+        .secondary-content {
+            color: #bbb;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .tip-box {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #ffeb3b;
+        }
+
+        .tip-box strong {
+            color: #fff;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: rgba(0, 230, 118, 0.2);
+            border: 1px solid #00e676;
+            color: #00e676;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 230, 118, 0.3);
+            transform: translateX(-5px);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            padding: 20px;
+            border-top: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>LinkedIn Optimization para Developers</h1>
+            <p>Mind map interactivo — Clase 04, Módulo 8 | Haz click en las secciones para expandir/contraer</p>
+        </header>
+
+        <div class="mindmap">
+            <!-- Main Node: LinkedIn Strategy -->
+            <div class="node">
+                <div class="node-title">
+                    🎯 Estrategia LinkedIn para Tech
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <ul>
+                        <li><strong>91% de recruiters</strong> usan LinkedIn para buscar talent tech</li>
+                        <li><strong>40x más visible</strong> si tu perfil está completo vs vacío</li>
+                        <li>LinkedIn es tu <strong>primer CV digital</strong> en la era remote</li>
+                        <li>La estrategia: <strong>Presencia + Contenido + Red = Oportunidades</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Node: 7 Elements -->
+            <div class="node">
+                <div class="node-title">
+                    7️⃣ Los 7 Elementos Clave del Perfil
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">1. Foto de Perfil (21x más visitas)</div>
+                        <div class="secondary-content">
+                            • Profesional pero humano<br>
+                            • Sonrisa genuine, fondo limpio<br>
+                            • Buena iluminación frontal<br>
+                            • Tamaño: 400x400px mínimo
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">2. Banner Tech (1584x396px)</div>
+                        <div class="secondary-content">
+                            • Logos de tecnologías (Python, React, AI)<br>
+                            • Frase impactante: "Building AI Solutions"<br>
+                            • Colores corporativos (verde #00f0ff)<br>
+                            • Expresar tu marca personal
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">3. Headline (220 chars max)</div>
+                        <div class="secondary-content">
+                            • NO es solo tu título actual<br>
+                            • Fórmula: [Rol] | [Top 3 Skills] | [Valor]<br>
+                            • Incluir keywords para búsquedas<br>
+                            • Ejemplo: "AI Engineer | Python, FastAPI, RAG | Soluciones inteligentes"
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">4. About (2600 chars, estructura 3 párrafos)</div>
+                        <div class="secondary-content">
+                            • P1: Quién eres + pasión<br>
+                            • P2: Skills técnicos + logros cuantificados<br>
+                            • P3: Qué buscas + call to action<br>
+                            • Keywords: 9-10 veces naturales
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">5. Featured (Proyectos + Portfolio)</div>
+                        <div class="secondary-content">
+                            • Link a tu portfolio web<br>
+                            • Mejor proyecto con live demo (Vercel)<br>
+                            • Post técnico published<br>
+                            • Artículo o blog personal
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">6. Experiencia (Verbo + Acción + Resultado)</div>
+                        <div class="secondary-content">
+                            • NO: "Programé en Python"<br>
+                            • SÍ: "Reduje tickets de soporte 30% con chatbot IA"<br>
+                            • Siempre cuantificar impacto<br>
+                            • Verbo fuerte al inicio
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">7. Skills (Top 3 = Más búsquedas)</div>
+                        <div class="secondary-content">
+                            • Top 3 aparecen en búsquedas<br>
+                            • 5+ endorsements = 17x más visitas<br>
+                            • Pedir endorsements: "¿Me endorsas Python?"<br>
+                            • 8-10 skills totales mínimo
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node: Optimización Técnica -->
+            <div class="node">
+                <div class="node-title">
+                    ⚙️ Optimización Técnica
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Keywords = Visibilidad</div>
+                        <div class="secondary-content">
+                            • Python, AI, React, JavaScript, FastAPI<br>
+                            • RAG, LLM, Full-Stack, Cloud, AWS<br>
+                            • Distribuir 9-10 veces en About<br>
+                            • Usar en Headline, Skills, Featured
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Certificaciones = Credibilidad</div>
+                        <div class="secondary-content">
+                            • Elements of AI (University of Helsinki)<br>
+                            • Google AI Essentials<br>
+                            • CS50P (Harvard)<br>
+                            • Cursos Andrés Querol<br>
+                            • Añadir TODAS las que tengas
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Perfil en Inglés = Mercado Global</div>
+                        <div class="secondary-content">
+                            • Settings → Profile language → Add English<br>
+                            • Traducir headline, about, projects<br>
+                            • Escritura natural (no Google Translate)<br>
+                            • Acceso a oportunidades internacionales/remote
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node: Contenido & Networking -->
+            <div class="node">
+                <div class="node-title">
+                    📢 Contenido & Networking
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Publicar Contenido (1 post/mes)</div>
+                        <div class="secondary-content">
+                            • Mini-tutorial de algo que aprendiste<br>
+                            • Reflexión sobre tu journey tech<br>
+                            • Insight sobre IA, code, career<br>
+                            • 250-350 palabras, móvil-friendly
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Networking Activo (3 comments/día)</div>
+                        <div class="secondary-content">
+                            • Comentar posts de otros devs<br>
+                            • Agregar valor (no solo "+1")<br>
+                            • Multiplicar tu reach organicamente<br>
+                            • Conectar con recruiters tech
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">Tácticas de Conexión</div>
+                        <div class="secondary-content">
+                            • Buscar "Tech Recruiter" en tu región<br>
+                            • Mensaje personalizado con propuesta clara<br>
+                            • Conectar con colegas de cursos<br>
+                            • Pedir endorsements con mensaje privado
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node: Checklist -->
+            <div class="node">
+                <div class="node-title">
+                    ✅ Checklist del Perfil Completo
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <ul>
+                        <li>☐ Foto profesional con fondo limpio</li>
+                        <li>☐ Banner tech personalizado (1584x396px)</li>
+                        <li>☐ Headline con keywords (máx 220 chars)</li>
+                        <li>☐ About: 3 párrafos, 150-230 palabras</li>
+                        <li>☐ Featured: portfolio + 2 proyectos</li>
+                        <li>☐ Experiencia con resultados cuantificados</li>
+                        <li>☐ Top 3 Skills + 5+ endorsements cada una</li>
+                        <li>☐ Educación + Certificaciones (Elements of AI, Google AI, CS50P, etc.)</li>
+                        <li>☐ Perfil en inglés (headline + about + featured)</li>
+                        <li>☐ Al menos 1 post técnico publicado</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Node: Impacto por Métrica -->
+            <div class="node">
+                <div class="node-title">
+                    📊 Impacto por Métrica
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <ul>
+                        <li><strong>21x</strong> más visitas si tienes buena foto</li>
+                        <li><strong>40x</strong> más visible si perfil está completo</li>
+                        <li><strong>17x</strong> más visitas si tienes 5+ endorsements en top skill</li>
+                        <li><strong>91%</strong> de recruiters usan LinkedIn</li>
+                        <li><strong>9-10</strong> keywords distribuidas naturalmente en About</li>
+                        <li><strong>1 post/mes</strong> = exponencial engagement</li>
+                        <li><strong>3 comments/día</strong> = multiplicar reach</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Node: Red Flags & Best Practices -->
+            <div class="node">
+                <div class="node-title">
+                    🚩 Errores Comunes & 🎯 Best Practices
+                    <button class="expand-btn" onclick="toggleNode(this)">▶</button>
+                </div>
+                <div class="node-content collapsed">
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">❌ Errores Frecuentes</div>
+                        <div class="secondary-content">
+                            • Headline genérico: "Buscando trabajo"<br>
+                            • Foto de pésima calidad o muy casual<br>
+                            • About muy largo (más de 300 palabras)<br>
+                            • Sin Featured section<br>
+                            • Skills desordenados (top 3 no son los mejores)<br>
+                            • Experiencia sin resultados cuantificados<br>
+                            • No responder mensajes/comentarios
+                        </div>
+                    </div>
+
+                    <div class="secondary-node">
+                        <div class="secondary-node-title">✅ Best Practices</div>
+                        <div class="secondary-content">
+                            • Headline específico + keywords<br>
+                            • Foto profesional con sonrisa<br>
+                            • About conciso: 3 párrafos cortos<br>
+                            • Featured: portfolio + demo + post<br>
+                            • Reordenar skills mensuales según mercado<br>
+                            • Experiencia: Verbo + Acción + Resultado%<br>
+                            • Postear 1x/mes + comentar 3x/día
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <strong>💡 Conclusión:</strong> LinkedIn es tu tarjeta de presentación en la era remote. Un perfil optimizado genera oportunidades sin que hagas nada. Invierte 2 horas ahora, recibe offers de recruiters durante meses.
+        </div>
+
+        <a href="clase-04.html" class="back-btn">← Volver a Clase 04</a>
+    </div>
+
+    <footer>
+        <p>Mind Map interactivo — Clase 04, Módulo 8 | Curso IA para Juan Querol</p>
+    </footer>
+
+    <script>
+        function toggleNode(btn) {
+            const node = btn.closest('.node');
+            const content = node.querySelector('.node-content');
+
+            btn.classList.toggle('expanded');
+            content.classList.toggle('collapsed');
+        }
+
+        // Expand all on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach(node => {
+                const btn = node.querySelector('.expand-btn');
+                const content = node.querySelector('.node-content');
+                // Start collapsed
+                btn.classList.remove('expanded');
+                content.classList.add('collapsed');
+            });
+        });
+    </script>
+</body>
+</html>

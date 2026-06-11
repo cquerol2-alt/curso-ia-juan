@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 9: Búsqueda Activa de Empleo — Curso IA para Juan</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <strong>Módulo 9</strong>
+        </nav>
+
+        <header>
+            <h1>Módulo 9: Búsqueda Activa de Empleo</h1>
+            <div class="subtitle">📚 5 clases · Semana 12 | Saber dónde buscar, cómo preparar entrevistas y posicionarte para que te encuentren</div>
+        </header>
+
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🎯</span>
+                Sobre este módulo
+            </h2>
+            <p>Ya tienes las habilidades técnicas, el portfolio y el CV listos. Ahora toca el paso más importante: encontrar trabajo. Este módulo está 100% centrado en Madrid y España, con opciones de remoto y prácticas. Aprenderás a:</p>
+            <ul>
+                <li>Encontrar ofertas de AI Developer en Madrid, España y remoto</li>
+                <li>Identificar oportunidades de prácticas en empresas tech</li>
+                <li>Leer ofertas de empleo como un pro y adaptar tu CV para pasar filtros ATS</li>
+                <li>Preparar entrevistas técnicas de IA con simulacro real</li>
+                <li>Construir tu marca personal y networking en el ecosistema tech de Madrid</li>
+                <li>Crear un plan de acción de 30 días con candidaturas reales</li>
+            </ul>
+
+            <div class="warning">
+                <strong>⚠️ Este es el módulo FINAL del curso.</strong> Al completarlo tendrás todo lo necesario para conseguir tu primer empleo como AI Developer. ¡El Boss Battle incluye enviar una candidatura real!
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📖</span>
+                Clases del módulo
+            </h2>
+
+            <div class="clase-list">
+                <div class="clase-item">
+                    <h3>Clase 01: Dónde Buscar Trabajo de AI Developer</h3>
+                    <p class="clase-meta">Lunes · Semana 12</p>
+                    <p>Plataformas de empleo en España y remoto, prácticas en empresas tech de Madrid, alertas automáticas y el mercado oculto.</p>
+                    <div style="margin-top: 12px;">
+                        <a href="clase-01.html" class="btn btn-green">Ir a clase 01</a>
+                    </div>
+                </div>
+
+                <div class="clase-item">
+                    <h3>Clase 02: Leer Ofertas y Adaptar tu CV para ATS</h3>
+                    <p class="clase-meta">Martes · Semana 12</p>
+                    <p>Cómo descifrar qué piden realmente las ofertas, red flags, palabras clave y cómo superar los filtros automáticos.</p>
+                    <div style="margin-top: 12px;">
+                        <a href="clase-02.html" class="btn btn-green">Ir a clase 02</a>
+                    </div>
+                </div>
+
+                <div class="clase-item">
+                    <h3>Clase 03: Preparar Entrevistas Técnicas de IA</h3>
+                    <p class="clase-meta">Miércoles · Semana 12</p>
+                    <p>Preguntas frecuentes sobre LLMs, RAG, APIs y prompt engineering. Simulacro de entrevista completo.</p>
+                    <div style="margin-top: 12px;">
+                        <a href="clase-03.html" class="btn btn-green">Ir a clase 03</a>
+                    </div>
+                </div>
+
+                <div class="clase-item">
+                    <h3>Clase 04: Networking y Marca Personal en Madrid</h3>
+                    <p class="clase-meta">Jueves · Semana 12</p>
+                    <p>LinkedIn optimizado, meetups tech en Madrid, contribuir a open source y publicar tu primer post técnico.</p>
+                    <div style="margin-top: 12px;">
+                        <a href="clase-04.html" class="btn btn-green">Ir a clase 04</a>
+                    </div>
+                </div>
+
+                <div class="clase-item" style="border-left-color: #FFD700;">
+                    <h3>🎯 Boss Battle Final: Plan de Acción 30 Días</h3>
+                    <p class="clase-meta">Viernes · Semana 12 · Cierre del curso</p>
+                    <p>5 empresas target, CV adaptado, mensajes a recruiters, perfil LinkedIn optimizado y ¡1 candidatura enviada de verdad!</p>
+                    <div style="margin-top: 12px;">
+                        <a href="clase-05-boss-battle.html" class="btn btn-green">Ir al Boss Battle</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">📊</span>
+                Tu progreso en el módulo
+            </h2>
+            <div id="module-progress" style="text-align: center; padding: 20px;">
+                <p style="color: var(--text-muted);">Completa las clases para ver tu progreso aquí.</p>
+            </div>
+        </section>
+
+        <div class="clase-nav">
+            <a href="../index.html">← Dashboard</a>
+            <span> | </span>
+            <a href="clase-01.html">Clase 01 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof CourseProgress !== 'undefined') {
+                const completed = [
+                    CourseProgress.isClassCompleted('m9-c01'),
+                    CourseProgress.isClassCompleted('m9-c02'),
+                    CourseProgress.isClassCompleted('m9-c03'),
+                    CourseProgress.isClassCompleted('m9-c04'),
+                    CourseProgress.isClassCompleted('m9-c05')
+                ].filter(Boolean).length;
+
+                const total = 5;
+                const progressDiv = document.getElementById('module-progress');
+
+                progressDiv.innerHTML = `
+                    <div style="font-size: 24px; margin-bottom: 12px;">
+                        ${completed} / ${total} clases completadas
+                    </div>
+                    <div style="background: #e0e0e0; border-radius: 8px; overflow: hidden; height: 20px; max-width: 400px; margin: 0 auto;">
+                        <div style="background: #00e676; width: ${(completed / total) * 100}%; height: 100%; transition: width 0.3s;"></div>
+                    </div>
+                    <p style="margin-top: 12px; color: var(--text-muted);">
+                        ${completed === total ? '✅ ¡Módulo completado! 🎓 ¡Has terminado el curso!' : `Completa ${total - completed} más para terminar.`}
+                    </p>
+                `;
+            }
+        });
+    </script>
+
+    <style>
+        .clase-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .clase-item {
+            padding: 16px;
+            border-left: 4px solid #00e676;
+            background: #1a1a2e;
+            border-radius: 4px;
+        }
+
+        .clase-item h3 {
+            margin: 0 0 8px 0;
+            color: #00e676;
+        }
+
+        .clase-item p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+    </style>
+</body>
+</html>

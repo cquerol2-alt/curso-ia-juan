@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss Battle: Agente que Investiga, Resume y Genera Informes | Curso IA Juan</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .boss-battle-header {
+            background: linear-gradient(135deg, rgba(0,240,255,0.15) 0%, rgba(57,255,20,0.1) 100%);
+            color: white;
+            padding: 3em 2em;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 2em;
+            box-shadow: 0 8px 32px rgba(0, 230, 118, 0.3);
+        }
+
+        .boss-battle-header h1 {
+            font-size: 2.5em;
+            margin: 0.5em 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .boss-battle-header .subtitle {
+            font-size: 1.1em;
+            margin-top: 1em;
+            opacity: 0.95;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 1.5em;
+            background: #000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .reto-section {
+            background: linear-gradient(135deg, #1a1a3e 0%, #12122a 100%);
+            border-left: 5px solid #00f0ff;
+            padding: 2em;
+            border-radius: 8px;
+            margin: 2em 0;
+        }
+
+        .reto-section h2 {
+            color: #00e676;
+            margin-top: 0;
+        }
+
+        .reto-section ol {
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        .reto-section li {
+            margin-bottom: 1em;
+        }
+
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5em;
+            margin: 2em 0;
+        }
+
+        .requirement-card {
+            background: #12122a;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5em;
+            transition: all 0.3s ease;
+        }
+
+        .requirement-card:hover {
+            border-color: #00e676;
+            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.15);
+        }
+
+        .requirement-card h3 {
+            color: #00e676;
+            margin-top: 0;
+        }
+
+        .code-approach {
+            background: #1a1a3e;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 8px;
+            padding: 2em;
+            margin: 2em 0;
+            overflow-x: auto;
+        }
+
+        .code-approach h3 {
+            color: #00e676;
+            margin-top: 0;
+        }
+
+        .code-approach pre {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 1.5em;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .code-approach code {
+            font-family: 'Courier New', monospace;
+        }
+
+        .evaluation-criteria {
+            background: #12122a;
+            border-left: 4px solid #00f0ff;
+            padding: 2em;
+            border-radius: 8px;
+            margin: 2em 0;
+        }
+
+        .criteria-item {
+            display: flex;
+            align-items: center;
+            margin: 1.5em 0;
+            font-size: 1.05em;
+        }
+
+        .criteria-percentage {
+            background: rgba(0, 240, 255, 0.15);
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 2em;
+            flex-shrink: 0;
+        }
+
+        .deliverables-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .deliverables-list li {
+            background: #12122a;
+            border-left: 4px solid #00f0ff;
+            padding: 1.5em;
+            margin: 1em 0;
+            border-radius: 4px;
+        }
+
+        .deliverables-list li:before {
+            content: "✓ ";
+            color: #00e676;
+            font-weight: bold;
+            font-size: 1.3em;
+            margin-right: 0.5em;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 3em;
+            padding-top: 2em;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .nav-link {
+            display: inline-block;
+            padding: 0.75em 1.5em;
+            background: rgba(0, 240, 255, 0.15);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: #0d3818;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3);
+        }
+
+        .nav-link.prev:before {
+            content: "← ";
+        }
+
+        .nav-link.next:after {
+            content: " →";
+        }
+
+        .breadcrumb {
+            margin-bottom: 2em;
+            font-size: 0.95em;
+            color: var(--text-muted)acc;
+        }
+
+        .breadcrumb a {
+            color: #00e676;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            margin: 0 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 1000px; margin: 0 auto; padding: 2em;">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span>/</span>
+            <a href="index.html">Módulo 6: Agentes IA</a>
+            <span>/</span>
+            <strong>Boss Battle</strong>
+        </div>
+
+        <!-- Boss Battle Header -->
+        <div class="boss-battle-header">
+            <h1>🎯 Boss Battle: Agente que Investiga, Resume y Genera Informes</h1>
+            <div class="subtitle">
+                📅 Semana 8 — Viernes | ⏱️ 2 horas | 🎯 50 XP
+            </div>
+        </div>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2>📹 Vídeo: Construir Agentes IA Avanzados</h2>
+
+            <div class="warning" style="margin-bottom: 12px; border-left: 3px solid #ffe600;">
+                <strong>⚠️ Aviso v2:</strong> el vídeo usa LangChain / LangGraph como envoltorio. La filosofía canónica del curso es <strong>Anthropic SDK directo con agentic loops y tool use</strong> (clases 01 y 02 de este módulo). Mira el vídeo por los patrones (investigación → resumen → informe, orquestación de herramientas), pero implementa tu Boss Battle con el SDK directo. Vas a tener menos código, más control y es lo que de verdad se usa en producción en 2026.
+            </div>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/B0TJC4lmzEM"
+                        title="Build Advanced AI Agents - freeCodeCamp"
+                        allowfullscreen=""
+                        loading="lazy">
+                </iframe>
+            </div>
+
+            <!-- TranslateTube Tip -->
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja"
+                    target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome,
+                abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+
+            <!-- Mind Map Link -->
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos clave con el mind map visual en español.
+                <a href="mindmap-06-c05.html" class="btn" style="margin-top: 0.8em; display: inline-block;">
+                    Abrir Mind Map ↗
+                </a>
+            </div>
+        </section>
+
+        <!-- El Reto Section -->
+        <section class="reto-section">
+            <h2>⚔️ El Reto: Tu Agente Investigador</h2>
+            <p style="font-size: 1.05em; line-height: 1.8;">
+                Tu misión es construir un <strong>agente IA autónomo</strong> que sea capaz de investigar un tema,
+                resumir información de múltiples fuentes y generar un informe profesional. Este es el tipo de sistema
+                que usan startups, consultoría y medios digitales para escalar análisis y investigación.
+            </p>
+
+            <h3 style="color: #00e676; margin-top: 2em;">Lo que tu agente debe hacer:</h3>
+            <ol>
+                <li><strong>Recibir un tema</strong> del usuario (ej: "Tendencias en IA 2026")</li>
+                <li><strong>Buscar en internet</strong> artículos relevantes usando DuckDuckGo, Google Custom Search, o Tavily</li>
+                <li><strong>Leer y resumir</strong> el contenido de las 3-5 mejores fuentes</li>
+                <li><strong>Generar un informe estructurado</strong> en Markdown con:
+                    <ul style="margin-top: 0.5em;">
+                        <li>Resumen ejecutivo (2-3 párrafos)</li>
+                        <li>Hallazgos clave (bullet points organizados por tema)</li>
+                        <li>Conclusiones y tendencias</li>
+                        <li>Fuentes citadas (links + títulos)</li>
+                    </ul>
+                </li>
+                <li><strong>Guardar el informe</strong> a un archivo (`.md` o `.txt`)</li>
+            </ol>
+
+            <h3 style="color: #00e676; margin-top: 2em;">Tú eliges el framework:</h3>
+            <p>
+                Puedes usar <strong>CrewAI</strong> (multi-agente, más complejo pero potente),
+                <strong>LangGraph</strong> (single agente con estado y herramientas),
+                o <strong>puro OpenAI function calling</strong> (más control, menos abstracciones).
+                Todas son válidas. Elige la que mejor se ajuste a tu nivel de comodidad.
+            </p>
+        </section>
+
+        <!-- Requisitos Técnicos -->
+        <section class="card">
+            <h2>✅ Requisitos Técnicos (Checklist)</h2>
+            <div class="requirements-grid">
+                <div class="requirement-card">
+                    <h3>🌐 Búsqueda Real</h3>
+                    <p>El agente debe hacer búsquedas reales en internet (no datos inventados).
+                    Usa APIs como Tavily, Perplexity, o DuckDuckGo Search API.</p>
+                </div>
+
+                <div class="requirement-card">
+                    <h3>📚 Resumen de Múltiples Fuentes</h3>
+                    <p>Debe procesar y resumir contenido de al menos 3 artículos.
+                    Cada resumen debe ser coherente y distinto.</p>
+                </div>
+
+                <div class="requirement-card">
+                    <h3>📊 Informe Estructurado</h3>
+                    <p>Output debe ser Markdown bien formateado con secciones, bullet points,
+                    headers y citas. Profesional y legible.</p>
+                </div>
+
+                <div class="requirement-card">
+                    <h3>💾 Guardar a Archivo</h3>
+                    <p>El informe se debe guardar en un archivo (`.md`, `.txt` o `.pdf`).
+                    Ruta y nombre deben ser lógicos.</p>
+                </div>
+
+                <div class="requirement-card">
+                    <h3>🛡️ Manejo de Errores</h3>
+                    <p>Si falla la búsqueda, si no hay resultados, o si hay timeout:
+                    el agente debe manejar gracefully (no crash).</p>
+                </div>
+
+                <div class="requirement-card">
+                    <h3>🌟 Bonus: Parámetro Depth</h3>
+                    <p>Opcional pero imprésionante: permite al usuario elegir "quick"
+                    (resumen rápido) vs "deep" (análisis profundo).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Guía de Implementación -->
+        <section class="card">
+            <h2>🛠️ Guía de Implementación: Elige tu Enfoque</h2>
+
+            <!-- Opción A: CrewAI -->
+            <div class="code-approach">
+                <h3>Opción A: CrewAI (Multi-Agente — Recomendado para máxima flexibilidad)</h3>
+                <p>3 agentes especializados que colaboran: Researcher, Summarizer, Writer.</p>
+
+                <pre><code>from crewai import Agent, Task, Crew
+from crewai_tools import tool
+import requests
+from bs4 import BeautifulSoup
+import os
+
+# Herramienta: Buscar en la web
+@tool
+def search_web(query: str) -> str:
+    """Busca en DuckDuckGo y retorna URLs relevantes"""
+    # Usa Tavily API o requests a DuckDuckGo
+    # Retorna: lista de URLs
+    pass
+
+# Herramienta: Extraer contenido de URL
+@tool
+def fetch_article(url: str) -> str:
+    """Obtiene el contenido de un artículo"""
+    response = requests.get(url, timeout=10)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    # Limpia y retorna texto
+    return text
+
+# Agente 1: Researcher
+researcher = Agent(
+    role="Research Analyst",
+    goal="Find the most relevant articles on a topic",
+    tools=[search_web, fetch_article],
+    max_iter=5
+)
+
+# Agente 2: Summarizer
+summarizer = Agent(
+    role="Content Summarizer",
+    goal="Create concise, accurate summaries",
+    max_iter=3
+)
+
+# Agente 3: Writer
+writer = Agent(
+    role="Report Writer",
+    goal="Synthesize summaries into a professional report",
+    max_iter=2
+)
+
+# Tasks
+task1 = Task(
+    description="Search for 5 top articles on: {topic}",
+    agent=researcher
+)
+
+task2 = Task(
+    description="Summarize the 3 best articles",
+    agent=summarizer
+)
+
+task3 = Task(
+    description="Generate a structured report in Markdown",
+    agent=writer
+)
+
+# Ejecutar
+crew = Crew(agents=[researcher, summarizer, writer],
+            tasks=[task1, task2, task3])
+
+result = crew.kickoff(inputs={"topic": "AI Agents 2026"})
+
+# Guardar
+with open("informe.md", "w") as f:
+    f.write(result)
+</code></pre>
+
+                <p><strong>Ventajas:</strong> Fácil escalar, clara separación de roles, el equipo se auto-organiza.</p>
+                <p><strong>Instalación:</strong> <code>pip install crewai crewai-tools</code></p>
+            </div>
+
+            <!-- Opción B: LangGraph -->
+            <div class="code-approach">
+                <h3>Opción B: LangGraph (Grafo de Estado — Máximo control)</h3>
+                <p>Un único agente que transita por estados: search → fetch → summarize → write.</p>
+
+                <pre><code>from langgraph.graph import StateGraph, END
+from langchain.tools import tool
+from langchain.agents import AgentExecutor, create_openai_tools_agent
+from langchain.prompts import ChatPromptTemplate
+import json
+
+# Estado del grafo
+class ResearchState:
+    def __init__(self):
+        self.topic = ""
+        self.search_results = []
+        self.summaries = []
+        self.report = ""
+
+# Herramientas
+@tool
+def search(query: str) -> list:
+    """Busca y retorna URLs"""
+    return ["url1", "url2", "url3"]
+
+@tool
+def fetch_and_summarize(url: str) -> str:
+    """Extrae y resume un artículo"""
+    # requests + BeautifulSoup + OpenAI para resumen
+    return "Resumen del artículo..."
+
+# Nodos del grafo
+def node_search(state: ResearchState):
+    state.search_results = search(state.topic)
+    return state
+
+def node_fetch(state: ResearchState):
+    state.summaries = [fetch_and_summarize(url)
+                       for url in state.search_results[:3]]
+    return state
+
+def node_write(state: ResearchState):
+    # Usa OpenAI para escribir informe final
+    state.report = "# Informe sobre " + state.topic + "\n\n"
+    for i, summary in enumerate(state.summaries, 1):
+        state.report += f"## Fuente {i}\n{summary}\n\n"
+    return state
+
+# Construir grafo
+graph = StateGraph(ResearchState)
+graph.add_node("search", node_search)
+graph.add_node("fetch", node_fetch)
+graph.add_node("write", node_write)
+
+graph.add_edge("search", "fetch")
+graph.add_edge("fetch", "write")
+graph.add_edge("write", END)
+
+graph.set_entry_point("search")
+runnable = graph.compile()
+
+# Ejecutar
+state = ResearchState()
+state.topic = "Tendencias IA 2026"
+result = runnable.invoke(state)
+
+# Guardar
+with open("informe.md", "w") as f:
+    f.write(result.report)
+</code></pre>
+
+                <p><strong>Ventajas:</strong> Total control de flujo, debugging fácil, escalable.</p>
+                <p><strong>Instalación:</strong> <code>pip install langgraph langchain</code></p>
+            </div>
+
+            <!-- Opción C: Puro OpenAI -->
+            <div class="code-approach">
+                <h3>Opción C: OpenAI Function Calling (Sin frameworks — Más bajo nivel)</h3>
+                <p>Construyes todo manualmente con function calling de OpenAI.</p>
+
+                <pre><code>import openai
+import json
+import requests
+from bs4 import BeautifulSoup
+
+client = openai.OpenAI()
+
+# Funciones que OpenAI puede llamar
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "search_web",
+            "description": "Search the web for articles",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"}
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "fetch_url",
+            "description": "Fetch and summarize a URL",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "url": {"type": "string"}
+                },
+                "required": ["url"]
+            }
+        }
+    }
+]
+
+def search_web(query: str):
+    # Simulado o llamada real a API
+    return ["url1", "url2", "url3"]
+
+def fetch_url(url: str):
+    try:
+        resp = requests.get(url, timeout=10)
+        soup = BeautifulSoup(resp.content, 'html.parser')
+        return soup.get_text()[:2000]  # Primeros 2000 chars
+    except:
+        return "Error fetching URL"
+
+# Loop principal
+topic = "Tendencias IA 2026"
+messages = [
+    {"role": "system",
+     "content": "Eres un analista. Tu tarea: buscar, resumir y generar informe sobre: " + topic},
+    {"role": "user",
+     "content": f"Investiga {topic} y genera un informe Markdown. Usa las herramientas."}
+]
+
+report = ""
+
+for _ in range(5):  # Max 5 iteraciones
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=messages,
+        tools=tools,
+        tool_choice="auto"
+    )
+
+    if response.stop_reason == "end_turn":
+        report = response.choices[0].message.content
+        break
+
+    # Procesar tool calls
+    for tool_call in response.choices[0].message.tool_calls:
+        if tool_call.function.name == "search_web":
+            result = search_web(tool_call.function.arguments["query"])
+        elif tool_call.function.name == "fetch_url":
+            result = fetch_url(tool_call.function.arguments["url"])
+
+        messages.append({"role": "assistant", "content": response.choices[0].message.content})
+        messages.append({"role": "user", "content": json.dumps(result)})
+
+# Guardar
+with open("informe.md", "w") as f:
+    f.write(report)
+</code></pre>
+
+                <p><strong>Ventajas:</strong> Máximo control, entiende bien cómo funciona.</p>
+                <p><strong>Requiere:</strong> <code>pip install openai requests beautifulsoup4</code></p>
+            </div>
+        </section>
+
+        <!-- Criterios de Evaluación -->
+        <section class="evaluation-criteria">
+            <h2>🎯 Criterios de Evaluación</h2>
+
+            <div class="criteria-item">
+                <div class="criteria-percentage">40%</div>
+                <div>
+                    <strong>Funcionalidad End-to-End</strong><br>
+                    El agente ejecuta correctamente: busca, resume, genera informe y guarda.
+                    Sin errores no manejados. Código ejecutable.
+                </div>
+            </div>
+
+            <div class="criteria-item">
+                <div class="criteria-percentage">30%</div>
+                <div>
+                    <strong>Calidad del Informe</strong><br>
+                    Bien estructurado (Markdown limpio, headers claros, bullet points).
+                    Información útil y relevante. Legible y profesional.
+                </div>
+            </div>
+
+            <div class="criteria-item">
+                <div class="criteria-percentage">20%</div>
+                <div>
+                    <strong>Código Limpio</strong><br>
+                    Bien organizado, comentado, funciones reutilizables.
+                    Sigue convenciones de Python (PEP 8). Fácil de entender.
+                </div>
+            </div>
+
+            <div class="criteria-item">
+                <div class="criteria-percentage">10%</div>
+                <div>
+                    <strong>Bonus: Extras Imprésionantes</strong><br>
+                    Parámetro depth (quick vs deep), soporte para múltiples temas,
+                    formato PDF, análisis de sentimiento, o cualquier mejora adicional.
+                </div>
+            </div>
+        </section>
+
+        <!-- Entregables -->
+        <section class="card">
+            <h2>📦 Entregables</h2>
+            <ul class="deliverables-list">
+                <li>
+                    <strong>Código Python</strong> (script principal + cualquier módulo auxiliar)<br>
+                    <span style="font-size: 0.95em; color: var(--text-muted)acc;">Ejemplo: `research_agent.py`, `tools.py`</span>
+                </li>
+                <li>
+                    <strong>Informe de Ejemplo</strong> (markdown generado por tu agente)<br>
+                    <span style="font-size: 0.95em; color: var(--text-muted)acc;">Demuestra que tu agente funciona. Incluye 3+ fuentes reales.</span>
+                </li>
+                <li>
+                    <strong>Captura de Pantalla</strong> (agente en ejecución)<br>
+                    <span style="font-size: 0.95em; color: var(--text-muted)acc;">Muestra la salida en terminal, el informe guardado, o ambos.</span>
+                </li>
+                <li>
+                    <strong>README.md</strong> (cómo ejecutar tu agente)<br>
+                    <span style="font-size: 0.95em; color: var(--text-muted)acc;">Instalación, dependencias, ejemplo de uso. 5-10 líneas.</span>
+                </li>
+            </ul>
+
+            <div class="warning" style="margin-top: 2em;">
+                <strong>⚠️ Importante:</strong> Sube todo a un repositorio público de GitHub llamado
+                <code>boss-battle-m6-c06</code> y pega la URL del repo en el formulario de entrega de abajo
+                antes del viernes 23:59. Añade también la captura de pantalla al repo (como imagen o enlace en el README).
+            </div>
+        </section>
+
+        <!-- Entrega del Boss Battle -->
+        <section class="card">
+            <h2 class="section-title">
+                <span class="section-icon">🏆</span>
+                Entrega del Boss Battle
+            </h2>
+            <div class="exercise-submit" id="submit-boss-battle" data-type="boss-battle">
+                <h4>🏆 Boss Battle: Multi-source Research Agent</h4>
+                <p style="margin-bottom: 1em;">Implementa un agente de investigación completo que combine todas las técnicas aprendidas en el módulo: función calling, CrewAI, LangGraph, y evaluación de resultados.</p>
+
+                <label style="display: block; margin-bottom: 1em;"><strong>Código completo del agente:</strong></label>
+                <textarea id="code-boss-battle" rows="16" placeholder="Pega tu código aquí o describe la estructura de archivos..." style="width: 100%; padding: 10px; border: 1px solid #444; border-radius: 4px; background: #1a1a1a; color: #fff; font-family: monospace; margin-bottom: 1.5em;"></textarea>
+
+                <label style="display: block; margin-bottom: 1em;"><strong>Documentación: arquitectura e integración:</strong></label>
+                <textarea id="explanation-boss-battle" rows="8" placeholder="Explica en detalle cómo tu agente integra las técnicas del módulo..." style="width: 100%; padding: 10px; border: 1px solid #444; border-radius: 4px; background: #1a1a1a; color: #fff; margin-bottom: 1.5em;"></textarea>
+
+                <label style="display: block; margin-bottom: 1em;"><strong>Demostración: queries complejas y resultados:</strong></label>
+                <textarea id="demo-boss-battle" rows="8" placeholder="Ej: Query 1, Proceso, Reporte, Query 2..." style="width: 100%; padding: 10px; border: 1px solid #444; border-radius: 4px; background: #1a1a1a; color: #fff; margin-bottom: 1.5em;"></textarea>
+
+                <label><input type="checkbox" required> El agente está completo, funciona y está documentado</label>
+                <div class="submit-row">
+                    <textarea id="notes-boss-battle" rows="2" placeholder="Notas finales opcionales..." style="width: 100%; padding: 10px; border: 1px solid #444; border-radius: 4px; background: #1a1a1a; color: #fff;"></textarea>
+                    <button onclick="CourseProgress.submitExercise('m6-bb', 1, this)" class="btn btn-submit" style="background: #ff6b6b; font-size: 1.1em; padding: 12px 24px;">🏆 ENVIAR BOSS BATTLE</button>
+                </div>
+                <div id="submit-status-boss-battle" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Test de Conocimiento -->
+        <section class="card">
+            <h2>🧠 Test de Conocimiento: Módulo 6 Completo</h2>
+            <p>Responde las 10 preguntas para consolidar tu aprendizaje.
+            Necesitas 7/10 para pasar. ¡Vamos!</p>
+
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <a href="clase-04.html" class="nav-link prev">Clase 04</a>
+            <a href="index.html" class="nav-link" style="background: #00e676; color: #000;">Módulo 6</a>
+            <a href="../modulo-07-fullstack-ai/index.html" class="nav-link next">Módulo 07</a>
+        </div>
+
+    </div>
+
+    <script src="../js/progress.js?v=20260430-cache-fix"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es la diferencia principal entre CrewAI y LangGraph?",
+                options: [
+                    "CrewAI usa multi-agentes especializados; LangGraph es un grafo de estado con un único agente",
+                    "LangGraph es más rápido que CrewAI",
+                    "CrewAI solo funciona en OpenAI; LangGraph con cualquier LLM",
+                    "No hay diferencia, son equivalentes"
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Qué es una herramienta (tool) en el contexto de agentes IA?",
+                options: [
+                    "Un parámetro del agente",
+                    "Una función que el agente puede llamar para ejecutar acciones (búsqueda web, fetch, cálculos, etc.)",
+                    "Un modelo de lenguaje adicional",
+                    "Un tipo de datos en Python"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es el propósito de un 'state' en LangGraph?",
+                options: [
+                    "Almacenar el progreso del agente entre nodos",
+                    "Controlar el nombre del grafo",
+                    "Definir el timeout del agente",
+                    "Crear un backup de la ejecución"
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Qué problema resuelve el function calling de OpenAI en agentes?",
+                options: [
+                    "Acelerar la ejecución del modelo",
+                    "Permitir que el modelo especifique qué función ejecutar, en lugar de generar JSON manualmente",
+                    "Reducir costos de API",
+                    "Cambiar el idioma del output"
+                ],
+                correct: 1
+            },
+            {
+                question: "En un agente de investigación, ¿por qué es importante el manejo de errores?",
+                options: [
+                    "Para que se vea más profesional",
+                    "Porque las búsquedas pueden fallar, URLs pueden estar fuera de servicio, o el timeout se puede agotar. El agente debe continuar gracefully.",
+                    "Para cumplir con regulaciones de la UE",
+                    "No es importante, el código siempre funciona"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué es un 'task' en CrewAI?",
+                options: [
+                    "Una tarea para el usuario",
+                    "Una unidad de trabajo asignada a un agente con descripción clara de qué lograr",
+                    "Un archivo de configuración",
+                    "Un tipo de prompt"
+                ],
+                correct: 1
+            },
+            {
+                question: "Si tu agente necesita resumir 5 artículos simultáneamente, ¿cuál framework es mejor?",
+                options: [
+                    "CrewAI, porque puedes tener múltiples agentes/tasks en paralelo",
+                    "LangGraph, es más rápido",
+                    "OpenAI function calling, no necesitas frameworks",
+                    "Todos son equivalentes"
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Cuál es la ventaja de usar BeautifulSoup en un agente de búsqueda?",
+                options: [
+                    "Mejora la velocidad del LLM",
+                    "Extrae HTML limpio de páginas web para obtener solo el texto relevante",
+                    "Conecta directamente a bases de datos",
+                    "Crea automáticamente markdown"
+                ],
+                correct: 1
+            },
+            {
+                question: "En el contexto de agentes, ¿qué significa 'agentic loop'?",
+                options: [
+                    "Un bucle infinito que causa error",
+                    "El ciclo: pensar → decidir qué herramienta usar → ejecutar → evaluar → repetir hasta lograr el goal",
+                    "Un parámetro de configuración",
+                    "Una característica exclusiva de CrewAI"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es el riesgo principal de hacer que un agente busque en internet sin restricciones?",
+                options: [
+                    "Costo de API muy alto",
+                    "El agente puede tomar decisiones peligrosas o acceder a contenido inapropiado sin supervisión humana",
+                    "El código se vuelve lento",
+                    "No hay riesgo, es completamente seguro"
+                ],
+                correct: 1
+            }
+        ];
+
+        // Inicializar quiz cuando la página cargue
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof CourseProgress !== 'undefined') {
+                    CourseProgress.initSubmissionIndicators('m6-bb');
+                    CourseProgress.initQuiz('quiz-container', quizQuestions, 'm6-bb');
+                } else {
+                    console.error('progress.js no cargó correctamente');
+                }
+            });
+        } else {
+            if (typeof CourseProgress !== 'undefined') {
+                CourseProgress.initSubmissionIndicators('m6-bb');
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm6-bb');
+            } else {
+                console.error('progress.js no cargó correctamente');
+            }
+        }
+    </script>
+</body>
+</html>

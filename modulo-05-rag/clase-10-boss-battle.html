@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss Battle M5: 3 arquitecturas sobre mis apuntes | Curso IA</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .boss-header {
+            background: linear-gradient(135deg, rgba(0,240,255,0.18) 0%, rgba(255,0,229,0.12) 100%);
+            padding: 2em;
+            border-radius: 12px;
+            margin-bottom: 2em;
+            box-shadow: 0 0 28px rgba(0,240,255,0.25);
+        }
+        .boss-header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            text-shadow: 0 0 12px rgba(0,240,255,0.6);
+        }
+        .step {
+            background: #15152a;
+            border-left: 4px solid #00f0ff;
+            padding: 1.2em 1.5em;
+            margin: 1em 0;
+            border-radius: 6px;
+        }
+        .step h3 { margin-top: 0; color: #00f0ff; }
+        .goal-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1em; margin: 1em 0; }
+        .goal-card { background:#1a1a3e; padding: 1em; border-radius: 6px; border-top: 3px solid #39ff14; }
+        .goal-card h4 { margin-top: 0; color:#39ff14; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> &gt; </span>
+            <a href="index.html">Módulo 5</a>
+            <span> &gt; </span>
+            <strong>🎯 Boss Battle</strong>
+        </nav>
+
+        <header class="boss-header">
+            <h1>🎯 Boss Battle: 3 arquitecturas sobre mis apuntes, comparadas</h1>
+            <div class="subtitle" style="margin-top:0.5em; color:#b0b0cc;">
+                📅 Semana 8 — Martes | ⏱️ 4-6 horas de trabajo serio
+            </div>
+            <p style="margin-top:1em; font-size:1.05em;">
+                Integra todo el módulo en un proyecto único: un chat web que contesta preguntas sobre tus apuntes usando <strong>las 3 arquitecturas</strong> (stuffing, agentic, RAG) y un <strong>botón para cambiar entre ellas</strong>. Observability con Langfuse. Deploy público.
+            </p>
+        </header>
+
+        <aside class="workshop-ref">
+            <h4>📚 Profundiza con el workshop de hola.dev</h4>
+            <p style="margin:0;">Para justificar la arquitectura elegida en el informe del Boss Battle:</p>
+            <ul>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#arquitectura-apps-llm" target="_blank" rel="noopener">Sección 79 — Arquitectura de aplicaciones con LLM</a></li>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#cuando-que-tecnica" target="_blank" rel="noopener">Sección 69 — Árbol de decisión prompt/RAG/FT</a></li>
+            </ul>
+            <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+        </aside>
+
+
+        <section class="card" style="border-left: 4px solid #00f0ff;">
+            <h2>🎯 Objetivo</h2>
+            <p>Construir y desplegar <em>"Pregúntale a Mis Apuntes"</em>: un chat web donde Juan (o quien sea) pueda hacer una pregunta y elegir qué arquitectura responde. La app debe medir coste y latencia en vivo, y enviar trazas a Langfuse.</p>
+            <div class="goal-row">
+                <div class="goal-card">
+                    <h4>📝 Apuntes</h4>
+                    <p>Tus notas del curso (módulos 1-5) como corpus. Mínimo 10 archivos de texto/markdown.</p>
+                </div>
+                <div class="goal-card">
+                    <h4>⚙️ 3 arquitecturas</h4>
+                    <p>Stuffing con cache, agentic con tool use, RAG clásico con rerank. Las 3 funcionando, seleccionables desde la UI.</p>
+                </div>
+                <div class="goal-card">
+                    <h4>🌐 Deploy público</h4>
+                    <p>Frontend en Vercel + backend en Render/Railway + tracing en Langfuse cloud.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>📦 Stack obligatorio</h2>
+            <ul>
+                <li><strong>Claude Sonnet 4.6</strong> (<code>claude-sonnet-4-6</code>) para responder en las 3 arquitecturas</li>
+                <li><strong>Claude Haiku 4.5</strong> (<code>claude-haiku-4-5-20251001</code>) para rerank</li>
+                <li><strong>OpenAI <code>text-embedding-3-small</code></strong> para embeddings</li>
+                <li><strong>ChromaDB</strong> como vector store</li>
+                <li><strong>FastAPI</strong> backend</li>
+                <li><strong>Next.js 14 + Vercel AI SDK</strong> frontend con streaming</li>
+                <li><strong>Langfuse</strong> para observability</li>
+            </ul>
+            <div class="warning" style="margin-top: 12px;">
+                <strong>❌ Prohibido:</strong> LangChain, LlamaIndex. Usa los SDKs directos de Anthropic y OpenAI. Todo el módulo está diseñado para enseñarte a entender y controlar cada pieza.
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>🧩 Plan de ataque (los 6 pasos del boss)</h2>
+
+            <div class="step">
+                <h3>Paso 1 · Preparar los apuntes</h3>
+                <p>Junta tus notas del curso o cualquier corpus tuyo (mínimo 10 archivos, 20-50 KB total). Guárdalos en <code>backend/data/apuntes/*.md</code>. Crea <code>apuntes_concat.txt</code> con todo concatenado (para la arq. stuffing).</p>
+            </div>
+
+            <div class="step">
+                <h3>Paso 2 · Backend con 3 endpoints</h3>
+                <p>FastAPI con tres rutas distintas. Cada una implementa una arquitectura del módulo:</p>
+<pre><code>POST /ask/stuffing   → prompt caching con el corpus entero en system
+POST /ask/agentic    → loop ReAct con tool search sobre el corpus
+POST /ask/rag        → retrieve (k=20) + rerank haiku → sonnet con top-3
+</code></pre>
+                <p>Cada endpoint devuelve <code>{ answer, latency_ms, cost_usd, trace_id }</code>. Instrumenta con <code>@observe</code>.</p>
+            </div>
+
+            <div class="step">
+                <h3>Paso 3 · Indexar con ChromaDB</h3>
+                <p>Script <code>ingest.py</code> que chunkea (800 chars, overlap 100), embebe con <code>text-embedding-3-small</code> y guarda en ChromaDB persistente. Debe ser idempotente.</p>
+            </div>
+
+            <div class="step">
+                <h3>Paso 4 · Frontend Next.js con selector</h3>
+                <p>Chat con <code>useChat</code> del Vercel AI SDK. Un dropdown <em>"Arquitectura: [stuffing | agentic | rag]"</em> decide a qué endpoint se llama. Bajo cada respuesta, muestra <strong>coste y latencia</strong> de ese turno.</p>
+            </div>
+
+            <div class="step">
+                <h3>Paso 5 · Observability</h3>
+                <p>Langfuse proyecto nuevo. Cada turno del chat genera una trace con el árbol completo. Bonus: botón 👍 / 👎 que registra <code>langfuse.score()</code>.</p>
+            </div>
+
+            <div class="step">
+                <h3>Paso 6 · Deploy</h3>
+                <p>Backend Python (FastAPI + ChromaDB) en Render o Railway. Frontend Next.js en Vercel. Variables de entorno: <code>ANTHROPIC_API_KEY</code>, <code>OPENAI_API_KEY</code>, <code>LANGFUSE_PUBLIC_KEY</code>, <code>LANGFUSE_SECRET_KEY</code>. Todo público y accesible por URL.</p>
+            </div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ffe600;">
+            <h2>🧪 Mini-benchmark obligatorio</h2>
+            <p>Con el deploy funcionando, haz las mismas 10 preguntas por las 3 arquitecturas desde la UI. Genera un CSV <code>benchmark_deploy.csv</code> con:</p>
+            <table>
+                <thead>
+                    <tr><th>arq</th><th>pregunta</th><th>respuesta (resumen)</th><th>correcta?</th><th>coste $</th><th>latencia ms</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>stuffing</td><td>¿Qué es el prompt caching?</td><td>"Caché de contexto…"</td><td>✅</td><td>0.028</td><td>3120</td></tr>
+                    <tr><td>agentic</td><td>¿Qué es el prompt caching?</td><td>"Según la búsqueda…"</td><td>✅</td><td>0.062</td><td>6850</td></tr>
+                    <tr><td>rag</td><td>¿Qué es el prompt caching?</td><td>"Es una técnica que…"</td><td>✅</td><td>0.009</td><td>1240</td></tr>
+                </tbody>
+            </table>
+            <p>Incluye el CSV en el repo + una tabla resumen (medias por arquitectura) en el <code>README.md</code>.</p>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #39ff14;">
+            <h2>✅ Rubrica — 100 puntos</h2>
+            <table>
+                <thead>
+                    <tr><th>Criterio</th><th>Puntos</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Las 3 arquitecturas implementadas y funcionando</td><td>30</td></tr>
+                    <tr><td>Frontend con selector y streaming</td><td>15</td></tr>
+                    <tr><td>Deploy público real (URL accesible)</td><td>15</td></tr>
+                    <tr><td>Tracing Langfuse con spans correctos</td><td>10</td></tr>
+                    <tr><td>Benchmark CSV + tabla comparativa en README</td><td>15</td></tr>
+                    <tr><td>Sin LangChain / LlamaIndex (verificado)</td><td>5</td></tr>
+                    <tr><td>README bien escrito con decisiones justificadas</td><td>10</td></tr>
+                </tbody>
+            </table>
+            <p><strong>Bonus +10</strong>: botón 👍/👎 que registra score en Langfuse. <strong>Bonus +10</strong>: gráfica en la UI con coste acumulado por arquitectura.</p>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">🧪</span> Quiz del Boss</h2>
+            <div id="quiz-container"></div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ff00e5;">
+            <h2>📤 Entregar Boss Battle</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="boss-battle">
+                <h4>🎯 Pregúntale a Mis Apuntes — 3 arquitecturas</h4>
+                <input type="url" placeholder="URL del repositorio en GitHub (frontend + backend)" />
+                <input type="url" placeholder="URL del deploy público (Vercel)" />
+                <textarea id="code-ejercicio-1" rows="15" placeholder="Pega aquí el código más importante: el endpoint /ask/rag, la función rerank, y la route /api/chat de Next.js."></textarea>
+                <textarea rows="4" placeholder="¿Qué arquitectura eligirías para una app en producción con 1000 queries/día? Justifícalo con tus datos del benchmark."></textarea>
+                <div style="margin-top:8px;">
+                    <button onclick="CourseProgress.submitExercise('m5-bb', 1, this)" class="btn btn-green btn-submit">Entregar Boss Battle 🎯</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+        </section>
+
+        <div class="nav-buttons">
+            <a href="clase-09.html" class="btn btn-secondary">← Clase 09</a>
+            <a href="index.html" class="btn btn-secondary">📚 Módulo 5</a>
+            <a href="../modulo-06-agentes/index.html" class="btn">Módulo 6 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Qué arquitectura debería tener el COSTE por query más BAJO en este boss?",
+                options: ["Stuffing (sin cache)", "Agentic con 5 vueltas", "RAG clásico con top-3 chunks", "Las 3 igual"],
+                correct: 2,
+                explanation: "RAG pasa al LLM solo 3 chunks pequeños. Stuffing pasa el corpus entero (caro sin cache). Agentic multiplica costes por las vueltas."
+            },
+            {
+                question: "¿Qué endpoint debería devolver el cost_usd ≈ $0.03-$0.10 con cache_write en la PRIMERA llamada?",
+                options: ["/ask/stuffing", "/ask/agentic", "/ask/rag", "Ninguno"],
+                correct: 0,
+                explanation: "La 1ª llamada a stuffing paga cache_write ($3.75/M). A partir de la 2ª pasa a cached_read ($0.30/M) — muy barato."
+            },
+            {
+                question: "¿Qué librería NO debes usar en el boss battle?",
+                options: ["anthropic", "chromadb", "langchain", "next.js"],
+                correct: 2,
+                explanation: "Regla del módulo: sin LangChain. Control directo con Anthropic SDK + ChromaDB + Vercel AI SDK."
+            },
+            {
+                question: "El selector de arquitectura en la UI ¿qué debe cambiar?",
+                options: [
+                    "El modelo",
+                    "El endpoint del backend al que se llama (/ask/stuffing vs /ask/agentic vs /ask/rag)",
+                    "El idioma",
+                    "El logo"
+                ],
+                correct: 1,
+                explanation: "Mismo modelo (Sonnet) en las 3 arquitecturas. Lo que cambia es el endpoint — cada uno implementa una arquitectura distinta."
+            },
+            {
+                question: "Haces 3 preguntas: 2 específicas ('¿qué es X?') y 1 cruzada ('¿cómo se relacionan X e Y en contexto Z?'). ¿Dónde esperas que agentic/stuffing destaque?",
+                options: [
+                    "En las específicas — RAG es mejor",
+                    "En la cruzada — razonamiento entre secciones favorece a arquitecturas que ven más contexto",
+                    "Da igual",
+                    "En ninguna"
+                ],
+                correct: 1,
+                explanation: "RAG con top-3 puede perderse partes relevantes en preguntas cross-sectional. Stuffing ve todo, agentic puede buscar varias veces."
+            },
+            {
+                question: "Tu CSV de benchmark tiene accuracy RAG 70%, stuffing 90%, agentic 85%. ¿Qué cuentas en el README?",
+                options: [
+                    "Elige RAG porque es moda",
+                    "Stuffing gana accuracy; si la diferencia compensa el coste (10x) depende de volumen. A baja escala → stuffing. Alta escala → RAG con mejor retriever.",
+                    "Quita agentic",
+                    "Pon las 3 siempre"
+                ],
+                correct: 1,
+                explanation: "Esta es la decisión que justifica ser senior: explicar trade-offs con tus propios números y decidir según el contexto."
+            },
+            {
+                question: "¿Para qué sirve Langfuse en este boss?",
+                options: [
+                    "Para entrenar modelos",
+                    "Para registrar cada query como un trace con spans de retrieve/rerank/answer — lo necesitas para depurar en producción",
+                    "Para reemplazar ChromaDB",
+                    "No es necesario"
+                ],
+                correct: 1,
+                explanation: "Langfuse te da observability: cada query con su árbol de spans, tokens, coste. Sin esto en prod estás ciego."
+            },
+            {
+                question: "¿Qué hace que el streaming funcione correctamente en el frontend?",
+                options: [
+                    "useChat + el backend devolviendo toDataStreamResponse()",
+                    "setTimeout",
+                    "localStorage",
+                    "setInterval cada 100ms"
+                ],
+                correct: 0,
+                explanation: "useChat consume el stream SSE que genera streamText(...).toDataStreamResponse() en la route de Next.js."
+            },
+            {
+                question: "¿Dónde debería vivir ChromaDB en el deploy?",
+                options: [
+                    "En Vercel serverless",
+                    "En el backend Python desplegado en Render/Railway (contenedor con volumen persistente)",
+                    "En GitHub",
+                    "En Langfuse"
+                ],
+                correct: 1,
+                explanation: "ChromaDB necesita un sistema de ficheros persistente. Render/Railway/Fly con volumen. Vercel serverless no sirve."
+            },
+            {
+                question: "La entrega del Boss requiere:",
+                options: [
+                    "Solo el código",
+                    "Solo la URL",
+                    "Repo GitHub + URL pública del deploy + código clave + benchmark CSV + reflexión justificando la arquitectura elegida",
+                    "Una captura"
+                ],
+                correct: 2,
+                explanation: "Entrega completa: repo, deploy, benchmark y reflexión. Si sólo entregas código se queda en ejercicio, no es boss."
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm5-bb');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss Battle Final: Plan de Acción de 30 Días - Curso IA para Juan Querol</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .boss-battle-header {
+            background: linear-gradient(135deg, #00e676 0%, #00d89a 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .boss-battle-header h1 {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #0a0a1a;
+        }
+        .boss-battle-header p {
+            font-size: 1.1em;
+            margin: 5px 0;
+            color: #0a0a1a;
+        }
+        .epic-badge {
+            display: inline-block;
+            background: #FFD700;
+            color: #00e676;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 10px 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .plan-section {
+            background: #1a1a3e;
+            border-left: 4px solid #00e676;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .plan-section h3 {
+            color: #00e676;
+            margin-top: 0;
+        }
+        .plan-week {
+            background: #12122a;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            border: 2px solid #E8F5E9;
+        }
+        .plan-week strong {
+            color: #00e676;
+            font-size: 1.1em;
+        }
+        .plan-day {
+            margin: 10px 0 10px 20px;
+            padding: 8px;
+            background: #FAFAFA;
+            border-radius: 3px;
+            border-left: 3px solid #81C784;
+        }
+        .checklist {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .checklist-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #12122a;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+        }
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: #00e676;
+        }
+        .checklist-item label {
+            cursor: pointer;
+            flex: 1;
+        }
+        .tracking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #12122a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tracking-table th {
+            background: #00e676;
+            color: #0a0a1a;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .tracking-table td {
+            padding: 12px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+        .tracking-table tr:hover {
+            background: #F5F5F5;
+        }
+        .status-pendiente {
+            background: #FFF3E0;
+            color: #E65100;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .status-enviada {
+            background: #E3F2FD;
+            color: #1565C0;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .status-respuesta {
+            background: #E8F5E9;
+            color: #00e676;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .motivation-box {
+            background: linear-gradient(135deg, #00e676 0%, #00d89a 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .motivation-box h3 {
+            font-size: 1.3em;
+            margin-top: 0;
+        }
+        .motivation-box ul {
+            text-align: left;
+            display: inline-block;
+            list-style: none;
+            padding: 0;
+        }
+        .motivation-box li {
+            padding: 8px 0;
+            font-size: 1.05em;
+        }
+        .motivation-box li:before {
+            content: "✓ ";
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .celebration {
+            background: linear-gradient(135deg, #00e676 0%, #00d89a 100%);
+            color: white;
+            text-align: center;
+            padding: 40px;
+            border-radius: 8px;
+            margin: 40px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .celebration h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .celebration p {
+            font-size: 1.2em;
+            margin: 15px 0;
+        }
+        .celebration-badges {
+            font-size: 3em;
+            margin: 20px 0;
+        }
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .success-message {
+            background: #C8E6C9;
+            border-left: 4px solid #00e676;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #00e676;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header con Boss Battle Epic -->
+        <div class="boss-battle-header">
+            <h1>🎯 BOSS BATTLE FINAL</h1>
+            <p>Plan de Acción de 30 Días para Conseguir tu Primer Trabajo en IA</p>
+            <div>
+                <span class="epic-badge">⚔️ ÚLTIMA BATALLA</span>
+                <span class="epic-badge">100 XP</span>
+                <span class="epic-badge">Dificultad: ÉPICA</span>
+            </div>
+        </div>
+
+        <!-- Introducción -->
+        <section class="card">
+            <h2>🚀 Bienvenido a la Batalla Final</h2>
+            <p>Ya no es solo teoría. Este boss battle es <strong>100% práctico</strong>: debes crear un plan de acción REAL de 30 días para conseguir tu primer trabajo en IA en Madrid, y <strong>empezar a ejecutarlo HOY</strong>.</p>
+            <p>No se trata de aprender más conceptos. Se trata de <strong>actuar</strong>.</p>
+            <p style="background: #FFF9C4; padding: 15px; border-radius: 4px; border-left: 4px solid #FBC02D;">
+                <strong>Regla de oro:</strong> Completar este boss battle significa enviar TU PRIMERA CANDIDATURA REAL antes de que termines este módulo.
+            </p>
+        </section>
+
+        <!-- Vídeo: Preguntas Difíciles de Entrevista -->
+        <section class="card">
+            <h2>📹 Vídeo: Preguntas Difíciles en Entrevistas de Trabajo</h2>
+            <p>Antes de armar tu plan, mira cómo un experto responde a las preguntas más difíciles de las entrevistas técnicas:</p>
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/SQrg5Mr0Ihs" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+            <p style="font-size: 0.95em; color: var(--text-muted);">Vídeo en español sobre preguntas desafiantes en entrevistas de trabajo. Perfecta preparación antes de empezar tu búsqueda activa.</p>
+        </section>
+
+        <!-- Plan de Acción de 30 Días -->
+        <section class="card">
+            <h2>📅 Tu Plan de Acción: 30 Días a la Acción</h2>
+
+            <div class="plan-section">
+                <h3>📌 Semana 1 (Días 1-7): PREPARACIÓN</h3>
+                <p>Asentamos las bases. Sin acción precipitada, todo bien estudiado.</p>
+
+                <div class="plan-week">
+                    <strong>Día 1: Seleccionar 5 Empresas Target en Madrid</strong>
+                    <div class="plan-day">
+                        Empresas que contraten junior en IA/Tech: Telefónica, BBVA Next Technologies, Cabify, Jobandtalent, Typeform, Clarity AI, Carto, Source{d}, empresas de Campus Madrid o Google for Startups.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Día 2: Investigar Cada Empresa</strong>
+                    <div class="plan-day">
+                        ¿Qué hacen con IA? ¿Quién lidera tech? ¿Hay ofertas abiertas? LinkedIn, web, GitHub, Medium.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Día 3: Adaptar CV a la Oferta #1</strong>
+                    <div class="plan-day">
+                        CV específico para la empresa + oferta que más te atraiga. Destaca proyectos relevantes.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Día 4: Cover Letter Personalizada</strong>
+                    <div class="plan-day">
+                        No genérica. Explica por qué ESTA empresa, por qué TÚ, qué puedes aportar.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Día 5: Optimizar LinkedIn</strong>
+                    <div class="plan-day">
+                        Headline atractivo, about section con palabras clave (IA, Python, APIs, etc.), proyectos destacados, foto profesional.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Días 6-7: Preparar Respuestas a Preguntas Técnicas</strong>
+                    <div class="plan-day">
+                        Mínimo 15 preguntas de entrevista. "Tell me about a project", "Cómo debuggearías esto", "Diferencia entre X e Y", etc.
+                    </div>
+                </div>
+            </div>
+
+            <div class="plan-section">
+                <h3>🔥 Semana 2 (Días 8-14): ACCIÓN</h3>
+                <p>Hora de actuar. Candidaturas, networking, visibilidad.</p>
+
+                <div class="plan-week">
+                    <strong>Día 8: 1ª Candidatura</strong>
+                    <div class="plan-day">
+                        La más interesante. CV + cover letter adaptados. Envía.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Días 9-10: Candidaturas 2 y 3</strong>
+                    <div class="plan-day">
+                        Dos más. Procesa aprendizajes del día 8.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Día 11: Contacto Frío en LinkedIn</strong>
+                    <div class="plan-day">
+                        Mensaje a 3 CTOs, Tech Leads o Recruiters del sector. Sin spam: personalizado, breve, propósito claro.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Día 12: Asistir a Meetup/Evento Tech</strong>
+                    <div class="plan-day">
+                        Presencial (Campus Madrid, Google, etc.) u online (Twitch, YouTube Live, webinar). Networking en vivo.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Días 13-14: Posts Técnicos en LinkedIn</strong>
+                    <div class="plan-day">
+                        2 posts: "Aprendí X con este proyecto", "5 errores al hacer Y en IA", "Mi experiencia con RAG", etc. Muestra tu talento.
+                    </div>
+                </div>
+            </div>
+
+            <div class="plan-section">
+                <h3>📈 Semana 3 (Días 15-21): EXPANSIÓN</h3>
+                <p>Multiplicamos canales. Aumento de volumen.</p>
+
+                <div class="plan-week">
+                    <strong>Días 15-16: 2 Candidaturas Más</strong>
+                    <div class="plan-day">
+                        Total: 5 candidaturas. Ya tienes ritmo.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Día 17: Programas de Prácticas</strong>
+                    <div class="plan-day">
+                        2 aplicaciones a programas de internship. Startups, grandes tech companies, aceleradoras.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Días 18-19: Networking LinkedIn</strong>
+                    <div class="plan-day">
+                        5 conexiones nuevas. Gente del sector, otros juniors en búsqueda, mentores.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Día 20: Open Source</strong>
+                    <div class="plan-day">
+                        Contribuir a un proyecto open source. Aunque sea documentación o un pequeño fix. Cuenta para portfolio.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Día 21: 2 Posts Más en LinkedIn</strong>
+                    <div class="plan-day">
+                        Sigue compartiendo tu conocimiento. Visibilidad = oportunidades.
+                    </div>
+                </div>
+            </div>
+
+            <div class="plan-section">
+                <h3>✅ Semana 4 (Días 22-30): CONSOLIDACIÓN</h3>
+                <p>Cierre de ciclo y ajustes para el siguiente mes.</p>
+
+                <div class="plan-week">
+                    <strong>Días 22-23: Revisar Respuestas</strong>
+                    <div class="plan-day">
+                        ¿Quién respondió? ¿Próximo paso? Documenta todo.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Días 24-25: Follow-up</strong>
+                    <div class="plan-day">
+                        Recontacta a empresas que no respondieron (después de 7-10 días). Profesional, sin agobio.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Días 26-28: 3 Candidaturas Más</strong>
+                    <div class="plan-day">
+                        Total del mes: 8+ candidaturas. Ya es un número serio.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Día 29: Otro Evento/Meetup</strong>
+                    <div class="plan-day">
+                        Segunda ola de networking. Mantén visibilidad.
+                    </div>
+                </div>
+
+                <div class="plan-week">
+                    <strong>Día 30: Reflexión y Ajuste</strong>
+                    <div class="plan-day">
+                        ¿Qué funcionó? ¿Qué cambiar para el mes 2? Documenta aprendizajes. Prepara mes siguiente.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Checklist Entregables -->
+        <section class="card">
+            <h2>✅ Checklist del Boss Battle</h2>
+            <p>Para completar este boss battle con éxito, debes entregar:</p>
+
+            <div class="checklist">
+                <div class="checklist-item">
+                    <input type="checkbox" id="ch1">
+                    <label for="ch1"><strong>Lista de 5 empresas target en Madrid</strong> con justificación (qué hacen, por qué te interesan)</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ch2">
+                    <label for="ch2"><strong>CV adaptado a la oferta #1</strong> (PDF con cambios específicos para esa empresa)</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ch3">
+                    <label for="ch3"><strong>Cover letter personalizada</strong> para la oferta #1</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ch4">
+                    <label for="ch4"><strong>Perfil LinkedIn optimizado</strong> (headline, about, proyectos destacados)</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ch5">
+                    <label for="ch5"><strong>SSI Score de LinkedIn</strong> (captura de pantalla con tu puntuación)</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ch6">
+                    <label for="ch6"><strong>Mensajes de contacto frío listos</strong> para 3 recruiters/CTOs (texto preparado)</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ch7">
+                    <label for="ch7"><strong>1 candidatura REAL enviada</strong> (captura de confirmación: "Aplicada el X de abril")</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ch8">
+                    <label for="ch8"><strong>1 post técnico publicado en LinkedIn</strong> (URL del post)</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ch9">
+                    <label for="ch9"><strong>Respuestas a 15 preguntas técnicas</strong> de entrevista (documento con preguntas + tus respuestas)</label>
+                </div>
+
+                <div class="checklist-item">
+                    <input type="checkbox" id="ch10">
+                    <label for="ch10"><strong>Tabla de tracking iniciada</strong> (al menos 3 empresas registradas)</label>
+                </div>
+            </div>
+
+            <div class="success-message">
+                <strong>✓ Regla de oro:</strong> No puedes completar este boss battle sin haber enviado al menos 1 candidatura REAL. Esto no es simulación. Es tu carrera.
+            </div>
+        </section>
+
+        <!-- Tabla de Tracking -->
+        <section class="card">
+            <h2>📊 Tu Tabla de Tracking</h2>
+            <p>Copia esta tabla en un Google Sheet y mantén actualizado el estado de tus candidaturas. Ejemplo:</p>
+
+            <table class="tracking-table">
+                <thead>
+                    <tr>
+                        <th>Empresa</th>
+                        <th>Oferta / Puesto</th>
+                        <th>CV Adaptado</th>
+                        <th>Enviada</th>
+                        <th>Fecha Envío</th>
+                        <th>Respuesta</th>
+                        <th>Fecha Respuesta</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ej: Telefónica</td>
+                        <td>Junior AI Developer</td>
+                        <td>✓</td>
+                        <td>Sí</td>
+                        <td>3-Apr-2026</td>
+                        <td>No (aún)</td>
+                        <td>—</td>
+                        <td><span class="status-enviada">Enviada</span></td>
+                    </tr>
+                    <tr>
+                        <td>BBVA Next Tech</td>
+                        <td>Data Scientist</td>
+                        <td>✓</td>
+                        <td>Sí</td>
+                        <td>4-Apr-2026</td>
+                        <td>Sí, entrevista</td>
+                        <td>5-Apr-2026</td>
+                        <td><span class="status-respuesta">Respuesta +</span></td>
+                    </tr>
+                    <tr>
+                        <td>Cabify</td>
+                        <td>ML Engineer</td>
+                        <td>—</td>
+                        <td>No</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td><span class="status-pendiente">Pendiente</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="margin-top: 15px; color: var(--text-muted);">
+                <strong>Tip:</strong> Crea un Google Sheet compartido y comparte el link con alguien de confianza para accountability. A veces un testigo externo te mantiene en la ruta.
+            </p>
+        </section>
+
+        <!-- Motivación -->
+        <div class="motivation-box">
+            <h3>💪 Antes de que empieces, lee esto</h3>
+            <ul>
+                <li>Has completado <strong>110+ horas de formación</strong> en Python, IA, APIs, Full-Stack, RAG, Agentes</li>
+                <li>Tienes <strong>3+ proyectos en portfolio</strong> que demuestran tu talento</li>
+                <li>Dominas <strong>tecnologías reales</strong> que las empresas buscan hoy</li>
+                <li>Tienes <strong>certificaciones reconocidas</strong> (Google Cloud, etc.)</li>
+                <li>Estás <strong>preparado para entrevistas técnicas</strong></li>
+                <li>El mercado de IA está <strong>hambriento de talento</strong></li>
+                <li><strong>Cada "no" te acerca al "sí"</strong></li>
+                <li>Tu primer trabajo en IA no está lejos. <strong>Actúa hoy.</strong></li>
+            </ul>
+        </div>
+
+        <!-- SUBMISSION SECTION -->
+        <section class="card submission-section" data-class-id="m9-c05">
+            <h2 class="section-title">
+                <span class="section-icon">📤</span>
+                Envío del Boss Battle
+            </h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="boss-battle">
+                <h4>📤 Entregar práctica: Boss Battle Final - Plan de Acción de 30 Días + Primera Candidatura</h4>
+                <p style="color: var(--text-muted); font-size: 0.95em; margin-bottom: 1em;"><strong>Requisito principal:</strong> Este boss battle se completa SOLO si envías tu primera candidatura real. No es simulación, es acción.</p>
+                <textarea id="code-ejercicio-1" placeholder="Comparte: 1) Google Sheet con tu plan de 30 días (Days 1-30 con tareas), 2) Lista de 5 empresas target investigadas, 3) Tu CV adaptado, 4) Screenshot de tu primera candidatura enviada (con fecha y empresa), 5) URL de tu perfil LinkedIn optimizado, 6) Links a tus posts técnicos publicados" rows="12"></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m9-bb', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- QUIZ: 10 preguntas -->
+        <section class="card">
+            <h2>🎮 Quiz Final: Certifica tu Plan</h2>
+            <p>Responde 10 preguntas sobre el plan de acción. Debes acertar <strong>8 o más para pasar</strong>.</p>
+
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Celebration Section (Aparece tras pasar el quiz) -->
+        <section id="celebration-section" style="display: none;">
+            <div class="celebration">
+                <h2 style="font-size: 2em; margin-bottom: 20px;">🎓 ¡CURSO COMPLETADO!</h2>
+                <p style="font-size: 1.2em; margin-bottom: 20px;">Has terminado las 55 clases del curso "IA para Desarrolladores Web"</p>
+                <div class="celebration-badges">
+                    🏅 Job Hunter + 🎓 Curso Completado
+                </div>
+                <p style="font-size: 1.1em; margin-top: 20px;">
+                    <strong>Ahora tienes las habilidades, el portfolio y la estrategia.</strong><br>
+                    El siguiente paso es TUYO. <br><br>
+                    <strong style="font-size: 1.2em;">¡Mucha suerte, Juan! 🚀</strong>
+                </p>
+                <p style="margin-top: 30px; font-size: 0.95em; opacity: 0.9;">
+                    Recuerda: El primer trabajo es el más duro. Pero tienes todo lo que necesitas. Actúa, persiste, ajusta. Tú puedes.
+                </p>
+            </div>
+        </section>
+
+        <!-- Navegación -->
+        <section class="card" style="text-align: center; margin-top: 40px;">
+            <a href="clase-04.html" class="btn">← Clase 4: Estrategia de Búsqueda</a>
+            <a href="index.html" class="btn">Volver a Módulo 9 →</a>
+        </section>
+    </div>
+
+    <script src="../js/progress.js?v=20260430-cache-fix"></script>
+    <script>
+
+        // Quiz Data
+        const quizQuestions = [
+            {
+                question: "¿Cuál es el objetivo principal de este boss battle?",
+                options: [
+                    "Aprender teoría sobre búsqueda de empleo",
+                    "Crear un plan de acción REAL de 30 días y enviar tu PRIMERA candidatura",
+                    "Ver vídeos motivacionales",
+                    "Completar un formulario online"
+                ],
+                correct: 1,
+                explanation: "El objetivo es 100% práctico: plan real + primera candidatura enviada antes de terminar el módulo."
+            },
+            {
+                question: "¿Cuántas empresas debes investigar y seleccionar en el Día 1?",
+                options: [
+                    "1 empresa",
+                    "3 empresas",
+                    "5 empresas",
+                    "10 empresas"
+                ],
+                correct: 2,
+                explanation: "Día 1: Selecciona 5 empresas target en Madrid que contraten junior en IA/Tech."
+            },
+            {
+                question: "¿En qué semana envías tu PRIMERA candidatura?",
+                options: [
+                    "Semana 1 (días 1-7)",
+                    "Semana 2 (días 8-14)",
+                    "Semana 3 (días 15-21)",
+                    "Semana 4 (días 22-30)"
+                ],
+                correct: 1,
+                explanation: "Semana 2, Día 8: Tu primera candidatura. La más interesante."
+            },
+            {
+                question: "¿Qué debes hacer en el Día 11 de tu plan?",
+                options: [
+                    "Asistir a un meetup técnico",
+                    "Contacto frío en LinkedIn a 3 personas del sector",
+                    "Publicar 2 posts técnicos",
+                    "Aplicar a programas de prácticas"
+                ],
+                correct: 1,
+                explanation: "Día 11: Mensaje personalizado a 3 CTOs, Tech Leads o Recruiters. Sin spam."
+            },
+            {
+                question: "¿Cuántas candidaturas debes haber enviado al final del mes?",
+                options: [
+                    "3 candidaturas",
+                    "5 candidaturas",
+                    "8+ candidaturas",
+                    "15 candidaturas"
+                ],
+                correct: 2,
+                explanation: "Al final del mes: 8+ candidaturas (Semana 1: 0, Semana 2: 3, Semana 3: 5, Semana 4: 8)."
+            },
+            {
+                question: "¿Cuál es el primer paso del Día 3?",
+                options: [
+                    "Enviar candidaturas",
+                    "Hacer contacto frío en LinkedIn",
+                    "Adaptar tu CV a la oferta #1",
+                    "Publicar un post técnico"
+                ],
+                correct: 2,
+                explanation: "Día 3: Adaptar CV específicamente a la empresa + oferta más interesante."
+            },
+            {
+                question: "¿Qué tipo de contenido debes publicar en LinkedIn según el plan?",
+                options: [
+                    "Solo memes de programadores",
+                    "Posts técnicos sobre tus proyectos, aprendizajes y errores",
+                    "Links de artículos ajenos",
+                    "Fotos personales"
+                ],
+                correct: 1,
+                explanation: "Posts técnicos: 'Aprendí X', '5 errores en Y', 'Mi experiencia con Z'. Muestra tu talento."
+            },
+            {
+                question: "¿Qué empresa se cita como ejemplo de target en Madrid?",
+                options: [
+                    "Google Palo Alto",
+                    "Microsoft Seattle",
+                    "Telefónica",
+                    "Meta California"
+                ],
+                correct: 2,
+                explanation: "Telefónica es una de las empresas target sugeridas en Madrid que contratan junior en tech."
+            },
+            {
+                question: "¿Cuál es la regla de oro de este boss battle?",
+                options: [
+                    "Ver todos los vídeos del curso",
+                    "Memorizar el plan completo",
+                    "Completar todos los posts en LinkedIn",
+                    "No puedes terminar sin haber enviado TU PRIMERA CANDIDATURA REAL"
+                ],
+                correct: 3,
+                explanation: "Regla de oro: Este boss battle no se completa sin una candidatura REAL enviada."
+            },
+            {
+                question: "¿Qué debes hacer en el Día 30?",
+                options: [
+                    "Enviar 5 candidaturas más",
+                    "Reflexión: qué funcionó, qué cambiar para el mes siguiente",
+                    "Asistir a 2 meetups",
+                    "Publicar 5 posts en LinkedIn"
+                ],
+                correct: 1,
+                explanation: "Día 30 (Consolidación): Reflexiona sobre aprendizajes y prepara el mes siguiente."
+            }
+        ];
+
+        // Initialize Quiz
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm9-bb');
+
+        // Override the original callback to show celebration
+        const originalCallback = window.quizPassedCallback;
+        window.quizPassedCallback = function() {
+            if (originalCallback) originalCallback();
+            // Show celebration section
+            document.getElementById('celebration-section').style.display = 'block';
+            // Scroll to celebration
+            setTimeout(() => {
+                document.getElementById('celebration-section').scrollIntoView({ behavior: 'smooth' });
+            }, 500);
+            // Award badges
+            CourseProgress.addBadge('Job Hunter', '🏅');
+            CourseProgress.addBadge('Curso Completado', '🎓');
+        };
+    </script>
+</body>
+</html>

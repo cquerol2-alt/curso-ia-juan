@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Map — Context stuffing en serio</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0a0a1a;color:#e8e8f0;font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+        .topbar{padding:12px 20px;background:linear-gradient(90deg,#00f0ff,#0a6e5c);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+        .topbar a{color:#fff;text-decoration:none;background:rgba(255,255,255,.15);padding:6px 14px;border-radius:20px;font-size:.85em;transition:.3s}
+        .topbar a:hover{background:rgba(255,255,255,.3)}
+        .topbar h1{font-size:1.1em;color:#fff;text-align:center;flex:1;margin:0 12px}
+        .map{max-width:900px;margin:30px auto;padding:0 16px}
+        .center{text-align:center;margin-bottom:32px}
+        .center .pill{display:inline-block;background:linear-gradient(135deg,#00f0ff,#ff00e5);padding:16px 32px;border-radius:60px;font-size:1.4em;font-weight:800;color:#0a0a1a;box-shadow:0 0 30px rgba(0,240,255,.3)}
+        .center .sub{color:#8888aa;margin-top:8px;font-size:.95em}
+        .branch{margin-bottom:16px;border:1px solid rgba(0,240,255,.15);border-radius:12px;overflow:hidden;transition:.3s}
+        .branch:hover{border-color:rgba(0,240,255,.4);box-shadow:0 0 15px rgba(0,240,255,.08)}
+        .branch-head{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;background:#12122a;user-select:none;transition:.2s}
+        .branch-head:hover{background:#1a1a3e}
+        .branch-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2em;flex-shrink:0}
+        .b1 .branch-icon{background:rgba(0,240,255,.15);border:2px solid #00f0ff}
+        .b2 .branch-icon{background:rgba(57,255,20,.15);border:2px solid #39ff14}
+        .b3 .branch-icon{background:rgba(255,107,107,.15);border:2px solid #ff6b6b}
+        .b4 .branch-icon{background:rgba(255,0,229,.15);border:2px solid #ff00e5}
+        .b5 .branch-icon{background:rgba(255,230,0,.15);border:2px solid #ffe600}
+        .branch-title{flex:1;font-weight:700;font-size:1.05em}
+        .b1 .branch-title{color:#00f0ff}
+        .b2 .branch-title{color:#39ff14}
+        .b3 .branch-title{color:#ff6b6b}
+        .b4 .branch-title{color:#ff00e5}
+        .b5 .branch-title{color:#ffe600}
+        .toggle{color:#8888aa;font-size:1.4em;transition:transform .3s}
+        .branch.open .toggle{transform:rotate(45deg)}
+        .branch-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+        .branch.open .branch-body{max-height:800px}
+        .sub-list{padding:8px 20px 16px 72px;display:flex;flex-direction:column;gap:8px}
+        .sub-item{padding:10px 16px;background:#1a1a2e;border-radius:8px;border-left:3px solid;font-size:.93em;line-height:1.5}
+        .b1 .sub-item{border-color:#00f0ff}
+        .b2 .sub-item{border-color:#39ff14}
+        .b3 .sub-item{border-color:#ff6b6b}
+        .b4 .sub-item{border-color:#ff00e5}
+        .b5 .sub-item{border-color:#ffe600}
+        .sub-item strong{color:#fff}
+        .sub-item code{background:#12122a;padding:2px 6px;border-radius:4px;font-size:.88em;color:#39ff14;font-family:'Fira Code',monospace}
+        @media(max-width:600px){.topbar h1{font-size:.9em}.center .pill{font-size:1.1em;padding:12px 24px}.sub-list{padding-left:52px}}
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="clase-02.html">← Volver a la clase</a>
+        <h1>Mind Map — Clase 02: context stuffing en serio</h1>
+        <div style="width:80px"></div>
+    </div>
+
+    <div class="map">
+        <div class="center">
+            <div class="pill">Stuffing con cabeza</div>
+            <p class="sub">Ventanas largas + prompt caching = stuffing gana a RAG en &lt;300 páginas</p>
+        </div>
+
+        <!-- Rama 1 — Cuánto cabe -->
+        <div class="branch b1">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">📏</div>
+                <div class="branch-title">¿Cuánto cabe en 200K tokens?</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Regla:</strong> 1 token ≈ 4 caracteres; 1 página de PDF ≈ <strong>500–700 tokens</strong></div>
+                    <div class="sub-item">Claude Sonnet 4.6: ventana <strong>200K</strong> tokens → ~<strong>280–400 páginas</strong> de PDF</div>
+                    <div class="sub-item">Versión long-context: <strong>1M</strong> tokens → ~<strong>1 500 páginas</strong> (un libro técnico + sus apéndices)</div>
+                    <div class="sub-item">Usa <code>client.messages.count_tokens()</code> para el dato exacto antes de lanzar la query real</div>
+                    <div class="sub-item"><strong>Intuición:</strong> si el doc se lee en una tarde, cabe. Si llena una estantería, no.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 2 — Prompt caching -->
+        <div class="branch b2">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">💾</div>
+                <div class="branch-title">Prompt caching (el game changer)</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Idea:</strong> marcar el bloque grande (el doc) con <code>cache_control: {"type":"ephemeral"}</code> y reutilizarlo</div>
+                    <div class="sub-item"><strong>Coste 1ª llamada:</strong> 1,25× (se paga escribir el caché)</div>
+                    <div class="sub-item"><strong>Coste 2ª-Nª llamada:</strong> 0,1× → <strong>10× más barato</strong></div>
+                    <div class="sub-item"><strong>Duración:</strong> 5 minutos por defecto (ephemeral); existe 1 h extendido con precio distinto</div>
+                    <div class="sub-item">Verifica en <code>usage.cache_read_input_tokens</code> y <code>usage.cache_creation_input_tokens</code> que el caché está funcionando</div>
+                    <div class="sub-item"><strong>Efecto secundario:</strong> latencia baja de 8–10 s a 1–2 s. La UX cambia totalmente</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 3 — Lost in the middle -->
+        <div class="branch b3">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">🕳️</div>
+                <div class="branch-title">"Lost in the middle": el riesgo real</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Qué es:</strong> los LLMs recuerdan mejor principio y final del contexto; lo del medio se difumina (curva en U)</div>
+                    <div class="sub-item">Demostrado por Liu et al. (2023) y confirmado en cada generación de modelos</div>
+                    <div class="sub-item">Claude Sonnet 4.6 lo mitiga (&gt;99% en "needle in a haystack" hasta 200K), pero <strong>no lo elimina</strong> con docs ruidosos</div>
+                    <div class="sub-item"><strong>Mitigación 1:</strong> pregunta al <em>final</em> del prompt, nunca al principio</div>
+                    <div class="sub-item"><strong>Mitigación 2:</strong> cabeceras claras (<code>## Sección 3</code>) y separadores si hay varios docs (<code>&lt;doc id="manual"&gt;</code>)</div>
+                    <div class="sub-item"><strong>Diagnóstico barato:</strong> parte el doc por la mitad y compara — si una mitad acierta y la otra no, es lost in the middle</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 4 — Coste vs RAG -->
+        <div class="branch b4">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">💰</div>
+                <div class="branch-title">Coste real: stuffing con caché vs RAG</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item">PDF 200 pág (~130K tokens). Precio Claude Sonnet 4.6: <strong>$3/M input</strong>, <strong>$15/M output</strong></div>
+                    <div class="sub-item"><strong>Sin caché</strong> 1ª query: ~$0,39 · <strong>10ª query</strong>: ~$0,39 (siempre igual)</div>
+                    <div class="sub-item"><strong>Con caché</strong> 1ª query: ~$0,49 (escribe) · <strong>10ª query</strong>: ~$0,04 (lee) 🟢</div>
+                    <div class="sub-item"><strong>RAG clásico</strong> por query: ~$0,003 (solo chunks relevantes) pero requiere infra y mantenimiento</div>
+                    <div class="sub-item"><strong>Regla mental:</strong> si haces &lt; ~100 queries/día sobre el mismo doc, stuffing + caché gana en TCO vs RAG</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rama 5 — Cuándo elegir stuffing -->
+        <div class="branch b5">
+            <div class="branch-head" onclick="this.parentElement.classList.toggle('open')">
+                <div class="branch-icon">✅</div>
+                <div class="branch-title">Cuándo stuffing gana (sí, también a RAG)</div>
+                <div class="toggle">+</div>
+            </div>
+            <div class="branch-body">
+                <div class="sub-list">
+                    <div class="sub-item"><strong>Condición 1:</strong> el doc cabe en &lt;200K tokens (~300 páginas)</div>
+                    <div class="sub-item"><strong>Condición 2:</strong> el doc cambia poco (el caché se aprovecha varias queries seguidas)</div>
+                    <div class="sub-item"><strong>Condición 3:</strong> las preguntas requieren <em>cross-sección</em> (ver varias partes del doc a la vez)</div>
+                    <div class="sub-item">Si cumples las 3 → stuffing con caché es <strong>más simple, más barato operativamente y a menudo más preciso</strong></div>
+                    <div class="sub-item"><strong>Trampa de junior:</strong> saltar a RAG por reflejo cuando stuffing sobra. En 2026 eso cuesta tiempo y da peores resultados</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

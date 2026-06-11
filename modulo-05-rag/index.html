@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 5: Context, Search & RAG — Cómo conectas una IA con tus datos</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <strong>Módulo 5</strong>
+        </nav>
+
+        <!-- Module Header -->
+        <header class="course-header">
+            <div class="header-content">
+                <h1>Módulo 5: Context, Search &amp; RAG</h1>
+                <div class="module-tag">
+                    <span>Semanas 6-8 · 20 horas · 10 clases</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Description Card -->
+        <section class="card description-card">
+            <h2>Objetivo del módulo</h2>
+            <p>
+                <strong>Aprende a conectar una IA con información que no está en su entrenamiento</strong> — tus PDFs, tu base de datos, tus apuntes, la web. Hay tres formas de hacerlo (context stuffing, agentic search y RAG clásico), y la habilidad que vale dinero en 2026 es saber <em>cuándo usar cada una</em>.
+            </p>
+            <p style="margin-top: 12px; font-size: 0.95em; color: #b0b0cc;">
+                En vez de aprender LangChain como framework (que está perdiendo relevancia), aprenderás las primitivas reales: ventanas de contexto, tool use, embeddings, evals. Al final del módulo tendrás un proyecto portfolio donde comparas las 3 arquitecturas sobre los mismos datos y justificas cuál elegirías en producción.
+            </p>
+            <div class="info" style="margin-top: 16px; border-left: 3px solid #00e676;">
+                <strong>🧭 Filosofía del módulo:</strong> <em>context engineering &gt; prompt engineering</em>. En 2026, el trabajo de un AI engineer no es escribir prompts bonitos, sino decidir qué información llega al modelo, cómo, cuándo y a qué coste. Este módulo te entrena en ese criterio.
+            </div>
+        </section>
+
+        <!-- Progress Section -->
+        <section class="card progress-section">
+            <h2>Progreso del módulo</h2>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span class="progress-text" id="progress-text">0/10 clases completadas</span>
+                    <span class="progress-percentage" id="progress-percentage">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- XP Bar -->
+            <div class="xp-bar-container" style="margin-top: 24px;">
+                <div class="xp-header">
+                    <span>Experiencia del módulo</span>
+                    <span class="xp-value" id="xp-value">0 XP</span>
+                </div>
+                <div class="xp-bar">
+                    <div class="xp-fill" id="xp-fill" style="width: 0%"></div>
+                </div>
+                <div class="xp-milestone" style="margin-top: 8px; font-size: 0.85em; color: #b0b0cc;">
+                    <span id="xp-milestone">Siguiente hito: 200 XP</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Qué contratar en Anthropic -->
+        <section class="card" style="border-left: 4px solid #ff00e5;">
+            <h2 class="section-title"><span class="section-icon">💳</span> Qué contratar en Anthropic (obligatorio)</h2>
+            <p style="margin-bottom: 1em;">
+                Todo el módulo usa la <strong>API de Anthropic</strong>, no LangChain, no wrappers. Antes de empezar la clase 01 necesitas tener <strong>créditos de API cargados</strong>. Aquí están las opciones y <strong>qué te recomiendo</strong>:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th>Qué es</th>
+                        <th>Precio</th>
+                        <th>¿Te vale para el curso?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: rgba(57,255,20,.08);">
+                        <td><strong>Claude API</strong><br><small>(Anthropic Console)</small></td>
+                        <td>Créditos pay-as-you-go para usar la API desde Python. Es lo que llama <code>client.messages.create(...)</code></td>
+                        <td>Pago por uso · <strong>mínimo $5</strong></td>
+                        <td>✅ <strong>OBLIGATORIO</strong> — sin esto no puedes hacer ni un ejercicio</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Claude Pro</strong></td>
+                        <td>Plan del chat <em>claude.ai</em>. Te da más mensajes, Projects, y acceso a los modelos más nuevos en la web</td>
+                        <td>$20/mes</td>
+                        <td>❌ No sirve para la API. Solo es para el chat web</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Claude Max</strong></td>
+                        <td>Plan premium del chat: 5× o 20× más uso que Pro, acceso anticipado a features</td>
+                        <td>$100 o $200/mes</td>
+                        <td>❌ Lo mismo que Pro — es chat, no API. Sobra para este curso</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Claude Code</strong><br><small>(CLI)</small></td>
+                        <td>Agente de coding en terminal. Viene incluido con Pro/Max o se paga por API</td>
+                        <td>Incluido con Pro/Max, o consumo de API</td>
+                        <td>🟡 Opcional — útil para trabajar, no necesario para los ejercicios</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tip" style="margin-top: 16px; border-left: 3px solid #39ff14;">
+                <strong>🎯 Mi recomendación para Juan:</strong>
+                <ol style="margin-top: 8px;">
+                    <li>Entra en <a href="https://console.anthropic.com/" target="_blank" style="color:#00f0ff;">console.anthropic.com</a>, crea cuenta, ve a <em>Billing → Add credits</em> y carga <strong>$10</strong>. Eso es más que suficiente para todo el módulo (estimación real: $4-7).</li>
+                    <li>En <em>Settings → Limits</em> pon un <strong>spend limit mensual de $15</strong> como red de seguridad.</li>
+                    <li>En <em>API Keys</em> crea una key nueva y guárdala en tu <code>.env</code> como <code>ANTHROPIC_API_KEY</code>. <strong>No la subas a GitHub.</strong></li>
+                    <li><strong>No contrates Claude Pro/Max</strong> para el curso. Si ya lo tienes por otro motivo, úsalo para aprender chateando con Claude — pero los ejercicios no lo usan.</li>
+                </ol>
+            </div>
+
+            <div class="warning" style="margin-top: 12px;">
+                <strong>⚠️ Error típico:</strong> pagar Claude Pro pensando que "te da acceso a la API". No. Son productos distintos con facturación separada. Para hacer código con el SDK, tienes que cargar créditos en <em>Anthropic Console</em> aparte.
+            </div>
+
+            <div class="info" style="margin-top: 12px;">
+                <strong>💸 Estimación real del módulo (con prompt caching activado):</strong>
+                Clases 01-03: ~$0.50 · Clase 04 (embeddings): ~$1 en OpenAI aparte · Clases 05-09: ~$2 · Boss Battle: ~$1.50. Total ≈ <strong>$5 en Anthropic + $1 en OpenAI</strong>. Carga $10 en cada uno y te sobra.
+            </div>
+        </section>
+
+        <!-- Antes de empezar -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">🔧</span> Antes de empezar: herramientas necesarias</h2>
+            <p style="margin-bottom: 1em;">Instala estas herramientas <strong>antes de empezar la semana 6</strong>. Todo es gratuito (salvo API credits de arriba).</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Herramienta</th>
+                        <th>Para qué</th>
+                        <th>Acceso</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Claude API (Anthropic)</strong></td>
+                        <td>Modelo principal con ventana de 200K y tool use excelente</td>
+                        <td><a href="https://console.anthropic.com/" target="_blank">console.anthropic.com ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>OpenAI API</strong></td>
+                        <td>Embeddings (<code>text-embedding-3-small</code>) y modelo alternativo</td>
+                        <td><a href="https://platform.openai.com/" target="_blank">platform.openai.com ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>ChromaDB</strong></td>
+                        <td>Vector store local, sin servidor (<code>pip install chromadb</code>)</td>
+                        <td><a href="https://www.trychroma.com/" target="_blank">trychroma.com ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ragas</strong></td>
+                        <td>Librería de evals para sistemas RAG (<code>pip install ragas</code>)</td>
+                        <td><a href="https://docs.ragas.io/" target="_blank">docs.ragas.io ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Langfuse</strong></td>
+                        <td>Observability y trazas de llamadas LLM (free tier)</td>
+                        <td><a href="https://langfuse.com/" target="_blank">langfuse.com ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>PyPDF</strong></td>
+                        <td>Cargar y parsear PDFs (<code>pip install pypdf</code>)</td>
+                        <td><a href="https://pypi.org/project/pypdf/" target="_blank">pypdf en PyPI ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vercel AI SDK</strong></td>
+                        <td>Frontend con streaming para el Boss Battle (<code>npm install ai</code>)</td>
+                        <td><a href="https://sdk.vercel.ai/" target="_blank">sdk.vercel.ai ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Instalación rápida (Python):</strong> <code>pip install anthropic openai chromadb ragas langfuse pypdf</code>
+            </div>
+
+            <div class="warning" style="margin-top: 1em;">
+                <strong>Coste estimado: 8-15 €/mes</strong> durante semanas 6-7 por uso de Claude + OpenAI (embeddings y respuestas). Pon un límite mensual de 15 € en ambos dashboards.
+            </div>
+
+            <div class="info" style="margin-top: 1em;">
+                <strong>¿Y LangChain?</strong> No lo necesitas para este módulo. Lo mencionaremos 15 min en la Clase 04 para que sepas qué es y cuándo sobra, pero no construirás nada encima. Trabajarás directamente con los SDK de Anthropic y OpenAI.
+            </div>
+        </section>
+
+        <!-- Classes List -->
+        <section class="card">
+            <h2>Clases del módulo</h2>
+            <div class="clase-list">
+                <!-- Semanas 6-7 Header -->
+                <div class="semana-header">
+                    <h3>Semanas 6-7: Las 3 arquitecturas</h3>
+                </div>
+
+                <a href="clase-01.html" class="clase-item" data-clase-id="1">
+                    <div class="clase-number">01</div>
+                    <div class="clase-info">
+                        <h3>El problema: cómo conectas una IA con tus datos</h3>
+                        <p class="clase-meta">Miércoles · Semana 6 · Context engineering</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-1">☐</span>
+                    </div>
+                </a>
+
+                <a href="clase-02.html" class="clase-item" data-clase-id="2">
+                    <div class="clase-number">02</div>
+                    <div class="clase-info">
+                        <h3>Context stuffing en serio: ventanas de 200K-1M tokens</h3>
+                        <p class="clase-meta">Jueves · Semana 6 · La opción que muchos ignoran</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-2">☐</span>
+                    </div>
+                </a>
+
+                <a href="clase-03.html" class="clase-item" data-clase-id="3">
+                    <div class="clase-number">03</div>
+                    <div class="clase-info">
+                        <h3>Agentic search: el modelo decide qué buscar</h3>
+                        <p class="clase-meta">Viernes · Semana 6 · Tool use nativo</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-3">☐</span>
+                    </div>
+                </a>
+
+                <a href="clase-04.html" class="clase-item" data-clase-id="4">
+                    <div class="clase-number">04</div>
+                    <div class="clase-info">
+                        <h3>Embeddings y vector stores desde cero (sin LangChain)</h3>
+                        <p class="clase-meta">Lunes · Semana 7 · ChromaDB + OpenAI embeddings</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-4">☐</span>
+                    </div>
+                </a>
+
+                <a href="clase-05.html" class="clase-item" data-clase-id="5">
+                    <div class="clase-number">05</div>
+                    <div class="clase-info">
+                        <h3>RAG clásico como pieza: chunking, retrieval, reranking</h3>
+                        <p class="clase-meta">Martes · Semana 7 · Técnica, no religión</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-5">☐</span>
+                    </div>
+                </a>
+
+                <!-- Semanas 7-8 Header -->
+                <div class="semana-header" style="margin-top: 1.5em;">
+                    <h3>Semanas 7-8: Criterio, evals y producción</h3>
+                </div>
+
+                <a href="clase-06.html" class="clase-item" data-clase-id="6">
+                    <div class="clase-number">06</div>
+                    <div class="clase-info">
+                        <h3>Cuándo RAG sí gana: benchmarks de las 3 arquitecturas</h3>
+                        <p class="clase-meta">Miércoles · Semana 7 · Coste, latencia, calidad</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-6">☐</span>
+                    </div>
+                </a>
+
+                <a href="clase-07.html" class="clase-item" data-clase-id="7">
+                    <div class="clase-number">07</div>
+                    <div class="clase-info">
+                        <h3>Evals: cómo mides si tu sistema responde bien</h3>
+                        <p class="clase-meta">Jueves · Semana 7 · Ragas + LLM-as-judge</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-7">☐</span>
+                    </div>
+                </a>
+
+                <a href="clase-08.html" class="clase-item" data-clase-id="8">
+                    <div class="clase-number">08</div>
+                    <div class="clase-info">
+                        <h3>Frontend con Vercel AI SDK: streaming y UX de IA</h3>
+                        <p class="clase-meta">Viernes · Semana 7 · Next.js + SDK</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-8">☐</span>
+                    </div>
+                </a>
+
+                <a href="clase-09.html" class="clase-item" data-clase-id="9">
+                    <div class="clase-number">09</div>
+                    <div class="clase-info">
+                        <h3>Deploy y observability con Langfuse</h3>
+                        <p class="clase-meta">Lunes · Semana 8 · Trazas, costes, debugging</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-9">☐</span>
+                    </div>
+                </a>
+
+                <!-- Clase 10 - Boss Battle -->
+                <a href="clase-10-boss-battle.html" class="clase-item boss-battle" data-clase-id="10">
+                    <div class="clase-number boss-number">🎯</div>
+                    <div class="clase-info">
+                        <h3>Boss Battle: 3 arquitecturas sobre mis apuntes, comparadas</h3>
+                        <p class="clase-meta">Martes · Semana 8 · Proyecto portfolio #2</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-10">☐</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Badge Card -->
+        <section class="card" style="text-align: center;">
+            <h2>🏅 Badge del módulo</h2>
+            <p style="font-size: 3em; margin: 0.3em 0;">🧩</p>
+            <p><strong>Context Engineer</strong></p>
+            <p style="color: #b0b0cc; font-size: 0.9em;">Completa las 10 clases para desbloquear este badge</p>
+        </section>
+
+        <!-- Certificación -->
+        <section class="card">
+            <h2>📜 Recursos complementarios</h2>
+            <p>Durante el módulo, apóyate en estos recursos gratuitos:</p>
+            <ul>
+                <li><strong><a href="https://docs.anthropic.com/en/docs/build-with-claude/tool-use" target="_blank">Anthropic Tool Use Docs</a></strong> — referencia oficial para clases 03, 06 y Boss Battle</li>
+                <li><strong><a href="https://docs.ragas.io/" target="_blank">Ragas Documentation</a></strong> — librería estándar para evals de RAG</li>
+                <li><strong><a href="https://www.anthropic.com/news/contextual-retrieval" target="_blank">Anthropic — Contextual Retrieval</a></strong> — paper/blog post clave sobre RAG moderno</li>
+            </ul>
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Nota v2 (abril 2026):</strong> El curso original mencionaba el curso "LangChain: Chat with Your Data" de DeepLearning.AI como certificación. Lo hemos quitado porque ya no representa cómo se construyen sistemas RAG hoy. Si tienes curiosidad por LangChain, míralo después del módulo como "contexto histórico".
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="module-footer">
+            <a href="../index.html" class="footer-link">← Volver al Dashboard</a>
+            <p class="footer-text">Módulo 5 de 9 · Context, Search &amp; RAG</p>
+        </footer>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        function initializeModuleProgress() {
+            const moduleProgress = CourseProgress.getModuleProgress(5);
+            const completedClasses = moduleProgress.completed;
+            const totalClasses = 10;
+            const progressPercentage = (completedClasses / totalClasses) * 100;
+
+            document.getElementById('progress-text').textContent = `${completedClasses}/${totalClasses} clases completadas`;
+            document.getElementById('progress-percentage').textContent = `${Math.round(progressPercentage)}%`;
+            document.getElementById('progress-fill').style.width = `${progressPercentage}%`;
+
+            const currentXP = moduleProgress.xp;
+            const maxXP = 200;
+            const xpPercentage = Math.min((currentXP / maxXP) * 100, 100);
+            document.getElementById('xp-value').textContent = `${currentXP} XP`;
+            document.getElementById('xp-fill').style.width = `${xpPercentage}%`;
+
+            const nextMilestone = Math.ceil((currentXP + 1) / 50) * 50;
+            document.getElementById('xp-milestone').textContent = `Siguiente hito: ${nextMilestone} XP`;
+
+            for (let i = 1; i <= 10; i++) {
+                const classId = `m5-c${i.toString().padStart(2, '0')}`;
+                const isCompleted = CourseProgress.isClassCompleted(classId);
+                const checkIcon = document.getElementById(`check-${i}`);
+
+                if (isCompleted) {
+                    checkIcon.textContent = '✓';
+                    checkIcon.style.color = '#39ff14';
+                    checkIcon.style.fontWeight = 'bold';
+                } else {
+                    checkIcon.textContent = '☐';
+                    checkIcon.style.color = '#8888aa';
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeModuleProgress();
+            CourseProgress.initToolChecklist(5);
+        });
+    </script>
+</body>
+</html>

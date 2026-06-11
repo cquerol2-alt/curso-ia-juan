@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 04: Embeddings y vector stores desde cero (sin LangChain)</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> > </span>
+            <a href="index.html">Módulo 5</a>
+            <span> > </span>
+            <strong>Clase 04</strong>
+        </nav>
+
+        <!-- Header -->
+        <header class="module-header">
+            <h1>Clase 04: Embeddings y vector stores desde cero (sin LangChain)</h1>
+            <p class="subtitle">📅 Semana 7 — Lunes | ⏱️ 55 minutos</p>
+        </header>
+
+        <!-- Intro -->
+        <div class="card" style="border-left: 4px solid #39ff14;">
+            <h2>🧮 Por qué embeddings son la pieza fundamental que tienes que entender</h2>
+            <p>
+                La búsqueda por substring del agente de la clase 03 tiene un problema obvio: si tú tienes un apunte que habla de <em>"caching en Anthropic"</em> y preguntas <em>"cómo reutilizo el contexto entre llamadas"</em>, <strong>no encuentra nada</strong>. No hay una sola palabra en común.
+            </p>
+            <p>
+                <strong>Los embeddings resuelven exactamente eso.</strong> Son la representación numérica que te permite buscar por significado, no por palabras. Sin embeddings no hay RAG. Sin entender bien embeddings vas a copiar snippets y tu sistema va a fallar en producción sin que sepas por qué.
+            </p>
+            <p>
+                Esta clase no monta LangChain encima. Trabajas con <strong>la API de OpenAI directamente</strong> (<code>text-embedding-3-small</code>) y <strong>ChromaDB</strong> como vector store local. Al final tendrás una versión semántica del <code>search_docs</code> de la clase 03 que encuentra lo relevante aunque no compartan una palabra.
+            </p>
+            <div class="tip" style="margin-top: 16px;">
+                <strong>📖 Lectura complementaria (10 min):</strong>
+                <a href="https://platform.openai.com/docs/guides/embeddings" target="_blank" style="color: #00f0ff;">OpenAI Embeddings Guide</a>.
+                Te quedas con: qué es <code>text-embedding-3-small</code> (1536 dimensiones), coste ($0.02/1M tokens), y que normaliza los vectores por ti (coseno = producto escalar).
+            </div>
+        </div>
+
+        <!-- Vídeo -->
+        <div class="card">
+            <h2>📹 Vídeo principal (22 min)</h2>
+            <div class="video-wrapper">
+                <iframe width="100%" height="450" src="https://www.youtube.com/embed/ySus5ZS0b94" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <a href="https://www.youtube.com/watch?v=ySus5ZS0b94" target="_blank" class="btn" style="background:#ff0000;">▶ Ver en YouTube ↗</a>
+                <p style="font-size:.85em; color:#b0b0cc; margin-top:6px;">Si el reproductor de arriba sale en blanco (pasa al abrir el HTML con doble-click por política de YouTube), usa este botón.</p>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Resumen visual de los conceptos en español.
+                <a href="mindmap-05-c04.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </div>
+
+        <!-- Conceptos clave -->
+        <aside class="workshop-ref">
+            <h4>📚 Profundiza con el workshop de hola.dev</h4>
+            <p style="margin:0;">Repaso visual de embeddings y panorama de vector DBs (mayo 2026) antes de meter ChromaDB:</p>
+            <ul>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#embeddings-practica" target="_blank" rel="noopener">Sección 14 — Embeddings en la práctica: aritmética de significado</a></li>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#vectordb" target="_blank" rel="noopener">Sección 73 — Bases de datos vectoriales: SQL vs NoSQL vs vectorial</a></li>
+            </ul>
+            <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+        </aside>
+
+
+
+
+<div class="card">
+            <h2>🧠 Conceptos clave</h2>
+
+            <h3 style="color:#39ff14;">1. Qué es un embedding</h3>
+            <p>
+                Un <strong>embedding</strong> es un vector de números reales (típicamente 384–1536 dimensiones) que representa el <em>significado</em> de un trozo de texto. Dos textos que hablan de lo mismo → sus vectores caen <em>cerca</em> en el espacio. Dos textos no relacionados → <em>lejos</em>.
+            </p>
+            <ul>
+                <li>"caching en Anthropic" → <code>[0.12, -0.34, 0.88, ..., 0.02]</code> (1536 floats)</li>
+                <li>"reutilizar contexto entre llamadas" → <code>[0.10, -0.30, 0.91, ..., 0.05]</code> ← <strong>parecido</strong></li>
+                <li>"receta de paella" → <code>[0.91, 0.45, -0.22, ..., -0.60]</code> ← lejos</li>
+            </ul>
+
+            <h3 style="color:#39ff14;">2. Distancia coseno (la única que necesitas recordar)</h3>
+            <p>
+                La métrica estándar para comparar embeddings es la <strong>similaridad coseno</strong>: mide el ángulo entre dos vectores. Va de −1 (opuestos) a 1 (idénticos).
+            </p>
+            <pre><code>import numpy as np
+
+def cos_sim(a, b):
+    a, b = np.array(a), np.array(b)
+    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))</code></pre>
+            <div class="info" style="margin-top: 8px;">
+                OpenAI te devuelve vectores <strong>ya normalizados</strong> (norm=1). Eso significa que el <em>producto escalar</em> (<code>np.dot</code>) ya ES la similaridad coseno. Puedes ahorrarte el denominador.
+            </div>
+
+            <h3 style="color:#39ff14;">3. El modelo: text-embedding-3-small</h3>
+            <ul>
+                <li><strong>Dimensiones:</strong> 1536 (reducibles a 256–512 con el parámetro <code>dimensions</code> sin perder casi calidad)</li>
+                <li><strong>Contexto máximo:</strong> 8 191 tokens por documento</li>
+                <li><strong>Coste:</strong> $0.02 por millón de tokens → indexar 1 000 páginas cuesta ~$0.01</li>
+                <li><strong>Por qué este y no Anthropic:</strong> Anthropic <em>no</em> ofrece API de embeddings a día de hoy. Usa OpenAI o Voyage AI. Es normal mezclar proveedores en stack de producción</li>
+            </ul>
+
+            <h3 style="color:#39ff14;">4. Vector store: ChromaDB</h3>
+            <p>
+                Un <strong>vector store</strong> es una base de datos optimizada para buscar "los k vectores más cercanos a este otro" (nearest neighbor search) de forma barata — no recorre los N documentos uno a uno, usa estructuras como HNSW.
+            </p>
+            <ul>
+                <li><strong>ChromaDB:</strong> el más simple. <code>pip install chromadb</code> y listo. Dos modos:
+                    <ul>
+                        <li><code>Client()</code> en memoria (se pierde al cerrar) — para prototipos</li>
+                        <li><code>PersistentClient(path="./chroma")</code> en disco — lo que usarás tú</li>
+                    </ul>
+                </li>
+                <li><strong>Alternativas:</strong> FAISS (más rápido, más manual), Qdrant/Weaviate (cliente-servidor, escalable), Pinecone (managed)</li>
+                <li><strong>Regla 2026:</strong> si tu corpus cabe en una máquina (&lt; 1M documentos), ChromaDB sobra. No pagues Pinecone por gusto</li>
+            </ul>
+        </div>
+
+        <!-- Práctica guiada -->
+        <div class="card">
+            <h2>🛠️ Práctica guiada (35 min)</h2>
+
+            <h3>Paso 1 — Entorno</h3>
+            <pre><code>pip install openai chromadb numpy python-dotenv</code></pre>
+            <p>Añade al <code>.env</code>: <code>OPENAI_API_KEY=sk-...</code> (junto al <code>ANTHROPIC_API_KEY</code> de antes).</p>
+
+            <h3>Paso 2 — Tu primer embedding</h3>
+            <pre><code>import os, numpy as np
+from dotenv import load_dotenv
+from openai import OpenAI
+
+load_dotenv()
+oai = OpenAI()
+
+def embed(texts: list[str]) -> list[list[float]]:
+    resp = oai.embeddings.create(
+        model="text-embedding-3-small",
+        input=texts
+    )
+    return [d.embedding for d in resp.data]
+
+frases = [
+    "prompt caching reutiliza el contexto entre llamadas",
+    "cómo reutilizar contexto entre llamadas al modelo",
+    "la paella lleva azafrán, pollo y conejo",
+]
+V = embed(frases)
+print(f"dim = {len(V[0])}")            # 1536
+print(f"sim(0,1) = {np.dot(V[0], V[1]):.3f}")   # alto (~0.7–0.8)
+print(f"sim(0,2) = {np.dot(V[0], V[2]):.3f}")   # bajo (~0.1–0.2)</code></pre>
+            <div class="success" style="margin-top: 8px;">
+                Observa: frases 0 y 1 no comparten <em>ni una palabra</em> relevante y salen con similaridad alta. Eso es lo que hace que embeddings sean superpoderosos para búsqueda.
+            </div>
+
+            <h3>Paso 3 — Indexar documentos en ChromaDB</h3>
+            <pre><code>import chromadb
+from pathlib import Path
+
+# Persistent en disco — se guarda en ./chroma
+chroma = chromadb.PersistentClient(path="./chroma")
+
+# embedding_function=None → le pasamos nosotros los embeddings ya calculados
+col = chroma.get_or_create_collection(
+    name="apuntes",
+    metadata={"hnsw:space": "cosine"}
+)
+
+def indexar(carpeta="apuntes", chunk_chars=800):
+    textos, ids, metas = [], [], []
+    for p in Path(carpeta).rglob("*.md"):
+        raw = p.read_text(encoding="utf-8")
+        # chunking simple: trozos de ~800 chars
+        for i in range(0, len(raw), chunk_chars):
+            trozo = raw[i:i + chunk_chars]
+            if trozo.strip():
+                textos.append(trozo)
+                ids.append(f"{p.name}:{i}")
+                metas.append({"archivo": p.name, "offset": i})
+
+    # embeddings en batches de 100
+    for k in range(0, len(textos), 100):
+        batch = textos[k:k+100]
+        vecs = embed(batch)
+        col.add(
+            documents=batch,
+            embeddings=vecs,
+            ids=ids[k:k+100],
+            metadatas=metas[k:k+100]
+        )
+    print(f"Indexados {len(textos)} chunks")
+
+indexar()</code></pre>
+
+            <h3>Paso 4 — Consultar por similaridad semántica</h3>
+            <pre><code>def buscar(pregunta: str, k: int = 3):
+    q_vec = embed([pregunta])[0]
+    res = col.query(query_embeddings=[q_vec], n_results=k)
+    # res tiene: documents, metadatas, distances (todos anidados en listas)
+    for doc, meta, dist in zip(res["documents"][0], res["metadatas"][0], res["distances"][0]):
+        print(f"\n[{meta['archivo']}:{meta['offset']}]  dist={dist:.3f}")
+        print(doc[:200], "…")
+
+buscar("¿cómo reutilizo el contexto entre llamadas?")</code></pre>
+            <div class="info" style="margin-top: 8px;">
+                <strong>Ojo al signo:</strong> ChromaDB devuelve <em>distancias</em> (menos es mejor), no similaridades. Con <code>hnsw:space=cosine</code>, <code>distance = 1 − similarity</code>.
+            </div>
+
+            <h3>Paso 5 — <code>search_docs_semantic</code> como tool para el agente</h3>
+            <p>Sustituye el <code>search_docs</code> de la clase 03 por esta versión semántica:</p>
+            <pre><code>def search_docs_semantic(query: str, max_results: int = 3) -> str:
+    q_vec = embed([query])[0]
+    res = col.query(query_embeddings=[q_vec], n_results=max_results)
+    out = []
+    for doc, meta, dist in zip(res["documents"][0], res["metadatas"][0], res["distances"][0]):
+        out.append(f"[{meta['archivo']}:{meta['offset']}  sim={1-dist:.2f}]\n{doc}")
+    return "\n\n".join(out) or "Sin resultados."
+
+# En la lista TOOLS, reemplaza la tool "search_docs" apuntando su implementación a esta función.</code></pre>
+            <div class="success" style="margin-top: 8px;">
+                Prueba con la misma pregunta que te fallaba en clase 03: ahora encuentra el fragmento aunque el apunte use palabras diferentes. <strong>Has hecho tu primer RAG.</strong>
+            </div>
+        </div>
+
+        <!-- Mini-reto -->
+        <div class="card" style="border-left: 4px solid #ff00e5;">
+            <h2>🎯 Mini-reto: similaridad semántica sobre 20 frases propias</h2>
+            <p>Escribe 20 frases sobre temas variados (IA, cocina, deporte, lo que quieras). Mezcla frases <strong>parafraseadas</strong> (ej: "el coche rojo está aparcado" y "un automóvil escarlata está estacionado") con frases <strong>no relacionadas</strong>.</p>
+            <ol>
+                <li>Genera los 20 embeddings en una sola llamada a <code>embed(frases)</code>.</li>
+                <li>Calcula la matriz 20×20 de similaridad coseno usando numpy.</li>
+                <li>Para cada frase, imprime sus 3 vecinas más cercanas (ignorando ella misma).</li>
+                <li>Verifica a ojo: ¿las parafraseadas salen juntas? ¿alguna similaridad te sorprende?</li>
+            </ol>
+            <div class="tip" style="margin-top: 8px;">
+                <strong>Truco numpy:</strong> si <code>M</code> es una matriz (20, 1536) normalizada, <code>M @ M.T</code> te da la matriz completa de similaridades en una línea.
+            </div>
+        </div>
+
+        <!-- Ejercicios entregables -->
+        <div class="card">
+            <h2>📝 Ejercicios entregables</h2>
+
+            <!-- Ejercicio 1 -->
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h3>Ejercicio 1 (A) — Primer embedding con <code>openai.embeddings</code></h3>
+                <p>Pega el código del <strong>Paso 2</strong>: genera embeddings de al menos 3 frases y calcula similaridades coseno. Incluye la salida printeada como comentario al final del código.</p>
+                <textarea id="code-ejercicio-1" rows="10" placeholder="Pega aquí tu código + salida como comentario..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c04', 1, this)">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <!-- Ejercicio 2 -->
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="code-along">
+                <h3>Ejercicio 2 (A) — Vector store con ChromaDB (sin LangChain)</h3>
+                <p>Pega el código completo de los <strong>Pasos 3 y 4</strong>: indexar los <code>.md</code> de <code>apuntes/</code> en ChromaDB y hacer una consulta <code>buscar("...")</code> con su resultado pegado como comentario.</p>
+                <textarea id="code-ejercicio-2" rows="14" placeholder="# Código indexado + consulta + resultado en comentario"></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c04', 2, this)">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+
+            <!-- Ejercicio 3 -->
+            <div class="exercise-submit" id="submit-ejercicio-3" data-type="mini-reto">
+                <h3>Ejercicio 3 (B) — Similaridad semántica sobre 20 frases propias</h3>
+                <p>Entrega tu script del mini-reto: las 20 frases, la matriz de similaridad (<code>M @ M.T</code>), y los top-3 vecinos por frase. Añade 2-3 líneas de <strong>análisis</strong>: ¿salieron juntas las parafraseadas? ¿hubo sorpresas?</p>
+                <textarea id="code-ejercicio-3" rows="14" placeholder="# 20 frases + matriz + top-3 vecinos + análisis"></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-3" rows="2" placeholder="¿Qué te sorprendió del análisis?"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c04', 3, this)">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-3" class="submit-status"></div>
+            </div>
+        </div>
+
+        <!-- Quiz -->
+        <div class="card">
+            <h2>🧩 Mini-quiz (10 preguntas)</h2>
+            <div id="quiz-container"></div>
+        </div>
+
+        <!-- Siguientes pasos -->
+        <div class="card" style="border-left: 4px solid #ffe600;">
+            <h2>🎓 Resumen y siguientes pasos</h2>
+            <ul>
+                <li>Un embedding es un vector denso que captura <strong>significado</strong>; dos textos parecidos → vectores cercanos.</li>
+                <li>La métrica estándar es <strong>similaridad coseno</strong>; con vectores normalizados (como los de OpenAI) = producto escalar.</li>
+                <li><code>text-embedding-3-small</code> (1536 dim, $0.02/M tokens) es el default hoy.</li>
+                <li>ChromaDB es el vector store más simple; suficiente para &lt; 1M documentos. Usa <code>PersistentClient</code>.</li>
+                <li>Swap del <code>search_docs</code> por uno semántico → tu agente ya hace RAG real.</li>
+            </ul>
+            <p><strong>Próxima clase:</strong> <a href="clase-05.html" style="color:#00f0ff;">RAG clásico como pieza: chunking, retrieval, reranking</a> — juntamos todo en un pipeline que podrías mandar a producción, con las decisiones que hay que tomar en cada paso.</p>
+        </div>
+
+        <!-- Navegación -->
+        <div class="nav-buttons">
+            <a href="clase-03.html" class="btn btn-secondary">← Clase 03</a>
+            <a href="index.html" class="btn btn-secondary">📚 Módulo 5</a>
+            <a href="clase-05.html" class="btn">Clase 05 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Qué representa un embedding?",
+                options: [
+                    "El texto original comprimido con gzip",
+                    "Un vector denso que captura el significado del texto",
+                    "El hash MD5 del documento",
+                    "La frecuencia de cada palabra (bag of words)"
+                ],
+                correct: 1,
+                explanation: "Un embedding es un vector de floats (típicamente 384–1536 dim) donde la <em>cercanía</em> geométrica refleja similaridad semántica."
+            },
+            {
+                question: "Cuando OpenAI te devuelve embeddings normalizados (norm = 1), la similaridad coseno se puede calcular como…",
+                options: [
+                    "<code>np.linalg.norm(a - b)</code>",
+                    "<code>np.dot(a, b)</code>",
+                    "<code>np.sum(np.abs(a - b))</code>",
+                    "<code>1 / np.dot(a, b)</code>"
+                ],
+                correct: 1,
+                explanation: "Con vectores normalizados el denominador del coseno es 1, así que el producto escalar ES la similaridad. Ahorra cálculos."
+            },
+            {
+                question: "¿Cuántas dimensiones tiene el modelo <code>text-embedding-3-small</code> por defecto?",
+                options: [
+                    "384",
+                    "768",
+                    "1536",
+                    "3072"
+                ],
+                correct: 2,
+                explanation: "1536 floats por defecto. Puedes reducirlas con el parámetro <code>dimensions</code> (ej: 256) sin perder casi calidad, y ahorras memoria."
+            },
+            {
+                question: "¿Por qué usamos OpenAI para embeddings en un curso centrado en Anthropic?",
+                options: [
+                    "Porque OpenAI es mejor modelo de chat",
+                    "Porque Anthropic no ofrece API de embeddings",
+                    "Porque es más barato que Anthropic",
+                    "Porque LangChain lo exige"
+                ],
+                correct: 1,
+                explanation: "Anthropic no tiene endpoint de embeddings (a día de hoy). Lo normal en stacks reales es mezclar proveedores: Claude para chat, OpenAI o Voyage AI para embeddings."
+            },
+            {
+                question: "Dentro de ChromaDB, ¿qué diferencia hay entre <code>Client()</code> y <code>PersistentClient(path=\"...\")</code>?",
+                options: [
+                    "<code>Client()</code> usa HNSW y <code>PersistentClient</code> no",
+                    "<code>Client()</code> vive solo en memoria; <code>PersistentClient</code> guarda el índice en disco",
+                    "Uno es de pago y el otro gratis",
+                    "No hay diferencia, son sinónimos"
+                ],
+                correct: 1,
+                explanation: "<code>Client()</code> es volátil (se pierde al reiniciar), <code>PersistentClient</code> persiste en la ruta que le indicas. Para cualquier cosa real, usa PersistentClient."
+            },
+            {
+                question: "En la consulta <code>col.query(query_embeddings=[v], n_results=3)</code>, ¿qué significa el campo <code>distances</code> que devuelve?",
+                options: [
+                    "La similaridad coseno (más alto = más parecido)",
+                    "La distancia (menos = más parecido); con espacio coseno, distance = 1 − similarity",
+                    "El número de tokens del fragmento",
+                    "El índice numérico dentro de la colección"
+                ],
+                correct: 1,
+                explanation: "Chroma devuelve distancias. Con <code>hnsw:space=cosine</code>, distance = 1 − similarity. Menos es mejor."
+            },
+            {
+                question: "¿Qué ventaja tiene la búsqueda semántica frente a búsqueda por substring como la de <code>search_docs</code> clase 03?",
+                options: [
+                    "Es más rápida para &lt; 10 documentos",
+                    "Encuentra relevancia aunque no haya palabras literales en común",
+                    "No requiere API key",
+                    "Consume menos RAM"
+                ],
+                correct: 1,
+                explanation: "Ese es el superpoder: \"caching\" y \"reutilizar contexto\" no comparten palabras pero son semánticamente lo mismo. Substring falla, embeddings acierta."
+            },
+            {
+                question: "Indexar 1 000 páginas de PDF con <code>text-embedding-3-small</code> ($0.02/M tokens, ~600 tokens/página) cuesta aproximadamente…",
+                options: [
+                    "$0.012",
+                    "$1.20",
+                    "$12",
+                    "$120"
+                ],
+                correct: 0,
+                explanation: "600 · 1 000 = 600 000 tokens ≈ 0.6 M · $0.02/M ≈ $0.012. Indexar es barato; lo caro es indexar mal y tener que reindexar todo."
+            },
+            {
+                question: "¿Para qué sirve pasar <code>metadatas=[{\"archivo\": ..., \"offset\": ...}]</code> al añadir documentos?",
+                options: [
+                    "No sirve para nada, es opcional",
+                    "Para poder filtrar queries por metadato y citar la fuente exacta en la respuesta",
+                    "Para reducir el tamaño del embedding",
+                    "Para encriptar el vector"
+                ],
+                correct: 1,
+                explanation: "Metadatos te permiten filtrar (<code>where={\"archivo\": \"clase-02.md\"}</code>) y, sobre todo, citar de dónde salió cada chunk — clave para RAG que tiene que justificar la respuesta."
+            },
+            {
+                question: "Cuando los embeddings están normalizados (norm=1) y M es una matriz (N, 1536), ¿cuál es la forma más rápida de obtener la matriz completa de similaridades N×N?",
+                options: [
+                    "Un doble bucle <code>for</code> calculando <code>np.dot</code> celda a celda",
+                    "<code>M @ M.T</code>",
+                    "<code>np.linalg.norm(M, axis=1)</code>",
+                    "<code>np.sort(M)</code>"
+                ],
+                correct: 1,
+                explanation: "<code>M @ M.T</code> es multiplicación matricial vectorizada en BLAS — órdenes de magnitud más rápida que un doble bucle Python."
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            CourseProgress.initSubmissionIndicators('m5-c04');
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm5-c04');
+        });
+    </script>
+</body>
+</html>

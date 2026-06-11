@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 04: Networking y Marca Personal en Madrid — Módulo 9</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            margin: 1.5em 0;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #00e676;
+            margin-top: 2em;
+            margin-bottom: 0.8em;
+            border-left: 4px solid #00e676;
+            padding-left: 12px;
+        }
+        .tip {
+            background: rgba(57, 255, 20, 0.08);
+            border-left: 3px solid #00e676;
+            padding: 1em;
+            margin: 1em 0;
+            border-radius: 4px;
+        }
+        .tip strong {
+            color: #00e676;
+        }
+        .info {
+            background: rgba(0, 240, 255, 0.08);
+            border-left: 3px solid #00e676;
+            padding: 1em;
+            margin: 1em 0;
+            border-radius: 4px;
+        }
+        .list-section {
+            margin: 1.5em 0;
+        }
+        .list-section ul {
+            padding-left: 1.5em;
+            line-height: 1.8;
+        }
+        .list-section li {
+            margin: 0.6em 0;
+        }
+        .headline-example {
+            background: #1a1a3e;
+            padding: 1em;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 1em 0;
+            border-left: 3px solid #00e676;
+        }
+        .good-bad {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5em;
+            margin: 1.5em 0;
+        }
+        .good-bad > div {
+            padding: 1em;
+            border-radius: 4px;
+            border-left: 3px solid;
+        }
+        .good {
+            background: rgba(57, 255, 20, 0.08);
+            border-left-color: #00e676;
+        }
+        .bad {
+            background: rgba(255, 0, 80, 0.08);
+            border-left-color: #ff5252;
+        }
+        .good strong {
+            color: #00e676;
+        }
+        .bad strong {
+            color: #ff5252;
+        }
+        .practice-item {
+            background: rgba(255, 107, 0, 0.08);
+            border-left: 3px solid #ff9800;
+            padding: 1em;
+            margin: 1em 0;
+            border-radius: 4px;
+        }
+        .practice-item strong {
+            color: #ff9800;
+        }
+        .challenge-box {
+            background: rgba(255, 0, 229, 0.08);
+            border-left: 3px solid #9c27b0;
+            padding: 1.5em;
+            margin: 1.5em 0;
+            border-radius: 4px;
+        }
+        .challenge-box strong {
+            color: #9c27b0;
+        }
+        .quiz-container {
+            margin: 2em 0;
+        }
+        .breadcrumb {
+            font-size: 0.9em;
+            color: var(--text-muted);
+            margin-bottom: 1.5em;
+        }
+        .breadcrumb a {
+            color: #00e676;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2em;
+            padding-top: 2em;
+            border-top: 1px solid rgba(0, 240, 255, 0.15);
+        }
+        .btn {
+            background: #00e676;
+            color: #0a0a1a;
+            padding: 0.8em 1.5em;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #39ff14;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+        }
+        .btn-secondary {
+            background: #1a1a3e;
+            color: #00f0ff;
+            border: 1px solid #00f0ff;
+        }
+        .btn-secondary:hover {
+            background: #00f0ff;
+            color: #0a0a1a;
+        }
+        .header-section {
+            background: linear-gradient(135deg, #00e676 0%, #00d89a 100%);
+            color: white;
+            padding: 2em;
+            border-radius: 8px;
+            margin-bottom: 2em;
+        }
+        .header-section h1 {
+            margin: 0 0 0.5em 0;
+            font-size: 2em;
+        }
+        .header-section p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        @media (max-width: 768px) {
+            .good-bad {
+                grid-template-columns: 1fr;
+            }
+            .nav-buttons {
+                flex-direction: column;
+                gap: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="breadcrumb">
+        <a href="../index.html">Dashboard</a> /
+        <a href="index.html">Módulo 9: Búsqueda de Empleo</a> /
+        Clase 04: Networking y Marca Personal
+    </div>
+
+    <div class="header-section">
+        <h1>🌐 Clase 04: Networking y Marca Personal en Madrid</h1>
+        <p>Cómo construir tu presencia profesional y conectar con oportunidades reales en el mercado tech madrileño</p>
+    </div>
+
+    <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/z3qq7qkRx6A" allowfullscreen></iframe>
+    </div>
+
+    <aside class="workshop-ref">
+        <h4>📚 Profundiza con el workshop de hola.dev</h4>
+        <p style="margin:0;">Para tener tema de conversación en meetups y no quedar como "el típico que solo ha leído titulares": qué papers/benchmarks merecen tu tiempo y dónde experimentar hoy:</p>
+        <ul>
+            <li><a href="https://workshop-ia-2026.686f6c61.dev/#recursos-papers-benchmarks" target="_blank" rel="noopener">Sección 165 — Papers y benchmarks que sí merecen tiempo</a></li>
+            <li><a href="https://workshop-ia-2026.686f6c61.dev/#recursos-laboratorio" target="_blank" rel="noopener">Sección 166 — Laboratorio para probar hoy</a></li>
+        </ul>
+        <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+    </aside>
+
+    <!-- RESUMEN -->
+    <div class="section-title">📖 Resumen de la Clase</div>
+
+    <div class="tip">
+        <strong>Objetivo clave:</strong> El 85% de las ofertas de trabajo nunca se publican públicamente. Tu visibilidad y conexiones son tan importantes como tu CV.
+    </div>
+
+    <!-- 1. POR QUÉ EL NETWORKING ES FUNDAMENTAL -->
+    <h3 class="section-title">1. Por qué el Networking es FUNDAMENTAL</h3>
+    <div class="list-section">
+        <ul>
+            <li><strong>El 85% de ofertas no se publican.</strong> Se cubren por referrals y contactos internos.</li>
+            <li><strong>Un referral multiplica x10 tus posibilidades de entrevista.</strong> Si alguien de dentro te recomienda, pasas filtros automáticamente.</li>
+            <li><strong>No es "enchufismo".</strong> Es demostrar que existes, que tienes valor y que puedes aportar.</li>
+            <li><strong>En España es especialmente importante.</strong> La cultura empresarial valora las conexiones personales.</li>
+        </ul>
+    </div>
+
+    <!-- 2. OPTIMIZAR LINKEDIN -->
+    <h3 class="section-title">2. Optimizar LinkedIn para AI Developer</h3>
+
+    <div class="info">
+        <strong>LinkedIn SSI Score:</strong> Tu "SEO profesional". Más conexiones + más engagement = más visible para recruiters.
+    </div>
+
+    <h4 style="color: #00e676; margin-top: 1.5em;">Headline (la primera línea que ve un recruiter)</h4>
+    <div class="headline-example">
+        AI Developer | Python | LLMs | RAG | Buscando oportunidades en Madrid
+    </div>
+
+    <h4 style="color: #00e676; margin-top: 1.5em;">Foto de Perfil</h4>
+    <div class="list-section">
+        <ul>
+            <li>✅ Foto profesional (no selfie)</li>
+            <li>✅ Fondo neutro (blanco o gris claro)</li>
+            <li>✅ Luz buena, sonrisa natural</li>
+            <li>✅ Ropa profesional pero accesible</li>
+        </ul>
+    </div>
+
+    <h4 style="color: #00e676; margin-top: 1.5em;">Banner Personalizado</h4>
+    <div class="tip">
+        Usa un banner con tu stack (Python, FastAPI, RAG, etc.). Puedes crearlo gratis en Canva con el template "LinkedIn Banner".
+    </div>
+
+    <h4 style="color: #00e676; margin-top: 1.5em;">About (sección sobre ti)</h4>
+    <div class="list-section">
+        <ul>
+            <li>3-5 frases máximo</li>
+            <li>Qué haces (AI Developer con especialidad en LLMs)</li>
+            <li>Qué sabes hacer (Python, FastAPI, RAG, Prompt Engineering)</li>
+            <li>Qué buscas (oportunidades en Madrid, sector tech/startup)</li>
+            <li>Call to action: "Conecta conmigo si trabaja en IA" o "Abierto a oportunidades"</li>
+        </ul>
+    </div>
+
+    <h4 style="color: #00e676; margin-top: 1.5em;">Experiencia (incluye proyectos del curso)</h4>
+    <div class="list-section">
+        <ul>
+            <li>Cada proyecto del curso = una entrada de experiencia</li>
+            <li>Título: "AI Assistant Development" o "RAG System Engineer"</li>
+            <li>Descripción: qué hiciste, con qué herramientas, qué aprendiste</li>
+            <li>Enlace a GitHub (si el repo es público)</li>
+        </ul>
+    </div>
+
+    <h4 style="color: #00e676; margin-top: 1.5em;">Skills (habilidades)</h4>
+    <div class="list-section">
+        <ul>
+            <li>Añade: Python, Machine Learning, LLMs, RAG, FastAPI, Prompt Engineering, Git, etc.</li>
+            <li><strong>Valida skills:</strong> Pide a compañeros o contactos que verifiquen tus skills (aumenta credibilidad)</li>
+            <li><strong>Haz los LinkedIn Skill Assessments</strong> (C#, JavaScript, Python, Git, CSS, etc.) — si apruebas, aparece un badge</li>
+        </ul>
+    </div>
+
+    <h4 style="color: #00e676; margin-top: 1.5em;">Activar "Open to Work"</h4>
+    <div class="tip">
+        <strong>Open to Work:</strong> Actívalo. Solo lo ven recruiters, no sale en tu feed. Especifica "Remote en Madrid" y "Startups de IA".
+    </div>
+
+    <!-- 3. MEETUPS Y EVENTOS EN MADRID -->
+    <h3 class="section-title">3. Meetups y Eventos Tech en Madrid</h3>
+
+    <div class="info">
+        <strong>Conectar en persona = x5 más efectivo que online.</strong> Los eventos son donde hacen networking real los CTOs y founders.
+    </div>
+
+    <div class="list-section">
+        <ul>
+            <li><strong>Madrid AI</strong> — Comunidad especializada en IA (meetup.com)</li>
+            <li><strong>Madrid.rb, MadridJS, Python Madrid</strong> — Comunidades por lenguaje</li>
+            <li><strong>T3chFest</strong> (t3chfest.es) — Conferencia tech gratuita en la Universidad Carlos III</li>
+            <li><strong>Commit Conf</strong> — Conferencia tech en Madrid (suele ser en otoño)</li>
+            <li><strong>Google Developer Groups Madrid</strong> — Charlas gratis de Google</li>
+            <li><strong>Startup Grind Madrid</strong> — Networking con founders</li>
+            <li><strong>Eventbrite:</strong> Busca "tech" + "Madrid" para ver todos los eventos</li>
+            <li><strong>Meetup.com:</strong> Busca "AI Madrid", "Python Madrid", "Machine Learning Madrid"</li>
+        </ul>
+    </div>
+
+    <div class="tip">
+        <strong>Estrategia:</strong> Apúntate a 2 meetups para este mes. Ve con propósito de conectar (prepara 2-3 preguntas sobre IA/empleo para hacer conversación).
+    </div>
+
+    <!-- 4. COMUNIDADES ONLINE -->
+    <h3 class="section-title">4. Comunidades Online (donde está la acción)</h3>
+
+    <div class="list-section">
+        <ul>
+            <li><strong>Discord:</strong> MoureDev (comunidad enorme en español, 20k+ miembros), MiduDev</li>
+            <li><strong>Slack:</strong> Comunidad Python España, Madrid Dev</li>
+            <li><strong>GitHub:</strong> Contribuye a proyectos open source. Busca issues con etiqueta "good first issue"</li>
+            <li><strong>Reddit:</strong> r/spain, r/programming, r/MachineLearning (lee antes de postear)</li>
+        </ul>
+    </div>
+
+    <div class="tip">
+        <strong>Valor real en comunidades:</strong> No hagas spam. Ayuda a otros, haz preguntas inteligentes, comparte lo que aprendes. Así la gente te recuerda.
+    </div>
+
+    <!-- 5. CREAR CONTENIDO TÉCNICO -->
+    <h3 class="section-title">5. Crear Contenido Técnico (Tu Marca Personal)</h3>
+
+    <div class="info">
+        <strong>Postea 1 vez a la semana en LinkedIn.</strong> No necesitas ser experto — documentar tu aprendizaje ya aporta valor.
+    </div>
+
+    <h4 style="color: #00e676; margin-top: 1.5em;">Formatos que funcionan:</h4>
+    <div class="list-section">
+        <ul>
+            <li>"Hoy aprendí X sobre RAG y aquí están los 5 conceptos clave..."</li>
+            <li>"5 errores que cometí con LLMs (y cómo los solucioné)"</li>
+            <li>"He deployado un AI Assistant en FastAPI, aquí está el tutorial"</li>
+            <li>Compartir un proyecto con screenshot + explicación de 3 frases</li>
+            <li>"Comparativa: RAG vs Fine-tuning — cuándo usar cada uno"</li>
+        </ul>
+    </div>
+
+    <div class="tip">
+        <strong>Opcional:</strong> Escribe artículos más largos en dev.to o Medium (en español). Cada artículo es un recurso permanente que te trae visibilidad.
+    </div>
+
+    <!-- 6. CONTACTO FRÍO (COLD OUTREACH) -->
+    <h3 class="section-title">6. Contacto Frío (Cold Outreach)</h3>
+
+    <h4 style="color: #00e676; margin-top: 1.5em;">Cómo escribir un mensaje a un recruiter o CTO</h4>
+    <div class="list-section">
+        <ul>
+            <li><strong>NO envíes CV directamente.</strong> Primero conecta, luego pide.</li>
+            <li><strong>Personaliza el mensaje.</strong> Di por qué quieres conectar específicamente con esa persona.</li>
+            <li><strong>Sé directo.</strong> Recruiters reciben 100+ mensajes/día. Sé claro en 3 frases.</li>
+        </ul>
+    </div>
+
+    <h4 style="color: #00e676; margin-top: 1.5em;">Plantilla de mensaje</h4>
+    <div class="good-bad">
+        <div class="bad">
+            <strong>❌ Malo:</strong><br><br>
+            "Hola, te añado. Envío CV adjunto. Gracias."
+        </div>
+        <div class="good">
+            <strong>✅ Bueno:</strong><br><br>
+            "Hola [Nombre], te sigo desde [LinkedIn/Twitter/blog]. Tu talk sobre RAG en [evento] me interesó mucho. Estoy especializándome en IA y RAG, ¿podemos conectar?"
+        </div>
+    </div>
+
+    <div class="another-good" style="background: rgba(57, 255, 20, 0.08); border-left: 3px solid #00e676; padding: 1em; margin: 1em 0; border-radius: 4px;">
+        <strong>✅ Otro buen ejemplo (a un CTO):</strong><br><br>
+        "Hola [CTO], acabo de terminar un proyecto de RAG con FastAPI + OpenAI (aquí está: [GitHub link]). He visto que en [Empresa] trabajan en IA y me encantaría conocer vuestro stack. ¿Hay oportunidades en el equipo?"
+    </div>
+
+    <!-- PRÁCTICA -->
+    <div class="section-title">💪 Práctica: Construye tu Presencia Profesional</div>
+
+    <div class="practice-item">
+        <strong>Tarea 1: LinkedIn Optimization</strong><br>
+        Reescribe tu headline, about y experiencia. Incluye los 3 proyectos del curso como experiencias.
+    </div>
+
+    <div class="practice-item">
+        <strong>Tarea 2: Skills & Assessments</strong><br>
+        Haz 3 LinkedIn Skill Assessments (Python, Git, JavaScript o el que prefieras).
+    </div>
+
+    <div class="practice-item">
+        <strong>Tarea 3: Eventos en Madrid</strong><br>
+        Busca 2 meetups tech en Madrid para este mes y apúntate. Anota la fecha y prepara 2-3 preguntas.
+    </div>
+
+    <div class="practice-item">
+        <strong>Tarea 4: Primer Post Técnico</strong><br>
+        Escribe y publica tu primer post en LinkedIn. Tema: "3 cosas que aprendí sobre [RAG / LLMs / IA] en este curso".
+    </div>
+
+    <div class="practice-item">
+        <strong>Tarea 5: Networking Activo</strong><br>
+        Envía 3 invitaciones de conexión a personas del sector tech en Madrid con mensaje personalizado.
+    </div>
+
+    <!-- DESAFÍO -->
+    <div class="challenge-box">
+        <strong>🎯 Desafío: Cold Outreach (sin enviar aún)</strong><br><br>
+        Elige un CTO o Tech Lead de una startup/empresa de IA en Madrid que te interese. Escribe un mensaje de contacto frío personalizado (máx. 150 palabras).
+        <br><br>
+        <strong>NO lo envíes todavía</strong> — primero comparte conmigo para revisar. La clave es mostrar que conoces a la persona y que tienes valor que aportar.
+    </div>
+
+    <!-- SUBMISSION SECTION -->
+    <div class="quiz-container submission-section" data-class-id="m9-c04">
+        <div class="section-title">📤 Envío de ejercicios</div>
+        <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along" style="background: rgba(57, 255, 20, 0.08); border-left: 3px solid #00e676; padding: 1.5em; margin: 1.5em 0; border-radius: 4px;">
+            <h4>📤 Entregar práctica: Optimización LinkedIn y presencia profesional</h4>
+            <p style="color: var(--text-muted); font-size: 0.95em;">Optimiza tu perfil LinkedIn completamente: headline, about, foto, proyectos destacados. Captura tu perfil y tu SSI Score.</p>
+            <textarea id="code-ejercicio-1" placeholder="Comparte: 1) Nuevo headline, 2) About section (3-5 frases), 3) URL de tu perfil LinkedIn, 4) Screenshot de perfil optimizado, 5) SSI Score" rows="8"></textarea>
+            <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+            <div class="submit-row">
+                <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                <button onclick="CourseProgress.submitExercise('m9-c04', 1, this)" class="btn btn-submit">Entregar 📤</button>
+            </div>
+            <div id="submit-status-ejercicio-1" class="submit-status"></div>
+        </div>
+        <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto" style="background: rgba(57, 255, 20, 0.08); border-left: 3px solid #00e676; padding: 1.5em; margin: 1.5em 0; border-radius: 4px;">
+            <h4>📤 Entregar práctica: Networking y contenido técnico</h4>
+            <p style="color: var(--text-muted); font-size: 0.95em;">Crea tu primer post técnico en LinkedIn. Publica 1 post sobre algo aprendido en el curso. Luego, envía 3 mensajes personalizados a CTOs/recruiters.</p>
+            <textarea id="code-ejercicio-2" placeholder="Comparte: 1) URL de tu post en LinkedIn, 2) Contenido del post (3-5 párrafos), 3) Los 3 mensajes personalizados que preparaste (copypaste), 4) Capturas de los perfiles a los que contactaste" rows="8"></textarea>
+            <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+            <div class="submit-row">
+                <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                <button onclick="CourseProgress.submitExercise('m9-c04', 2, this)" class="btn btn-submit">Entregar 📤</button>
+            </div>
+            <div id="submit-status-ejercicio-2" class="submit-status"></div>
+        </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="quiz-container">
+        <div class="section-title">📝 Quiz</div>
+        <p>Responde al menos 8 de 10 preguntas correctamente para completar la clase.</p>
+        <div id="quiz-container"></div>
+    </div>
+
+    <!-- NAVEGACIÓN INFERIOR -->
+    <div class="nav-buttons">
+        <a href="clase-03.html" class="btn btn-secondary">← Clase 03</a>
+        <a href="clase-05-boss-battle.html" class="btn">Clase 05 (Boss Battle) →</a>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+
+        const quizQuestions = [
+            {
+                question: "¿Qué porcentaje de ofertas de trabajo nunca se publican públicamente en España?",
+                options: [
+                    "Aproximadamente 85%",
+                    "Aproximadamente 50%",
+                    "Aproximadamente 30%",
+                    "Menos del 10%"
+                ],
+                correct: 0,
+                explanation: "El 85% de las ofertas se cubren por referrals y conexiones internas, no por publicación pública."
+            },
+            {
+                question: "¿Cuánto multiplica un referral tus posibilidades de entrevista?",
+                options: [
+                    "2x",
+                    "5x",
+                    "10x",
+                    "15x"
+                ],
+                correct: 2,
+                explanation: "Un referral de alguien dentro de la empresa multiplica x10 tus posibilidades de pasar filtros."
+            },
+            {
+                question: "¿Cuál es la función principal del LinkedIn Headline?",
+                options: [
+                    "Mostrar tu nombre y empresa",
+                    "Captar la atención del recruiter en la primera línea que ve",
+                    "Listar todas tus experiencias",
+                    "Compartir tu teléfono de contacto"
+                ],
+                correct: 1,
+                explanation: "El headline es lo primero que ven recruiters. Debe decir qué haces, tecnologías y ubicación/búsqueda."
+            },
+            {
+                question: "¿Qué significan las siglas SSI en LinkedIn?",
+                options: [
+                    "Sales Skill Index",
+                    "Social Selling Index",
+                    "Spanish Skills Indicator",
+                    "System Security Index"
+                ],
+                correct: 1,
+                explanation: "SSI (Social Selling Index) mide tu visibilidad profesional en LinkedIn."
+            },
+            {
+                question: "¿Cuál es el beneficio principal de 'Open to Work' en LinkedIn?",
+                options: [
+                    "Lo ve todo el mundo en tu perfil",
+                    "Solo lo ven recruiters, no sale en tu feed",
+                    "Aumenta automáticamente tus conexiones",
+                    "Te da acceso a ofertas exclusivas"
+                ],
+                correct: 1,
+                explanation: "'Open to Work' solo es visible para recruiters, mantiene tu privacidad."
+            },
+            {
+                question: "¿Cuánto contenido técnico deberías publicar en LinkedIn según esta clase?",
+                options: [
+                    "Diariamente",
+                    "Dos veces a la semana",
+                    "Una vez a la semana",
+                    "Una vez al mes"
+                ],
+                correct: 2,
+                explanation: "Publicar 1 post a la semana es suficiente para construir marca personal sin saturar."
+            },
+            {
+                question: "¿Cuál es la comunidad de Discord más grande en español para programadores?",
+                options: [
+                    "MiduDev",
+                    "MoureDev",
+                    "DevSpain",
+                    "Spanish Tech"
+                ],
+                correct: 1,
+                explanation: "MoureDev es una comunidad enorme en español (20k+ miembros)."
+            },
+            {
+                question: "¿Qué deberías hacer ANTES de enviar un mensaje de cold outreach con CV?",
+                options: [
+                    "Nada, envía el CV directamente",
+                    "Personaliza el mensaje, conecta primero, luego pide",
+                    "Espera a que te sigan",
+                    "Envía múltiples mensajes para aumentar probabilidad"
+                ],
+                correct: 1,
+                explanation: "Nunca envíes CV directamente. Personaliza, conecta primero, luego pide."
+            },
+            {
+                question: "¿Cuál es la estrategia principal para networking en eventos tech?",
+                options: [
+                    "Llegar solo y quedarse en la esquina",
+                    "Ir con propósito de conectar, preparar 2-3 preguntas",
+                    "Repartir CVs a todo el mundo",
+                    "Ir a todos los eventos de Madrid en una semana"
+                ],
+                correct: 1,
+                explanation: "Prepárate con preguntas y ve con intención de conectar genuinamente."
+            },
+            {
+                question: "¿Qué incluirías en tu About de LinkedIn como AI Developer?",
+                options: [
+                    "Tu historial completo desde la universidad",
+                    "Qué haces, qué sabes hacer, qué buscas (3-5 frases max)",
+                    "Solo enlaces a tus redes sociales",
+                    "Tu teléfono y email"
+                ],
+                correct: 1,
+                explanation: "El About debe ser conciso: quién eres, qué sabes, qué buscas."
+            }
+        ];
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm9-c04');
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm9-c04');
+        }
+    </script>
+</body>
+</html>

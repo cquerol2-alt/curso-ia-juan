@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 03: Prompt Engineering Avanzado | Módulo 2 | Curso IA</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .code-example {
+            background: #0a0e27;
+            border-left: 4px solid #00ff88;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            color: #00ff88;
+            overflow-x: auto;
+        }
+        .tip-box {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid #00ff88;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 5px;
+            color: #e0e0e0;
+        }
+        .example-box {
+            background: rgba(100, 200, 255, 0.1);
+            border-left: 4px solid #64c8ff;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 5px;
+            color: #e0e0e0;
+        }
+        .exercise-container {
+            background: rgba(255, 100, 100, 0.1);
+            border: 2px solid #ff6464;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .exercise-container h4 {
+            color: #ff6464;
+            margin-top: 0;
+        }
+        .info-box {
+            background: rgba(0, 150, 255, 0.1);
+            border-left: 4px solid #0096ff;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 5px;
+            color: #e0e0e0;
+        }
+        .quiz-container {
+            margin-top: 30px;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+        .nav-btn {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            color: var(--neon-cyan);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+        }
+        .nav-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid var(--border-glow);
+        }
+        table th {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--neon-cyan);
+        }
+        table tr:hover {
+            background: rgba(0, 240, 255, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Nav Breadcrumb -->
+    <nav class="breadcrumb">
+        <a href="../index.html">Dashboard</a>
+        <span> > </span>
+        <a href="index.html">Módulo 2</a>
+        <span> > </span>
+        <span>Clase 03</span>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="class-header">
+            <h1>🧠 Prompt Engineering Avanzado</h1>
+            <p class="subtitle">Clase 03 | Semana 3 — Miércoles</p>
+            <p class="module-badge">Módulo 2: Fundamentos</p>
+        </header>
+
+        <!-- Video Section -->
+        <section class="card">
+            <h2>🎬 Vídeo de la lección</h2>
+            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 5px;"
+                    src="https://www.youtube.com/embed/H4YK_7MAckk"
+                    title="DeepLearning.AI Prompt Engineering for Developers"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+            <div class="info-box">
+                <strong>📌 Complementa con el curso gratuito completo:</strong><br>
+                <a href="https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/" target="_blank" style="color: #00ff88;">
+                    DeepLearning.AI ChatGPT Prompt Engineering for Developers
+                </a>
+            </div>
+
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue las técnicas de prompting con el mind map visual en español.
+                <a href="mindmap-03.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+        </section>
+
+        <!-- Resumen Section -->
+        <section class="card">
+            <h2>📖 Resumen</h2>
+
+            <!-- a) System, User, Assistant -->
+            <h3>a) System Prompts, User Prompts y Assistant Messages</h3>
+            <p>
+                Los mensajes en una conversación con IA tienen tres actores principales:
+            </p>
+            <ul>
+                <li><strong>System:</strong> Instrucciones que definen el comportamiento y la personalidad del asistente.</li>
+                <li><strong>User:</strong> El mensaje que envía el usuario (la pregunta o solicitud).</li>
+                <li><strong>Assistant:</strong> La respuesta que genera el modelo de IA.</li>
+            </ul>
+            <p>
+                Estos tres roles se repiten en una conversación. El system prompt generalmente se establece una sola vez al inicio.
+            </p>
+            <div class="code-example">
+System: "Eres un experto en cocina española. Responde siempre con tono amable y proporciona recetas detalladas."
+User: "¿Cómo hago una paella?"
+Assistant: "Para hacer una buena paella valenciana, necesitas arroz bomba de calidad, azafrán, caldo de pollo caliente... [respuesta completa]"
+            </div>
+            <div class="tip-box">
+                <strong>💡 Tip:</strong> El system prompt es como el <strong>constructor de una clase</strong>: define el comportamiento base que todo el asistente seguirá.
+            </div>
+
+            <!-- b) Zero-shot, One-shot, Few-shot -->
+            <h3>b) Zero-shot, One-shot y Few-shot Prompting</h3>
+            <p>
+                Estos términos describen cuántos ejemplos proporciona antes de pedir al modelo que resuelva una tarea:
+            </p>
+
+            <h4>Zero-shot (sin ejemplos):</h4>
+            <div class="example-box">
+                <strong>Prompt:</strong> "Clasifica este texto como positivo o negativo: 'El producto es terrible'"<br>
+                <strong>Respuesta:</strong> "Negativo"<br>
+                <br>
+                <strong>Cuándo usarlo:</strong> Tareas simples que el modelo entiende sin necesidad de ejemplos.
+            </div>
+
+            <h4>One-shot (un ejemplo):</h4>
+            <div class="example-box">
+                <strong>Prompt:</strong><br>
+                "Clasifica sentimientos. Ejemplo: 'El servicio fue excelente' = Positivo<br>
+                Ahora clasifica: 'El producto es terrible'"<br>
+                <strong>Respuesta:</strong> "Negativo"<br>
+                <br>
+                <strong>Cuándo usarlo:</strong> Cuando quieres aclarar el formato o estilo esperado.
+            </div>
+
+            <h4>Few-shot (3-5 ejemplos):</h4>
+            <div class="example-box">
+                <strong>Prompt:</strong><br>
+                "Clasifica sentimientos de reseñas:<br>
+                1. 'Producto excelente, lo recomiendo' = Positivo<br>
+                2. 'Entrega lenta y producto roto' = Negativo<br>
+                3. 'Es un producto normal, nada especial' = Neutro<br>
+                4. 'Servicio rápido pero comida fría' = Negativo<br>
+                <br>
+                Ahora clasifica: 'La pizza estaba deliciosa y el mesero muy atento' = ?"<br>
+                <strong>Respuesta:</strong> "Positivo"<br>
+                <br>
+                <strong>Cuándo usarlo:</strong> Tareas complejas o cuando necesitas máxima precisión.
+            </div>
+
+            <!-- c) Chain of Thought -->
+            <h3>c) Chain of Thought (CoT): Piensa Paso a Paso</h3>
+            <p>
+                Pedir al modelo que "piense paso a paso" o "razone" antes de responder mejora dramáticamente la calidad de sus respuestas, especialmente en problemas lógicos y matemáticos.
+            </p>
+
+            <h4>Sin Chain of Thought:</h4>
+            <div class="example-box">
+                <strong>Prompt:</strong> "Si un restaurante pide 20 platos a 15€ cada uno con 15% de descuento, ¿cuál es el total?"<br>
+                <strong>Respuesta (a menudo incorrecta):</strong> "300€"
+            </div>
+
+            <h4>Con Chain of Thought:</h4>
+            <div class="example-box">
+                <strong>Prompt:</strong> "Si un restaurante pide 20 platos a 15€ cada uno con 15% de descuento, ¿cuál es el total? Piensa paso a paso."<br>
+                <strong>Respuesta:</strong> "Paso 1: 20 platos × 15€ = 300€<br>
+                Paso 2: 15% de 300€ = 0.15 × 300 = 45€<br>
+                Paso 3: 300€ - 45€ = 255€<br>
+                <strong>Total: 255€</strong>"
+            </div>
+
+            <!-- d) Técnicas avanzadas -->
+            <h3>d) Técnicas Avanzadas</h3>
+
+            <h4>Role Prompting (Juego de Roles):</h4>
+            <div class="code-example">
+"Actúa como un ingeniero senior de Google con 10 años de experiencia.
+¿Qué preguntas harías en una entrevista de técnica a un candidato junior?"
+            </div>
+            <p>El modelo responde desde esa perspectiva, elevando la calidad.</p>
+
+            <h4>Output Formatting (Formato de Salida):</h4>
+            <div class="code-example">
+"Analiza este producto y responde en formato JSON:
+{
+  'nombre': '',
+  'precio': '',
+  'disponible': true/false,
+  'calificación': 0-5
+}
+Producto: Arroz Bomba, 12€, en stock, 4.8 estrellas"
+            </div>
+
+            <h4>Constraints (Restricciones):</h4>
+            <div class="code-example">
+"Explica qué es Machine Learning:
+- Máximo 100 palabras
+- No uses jerga técnica
+- Incluye un ejemplo real"
+            </div>
+
+            <h4>Delimiters (Delimitadores):</h4>
+            <div class="code-example">
+"Analiza el texto entre los --- :
+
+--- Texto a analizar ---
+"El servicio fue rápido pero la comida llegó fría."
+---
+
+Extrae:
+1. Aspectos positivos
+2. Aspectos negativos
+3. Sentimiento general"
+            </div>
+
+            <h4>Self-Consistency (Auto-verificación):</h4>
+            <div class="code-example">
+"Resuelve: Si Juan tiene 3 veces más dinero que María,
+y juntos tienen 400€, ¿cuánto tiene cada uno?
+Resuelve el problema, luego verifica tu respuesta con una ecuación."
+            </div>
+
+            <!-- e) Prompt Templates -->
+            <h3>e) Prompt Templates: Reutiliza lo que Funciona</h3>
+            <p>
+                Un <strong>template</strong> es un prompt con variables que se adapta a diferentes inputs. Es perfecto para tareas repetitivas.
+            </p>
+            <div class="code-example">
+TEMPLATE:
+Analiza el siguiente {tipo_contenido} y extrae:
+1. Tema principal
+2. Sentimiento (positivo/negativo/neutro)
+3. 3 puntos clave
+
+Contenido: {contenido}
+Formato de salida: JSON
+            </div>
+            <p><strong>Uso:</strong> Reutiliza reemplazando {tipo_contenido} y {contenido}.</p>
+            <p><strong>Ejemplo 1:</strong> tipo_contenido="reseña de producto", contenido="Este laptop es rápido pero muy caro"</p>
+            <p><strong>Ejemplo 2:</strong> tipo_contenido="artículo de blog", contenido="Los 5 mejores restaurantes de Valencia..."</p>
+
+            <!-- f) Errores comunes -->
+            <h3>f) Errores Comunes en Prompting</h3>
+            <table>
+                <tr>
+                    <th>Error</th>
+                    <th>Mal (❌)</th>
+                    <th>Bien (✅)</th>
+                </tr>
+                <tr>
+                    <td><strong>Ser demasiado vago</strong></td>
+                    <td>"Háblame de IA"</td>
+                    <td>"Explica en 3 párrafos qué es una red neuronal, dirigido a un programador junior con ejemplos de código"</td>
+                </tr>
+                <tr>
+                    <td><strong>No dar contexto</strong></td>
+                    <td>"¿Debo usar A o B?"</td>
+                    <td>"Tengo un proyecto web con 100k usuarios. ¿Debo usar React o Vue? Necesito máxima velocidad de desarrollo"</td>
+                </tr>
+                <tr>
+                    <td><strong>No especificar formato</strong></td>
+                    <td>"Dame ideas de marketing"</td>
+                    <td>"Dame 5 ideas de marketing para un restaurante español. Formato: lista con [Idea | Presupuesto | ROI esperado]"</td>
+                </tr>
+                <tr>
+                    <td><strong>Prompt Injection</strong></td>
+                    <td colspan="2">(Tema para Clase 04: Seguridad en Prompts)</td>
+                </tr>
+            </table>
+
+        </section>
+
+        <!-- Práctica Guiada Section -->
+        <section class="card">
+            <h2>💻 Práctica Guiada</h2>
+            <p>
+                Realiza estos 4 ejercicios para practicar las técnicas de prompt engineering avanzado. Puedes usar ChatGPT, Claude o Gemini.
+            </p>
+
+            <div class="exercise-container">
+                <h4>✏️ Ejercicio 1: System Prompt para Chatbot</h4>
+                <p>
+                    <strong>Tarea:</strong> Escribe un system prompt para un chatbot de <strong>Rice in Action</strong> (empresa de arroces preelaborados para canal HORECA).
+                </p>
+                <p>El chatbot debe:</p>
+                <ul>
+                    <li>Responder preguntas sobre productos (variedades, precios, cantidades mínimas)</li>
+                    <li>Ser amable, profesional y rápido</li>
+                    <li>Sugerir productos según las necesidades del cliente</li>
+                    <li>Ofrecer contacto con ventas para pedidos grandes</li>
+                </ul>
+                <p><strong>Entrega:</strong> Copia el system prompt que escribas en la sección de comentarios.</p>
+            </div>
+
+            <div class="exercise-container">
+                <h4>✏️ Ejercicio 2: Few-shot Prompting</h4>
+                <p>
+                    <strong>Tarea:</strong> Usa few-shot prompting para clasificar 5 reseñas de restaurantes.
+                </p>
+                <p>
+                    <strong>Formato esperado:</strong> Proporciona 3 ejemplos de reseñas clasificadas (positivo/negativo/neutro),
+                    y luego pide al modelo que clasifique 5 nuevas reseñas.
+                </p>
+                <p><strong>Reseñas para clasificar:</strong></p>
+                <ol>
+                    <li>"Comida excelente, servicio rápido y meseros atentos. Volveré pronto."</li>
+                    <li>"El arroz llegó frío y el camarero fue grosero."</li>
+                    <li>"La paella estaba bien, nada del otro mundo."</li>
+                    <li>"¡Mejor restaurante de Valencia! Impresionante en todos los sentidos."</li>
+                    <li>"Precios altos y porciones pequeñas. Decepcionante."</li>
+                </ol>
+                <p><strong>Entrega:</strong> Pega el prompt completo (ejemplos + reseñas) y las clasificaciones en los comentarios.</p>
+            </div>
+
+            <div class="exercise-container">
+                <h4>✏️ Ejercicio 3: Chain of Thought</h4>
+                <p>
+                    <strong>Tarea:</strong> Resuelve este problema de dos formas: primero sin Chain of Thought, luego con CoT.
+                </p>
+                <p>
+                    <strong>Problema:</strong><br>
+                    "Si un restaurante pide 15 cajas de arroz a 12€ cada una con un 10% de descuento por volumen,
+                    y el envío cuesta 8€, ¿cuál es el total?"
+                </p>
+                <p><strong>Entrega:</strong> Muestra ambas respuestas (sin CoT y con CoT) y explica cuál es más precisa.</p>
+            </div>
+
+            <div class="exercise-container">
+                <h4>✏️ Ejercicio 4: Prompt Template Reutilizable</h4>
+                <p>
+                    <strong>Tarea:</strong> Crea un prompt template para generar descripciones de producto para una web de e-commerce.
+                </p>
+                <p>El template debe incluir variables para:</p>
+                <ul>
+                    <li>Nombre del producto</li>
+                    <li>Características principales</li>
+                    <li>Precio</li>
+                    <li>Público objetivo</li>
+                </ul>
+                <p>
+                    <strong>Bonus:</strong> Prueba el template con 2 productos diferentes
+                    (ej: "Arroz Bomba Premium" y "Arroz Integral Ecológico").
+                </p>
+                <p><strong>Entrega:</strong> Copia el template y los 2 ejemplos generados.</p>
+            </div>
+        </section>
+
+        <!-- Mini-Reto Section -->
+        <section class="card">
+            <h2>🧪 Mini-Reto del Día: Prompt Battle</h2>
+            <p>
+                <strong>Objetivo:</strong> Comparar la calidad de respuestas usando prompts malos vs. prompts buenos.
+            </p>
+            <p>
+                <strong>Tarea:</strong> Usa ChatGPT, Claude o Gemini para generar el código HTML + CSS de una <strong>landing page para un restaurante</strong>.
+            </p>
+
+            <h4>Intento 1: Prompt Vago (❌ Malo)</h4>
+            <div class="code-example">
+"Crea una landing page para un restaurante"
+            </div>
+            <p><strong>Resultado:</strong> Copia el HTML generado. Observa: ¿es profesional? ¿tiene buen diseño? ¿incluye llamadas a la acción?</p>
+
+            <h4>Intento 2: Prompt Optimizado (✅ Bueno)</h4>
+            <div class="code-example">
+"Eres un desarrollador senior de landing pages. Crea una landing page HTML + CSS
+para 'El Arrocero Valenciano', restaurante especializado en paellas auténticamente valencianas.
+
+Requisitos:
+- Debe incluir: hero section, galería de platos, testimonios, formulario de reserva
+- Diseño: moderno, responsive (mobile-first), colores cálidos (naranjas, marrones)
+- Llamadas a la acción: 'Reservar ahora', 'Ver menú'
+- Estructura: header con nav, main content, footer con contacto
+- Especifica que es Michelin (si es necesario, pon ⭐⭐)
+
+Formato: HTML completo con CSS embebido, listo para copiar-pegar."
+            </div>
+            <p><strong>Resultado:</strong> Copia el HTML generado. Observa: ¿es mucho mejor? ¿incluye más detalles? ¿se puede usar directamente?</p>
+
+            <h4>Análisis Final:</h4>
+            <p>
+                <strong>Pregunta:</strong> ¿Cuál es mejor y por qué? Describe las diferencias en calidad, detalle y usabilidad.
+                Copia tu análisis en los comentarios.
+            </p>
+        </section>
+
+        <!-- ===== ENTREGA DE EJERCICIO ===== -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Prompt Battle</h4>
+                <p style="color: var(--text-muted); font-size: 0.95em;">Pega el HTML generado con cada prompt (o un resumen de las diferencias) y tu análisis final: ¿cuál es mejor y por qué? Describe las diferencias en calidad, detalle y usabilidad.</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Intento 1 (prompt vago) - resultado:&#10;...&#10;&#10;Intento 2 (prompt optimizado) - resultado:&#10;...&#10;&#10;Análisis: ¿cuál es mejor y por qué?"></textarea>
+                <label><input type="checkbox" required> He probado los dos prompts y comparado los resultados</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m2-c03', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- Test de Conocimiento Section -->
+        <section class="card quiz-container">
+            <h2>📝 Test de Conocimiento</h2>
+            <p>Responde estas 10 preguntas para consolidar lo aprendido. Ganas XP al completar el quiz.</p>
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <a href="clase-02.html" class="nav-btn">← Clase 02</a>
+            <a href="clase-04.html" class="nav-btn">Clase 04 →</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Curso IA para Juan Querol. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es la función del 'system prompt'?",
+                options: [
+                    "Enviar el mensaje del usuario",
+                    "Definir el comportamiento y reglas del asistente",
+                    "Guardar la conversación",
+                    "Generar la respuesta del modelo"
+                ],
+                correct: 1,
+                explanation: "El system prompt establece instrucciones para el comportamiento, personalidad y reglas que seguirá el asistente en toda la conversación."
+            },
+            {
+                question: "¿Qué es 'few-shot prompting'?",
+                options: [
+                    "Dar pocas instrucciones",
+                    "Dar varios ejemplos antes de la pregunta real",
+                    "Usar prompts cortos",
+                    "Hacer pocas preguntas"
+                ],
+                correct: 1,
+                explanation: "Few-shot prompting significa proporcionar 3-5 ejemplos de tareas similares antes de pedir que resuelva la tarea principal."
+            },
+            {
+                question: "¿Qué técnica consiste en pedir al modelo que 'piense paso a paso'?",
+                options: [
+                    "Few-shot",
+                    "Zero-shot",
+                    "Chain of Thought",
+                    "Role prompting"
+                ],
+                correct: 2,
+                explanation: "Chain of Thought (CoT) mejora significativamente la precisión pidiendo al modelo que razone y explique cada paso de su solución."
+            },
+            {
+                question: "¿Cuál de estos es un buen prompt?",
+                options: [
+                    "Háblame de Python",
+                    "Explica en 3 párrafos qué es Python, dirigido a un dev JS, con ejemplos de código",
+                    "Python",
+                    "Dime cosas sobre Python"
+                ],
+                correct: 1,
+                explanation: "Un buen prompt es específico, incluye contexto (dev JS), restricciones (3 párrafos) y formato esperado (con código)."
+            },
+            {
+                question: "¿Para qué se usan delimitadores (```, ---) en un prompt?",
+                options: [
+                    "Para decorar el prompt",
+                    "Para separar claramente secciones del prompt",
+                    "Para hacer el prompt más largo",
+                    "No tienen utilidad real"
+                ],
+                correct: 1,
+                explanation: "Los delimitadores hacen el prompt más claro separando el contenido a analizar del resto de instrucciones."
+            },
+            {
+                question: "¿Qué es role prompting?",
+                options: [
+                    "Asignar un rol al modelo para que responda desde esa perspectiva",
+                    "Cambiar de usuario",
+                    "Crear múltiples cuentas",
+                    "Usar diferentes APIs"
+                ],
+                correct: 0,
+                explanation: "Role prompting asigna un rol específico al modelo (ej: 'Actúa como ingeniero senior') para elevar la calidad de las respuestas."
+            },
+            {
+                question: "¿Cuál es un error común en prompting?",
+                options: [
+                    "Ser específico en la solicitud",
+                    "Dar ejemplos",
+                    "Ser demasiado vago y no dar contexto",
+                    "Pedir formato JSON"
+                ],
+                correct: 2,
+                explanation: "Ser vago sin contexto produce respuestas genéricas. Debes ser específico, dar contexto y explicar el propósito."
+            },
+            {
+                question: "En la estructura de mensajes, ¿quién define las reglas de comportamiento?",
+                options: [
+                    "user",
+                    "assistant",
+                    "system",
+                    "function"
+                ],
+                correct: 2,
+                explanation: "El 'system' role es el responsable de definir las reglas de comportamiento y la personalidad del asistente."
+            },
+            {
+                question: "¿Qué es un prompt template?",
+                options: [
+                    "Un prompt fijo que nunca cambia",
+                    "Un prompt con variables reutilizables que se adapta a diferentes inputs",
+                    "Una plantilla de diseño HTML",
+                    "Un tipo especial de API"
+                ],
+                correct: 1,
+                explanation: "Un prompt template tiene variables (entre {}) que se reemplazan con inputs diferentes, permitiendo reutilizar la estructura."
+            },
+            {
+                question: "¿Qué técnica mejoraría la respuesta a '¿Cuánto es 17 × 24 + 13?'?",
+                options: [
+                    "Zero-shot",
+                    "Few-shot",
+                    "Chain of Thought",
+                    "Role prompting"
+                ],
+                correct: 2,
+                explanation: "Chain of Thought haría que el modelo resuelva paso a paso: primero 17 × 24, luego sumar 13, mejorando la precisión."
+            }
+        ];
+
+        // Initialize quiz
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm2-c03');
+    </script>
+</body>
+</html>

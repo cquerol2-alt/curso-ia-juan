@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 08: Frontend Vercel AI SDK — streaming y UX de IA | Módulo 5</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> &gt; </span>
+            <a href="index.html">Módulo 5</a>
+            <span> &gt; </span>
+            <strong>Clase 08</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 08: Frontend con Vercel AI SDK — streaming y UX de IA</h1>
+            <div class="subtitle">📅 Semana 7 — Viernes | 🎬 30 min vídeo + 💻 60 min práctica + 🧪 15 min test</div>
+        </header><section class="card" style="border-left: 4px solid #00f0ff;">
+            <h2 class="section-title"><span class="section-icon">🎯</span> Qué vas a construir hoy</h2>
+            <p>Un <strong>frontend web real</strong> (Next.js + Vercel AI SDK) que consume tu RAG de la clase 05 y muestra la respuesta <em>streaming token a token</em> con renderizado de markdown y citas a los chunks fuente. Dejamos atrás Streamlit: esto es lo que se usa en productos reales de IA hoy.</p>
+            <div class="info" style="margin-top: 12px;">
+                <strong>🧭 Filosofía:</strong> la UX de IA se gana con <em>streaming</em>. Una respuesta que aparece entera 5s después se siente lenta; la misma respuesta con tokens apareciendo a 1s se siente <em>instantánea</em>. Mismo coste, percepción distinta.
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>📹 Vídeo principal (30 min)</h2>
+            <div class="video-wrapper">
+                <iframe width="100%" height="450" src="https://www.youtube.com/embed/4SO3CUWPYf0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <a href="https://www.youtube.com/watch?v=4SO3CUWPYf0" target="_blank" class="btn" style="background:#ff0000;">▶ Ver en YouTube ↗</a>
+                <p style="font-size:.85em; color:#b0b0cc; margin-top:6px;">Si el reproductor sale en blanco, usa este botón.</p>
+            </div>
+            <div class="warning" style="margin-top: 12px;">
+                <strong>⚠️ Aviso v2:</strong> el vídeo puede estar basado en OpenAI. Aquí usamos Vercel AI SDK con el provider <code>@ai-sdk/anthropic</code> para hablar directamente con Claude Sonnet 4.6. Los conceptos (useChat, streaming, hooks) son idénticos.
+            </div>
+        </section>
+        <aside class="workshop-ref">
+            <h4>📚 Profundiza con el workshop de hola.dev</h4>
+            <p style="margin:0;">Cómo funciona el streaming a nivel de eventos en la API antes de meterlo en el front:</p>
+            <ul>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#streaming" target="_blank" rel="noopener">Sección 78 — Streaming de respuestas</a></li>
+            </ul>
+            <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+        </aside>
+
+
+
+
+<section class="card">
+            <h2 class="section-title"><span class="section-icon">📖</span> Por qué Vercel AI SDK (y no Streamlit)</h2>
+            <table>
+                <thead>
+                    <tr><th>Aspecto</th><th>Streamlit</th><th>Vercel AI SDK + Next.js</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Streaming token a token</td>
+                        <td>Mediocre, necesita trucos</td>
+                        <td>Nativo, hook <code>useChat</code></td>
+                    </tr>
+                    <tr>
+                        <td>Control de UI</td>
+                        <td>Limitado a widgets Python</td>
+                        <td>HTML/CSS/JS total</td>
+                    </tr>
+                    <tr>
+                        <td>Hosting</td>
+                        <td>Streamlit Cloud / Render</td>
+                        <td>Vercel (deploy atómico por push)</td>
+                    </tr>
+                    <tr>
+                        <td>Provider switching</td>
+                        <td>Manual</td>
+                        <td>Cambias 1 línea (<code>anthropic</code> → <code>openai</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>Producto real</td>
+                        <td>Demos internas</td>
+                        <td>Estándar de facto en SaaS de IA (Perplexity, v0, Cursor…)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ff00e5;">
+            <h2 class="section-title"><span class="section-icon">💻</span> Práctica: tu chat RAG con streaming (60 min)</h2>
+
+            <h3>Paso 1 · Bootstrap del proyecto Next.js</h3>
+            <div class="code-block">
+                <span class="lang-label">Bash</span>
+<pre><code>npx create-next-app@latest rag-chat --ts --app --tailwind --eslint
+cd rag-chat
+npm install ai @ai-sdk/anthropic
+echo "ANTHROPIC_API_KEY=sk-ant-..." &gt; .env.local
+</code></pre>
+            </div>
+
+            <h3>Paso 2 · Backend route: <code>app/api/chat/route.ts</code></h3>
+            <div class="code-block">
+                <span class="lang-label">TypeScript</span>
+<pre><code>import { anthropic } from '@ai-sdk/anthropic';
+import { streamText } from 'ai';
+
+export const maxDuration = 30;
+
+// Cliente de tu vector store — placeholder. En real, llama al backend Python
+// o mueve ChromaDB a un servicio expuesto.
+async function retrieveContext(query: string): Promise&lt;string[]&gt; {
+  // fetch a tu API Python que hace retrieve+rerank de la clase 05
+  const r = await fetch(`${process.env.RAG_API}/retrieve?q=${encodeURIComponent(query)}`);
+  const data = await r.json();
+  return data.chunks as string[]; // top-3 chunks
+}
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+  const lastUser = messages[messages.length - 1].content as string;
+
+  const chunks = await retrieveContext(lastUser);
+  const context = chunks.map((c, i) =&gt; `[${i + 1}] ${c}`).join('\n---\n');
+
+  const system = `Eres un asistente que responde SOLO con los chunks dados.
+Cita las fuentes como [1], [2]... al final de cada afirmación.
+Si la respuesta no está en los chunks, di "No encuentro info en mis apuntes".
+
+CHUNKS:
+${context}`;
+
+  const result = streamText({
+    model: anthropic('claude-sonnet-4-6'),
+    system,
+    messages,
+  });
+
+  return result.toDataStreamResponse();
+}
+</code></pre>
+            </div>
+
+            <h3>Paso 3 · Frontend: <code>app/page.tsx</code></h3>
+            <div class="code-block">
+                <span class="lang-label">TypeScript + React</span>
+<pre><code>'use client';
+import { useChat } from 'ai/react';
+import ReactMarkdown from 'react-markdown';
+
+export default function Chat() {
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat();
+
+  return (
+    &lt;div className="max-w-2xl mx-auto p-4"&gt;
+      &lt;h1 className="text-2xl font-bold mb-4"&gt;Pregúntale a mis apuntes&lt;/h1&gt;
+
+      &lt;div className="space-y-4 mb-8"&gt;
+        {messages.map(m =&gt; (
+          &lt;div key={m.id} className={m.role === 'user' ? 'bg-slate-700 p-3 rounded' : 'bg-slate-800 p-3 rounded'}&gt;
+            &lt;div className="text-xs opacity-60 mb-1"&gt;{m.role}&lt;/div&gt;
+            &lt;ReactMarkdown&gt;{m.content}&lt;/ReactMarkdown&gt;
+          &lt;/div&gt;
+        ))}
+        {isLoading &amp;&amp; &lt;div className="opacity-50"&gt;Pensando...&lt;/div&gt;}
+      &lt;/div&gt;
+
+      &lt;form onSubmit={handleSubmit} className="flex gap-2"&gt;
+        &lt;input
+          value={input}
+          onChange={handleInputChange}
+          placeholder="Tu pregunta sobre los apuntes..."
+          className="flex-1 border rounded p-2 bg-slate-900"
+        /&gt;
+        &lt;button type="submit" className="bg-cyan-500 text-black px-4 rounded font-bold"&gt;
+          Enviar
+        &lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+            </div>
+            <div class="tip" style="margin-top: 12px;">
+                Instala <code>react-markdown</code>: <code>npm install react-markdown</code>. Si quieres resaltado de sintaxis en bloques de código: <code>npm install rehype-highlight</code>.
+            </div>
+
+            <h3>Paso 4 · Arranca el backend Python (RAG) en paralelo</h3>
+            <div class="code-block">
+                <span class="lang-label">Python — rag_api.py (FastAPI)</span>
+<pre><code>from fastapi import FastAPI
+from rag_pipeline import retrieve, rerank  # de la clase 05
+
+app = FastAPI()
+
+@app.get("/retrieve")
+def do_retrieve(q: str):
+    candidates = retrieve(q, k=20)
+    top = rerank(q, candidates, n=3)
+    return {"chunks": [c["text"] for c in top]}
+
+# uvicorn rag_api:app --reload --port 8000
+</code></pre>
+            </div>
+            <div class="code-block">
+                <span class="lang-label">.env.local (Next.js)</span>
+<pre><code>ANTHROPIC_API_KEY=sk-ant-...
+RAG_API=http://localhost:8000
+</code></pre>
+            </div>
+
+            <h3>Paso 5 · Probar en local</h3>
+            <div class="code-block">
+                <span class="lang-label">Bash — dos terminales</span>
+<pre><code># Terminal 1 — backend RAG
+uvicorn rag_api:app --reload --port 8000
+
+# Terminal 2 — frontend Next.js
+npm run dev
+# abre http://localhost:3000
+</code></pre>
+            </div>
+            <p>Escribe una pregunta. Deberías ver los tokens apareciendo uno a uno. Si aparece todo de golpe → falla el streaming; revisa que devuelves <code>toDataStreamResponse()</code>.</p>
+
+            <h3>Paso 6 · Citas visibles en la UI (bonus)</h3>
+            <p>Haz que el backend devuelva también los chunks como <em>data annotations</em> para renderizarlos como tarjetas debajo de la respuesta. El Vercel AI SDK soporta <code>data</code> fields custom vía <code>streamText({ data })</code>.</p>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #ffe600;">
+            <h2 class="section-title"><span class="section-icon">🧠</span> Gotchas comunes</h2>
+            <ul>
+                <li><strong>CORS</strong>: si el front y el back están en dominios distintos, añade <code>CORSMiddleware</code> en FastAPI o llama al back desde el <em>server side</em> de Next.js (que es lo que hace este ejemplo).</li>
+                <li><strong>Rate limits</strong>: el streaming mantiene la conexión abierta; añade timeout en tu Vercel function (<code>export const maxDuration = 30</code>).</li>
+                <li><strong>Markdown código</strong>: sin <code>react-markdown</code> verás los backticks en bruto. Instálalo desde el minuto 0.</li>
+                <li><strong>Provider switch</strong>: para probar GPT-4, cambia <code>anthropic('claude-sonnet-4-6')</code> por <code>openai('gpt-4o')</code>. Instala <code>@ai-sdk/openai</code> primero.</li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">🧪</span> Quiz</h2>
+            <div id="quiz-container"></div>
+        </section>
+
+        <section class="card" style="border-left: 4px solid #39ff14;">
+            <h2 class="section-title"><span class="section-icon">📝</span> Ejercicios entregables</h2>
+
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h3>Ejercicio 1 (A) — Frontend Next.js + Vercel AI SDK con streaming</h3>
+                <p>Monta el proyecto Next.js siguiendo los pasos 1-5. Conéctalo a tu backend RAG de la clase 05. Graba un GIF o vídeo corto (10s) donde se vea el streaming token a token funcionando. Entrega la ruta del repo + captura.</p>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="# URL del repo + captura + cualquier problema que hayas encontrado"></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c08', 1, this)">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h3>Ejercicio 2 (B) — Chat con markdown + citas a las fuentes</h3>
+                <p>Añade <code>react-markdown</code> para que las respuestas salgan formateadas (negritas, listas, código). Bonus: muestra debajo de cada respuesta tarjetas con los 3 chunks usados (con su fuente). Entrega el código del <code>page.tsx</code> y una captura con citas visibles.</p>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="# page.tsx final + screenshot con citas renderizadas"></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales"></textarea>
+                    <button class="btn btn-submit" onclick="CourseProgress.submitExercise('m5-c08', 2, this)">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <div class="nav-buttons">
+            <a href="clase-07.html" class="btn btn-secondary">← Clase 07</a>
+            <a href="index.html" class="btn btn-secondary">📚 Módulo 5</a>
+            <a href="clase-09.html" class="btn">Clase 09 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Qué ventaja principal aporta el streaming token a token en la UX de IA?",
+                options: [
+                    "Reduce el coste de los tokens",
+                    "La respuesta se siente instantánea aunque el tiempo total sea parecido",
+                    "Mejora la accuracy del modelo",
+                    "Elimina la necesidad de retrieval"
+                ],
+                correct: 1,
+                explanation: "El streaming cambia la percepción: ver tokens apareciendo a 1s se siente rápido aunque tarde 6s en total. Es UX, no coste."
+            },
+            {
+                question: "¿Qué hook del Vercel AI SDK orquesta el chat en React?",
+                options: [
+                    "useEffect",
+                    "useChat",
+                    "useSWR",
+                    "useAI"
+                ],
+                correct: 1,
+                explanation: "useChat te da messages, input, handleInputChange, handleSubmit, isLoading — todo listo."
+            },
+            {
+                question: "¿En qué parte corre el retrieval (ChromaDB + rerank)?",
+                options: [
+                    "En el navegador del usuario",
+                    "En el backend Python (FastAPI) llamado desde la route de Next.js",
+                    "En el propio Claude",
+                    "En Vercel Edge"
+                ],
+                correct: 1,
+                explanation: "ChromaDB y el rerank con Haiku corren Python. Next.js los consume vía HTTP desde la route /api/chat."
+            },
+            {
+                question: "¿Qué ventaja da Vercel AI SDK sobre llamar fetch a la API de Anthropic a mano?",
+                options: [
+                    "Ninguna, es lo mismo",
+                    "Abstrae streaming, manejo de tool calls, y permite cambiar de provider cambiando 1 línea",
+                    "Es obligatorio en Vercel",
+                    "Sólo funciona con Anthropic"
+                ],
+                correct: 1,
+                explanation: "Abstrae streaming + provider switching + tool loops. Fuerte portabilidad entre Anthropic, OpenAI, Google, Mistral, etc."
+            },
+            {
+                question: "El backend devuelve <code>toDataStreamResponse()</code>. ¿Qué envía al cliente?",
+                options: [
+                    "Un JSON con la respuesta completa al final",
+                    "Un stream SSE (Server-Sent Events) con tokens progresivos",
+                    "Un WebSocket",
+                    "Un archivo HTML"
+                ],
+                correct: 1,
+                explanation: "Es un stream SSE que el useChat consume pieza a pieza. Así el cliente ve tokens inmediatamente."
+            },
+            {
+                question: "¿Qué variable de entorno necesita Next.js para llamar a Anthropic?",
+                options: [
+                    "OPENAI_API_KEY",
+                    "ANTHROPIC_API_KEY en .env.local",
+                    "NEXT_PUBLIC_ANTHROPIC_KEY",
+                    "Ninguna, es gratis"
+                ],
+                correct: 1,
+                explanation: "ANTHROPIC_API_KEY en .env.local (no NEXT_PUBLIC_, porque debe quedar server-side)."
+            },
+            {
+                question: "¿Por qué NO poner la API key con prefijo NEXT_PUBLIC_?",
+                options: [
+                    "Porque queda más bonito",
+                    "Porque NEXT_PUBLIC_* se incluye en el bundle del cliente y cualquiera puede robarla",
+                    "Porque es ilegal",
+                    "Porque Vercel la bloquea"
+                ],
+                correct: 1,
+                explanation: "Variables con prefijo NEXT_PUBLIC_ se exponen al navegador. Una API key así = dinero perdido."
+            },
+            {
+                question: "Para cambiar a GPT-4 desde Claude en Vercel AI SDK ¿qué haces?",
+                options: [
+                    "Reescribes el backend",
+                    "Instalas @ai-sdk/openai y cambias anthropic('claude-sonnet-4-6') por openai('gpt-4o')",
+                    "Imposible, hay que migrar",
+                    "Pagas licencia"
+                ],
+                correct: 1,
+                explanation: "Una línea + import. Esa es la razón de usar el SDK en vez de llamar a fetch directo."
+            },
+            {
+                question: "Tu respuesta llega entera de golpe sin streaming. ¿Dónde buscas el bug?",
+                options: [
+                    "En el CSS",
+                    "En si devuelves toDataStreamResponse() y si el cliente usa useChat (no fetch plano)",
+                    "En el logo",
+                    "En tu dominio"
+                ],
+                correct: 1,
+                explanation: "El streaming se rompe si devuelves JSON en vez de stream SSE, o si el cliente hace fetch y await al JSON."
+            },
+            {
+                question: "¿Qué usarías para renderizar markdown (bold, listas, código) en los mensajes?",
+                options: [
+                    "No se puede, es texto plano",
+                    "react-markdown + opcionalmente rehype-highlight",
+                    "jQuery",
+                    "Excel"
+                ],
+                correct: 1,
+                explanation: "react-markdown convierte el string en componentes React. rehype-highlight añade syntax highlighting a bloques de código."
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm5-c08');
+        });
+    </script>
+</body>
+</html>

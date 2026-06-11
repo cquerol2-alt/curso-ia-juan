@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 01: El problema — Cómo conectas una IA con tus datos</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a>
+            <span> &gt; </span>
+            <a href="index.html">Módulo 5</a>
+            <span> &gt; </span>
+            <strong>Clase 01</strong>
+        </nav>
+        <!-- Header -->
+        <header class="module-header">
+            <h1>Clase 01: El problema — Cómo conectas una IA con tus datos</h1>
+            <p class="subtitle">📅 Semana 6 — Miércoles | ⏱️ 45 minutos | 🧭 Clase bisagra del módulo</p>
+        </header>
+
+        <!-- Intro -->
+        <div class="card" style="border-left: 4px solid #00f0ff;">
+            <h2>🧭 Por qué esta clase es distinta</h2>
+            <p>
+                Hasta 2024, si alguien te preguntaba "¿cómo hago que un LLM responda sobre mis documentos?", la respuesta automática era <strong>"móntale un RAG con LangChain"</strong>. En 2026 eso ya no es verdad. Tienes <strong>3 formas</strong> de darle a una IA información que no está en su entrenamiento — y elegir bien es más importante que saber programar cualquiera de las tres.
+            </p>
+            <p>
+                En esta clase no vas a tocar embeddings ni vector stores todavía. Vas a aprender a <strong>pensar el problema antes de elegir herramienta</strong>. Esto es lo que en 2026 se llama <em>context engineering</em>, y es la habilidad que separa a un junior que "sabe LangChain" de un dev que entiende el stack.
+            </p>
+        </div>
+
+        <!-- Video Section -->
+        <div class="card">
+            <h2>📹 Vídeo Principal</h2>
+            <div class="video-wrapper">
+                <iframe width="100%" height="450" src="https://www.youtube.com/embed/LP5OCa20Zpg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <a href="https://www.youtube.com/watch?v=LP5OCa20Zpg" target="_blank" class="btn" style="background:#ff0000;">▶ Ver en YouTube ↗</a>
+                <p style="font-size:.85em; color:#b0b0cc; margin-top:6px;">Si el reproductor de arriba sale en blanco (pasa al abrir el HTML con doble-click por política de YouTube), usa este botón.</p>
+            </div>
+            <div class="info" style="margin-top: 12px; border-left: 3px solid #00e676;">
+                <strong>🗣️ ¿Vídeo en inglés?</strong> Usa <a href="https://chromewebstore.google.com/detail/youtube-dubbing-%E2%80%93-transla/oglffgiaiekgeicdgkdlnlkhliajdlja" target="_blank" style="color: #00e676;">YouTube Dubbing – Translate &amp; Dub</a> — instala la extensión de Chrome, abre el vídeo en YouTube y selecciona español. Dobla en tiempo real con IA.
+            </div>
+            <div class="warning" style="margin-top: 12px; border-left: 3px solid #ffe600;">
+                <strong>⚠️ Nota de modelo:</strong> el vídeo usa Claude 3.5, pero en el código canónico del módulo usamos <code>claude-sonnet-4-6</code> (modelo actual). Los conceptos de arquitectura (context stuffing, RAG, agentic) son idénticos — solo cambia el nombre del modelo en <code>client.messages.create(model=...)</code>.
+            </div>
+            <div class="tip" style="margin-top: 1em;">
+                <strong>Mind map interactivo:</strong> Sigue los conceptos clave con el mind map visual en español — cubre las 3 arquitecturas y cuándo usar cada una.
+                <a href="mindmap-05-c01.html" class="btn" style="margin-top: 0.8em; display: inline-block;">Abrir Mind Map ↗</a>
+            </div>
+            <div class="tip" style="margin-top: 1em; background: rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107;">
+                <strong>📚 Lectura complementaria:</strong> <a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">Building Effective Agents — Anthropic</a> (inglés). La sección "Augmented LLM" explica exactamente este concepto desde la fuente.
+            </div>
+            <aside class="workshop-ref" style="margin-top: 1em;">
+                <h4>📚 Profundiza con el workshop de hola.dev</h4>
+                <p style="margin:0;">El framework mental de "context engineering" como disciplina superior al prompt engineering — y por qué RAG ya no es la respuesta automática — está muy bien explicado aquí:</p>
+                <ul>
+                    <li><a href="https://workshop-ia-2026.686f6c61.dev/#context-engineering" target="_blank" rel="noopener">Sección 37 — Context engineering: más allá del prompt</a></li>
+                    <li><a href="https://workshop-ia-2026.686f6c61.dev/#prompt-engineering" target="_blank" rel="noopener">Sección 36 — Prompt engineering (qué cubre y dónde se queda corto)</a></li>
+                </ul>
+                <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+            </aside>
+        </div>
+
+        <!-- Resumen de Conceptos -->
+        <div class="card">
+            <h2>📚 Resumen de Conceptos</h2>
+
+            <h3>El problema real: el "apagón de conocimiento"</h3>
+            <p>
+                Un LLM como Claude o GPT fue entrenado con datos hasta una fecha concreta (su <em>knowledge cutoff</em>). Pregúntale por:
+            </p>
+            <ul>
+                <li>Tus apuntes de la U-TAD del último trimestre</li>
+                <li>El manual interno de una empresa</li>
+                <li>Las últimas 3 entregas de tu equipo en Linear</li>
+                <li>Un paper publicado la semana pasada</li>
+            </ul>
+            <p>
+                …y lo va a inventar con confianza absoluta. A esto se le llama <strong>alucinación</strong>. El modelo no sabe que no sabe.
+            </p>
+            <p>
+                <strong>Context engineering</strong> es la disciplina de meterle al modelo la información correcta en el momento correcto para que deje de inventar. No es prompt engineering (eso es "cómo le hablo"). Es "qué datos le doy".
+            </p>
+
+            <h3>Las 3 arquitecturas — de menor a mayor complejidad</h3>
+
+            <h4 style="color: #00f0ff;">1️⃣ Context stuffing (meterlo todo en el prompt)</h4>
+            <p>
+                Los modelos de 2026 tienen ventanas de contexto gigantes: Claude Sonnet 4.6 maneja <strong>200 000 tokens</strong> (≈ 150 000 palabras, un libro entero) y versiones "long" llegan a <strong>1 millón</strong>. Si tu conocimiento cabe ahí dentro, meterlo entero en el prompt es la solución más simple.
+            </p>
+            <ul>
+                <li><strong>Cuándo usar:</strong> documentos &lt; 200K tokens, consultas puntuales, prototipado rápido</li>
+                <li><strong>Ventajas:</strong> cero infraestructura, latencia baja, el modelo ve todo el contexto</li>
+                <li><strong>Desventajas:</strong> caro por llamada (pagas todos los tokens siempre), problema de "lost in the middle" (el modelo ignora información en medio de contextos muy largos)</li>
+            </ul>
+
+            <h4 style="color: #ff00e5;">2️⃣ Agentic search (que el modelo decida qué buscar)</h4>
+            <p>
+                En vez de darle todo, le das al modelo <strong>herramientas</strong> (<em>tools</em>): <code>search_docs()</code>, <code>read_file()</code>, <code>web_search()</code>. El modelo lee la pregunta, decide qué necesita buscar, ejecuta la herramienta, lee el resultado y responde. Esto es lo que hacen Claude Code, Cursor o Perplexity por debajo.
+            </p>
+            <ul>
+                <li><strong>Cuándo usar:</strong> corpus grandes dinámicos, preguntas que requieren buscar en varias fuentes, workflows donde la información no es predecible</li>
+                <li><strong>Ventajas:</strong> el modelo escala a cualquier tamaño de datos, solo paga los tokens que necesita, se adapta a la pregunta</li>
+                <li><strong>Desventajas:</strong> más latencia (múltiples turnos), requiere construir tools fiables, más complejidad de debug</li>
+            </ul>
+
+            <h4 style="color: #39ff14;">3️⃣ RAG clásico (embeddings + vector store + retrieval)</h4>
+            <p>
+                Chunks + embeddings + vector DB + retrieve top-K + prompt aumentado + respuesta. Lo de siempre. Lo importante en 2026 es entender que es <strong>una opción entre tres, no la opción por defecto</strong>.
+            </p>
+            <ul>
+                <li><strong>Cuándo usar:</strong> corpus muy grandes (millones de docs), latencia crítica, coste por consulta bajo, búsqueda semántica donde las tools no bastan</li>
+                <li><strong>Ventajas:</strong> escalable a millones de documentos, coste por query bajo y predecible, búsqueda semántica potente</li>
+                <li><strong>Desventajas:</strong> pipeline complejo, hay que mantener el índice al día, calidad depende de chunking/reranking</li>
+            </ul>
+
+            <h3>La jerarquía de decisión</h3>
+            <p style="background: rgba(0, 240, 255, 0.08); padding: 1em; border-radius: 8px;">
+                <strong>Regla práctica de 2026:</strong> empieza por <em>stuffing</em> si cabe → si no cabe o necesitas frescura, pasa a <em>agentic search</em> → solo si el volumen o la latencia lo exigen, móntate un <em>RAG clásico</em>.
+            </p>
+
+            <h3>Comparativa rápida</h3>
+            <table style="width: 100%; margin-top: 1em;">
+                <thead>
+                    <tr style="background: rgba(27, 94, 32, 0.2);">
+                        <th>Criterio</th>
+                        <th>Context stuffing</th>
+                        <th>Agentic search</th>
+                        <th>RAG clásico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Tamaño del corpus</strong></td>
+                        <td>&lt; 200K tokens</td>
+                        <td>Cualquiera</td>
+                        <td>Millones de docs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Complejidad</strong></td>
+                        <td>Baja 🟢</td>
+                        <td>Media 🟡</td>
+                        <td>Alta 🔴</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Coste por query</strong></td>
+                        <td>Alto</td>
+                        <td>Medio-bajo</td>
+                        <td>Bajo</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Latencia</strong></td>
+                        <td>Baja (1 llamada)</td>
+                        <td>Alta (múltiples turnos)</td>
+                        <td>Media</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Frescura</strong></td>
+                        <td>La que metas</td>
+                        <td>En vivo</td>
+                        <td>La del índice</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Infraestructura</strong></td>
+                        <td>Nada</td>
+                        <td>APIs + tools</td>
+                        <td>Vector DB + pipeline</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Qué cambia en tu CV</h3>
+            <p>
+                En 2024 los recruiters preguntaban <em>"¿sabes LangChain?"</em>. En 2026 preguntan <em>"¿cuándo usarías RAG y cuándo no?"</em>. Saber las 3 opciones y justificar elecciones vale más que pegar <code>pip install langchain</code>.
+            </p>
+        </div>
+
+        <!-- Práctica Guiada -->
+        <div class="card">
+            <h2>⚙️ Práctica Guiada: tu primera llamada con contexto</h2>
+            <p>
+                Vamos a hacer el experimento más simple de context engineering: le pedimos al modelo algo que <strong>no sabe</strong>, y luego se lo damos en el prompt. Dos llamadas, mismo modelo, respuestas radicalmente distintas.
+            </p>
+
+            <h3>Paso 1: Instalar el SDK de Anthropic</h3>
+            <pre><code>pip install anthropic python-dotenv</code></pre>
+            <p>
+                Nota: <strong>no instalamos LangChain</strong>. En 2026, el SDK oficial de Anthropic (y el de OpenAI) cubren todo lo que necesitas sin añadir abstracciones extra.
+            </p>
+
+            <h3>Paso 2: Configura tu API key</h3>
+            <p>Crea un archivo <code>.env</code> en la raíz del proyecto:</p>
+            <pre><code>ANTHROPIC_API_KEY=sk-ant-api03-xxxxxxxxxxxxxxxxx</code></pre>
+            <p>
+                Puedes conseguir una clave en <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a> (crea cuenta gratis, tienes ~5 $ de crédito inicial — sobra para todo el módulo).
+            </p>
+
+            <h3>Paso 3: Pregunta SIN contexto (el modelo alucina)</h3>
+            <pre><code>import os
+from anthropic import Anthropic
+from dotenv import load_dotenv
+
+load_dotenv()
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+# Pregunta sobre algo que el modelo NO sabe: tu info privada
+pregunta = "¿Cuál es la política de devoluciones de la tienda de Juan?"
+
+respuesta = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=512,
+    messages=[{"role": "user", "content": pregunta}]
+)
+
+print("SIN CONTEXTO:")
+print(respuesta.content[0].text)</code></pre>
+            <p>
+                Vas a ver una de estas dos cosas: (a) el modelo dice "no tengo información sobre la tienda de Juan" (bien), o (b) se lo inventa con seguridad (mal, alucinación).
+            </p>
+
+            <h3>Paso 4: Misma pregunta CON contexto (context stuffing)</h3>
+            <pre><code># El "documento privado" que queremos que el modelo use
+documento = """
+POLÍTICA DE DEVOLUCIONES — Tienda de Juan
+=========================================
+1. Plazo: 30 días desde la fecha de compra.
+2. Condiciones: producto sin usar, con etiqueta original.
+3. Reembolso: en el mismo método de pago en 5-7 días hábiles.
+4. Envío de devolución: gratis si el error es nuestro, a cargo del cliente si el cliente cambia de opinión.
+5. Excepciones: productos personalizados no admiten devolución.
+"""
+
+prompt_aumentado = f"""Usa SOLO la información del siguiente documento para responder. Si el documento no tiene la respuesta, di "no está en el documento".
+
+DOCUMENTO:
+{documento}
+
+PREGUNTA: {pregunta}"""
+
+respuesta = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=512,
+    messages=[{"role": "user", "content": prompt_aumentado}]
+)
+
+print("\nCON CONTEXTO (stuffing):")
+print(respuesta.content[0].text)</code></pre>
+            <p>
+                Esto es <strong>context stuffing en su versión más simple</strong>. Acabas de hacer lo que el 80 % de los tutoriales te venden como "RAG", pero sin vector store, sin LangChain y sin embeddings. Para 5 párrafos, el 99 % de las veces no necesitas nada más.
+            </p>
+
+            <h3>Paso 5: Mide el coste real</h3>
+            <pre><code># El SDK te devuelve cuántos tokens has usado
+print(f"Tokens de entrada: {respuesta.usage.input_tokens}")
+print(f"Tokens de salida: {respuesta.usage.output_tokens}")
+
+# Precio aproximado Claude Sonnet 4.6 (abril 2026):
+# Input:  $3 / millón de tokens
+# Output: $15 / millón de tokens
+coste = (respuesta.usage.input_tokens * 3 + respuesta.usage.output_tokens * 15) / 1_000_000
+print(f"Coste de esta llamada: ${coste:.6f}")</code></pre>
+            <p>
+                Guarda este número mentalmente. En la Boss Battle del módulo vas a comparar el coste de las 3 arquitecturas sobre los mismos datos — la diferencia te va a sorprender.
+            </p>
+
+            <div class="tip" style="margin-top: 1.5em;">
+                <strong>💡 Tip:</strong> En 2026, el modelo <em>por defecto</em> no es "el más barato", es "el que acierta sin retries". Un retry cuesta más que usar Sonnet desde el principio.
+            </div>
+        </div>
+
+        <!-- Mini Reto del Día -->
+        <div class="card" style="border-left: 4px solid #ff6b6b;">
+            <h2>🎯 Mini-Reto del Día</h2>
+            <p><strong>Desafío:</strong> Convierte un apunte tuyo de la U-TAD en un "mini asistente" que solo responda sobre ese documento.</p>
+
+            <h3>Requisitos:</h3>
+            <ol>
+                <li>Coge un apunte en texto plano (o conviértelo con <code>.read_text()</code>) — recomendado &lt; 10 000 caracteres</li>
+                <li>Escribe un script que reciba una pregunta por <code>input()</code> y responda usando context stuffing</li>
+                <li>Añade al prompt la instrucción "si no está en el documento, di 'no está en el apunte'"</li>
+                <li>Haz <strong>3 preguntas</strong>: una que SÍ esté en el apunte, una que NO esté, y una ambigua. Documenta qué responde en cada caso</li>
+                <li>Imprime los tokens usados y el coste estimado en cada llamada</li>
+            </ol>
+
+            <h3>Código de inicio:</h3>
+            <pre><code>import os
+from pathlib import Path
+from anthropic import Anthropic
+from dotenv import load_dotenv
+
+load_dotenv()
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+# 1. Carga tu apunte
+apunte = Path("mi_apunte.md").read_text(encoding="utf-8")
+
+def preguntar(pregunta: str) -> str:
+    prompt = f"""Responde usando SOLO el siguiente apunte. Si la información no está, di "no está en el apunte".
+
+APUNTE:
+{apunte}
+
+PREGUNTA: {pregunta}"""
+
+    resp = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=512,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    print(f"\nPregunta: {pregunta}")
+    print(f"Respuesta: {resp.content[0].text}")
+    print(f"Tokens in/out: {resp.usage.input_tokens}/{resp.usage.output_tokens}")
+    return resp.content[0].text
+
+# 2. Haz las 3 preguntas
+preguntar("¿Cuál es la idea principal del apunte?")          # SÍ
+preguntar("¿Qué opina Juan sobre el fútbol?")                # NO
+preguntar("¿Hay algo relacionado con programación?")         # Ambigua</code></pre>
+
+            <p style="margin-top: 1em; color: #ff6b6b;"><strong>Bonus:</strong> añade un contador global de tokens gastados durante la sesión y calcula el coste total.</p>
+        </div>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: primera llamada con context stuffing</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí tu código (pasos 3 y 4 de la práctica guiada)..."></textarea>
+                <label><input type="checkbox" required> El modelo responde con la política cuando le paso el documento</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m5-c01', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: asistente sobre tu apunte</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí tu código..."></textarea>
+                <textarea id="output-ejercicio-2" rows="6" placeholder="Pega las 3 respuestas + tokens + coste..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Qué tal funcionó: ¿el modelo dijo 'no está en el apunte' cuando tocaba?"></textarea>
+                    <button onclick="CourseProgress.submitExercise('m5-c01', 2, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <hr style="margin: 2em 0; border: none; border-top: 1px solid rgba(0,240,255,0.1);">
+
+        <!-- Test de Conocimiento -->
+        <div class="card">
+            <h2>📊 Test de Conocimiento</h2>
+            <p>Responde estas 10 preguntas para consolidar lo aprendido:</p>
+
+            <div id="quiz-container"></div>
+
+            <div id="quiz-result" class="result-box" style="display: none; margin-top: 2em;">
+                <h3>Resultado Final</h3>
+                <p id="result-text"></p>
+                <div id="result-details"></div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation" style="margin-top: 3em;">
+            <a href="index.html" class="btn btn-secondary">← Módulo 5</a>
+            <a href="clase-02.html" class="btn btn-primary">Clase 02 →</a>
+        </div>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Qué es 'context engineering'?",
+                options: [
+                    "Otra forma de llamar a prompt engineering",
+                    "La disciplina de decidir qué información dar al modelo y cómo",
+                    "Una librería de LangChain",
+                    "El proceso de entrenar un modelo desde cero"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuántas arquitecturas principales hay para conectar un LLM con tus datos en 2026?",
+                options: [
+                    "Solo una: RAG",
+                    "Dos: RAG y fine-tuning",
+                    "Tres: context stuffing, agentic search y RAG clásico",
+                    "Cinco o más, no hay consenso"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Cuándo es 'context stuffing' la mejor opción?",
+                options: [
+                    "Cuando tu corpus supera el millón de tokens",
+                    "Cuando la información cabe en la ventana de contexto y necesitas baja latencia",
+                    "Cuando tienes miles de usuarios concurrentes y coste muy bajo",
+                    "Nunca, siempre hay que montar un vector store"
+                ],
+                correct: 1
+            },
+            {
+                question: "En 'agentic search', ¿quién decide qué información buscar?",
+                options: [
+                    "El desarrollador, hardcodeando las queries",
+                    "Un pipeline de retrieval con top-K",
+                    "El propio modelo, a través de tool use",
+                    "El usuario final escribiendo SQL"
+                ],
+                correct: 2
+            },
+            {
+                question: "Un LLM al que le preguntas por información fuera de su entrenamiento tiende a...",
+                options: [
+                    "Decir siempre 'no lo sé'",
+                    "Conectarse automáticamente a internet",
+                    "Inventar una respuesta con confianza (alucinar)",
+                    "Generar un error"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Qué ventana de contexto maneja Claude Sonnet 4.6 (abril 2026)?",
+                options: [
+                    "4 000 tokens",
+                    "16 000 tokens",
+                    "200 000 tokens (con versiones long a 1M)",
+                    "Solo 8 000 tokens"
+                ],
+                correct: 2
+            },
+            {
+                question: "Problema típico del context stuffing con contextos muy largos:",
+                options: [
+                    "El modelo se cae",
+                    "'Lost in the middle' — el modelo ignora info que queda en mitad del contexto",
+                    "Se pierde la API key",
+                    "El vector store se corrompe"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Por qué el curso NO enseña LangChain como framework central?",
+                options: [
+                    "Porque es ilegal",
+                    "Porque los SDKs oficiales (Anthropic, OpenAI) son más simples y reflejan el stack real de 2026",
+                    "Porque no funciona",
+                    "Porque es solo para Java"
+                ],
+                correct: 1
+            },
+            {
+                question: "Regla práctica de elección de arquitectura:",
+                options: [
+                    "Siempre RAG clásico",
+                    "Stuffing si cabe → agentic search si no → RAG clásico solo si el volumen/latencia lo exigen",
+                    "Primero fine-tuning, luego RAG",
+                    "Depende de si hablas inglés o español"
+                ],
+                correct: 1
+            },
+            {
+                question: "Si el modelo recibe un documento con la política de devoluciones y le preguntas por ella, ¿qué pasa?",
+                options: [
+                    "Se conecta a la web y la busca",
+                    "Alucina una respuesta plausible pero inventada",
+                    "Responde usando el documento que le has dado",
+                    "Devuelve un error de permisos"
+                ],
+                correct: 2
+            }
+        ];
+
+        // Inicializar quiz
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm5-c01');
+
+        // Inicializar indicadores de envío
+        if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+            CourseProgress.initSubmissionIndicators('m5-c01');
+        }
+    </script>
+</body>
+</html>

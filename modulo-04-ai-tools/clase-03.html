@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 03: Claude Code y Windsurf — Agentes de Código — Módulo 4</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a><span> > </span>
+            <a href="index.html">Módulo 4</a><span> > </span>
+            <strong>Clase 03</strong>
+        </nav>
+
+        <header class="course-header">
+            <h1>Clase 03: Claude Code y Windsurf — Agentes de Código</h1>
+            <div class="subtitle">📅 Semana 5 — Viernes | 🎬 30 min vídeo + 💻 65 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <!-- PART A: CLAUDE CODE -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">🅰️</span> Claude Code — Tu Pair Programmer en Terminal</h2>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/73eFWU-edO4" allowfullscreen loading="lazy"></iframe>
+            </div>
+
+            <h3>📖 Resumen: ¿Qué es Claude Code?</h3>
+            <p>
+                <strong>Claude Code</strong> es la herramienta agentica de Anthropic para programadores. Se ejecuta en tu terminal y actúa como un senior developer pair-programming contigo. Lee tu codebase completa, edita archivos, ejecuta comandos, gestiona git, y todo desde línea de comandos con lenguaje natural.
+            </p>
+
+            <h3>🚀 Instalación</h3>
+            <pre><code>npm install -g @anthropic-ai/claude-code
+cd tu-proyecto
+claude</code></pre>
+            <p><strong>Requisitos:</strong></p>
+            <ul>
+                <li>Node.js 18 o superior</li>
+                <li>Anthropic API key o cuenta de Claude</li>
+            </ul>
+
+            <h3>⚙️ Cómo Funciona</h3>
+            <ol>
+                <li>Escribes una orden en lenguaje natural (ej: "refactoriza este componente para que sea reutilizable")</li>
+                <li>Claude Code lee los archivos relevantes de tu proyecto</li>
+                <li>Propone cambios y te pregunta antes de aplicarlos</li>
+                <li>Ejecuta tests, compila, hace commit si todo va bien</li>
+                <li>Si hay errores, intenta arreglarlos automáticamente</li>
+            </ol>
+
+            <h3>🎯 Comandos Clave</h3>
+            <ul>
+                <li><strong>Lenguaje natural:</strong> Solo escribe qué quieres. Claude Code entiende el contexto.</li>
+                <li><strong>/help:</strong> Muestra los comandos disponibles</li>
+                <li><strong>/clear:</strong> Reinicia la conversación</li>
+                <li><strong>CLAUDE.md:</strong> Claude Code lee tu archivo de instrucciones del proyecto para entender contexto, convenciones, estructura</li>
+            </ul>
+
+            <h3>🔍 Cuándo Usar Cada Herramienta</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Herramienta</th>
+                        <th>Mejor Para</th>
+                        <th>Ejemplo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>GitHub Copilot</strong></td>
+                        <td>Autocompletado mientras escribes</td>
+                        <td>Completa líneas, funciones simples</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cursor</strong></td>
+                        <td>Edición visual multi-archivo (Composer)</td>
+                        <td>Refactorizar 3-4 archivos con control visual</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Claude Code</strong></td>
+                        <td>Tareas complejas desde terminal, entender codebase grande</td>
+                        <td>Refactorizar todo el proyecto, migrar versiones</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Windsurf</strong></td>
+                        <td>Agéntico + IDE visual (Cascade)</td>
+                        <td>Cambios complejos con ejecución automática</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tip">
+                <strong>Pro Tip:</strong> Claude Code brilla cuando necesitas entender y cambiar una codebase entera. Lee <code>CLAUDE.md</code> para saber convenciones, estructura, y puede aplicar cambios consistentes en 50 archivos en un comando.
+            </div>
+        </section>
+
+        <!-- PART B: WINDSURF -->
+        <aside class="workshop-ref">
+            <h4>📚 Profundiza con el workshop de hola.dev</h4>
+            <p style="margin:0;">El workshop trata Claude Code en profundidad: configuración, rules, skills y plugins. Material muy potente para esta clase:</p>
+            <ul>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#config-claude-code" target="_blank" rel="noopener">Sección 123 — Configurar Claude Code como un pro</a></li>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#rules-efectivas" target="_blank" rel="noopener">Sección 125 — Escribir rules efectivas</a></li>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#crear-skill" target="_blank" rel="noopener">Sección 126 — Crear una skill: extensiones reutilizables</a></li>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#anatomia-plugin" target="_blank" rel="noopener">Sección 127 — Anatomía de un plugin: skills + agentes + hooks</a></li>
+            </ul>
+            <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+        </aside>
+
+
+
+
+<section class="card">
+            <h2 class="section-title"><span class="section-icon">🅱️</span> Windsurf — IDE Agéntico Nativo</h2>
+
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/3qi94lCdYI0" allowfullscreen loading="lazy"></iframe>
+            </div>
+
+            <h3>📖 Resumen: ¿Qué es Windsurf?</h3>
+            <p>
+                <strong>Windsurf</strong> es un IDE completo de Codeium basado en VS Code, pero con IA agentica nativa. Su estrella es <strong>Cascade</strong>, un agente que combina sugerencias inline (copilot) con ejecución automática de tareas complejas (agent).
+            </p>
+
+            <h3>🚀 Instalación</h3>
+            <p>
+                Descarga desde <a href="https://windsurf.ai/" target="_blank">windsurf.ai</a> (disponible para Windows, macOS, Linux).
+            </p>
+
+            <h3>🤖 Cascade: El Agente de Windsurf</h3>
+            <ul>
+                <li><strong>Modo Copilot:</strong> Sugerencias inline mientras escribes (como Copilot clásico)</li>
+                <li><strong>Modo Agente:</strong> Ejecuta tareas complejas paso a paso, propone cambios, los aplica si apruebas</li>
+                <li><strong>Flows:</strong> Windsurf combina ambos modos automáticamente según lo que necesites</li>
+            </ul>
+
+            <h3>⚡ Cascade vs Cursor Composer</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aspecto</th>
+                        <th>Cursor Composer</th>
+                        <th>Windsurf Cascade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Interfaz</strong></td>
+                        <td>Panel lateral con cambios</td>
+                        <td>Panel lateral con agente conversacional</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Control</strong></td>
+                        <td>Tú apruebas/rechazas cambios visualmente</td>
+                        <td>IA propone, ejecuta, itera si hay errores</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Agentico</strong></td>
+                        <td>No, manual</td>
+                        <td>Sí, automático por defecto</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mejor Para</strong></td>
+                        <td>Cambios donde quieres ver cada paso</td>
+                        <td>Tareas complejas donde IA itera sola</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tip">
+                <strong>Pro Tip:</strong> Windsurf Cascade es más "agéntico" por defecto. Si le pides "implementa un login con JWT", Cascade escribirá el código, ejecutará tests, e incluso intentará arreglarlo si hay errores. Cursor te da más control manual paso a paso.
+            </div>
+        </section>
+
+        <!-- COMPARATIVA GLOBAL -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📊</span> Tabla Comparativa: 4 Herramientas</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aspecto</th>
+                        <th>GitHub Copilot</th>
+                        <th>Cursor</th>
+                        <th>Claude Code</th>
+                        <th>Windsurf</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Tipo</strong></td>
+                        <td>Extensión VS Code</td>
+                        <td>IDE (fork VS Code)</td>
+                        <td>Terminal + CLI</td>
+                        <td>IDE (fork VS Code)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Modelo IA</strong></td>
+                        <td>GPT-4 / Copilot Pro</td>
+                        <td>Multi (Claude, GPT-4, etc)</td>
+                        <td>Claude (Anthropic)</td>
+                        <td>Multi (Cascade proprietary)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Precio Free Tier</strong></td>
+                        <td>Sí (limitado)</td>
+                        <td>Sí (Cursor Free)</td>
+                        <td>Sí (cuenta Claude)</td>
+                        <td>Sí (versión community)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mejor Para</strong></td>
+                        <td>Autocompletado rápido</td>
+                        <td>Edición visual multi-archivo</td>
+                        <td>Tareas terminal, codebase entera</td>
+                        <td>Agéntico automático</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Curva Aprendizaje</strong></td>
+                        <td>Baja (casi automático)</td>
+                        <td>Media (UI nueva)</td>
+                        <td>Media (línea comandos)</td>
+                        <td>Media (Cascade nuevo concepto)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- PRÁCTICA -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">💻</span> Práctica: 50 minutos</h2>
+
+            <h3>Ejercicio 1: Claude Code Setup (15 min)</h3>
+            <ol>
+                <li>Instala Claude Code globalmente: <code>npm install -g @anthropic-ai/claude-code</code></li>
+                <li>Navega a un proyecto existente: <code>cd tu-proyecto</code></li>
+                <li>Inicia Claude Code: <code>claude</code></li>
+                <li>Pide a Claude Code que <strong>explique la estructura del proyecto</strong>:
+                    <pre><code>"Explica la estructura de carpetas de este proyecto y qué hace cada módulo principal"</code></pre>
+                </li>
+                <li>Observa cómo lee los archivos, entiende el contexto, y te da un resumen completo.</li>
+            </ol>
+
+            <h3>Ejercicio 2: Claude Code - Feature Simple (15 min)</h3>
+            <ol>
+                <li>En el mismo proyecto, pide a Claude Code que añada una feature:
+                    <pre><code>"Añade validación de formularios al archivo login.html.
+Debe validar: email (formato correcto), password (mínimo 8 caracteres).
+Si hay error, muestra mensaje rojo debajo del input."</code></pre>
+                </li>
+                <li>Claude Code leerá el HTML, propondrá el código (probablemente JavaScript puro o usando una librería).</li>
+                <li>Revisa su propuesta y aprueba (<code>y</code>) o rechaza (<code>n</code>).</li>
+                <li>Anota: ¿entendió bien el contexto? ¿la solución es buena? ¿necesitó correcciones?</li>
+            </ol>
+
+            <h3>Ejercicio 3: Codebase-to-Course — Entiende cualquier repo con IA (15 min)</h3>
+            <p>
+                <strong>¿Qué es?</strong> <a href="https://github.com/zarazhangrui/codebase-to-course" target="_blank">Codebase-to-Course</a> es un skill de Claude Code que convierte cualquier repositorio de código en un curso interactivo en HTML. Le pasas un repo y genera automáticamente un archivo con explicaciones línea a línea, diagramas de arquitectura animados, quizzes y un glosario de términos técnicos. Todo en un solo HTML que funciona offline.
+            </p>
+            <p>
+                <strong>¿Para qué sirve?</strong> Para aprender a leer y entender código ajeno — una de las habilidades más importantes como desarrollador. En vez de leer un repo a ciegas intentando descifrar qué hace cada archivo, esta herramienta te genera una guía visual que te lo explica paso a paso.
+            </p>
+            <ol>
+                <li>Clona tu API Flask del Módulo 1 (o cualquier repo pequeño que te interese):
+                    <pre><code>git clone https://github.com/tu-usuario/tu-proyecto-flask.git
+cd tu-proyecto-flask</code></pre>
+                </li>
+                <li>Abre Claude Code en ese directorio y pide que use el skill:
+                    <pre><code>claude
+"Usa codebase-to-course para generar un curso interactivo de este proyecto"</code></pre>
+                </li>
+                <li>Claude Code analizará todo el código y generará un HTML interactivo con:
+                    <ul>
+                        <li>Explicaciones del código en lenguaje natural (línea a línea)</li>
+                        <li>Diagramas de cómo se conectan los módulos</li>
+                        <li>Un quiz para comprobar que has entendido la estructura</li>
+                        <li>Glosario con tooltips de los términos técnicos</li>
+                    </ul>
+                </li>
+                <li>Abre el HTML generado en el navegador y recórrelo</li>
+                <li><strong>Reflexión:</strong> ¿Entiendes mejor el código después de leer el curso generado? ¿Hay algo que no sabías que hacía tu propio proyecto?</li>
+            </ol>
+
+            <div class="tip">
+                <strong>Pro Tip:</strong> Esta herramienta es brutal para entender repos open source. En los Módulos 5 y 6 la puedes usar para entender por dentro librerías como LangChain o CrewAI antes de usarlas. Leer código ajeno es tan importante como escribir código propio.
+            </div>
+
+            <h3>Ejercicio 4: Windsurf Setup (10 min)</h3>
+            <ol>
+                <li>Descarga e instala Windsurf desde <a href="https://windsurf.ai/" target="_blank">windsurf.ai</a></li>
+                <li>Abre tu proyecto en Windsurf (File > Open Folder)</li>
+                <li>Abre el panel de Cascade (debería estar en la barra lateral)</li>
+                <li>Pide algo simple: <code>"¿Qué es el archivo package.json y qué contiene?"</code></li>
+                <li>Observa la diferencia de UI con Claude Code (Windsurf es visual, Claude Code es terminal)</li>
+            </ol>
+
+            <h3>Ejercicio 5: El Mismo Cambio, 3 Herramientas (10 min)</h3>
+            <ol>
+                <li><strong>Elige un cambio concreto</strong> (ej: "añade un footer con copyright y año actual a index.html")</li>
+                <li><strong>Hazlo con Cursor Composer:</strong> Abre Cursor, llama a Composer, pide el cambio, aprueba visualmente</li>
+                <li><strong>Hazlo con Claude Code:</strong> Vuelve a terminal, <code>claude</code>, pide el cambio, aprueba</li>
+                <li><strong>Hazlo con Windsurf Cascade:</strong> Abre Windsurf, pide el cambio en Cascade, observa cómo lo ejecuta</li>
+                <li><strong>Anota en papel:</strong>
+                    <ul>
+                        <li>¿Cuál fue más rápido?</li>
+                        <li>¿Cuál dio mejor resultado?</li>
+                        <li>¿Cuál preferiste y por qué?</li>
+                        <li>¿En qué situación usarías cada uno?</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <div class="reto-box">
+                <h3>🎯 Mini-Reto: Dark Mode en 3 IDEs</h3>
+                <p><strong>Misión:</strong> Implementa dark mode en tu proyecto con las 3 herramientas y compara resultados.</p>
+                <p><strong>Qué hacer:</strong></p>
+                <ol>
+                    <li><strong>Cursor Composer:</strong> Pide "Implementa dark mode usando CSS variables. Añade toggle en navbar."</li>
+                    <li><strong>Claude Code:</strong> Mismo comando en terminal</li>
+                    <li><strong>Windsurf Cascade:</strong> Mismo comando en panel</li>
+                    <li><strong>Análisis:</strong>
+                        <ul>
+                            <li>¿Cuál escribió el código más limpio?</li>
+                            <li>¿Cuál ejecutó tests automáticamente?</li>
+                            <li>¿Cuál necesitó más iteraciones?</li>
+                            <li>¿Cuál es tu favorito y por qué?</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Claude Code Setup</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí tu código o evidencia de instalación..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c03', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="code-along">
+                <h4>📤 Entregar práctica: Feature simple con Claude Code</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c03', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-3" data-type="code-along">
+                <h4>📤 Entregar práctica: Codebase-to-Course</h4>
+                <textarea id="code-ejercicio-3" rows="12" placeholder="Pega aquí el enlace al HTML generado o un pantallazo de lo que has aprendido del repo..."></textarea>
+                <label><input type="checkbox" required> He recorrido el curso generado y entiendo mejor la estructura del código</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-3" rows="2" placeholder="¿Qué has descubierto del repo que no sabías?"></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c03', 3, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-3" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-4" data-type="code-along">
+                <h4>📤 Entregar práctica: Windsurf Setup</h4>
+                <textarea id="code-ejercicio-4" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-4" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c03', 4, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-4" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-5" data-type="code-along">
+                <h4>📤 Entregar práctica: El mismo cambio en 3 herramientas</h4>
+                <textarea id="code-ejercicio-5" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-5" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c03', 5, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-5" class="submit-status"></div>
+            </div>
+            <hr style="border-color:rgba(0,240,255,0.1);margin:1.5em 0;">
+            <div class="exercise-submit" id="submit-ejercicio-6" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Dark Mode en 3 IDEs</h4>
+                <textarea id="code-ejercicio-6" rows="12" placeholder="Pega aquí tu código..."></textarea>
+                <textarea id="output-ejercicio-6" rows="4" placeholder="Pega aquí el output de tu programa..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-6" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m4-c03', 6, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-6" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">🧪</span> Test: 10 Preguntas</h2>
+            <div id="quiz-container"></div>
+        </section>
+
+        <!-- NAVEGACIÓN -->
+        <nav class="clase-nav">
+            <a href="clase-02.html" class="btn">← Clase 02</a>
+            <span style="color: var(--text-muted);">Módulo 4 - Clase 03 de 5</span>
+            <a href="clase-04.html" class="btn">Clase 04 →</a>
+        </nav>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es la principal diferencia entre Claude Code y un IDE como Cursor?",
+                type: "multiple",
+                options: [
+                    "Claude Code es una extensión de VS Code, Cursor es un IDE independiente",
+                    "Claude Code se ejecuta en terminal y lee la codebase completa, Cursor es visual con multi-archivo",
+                    "Claude Code es más lento que Cursor",
+                    "No hay diferencia, son iguales"
+                ],
+                correct: 1,
+                explanation: "Claude Code es una herramienta de terminal que lee el contexto completo de tu proyecto, mientras que Cursor es un IDE visual basado en VS Code con cambios multi-archivo que apruebas visualmente."
+            },
+            {
+                question: "¿Qué es Cascade en el contexto de Windsurf?",
+                type: "multiple",
+                options: [
+                    "Un lenguaje de programación nuevo",
+                    "El agente agentico de Windsurf que combina copilot + ejecución automática",
+                    "Una librería de JavaScript para animaciones",
+                    "Un servicio de hosting para proyectos"
+                ],
+                correct: 1,
+                explanation: "Cascade es el agente nativo de Windsurf que combina sugerencias inline (copilot) con ejecución automática de tareas complejas, permitiendo que la IA proponga cambios e incluso los ejecute."
+            },
+            {
+                question: "¿Cuál es el comando para instalar Claude Code globalmente?",
+                type: "multiple",
+                options: [
+                    "npm install claude-code",
+                    "npm install -g @anthropic-ai/claude-code",
+                    "pip install claude-code",
+                    "brew install claude-code"
+                ],
+                correct: 1,
+                explanation: "El comando correcto es: npm install -g @anthropic-ai/claude-code"
+            },
+            {
+                question: "¿Qué archivo especial puede leer Claude Code para entender el contexto de un proyecto?",
+                type: "multiple",
+                options: [
+                    "README.md solamente",
+                    "package.json",
+                    "CLAUDE.md (instrucciones del proyecto)",
+                    ".env"
+                ],
+                correct: 2,
+                explanation: "Claude Code lee CLAUDE.md para entender convenciones, estructura, reglas del proyecto, y así aplicar cambios consistentes con el contexto específico."
+            },
+            {
+                question: "Según la clase, ¿para cuál de estas tareas es MEJOR usar Claude Code?",
+                type: "multiple",
+                options: [
+                    "Completar una línea de código mientras escribes",
+                    "Refactorizar 3-4 archivos con control visual",
+                    "Refactorizar todo un proyecto, migrar versiones, entender codebase grande",
+                    "Revisar rápidamente el código de un compañero"
+                ],
+                correct: 2,
+                explanation: "Claude Code brilla en tareas complejas que requieren entender la codebase entera, como refactorización masiva, migraciones, o cambios globales en convenciones."
+            },
+            {
+                question: "¿Cuál es la principal diferencia entre Cascade (Windsurf) y Composer (Cursor)?",
+                type: "multiple",
+                options: [
+                    "Cascade es más rápido",
+                    "Cascade es agentico por defecto (ejecuta automáticamente), Composer te da más control manual",
+                    "Composer es mejor para proyectos grandes",
+                    "No hay diferencia real"
+                ],
+                correct: 1,
+                explanation: "Cascade es agentico por defecto: la IA propone, ejecuta, e itera si hay errores. Composer te da más control: tú ves cada cambio y lo apruebas visualmente."
+            },
+            {
+                question: "¿Cuál de estas herramientas se ejecuta PRINCIPALMENTE en terminal?",
+                type: "multiple",
+                options: [
+                    "GitHub Copilot",
+                    "Cursor",
+                    "Claude Code",
+                    "Windsurf"
+                ],
+                correct: 2,
+                explanation: "Claude Code es una herramienta de CLI/terminal. Escribes comandos en lenguaje natural en la terminal y Claude Code los ejecuta."
+            },
+            {
+                question: "¿Qué requisitos necesitas para instalar Claude Code?",
+                type: "multiple",
+                options: [
+                    "Solo Node.js 18+",
+                    "Node.js 18+ y Anthropic API key (o cuenta de Claude)",
+                    "Python 3.8+ y una API key",
+                    "Docker instalado"
+                ],
+                correct: 1,
+                explanation: "Necesitas Node.js 18 o superior y una Anthropic API key (o acceso a cuenta de Claude) para usar Claude Code."
+            },
+            {
+                question: "¿En cuál de estas situaciones usarías GitHub Copilot sobre las otras opciones?",
+                type: "multiple",
+                options: [
+                    "Necesitas refactorizar todo tu proyecto",
+                    "Quieres autocompletado rápido mientras escribes código",
+                    "Necesitas entender una codebase completamente nueva",
+                    "Quieres un agente que ejecute cambios automáticamente"
+                ],
+                correct: 1,
+                explanation: "GitHub Copilot es excelente para autocompletado rápido y sugerencias inline mientras escribes. No es la mejor opción para tareas complejas o refactorización masiva."
+            },
+            {
+                question: "¿Cuál es la dirección web oficial de Windsurf?",
+                type: "multiple",
+                options: [
+                    "https://windsurf.com/",
+                    "https://codeium.com/windsurf",
+                    "https://windsurf.ai/",
+                    "https://ide.windsurf.io/"
+                ],
+                correct: 2,
+                explanation: "La dirección oficial de Windsurf es https://windsurf.ai/ — es donde puedes descargar la aplicación."
+            }
+        ];
+
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm4-c03');
+
+        if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+            CourseProgress.initSubmissionIndicators('m4-c03');
+        }
+    </script>
+</body>
+</html>

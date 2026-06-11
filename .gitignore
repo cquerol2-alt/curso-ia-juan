@@ -1,0 +1,48 @@
+# Sistema Operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.sublime-project
+.sublime-workspace
+
+# Node (si en el futuro se añade build tools)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Archivos temporales de Office
+~$*
+*.tmp
+
+# Logs
+*.log
+npm-debug.log*
+
+# Archivos de sistema
+.env.local
+.env.*.local
+
+# Secretos y tokens — NUNCA subir
+.secrets/
+*-pat.txt
+*.token
+
+# Claude / sesiones de trabajo
+CLAUDE.md
+Correcciones_*.docx
+
+# Ficheros de prueba de sesiones de trabajo — no publicar
+_test*
+_sync_test*
+_cowork-*

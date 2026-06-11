@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 06: Streaming, Tokens y Control de Costes — Curso IA Juan</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+            font-size: 0.95em;
+        }
+        .pricing-table th {
+            background: linear-gradient(135deg, rgba(0,240,255,0.15) 0%, rgba(57,255,20,0.1) 100%);
+            color: #fff;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .pricing-table td {
+            border-bottom: 1px solid #333;
+            padding: 10px 12px;
+            color: #ccc;
+        }
+        .pricing-table tr:hover {
+            background: rgba(0, 230, 118, 0.05);
+        }
+        .code-block {
+            background: #0a0e27;
+            border-left: 3px solid #00e676;
+            padding: 1em;
+            margin: 1em 0;
+            overflow-x: auto;
+            border-radius: 4px;
+        }
+        .code-block code {
+            color: #39ff14;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        .warning {
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 3px solid #ff6b6b;
+            padding: 1em;
+            margin: 1.5em 0;
+            border-radius: 4px;
+        }
+        .warning strong {
+            color: #ff6b6b;
+        }
+        .tip {
+            background: rgba(0, 230, 118, 0.08);
+            border-left: 3px solid #00e676;
+            padding: 1em;
+            margin: 1.5em 0;
+            border-radius: 4px;
+        }
+        .tip strong {
+            color: #00e676;
+        }
+        .info {
+            background: rgba(100, 150, 255, 0.08);
+            border-left: 3px solid #6496ff;
+            padding: 1em;
+            margin: 1.5em 0;
+            border-radius: 4px;
+        }
+        .info strong {
+            color: #6496ff;
+        }
+        .exercise-header {
+            background: linear-gradient(135deg, rgba(0,240,255,0.15) 0%, rgba(57,255,20,0.1) 100%);
+            color: #fff;
+            padding: 12px 16px;
+            margin: 1.5em 0 1em 0;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        .exercise-content {
+            background: rgba(27, 94, 32, 0.15);
+            border: 1px solid #00e676;
+            padding: 1.5em;
+            margin: 0 0 2em 0;
+            border-radius: 4px;
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            margin: 1.5em 0;
+            box-shadow: 0 8px 32px rgba(0, 230, 118, 0.1);
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .quiz-container {
+            background: rgba(27, 94, 32, 0.1);
+            border: 1px solid #00e676;
+            padding: 2em;
+            border-radius: 8px;
+            margin: 2em 0;
+        }
+        .question {
+            margin: 1.5em 0;
+            padding: 1em;
+            background: rgba(10, 14, 39, 0.5);
+            border-radius: 4px;
+        }
+        .question label {
+            display: flex;
+            align-items: center;
+            margin: 0.8em 0;
+            cursor: pointer;
+        }
+        .question input[type="radio"],
+        .question input[type="checkbox"] {
+            margin-right: 0.8em;
+            cursor: pointer;
+        }
+        .breadcrumb {
+            font-size: 0.9em;
+            margin-bottom: 2em;
+            color: var(--text-muted);
+        }
+        .breadcrumb a {
+            color: #00e676;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .section {
+            margin: 3em 0;
+        }
+        .card {
+            background: rgba(27, 94, 32, 0.1);
+            border: 1px solid #00e676;
+            border-radius: 8px;
+            padding: 2em;
+            margin-bottom: 2em;
+        }
+        .card h3 {
+            color: #00e676;
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3em;
+            padding-top: 2em;
+            border-top: 1px solid #333;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.8em 1.6em;
+            background: linear-gradient(135deg, rgba(0,240,255,0.15) 0%, rgba(57,255,20,0.1) 100%);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: rgba(0, 230, 118, 0.2);
+            border: 1px solid #00e676;
+            color: #00e676;
+        }
+        .formula {
+            background: #0a0e27;
+            border: 1px solid #00e676;
+            padding: 1em;
+            margin: 1em 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #39ff14;
+            text-align: center;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5em;
+            margin: 1.5em 0;
+        }
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .comparison-item {
+            background: rgba(27, 94, 32, 0.1);
+            border: 1px solid #00e676;
+            padding: 1.5em;
+            border-radius: 4px;
+        }
+        .comparison-item h4 {
+            color: #00e676;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="../index.html">Dashboard</a> >
+            <a href="../index.html">Módulo 3</a> >
+            <span>Clase 06</span>
+        </nav>
+
+        <!-- Header -->
+        <header style="margin-bottom: 2em;">
+            <h1 style="color: #00e676; margin: 0;">Clase 06: Streaming, Tokens y Control de Costes</h1>
+            <p style="color: var(--text-muted); margin: 0.5em 0 0 0; font-size: 0.95em;">📅 Semana 5 — Lunes | 🎬 30 min vídeo + 💻 50 min práctica + 🧪 15 min test</p>
+        </header>
+
+        <!-- Video Section -->
+        <section class="section">
+            <h2 style="color: #00e676;">📺 Vídeo: Chatbot con OpenAI — Memoria y Streaming (en español 🇪🇸)</h2>
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/mmPYLheQuvY" title="Crea un Chatbot con OpenAI: Memoria y Respuestas en Streaming en Python" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <!-- Part A: Streaming -->
+        <aside class="workshop-ref">
+            <h4>📚 Profundiza con el workshop de hola.dev</h4>
+            <p style="margin:0;">Para ver los eventos del stream, los precios reales por millón de tokens (mayo 2026) y cómo abaratar con prompt caching:</p>
+            <ul>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#streaming" target="_blank" rel="noopener">Sección 78 — Streaming de respuestas</a></li>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#costes" target="_blank" rel="noopener">Sección 115 — Tokens y coste: ¿cuánto cuesta usar IA?</a></li>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#prompt-caching" target="_blank" rel="noopener">Sección 75 — Prompt caching: reutilizar prefijos repetidos</a></li>
+            </ul>
+            <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+        </aside>
+
+
+
+
+<section class="section">
+            <h2 style="color: #00e676;">Part A: Streaming — Respuestas Palabra a Palabra</h2>
+
+            <div class="card">
+                <h3>¿Por qué importa el Streaming?</h3>
+                <p>
+                    Imagina que haces una pregunta a una IA y esperas 10 segundos mirando un spinner giratorio.
+                    <strong>Mala experiencia de usuario.</strong> Con streaming, las palabras empiezan a llegar
+                    inmediatamente—la respuesta se construye en tiempo real, como si un humano estuviera escribiendo.
+                </p>
+                <p>
+                    En aplicaciones web, streaming es la diferencia entre una interfaz "muerta" y una que se siente viva.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>¿Cómo Funciona el Streaming?</h3>
+                <p>
+                    El servidor envía la respuesta en <strong>chunks</strong> (fragmentos) en lugar de todo de golpe:
+                </p>
+                <ul>
+                    <li><strong>Server-Sent Events (SSE):</strong> El servidor abre una conexión y envía datos incrementalmente al cliente.</li>
+                    <li><strong>Tokens/Deltas:</strong> Cada chunk es un delta—un cambio incremental que se suma al anterior.</li>
+                    <li><strong>Connection abierta:</strong> La conexión se mantiene abierta hasta que se recibe el último token.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>OpenAI Streaming: Código en Python</h3>
+                <p>
+                    Para activar streaming en OpenAI, solo hay que pasar <code>stream=True</code>:
+                </p>
+                <div class="code-block"><code>
+from openai import OpenAI
+
+client = OpenAI()
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": "Explica qué es un token en 50 palabras"}],
+    stream=True  # ← Activa streaming
+)
+
+# Itera sobre los chunks
+for chunk in response:
+    if chunk.choices[0].delta.content:
+        print(chunk.choices[0].delta.content, end="", flush=True)
+
+print()  # Nueva línea al final
+                </code></div>
+            </div>
+
+            <div class="card">
+                <h3>Streaming con Anthropic (Claude)</h3>
+                <p>
+                    Claude también soporta streaming, con una API muy similar:
+                </p>
+                <div class="code-block"><code>
+from anthropic import Anthropic
+
+client = Anthropic()
+
+with client.messages.stream(
+    model="claude-sonnet-4-6",
+    max_tokens=100,
+    messages=[{"role": "user", "content": "¿Qué es un token?"}],
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+
+print()
+                </code></div>
+            </div>
+
+            <div class="card">
+                <h3>Streaming en FastAPI (Intro Rápida)</h3>
+                <p>
+                    Para exponer un endpoint streaming en tu API web:
+                </p>
+                <div class="code-block"><code>
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
+from openai import OpenAI
+
+app = FastAPI()
+client = OpenAI()
+
+@app.post("/stream-chat")
+async def stream_chat(prompt: str):
+    def generate():
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            stream=True
+        )
+        for chunk in response:
+            if chunk.choices[0].delta.content:
+                yield chunk.choices[0].delta.content + "\n"
+
+    return StreamingResponse(generate(), media_type="text/event-stream")
+                </code></div>
+                <div class="tip">
+                    <strong>Tip:</strong> En producción, usa librerías como <code>server-sent-events</code> o WebSockets
+                    para mayor robustez. Por ahora, esto es suficiente para prototipado.
+                </div>
+            </div>
+        </section>
+
+        <!-- Part B: Tokens -->
+        <section class="section">
+            <h2 style="color: #00e676;">Part B: Tokens — La Moneda de los LLMs</h2>
+
+            <div class="card">
+                <h3>¿Qué es un Token?</h3>
+                <p>
+                    Un token es una unidad mínima de texto que el modelo procesa. <strong>Aproximadamente:</strong>
+                </p>
+                <ul>
+                    <li>1 token ≈ 4 caracteres</li>
+                    <li>1 token ≈ 0.75 palabras en inglés</li>
+                    <li>En español: un poco menos (~0.6-0.7 palabras por token, porque las palabras son más largas)</li>
+                </ul>
+                <p>
+                    <strong>Ejemplo:</strong> "Hola, ¿cómo estás?" = ~5-6 tokens (no 4 palabras).
+                </p>
+                <div class="tip">
+                    <strong>Herramienta interactiva:</strong>
+                    Prueba cuántos tokens tiene tu texto en
+                    <a href="https://platform.openai.com/tokenizer" target="_blank" style="color: #00e676;">OpenAI Tokenizer</a>.
+                    Copia tu prompt y mira exactamente cuántos tokens son.
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Input Tokens vs Output Tokens</h3>
+                <p>
+                    <strong>Ambos se cobran por separado:</strong>
+                </p>
+                <ul>
+                    <li><strong>Input tokens:</strong> Lo que envías al modelo (tu prompt + contexto).</li>
+                    <li><strong>Output tokens:</strong> Lo que el modelo genera (la respuesta).</li>
+                </ul>
+                <p>
+                    Generalmente, <strong>los output tokens son más caros</strong> (el modelo "trabaja más" generándolos).
+                </p>
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <h4>📥 Input</h4>
+                        <p style="margin: 0;">Tu pregunta + contexto</p>
+                    </div>
+                    <div class="comparison-item">
+                        <h4>📤 Output</h4>
+                        <p style="margin: 0;">La respuesta generada</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Context Window: El Límite de Memoria</h3>
+                <p>
+                    El <strong>context window</strong> es la cantidad máxima de tokens que el modelo puede procesar de golpe:
+                </p>
+                <ul>
+                    <li><strong>GPT-4o:</strong> 128.000 tokens (~100.000 palabras)</li>
+                    <li><strong>Claude 3.5 Sonnet:</strong> 200.000 tokens (~150.000 palabras)</li>
+                    <li><strong>GPT-4o-mini:</strong> 128.000 tokens</li>
+                </ul>
+                <p>
+                    Si intentas pasar más tokens de los que caben en el context window, el modelo rechazará la solicitud.
+                </p>
+                <div class="warning">
+                    <strong>⚠️ Atención:</strong> Un fichero de 100 páginas ≈ 25.000-30.000 tokens.
+                    Si pasas 5 ficheros grandes + tu pregunta, fácilmente superarás el límite.
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Contar Tokens con tiktoken (Python)</h3>
+                <p>
+                    Antes de enviar un request, puedes estimar tokens:
+                </p>
+                <div class="code-block"><code>
+import tiktoken
+
+# Carga el codificador para GPT-4o
+enc = tiktoken.encoding_for_model("gpt-4o")
+
+text = "Este es un ejemplo de texto para contar tokens."
+tokens = enc.encode(text)
+
+print(f"Texto: {text}")
+print(f"Tokens: {len(tokens)}")  # Ej: 10 tokens
+
+# Útil para validar antes de hacer el request:
+if len(tokens) > 100000:
+    print("❌ Demasiados tokens, el request fallará")
+else:
+    print("✅ OK, puedes enviar el request")
+                </code></div>
+            </div>
+        </section>
+
+        <!-- Part C: Pricing -->
+        <section class="section">
+            <h2 style="color: #00e676;">Part C: Cuánto Cuesta Cada Llamada</h2>
+
+            <div class="card">
+                <h3>Tabla de Precios OpenAI (Actualizado Abril 2026)</h3>
+                <table class="pricing-table">
+                    <thead>
+                        <tr>
+                            <th>Modelo</th>
+                            <th>Input (por 1M tokens)</th>
+                            <th>Output (por 1M tokens)</th>
+                            <th>Caso de Uso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GPT-4o</strong></td>
+                            <td>$5.00</td>
+                            <td>$15.00</td>
+                            <td>Tareas complejas, análisis, código</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GPT-4o-mini</strong></td>
+                            <td>$0.15</td>
+                            <td>$0.60</td>
+                            <td>Tareas simples, clasificación</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GPT-4 Turbo</strong></td>
+                            <td>$10.00</td>
+                            <td>$30.00</td>
+                            <td>Investigación, análisis profundo</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>Tabla de Precios Anthropic (Claude)</h3>
+                <table class="pricing-table">
+                    <thead>
+                        <tr>
+                            <th>Modelo</th>
+                            <th>Input (por 1M tokens)</th>
+                            <th>Output (por 1M tokens)</th>
+                            <th>Context Window</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Claude 3.5 Sonnet</strong></td>
+                            <td>$3.00</td>
+                            <td>$15.00</td>
+                            <td>200K tokens</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Claude 3 Haiku</strong></td>
+                            <td>$0.80</td>
+                            <td>$4.00</td>
+                            <td>200K tokens</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>Fórmula: Calcular el Coste de un Request</h3>
+                <div class="formula">
+                    Coste Total = (Input_tokens / 1,000,000 × Input_price) + (Output_tokens / 1,000,000 × Output_price)
+                </div>
+                <p><strong>Ejemplo:</strong></p>
+                <ul>
+                    <li>Prompt: "Analiza este código" = 500 tokens (input)</li>
+                    <li>Respuesta: 200 tokens (output)</li>
+                    <li>Modelo: GPT-4o-mini ($0.15 input, $0.60 output)</li>
+                </ul>
+                <div class="code-block"><code>
+Coste = (500 / 1,000,000 × 0.15) + (200 / 1,000,000 × 0.60)
+      = 0.000075 + 0.00012
+      = $0.000195 ≈ 0.02 centavos
+                </code></div>
+                <p>
+                    <strong>Conclusión:</strong> Una llamada típica a GPT-4o-mini cuesta centavos. Pero si haces 10.000
+                    llamadas al día, suman rápido.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>La Regla de Oro: No Todos los Modelos Para Todo</h3>
+                <p style="font-size: 1.1em; color: #00e676; font-weight: 600;">
+                    ✅ GPT-4o para tareas complejas (análisis de código, reasoning, creatividad).
+                </p>
+                <p style="font-size: 1.1em; color: #00e676; font-weight: 600;">
+                    ✅ GPT-4o-mini para tareas simples (clasificación, extracción, resúmenes cortos).
+                </p>
+                <p style="font-size: 1.1em; color: #00e676; font-weight: 600;">
+                    ✅ Claude Haiku para tareas ultra-rápidas (clasificación binaria, búsqueda).
+                </p>
+                <div class="warning">
+                    <strong>❌ No hagas esto:</strong> Usar GPT-4o para clasificar un texto entre 3 categorías.
+                    Pagas 30× más de lo que deberías.
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Establecer Límites de Gasto</h3>
+                <p><strong>OpenAI Dashboard:</strong></p>
+                <ol>
+                    <li>Ve a <a href="https://platform.openai.com/account/billing/overview" target="_blank" style="color: #00e676;">Settings → Billing</a></li>
+                    <li>Busca "Usage limits"</li>
+                    <li>Establece un límite mensual (ej: $50/mes)</li>
+                    <li>Recibirás una alerta cuando lo alcances</li>
+                </ol>
+                <p style="margin-top: 1em;"><strong>Anthropic (Claude API):</strong></p>
+                <ol>
+                    <li>Ve a tu <a href="https://console.anthropic.com/" target="_blank" style="color: #00e676;">Anthropic Console</a></li>
+                    <li>Sección "Billing"</li>
+                    <li>Establece límites de gasto similares</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Part D: Optimization -->
+        <section class="section">
+            <h2 style="color: #00e676;">Part D: Optimización Práctica para Ahorrar Dinero</h2>
+
+            <div class="card">
+                <h3>1. Prompts Cortos = Menos Tokens = Menos Dinero</h3>
+                <p><strong>Antes (ineficiente):</strong></p>
+                <div class="code-block"><code>
+"Eres un experto en programación con 20 años de experiencia.
+Tu trabajo es analizar código Python y encontrar bugs.
+Por favor, analiza el siguiente código y dime qué está mal..."
+                </code></div>
+                <p><strong>Después (eficiente):</strong></p>
+                <div class="code-block"><code>
+"Analiza este código Python y encuentra bugs."
+                </code></div>
+                <p>
+                    Resultado: prompts cortos sin "fluff" ahorran tokens. El modelo entiende igual sin la preambuladita.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>2. Caching: No Preguntar Dos Veces lo Mismo</h3>
+                <p>
+                    Si tienes requests idénticos, cachéalos (guarda la respuesta) para no enviar a la API:
+                </p>
+                <div class="code-block"><code>
+import hashlib
+from functools import lru_cache
+
+@lru_cache(maxsize=1000)
+def ask_gpt(prompt: str) -> str:
+    # La respuesta se cachea automáticamente
+    # Si llamas dos veces con el mismo prompt,
+    # se devuelve del cache sin tocar la API
+    response = client.chat.completions.create(...)
+    return response.choices[0].message.content
+
+ask_gpt("¿Qué es un token?")  # API call
+ask_gpt("¿Qué es un token?")  # Desde cache ✅
+                </code></div>
+            </div>
+
+            <div class="card">
+                <h3>3. Model Routing: La Inteligencia de Elegir el Modelo Correcto</h3>
+                <p>
+                    Analiza la complejidad de la pregunta y elige el modelo más barato que la resuelve:
+                </p>
+                <div class="code-block"><code>
+def smart_route(user_query: str) -> str:
+    # Palabras clave que indican complejidad
+    complex_keywords = ["analiza", "explain", "why", "debug", "algorithm"]
+
+    is_complex = any(kw in user_query.lower() for kw in complex_keywords)
+
+    if is_complex:
+        model = "gpt-4o"  # Para reasoning, análisis
+    else:
+        model = "gpt-4o-mini"  # Para lo demás
+
+    response = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": user_query}]
+    )
+    return response.choices[0].message.content
+                </code></div>
+                <p>
+                    <strong>Resultado:</strong> 90% de preguntas van a mini (barato), 10% a GPT-4o (más preciso).
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>4. Monitoreo con Dashboards de Uso</h3>
+                <p>
+                    Revisa regularmente cuánto estás gastando:
+                </p>
+                <ul>
+                    <li><strong>OpenAI:</strong> <a href="https://platform.openai.com/account/billing/usage" target="_blank" style="color: #00e676;">Billing → Usage</a> (actualiza cada hora)</li>
+                    <li><strong>Anthropic:</strong> <a href="https://console.anthropic.com/" target="_blank" style="color: #00e676;">Console → Usage</a></li>
+                </ul>
+                <p>
+                    Busca spikes anormales. Si ves un pico de gasto, investiga qué lo causó (bug en un loop,
+                    alguien abusando de la API, etc.).
+                </p>
+            </div>
+        </section>
+
+        <!-- PRACTICE EXERCISES -->
+        <section class="section">
+            <h2 style="color: #00e676;">💻 Ejercicios Prácticos</h2>
+
+            <!-- Exercise 1 -->
+            <div class="exercise-header">
+                Ejercicio 1: Chatbot Streaming con Contador de Tokens (Code-Along)
+            </div>
+            <div class="exercise-content">
+                <p>
+                    <strong>Objetivo:</strong> Construir un chatbot terminal que hace streaming de respuestas
+                    y muestra el número total de tokens usados.
+                </p>
+                <p><strong>Pasos:</strong></p>
+                <ol>
+                    <li>Instala las librerías necesarias:
+                        <div class="code-block"><code>pip install openai tiktoken</code></div>
+                    </li>
+                    <li>Crea un archivo `chatbot_streaming.py`:
+                        <div class="code-block"><code>
+import sys
+from openai import OpenAI
+import tiktoken
+
+client = OpenAI()
+enc = tiktoken.encoding_for_model("gpt-4o-mini")
+
+messages = []
+
+def count_tokens(text: str) -> int:
+    return len(enc.encode(text))
+
+def chat_stream(user_input: str):
+    messages.append({"role": "user", "content": user_input})
+
+    # Contar tokens de input
+    input_tokens = sum(
+        count_tokens(msg.get("content", ""))
+        for msg in messages
+    )
+
+    print("\n🤖 Asistente: ", end="", flush=True)
+
+    full_response = ""
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        stream=True
+    )
+
+    for chunk in response:
+        if chunk.choices[0].delta.content:
+            text = chunk.choices[0].delta.content
+            print(text, end="", flush=True)
+            full_response += text
+
+    print()  # Nueva línea
+
+    # Contar tokens de output
+    output_tokens = count_tokens(full_response)
+
+    # Mostrar resumen
+    print(f"\n📊 Tokens - Input: {input_tokens}, Output: {output_tokens}, Total: {input_tokens + output_tokens}")
+
+    # Guardar en historial
+    messages.append({"role": "assistant", "content": full_response})
+
+# Loop principal
+print("🚀 Chatbot Streaming | Escribe 'salir' para terminar\n")
+while True:
+    user = input("👤 Tú: ").strip()
+    if user.lower() in ["salir", "exit"]:
+        print("Hasta luego!")
+        break
+    if user:
+        chat_stream(user)
+                        </code></div>
+                    </li>
+                    <li>Corre el script:
+                        <div class="code-block"><code>python chatbot_streaming.py</code></div>
+                    </li>
+                    <li>Prueba con varias preguntas y observa cómo:
+                        <ul>
+                            <li>La respuesta aparece palabra por palabra (streaming)</li>
+                            <li>Se cuenta el total de tokens después de cada respuesta</li>
+                        </ul>
+                    </li>
+                </ol>
+                <div class="tip">
+                    <strong>Tip:</strong> Prueba preguntas de diferente longitud y mira cómo varían los tokens.
+                    Una pregunta de 2 palabras vs una de 20 costará muy diferente.
+                </div>
+            </div>
+
+            <!-- Exercise 2 -->
+            <div class="exercise-header">
+                Ejercicio 2: Mini-Challenge — Token Cost Calculator
+            </div>
+            <div class="exercise-content">
+                <p>
+                    <strong>Objetivo:</strong> Crear una función que estima el coste de un request
+                    sin toccar la API.
+                </p>
+                <p><strong>Especificación:</strong></p>
+                <div class="code-block"><code>
+def estimate_cost(prompt: str, model: str = "gpt-4o-mini") -> dict:
+    """
+    Estima el coste de un request sin hacerlo.
+
+    Args:
+        prompt: El texto de entrada
+        model: El modelo a usar ("gpt-4o-mini" o "gpt-4o")
+
+    Returns:
+        dict con:
+        - input_tokens
+        - estimated_output_tokens
+        - input_cost (en dólares)
+        - output_cost (en dólares, asumiendo output = input)
+        - total_cost_estimate
+    """
+                </code></div>
+                <p><strong>Tabla de Precios:</strong></p>
+                <div class="code-block"><code>
+PRICING = {
+    "gpt-4o-mini": {"input": 0.15, "output": 0.60},
+    "gpt-4o": {"input": 5.00, "output": 15.00},
+}
+                </code></div>
+                <p><strong>Pasos:</strong></p>
+                <ol>
+                    <li>Crea `cost_calculator.py`</li>
+                    <li>Usa `tiktoken` para contar tokens de input</li>
+                    <li>Asume que output_tokens ≈ input_tokens (estimación simple)</li>
+                    <li>Calcula: (input_tokens / 1M × input_price) + (output_tokens / 1M × output_price)</li>
+                    <li>Prueba con 3 prompts diferentes:
+                        <ul>
+                            <li>Corto: "Hola"</li>
+                            <li>Medio: "Explica qué es un algoritmo de búsqueda binaria"</li>
+                            <li>Largo: (copia un párrafo de 200 palabras)</li>
+                        </ul>
+                    </li>
+                </ol>
+                <p><strong>Salida esperada:</strong></p>
+                <div class="code-block"><code>
+Prompt: "Hola"
+Model: gpt-4o-mini
+  Input tokens: 1
+  Estimated output: 1
+  Input cost: $0.00000015
+  Output cost: $0.0000006
+  Total: $0.00000075 ✅
+
+Prompt: "Explica qué es un algoritmo de búsqueda binaria"
+Model: gpt-4o-mini
+  Input tokens: 9
+  Estimated output: 9
+  Input cost: $0.00000135
+  Output cost: $0.0000054
+  Total: $0.00000675 ✅
+                </code></div>
+            </div>
+
+            <!-- Exercise 3 -->
+            <div class="exercise-header">
+                Ejercicio 3: Reto Extra — Smart Model Router
+            </div>
+            <div class="exercise-content">
+                <p>
+                    <strong>Objetivo:</strong> Crear un router que elige automáticamente entre GPT-4o-mini
+                    y GPT-4o basado en la complejidad de la pregunta.
+                </p>
+                <p><strong>Requisitos:</strong></p>
+                <ol>
+                    <li>
+                        Función `classify_query(query: str) -> str` que devuelve "simple" o "complex"
+                        <ul>
+                            <li>Busca palabras clave: "why", "how", "explain", "analyze", "debug", "design"</li>
+                            <li>Si hay 2+ palabras clave, es "complex"</li>
+                            <li>Si el prompt es > 100 caracteres, es "complex"</li>
+                            <li>Sino, es "simple"</li>
+                        </ul>
+                    </li>
+                    <li>
+                        Función `route_and_respond(query: str) -> dict` que:
+                        <ul>
+                            <li>Clasifica la query</li>
+                            <li>Elige model ("gpt-4o-mini" para simple, "gpt-4o" para complex)</li>
+                            <li>Hace el request (sin streaming para simplificar)</li>
+                            <li>Retorna: respuesta, modelo usado, y coste estimado</li>
+                        </ul>
+                    </li>
+                    <li>
+                        Prueba con 5 queries distintas y calcula:
+                        <ul>
+                            <li>Coste total si usaras GPT-4o para todas</li>
+                            <li>Coste total con el router</li>
+                            <li>Ahorro ($)</li>
+                        </ul>
+                    </li>
+                </ol>
+                <p><strong>Ejemplo de salida:</strong></p>
+                <div class="code-block"><code>
+Query 1: "Hola"
+  Clasificación: simple
+  Modelo: gpt-4o-mini
+  Coste: $0.00000075
+
+Query 2: "Why is quantum computing relevant for cryptography?"
+  Clasificación: complex
+  Modelo: gpt-4o
+  Coste: $0.001234
+
+---
+Coste si todo fuera GPT-4o: $0.00987
+Coste con router: $0.00345
+Ahorro: $0.00642 (65% más barato) ✅
+                </code></div>
+            </div>
+        </section>
+
+        <!-- Entrega de ejercicios -->
+        <section class="section">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Chatbot Streaming con contador de tokens</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c06', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr>
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: Token Cost Calculator</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí tu código..."></textarea>
+                <textarea id="output-ejercicio-2" rows="4" placeholder="Pega aquí el output de tu programa..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c06', 2, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="section">
+            <h2 style="color: #00e676;">🧪 Test (Quiz)</h2>
+            <div class="quiz-container">
+                <div id="quiz-container">
+                    <!-- Quiz se renderiza aquí -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <a href="clase-05.html" class="btn btn-secondary">← Clase Anterior</a>
+            <a href="../index.html" class="btn btn-secondary">Volver a Módulo 3</a>
+            <a href="clase-07-boss-battle.html" class="btn">Boss Battle →</a>
+        </nav>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Cuál es la principal ventaja del streaming en una aplicación web?",
+                options: [
+                    "Reduce el coste de la API",
+                    "Las respuestas aparecen palabra a palabra, mejorando la UX",
+                    "Permite procesar más tokens simultáneamente",
+                    "Asegura que la respuesta sea siempre correcta"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuántos tokens representa aproximadamente 1 palabra en español?",
+                options: [
+                    "Exactamente 1 token",
+                    "0.3-0.5 tokens",
+                    "0.6-0.8 tokens",
+                    "2-3 tokens"
+                ],
+                correct: 2
+            },
+            {
+                question: "¿Cuál es el context window de Claude 3.5 Sonnet?",
+                options: [
+                    "128.000 tokens",
+                    "100.000 tokens",
+                    "200.000 tokens",
+                    "50.000 tokens"
+                ],
+                correct: 2
+            },
+            {
+                question: "Si pasas un prompt de 500 tokens a GPT-4o-mini y recibes 200 tokens de output, ¿cuál es el coste aproximado?",
+                options: [
+                    "$0.0001",
+                    "$0.0002",
+                    "$0.001",
+                    "$0.01"
+                ],
+                correct: 0
+            },
+            {
+                question: "¿Cuál es la regla de oro para optimizar costes?",
+                options: [
+                    "Siempre usar GPT-4o para todo",
+                    "Usar GPT-4o solo para tareas complejas, mini para tareas simples",
+                    "Minimizar el número de palabras en los prompts",
+                    "Desactivar el streaming para ahorrar"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué es un token según OpenAI?",
+                options: [
+                    "Una palabra completa",
+                    "Aproximadamente 4 caracteres",
+                    "Un símbolo de puntuación",
+                    "Una sentencia completa"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es la diferencia de precio entre input y output tokens en GPT-4o-mini?",
+                options: [
+                    "No hay diferencia",
+                    "Los output son 4× más caros",
+                    "Los input son más caros",
+                    "Depende del modelo"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es la forma correcta de activar streaming en OpenAI?",
+                options: [
+                    "stream_mode=True",
+                    "streaming=True",
+                    "stream=True",
+                    "enable_streaming=True"
+                ],
+                correct: 2
+            }
+        ];
+
+        // Inicializa el quiz
+        CourseProgress.initQuiz('quiz-container', quizQuestions, 'm3-c06');
+
+        // Inicializar indicadores de entrega
+        if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+            CourseProgress.initSubmissionIndicators('m3-c06');
+        }
+    </script>
+</body>
+</html>

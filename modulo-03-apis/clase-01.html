@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 01: OpenAI API — Setup y Primera Llamada — Módulo 3</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav-breadcrumb">
+            <a href="../index.html">Dashboard</a><span> > </span>
+            <a href="index.html">Módulo 3</a><span> > </span>
+            <strong>Clase 01</strong>
+        </nav>
+
+        <header>
+            <h1>Clase 01: OpenAI API — Setup y Primera Llamada</h1>
+            <div class="subtitle">📅 Semana 4 — Lunes | 🎬 30 min vídeo + 💻 50 min práctica + 🧪 15 min test</div>
+        </header>
+
+        <!-- SECCIÓN 1: Vídeo de la lección -->
+        <div class="card">
+            <h2>🎬 Vídeo de la lección</h2>
+            <p>En este vídeo, <strong>Brais Moure (MoureDev)</strong> te enseña cómo usar la API de ChatGPT desde Python paso a paso: crear cuenta, obtener tu API key, instalar la librería y hacer tu primera llamada.</p>
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/1Pl1FWHKHXQ" title="MoureDev - API de ChatGPT desde Python" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <div class="info-box" style="margin-top: 15px;">
+                <strong>📚 Lectura complementaria:</strong><br>
+                Después del vídeo, consulta el <a href="https://www.dataquest.io/blog/api-introduction/" target="_blank">tutorial completo de Dataquest sobre APIs</a> para consolidar conceptos de REST APIs y JSON.
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: Resumen de conceptos -->
+        <aside class="workshop-ref">
+            <h4>📚 Profundiza con el workshop de hola.dev</h4>
+            <p style="margin:0;">Si quieres ver la primera llamada a un LLM en otros lenguajes (curl + SDK de TypeScript) y entender qué devuelve la API, esta sección lo explica desde cero:</p>
+            <ul>
+                <li><a href="https://workshop-ia-2026.686f6c61.dev/#api-hello-world" target="_blank" rel="noopener">Sección 77 — API Hello World: tu primera llamada a un LLM</a></li>
+            </ul>
+            <p class="atribucion">Workshop público de hola.dev. Material externo, no entra en el test.</p>
+        </aside>
+
+
+
+
+<div class="card">
+            <h2>📖 Resumen de conceptos</h2>
+
+            <h3>a) ¿Qué es una API y por qué importa?</h3>
+            <p><strong>API = Application Programming Interface.</strong> Es la forma en que dos programas se comunican entre sí. Piensa en una API como un "menú de restaurante":</p>
+            <ul>
+                <li>El restaurante (servidor) ofrece opciones (endpoints)</li>
+                <li>Tú (cliente) haces un pedido (request)</li>
+                <li>El camarero trae la comida (response)</li>
+            </ul>
+
+            <p><strong>REST API:</strong> Es el estándar actual. Usa HTTP (el protocolo web) para comunicarse. Cada acción se mapea a verbos HTTP:</p>
+            <ul>
+                <li><strong>GET:</strong> Obtener datos (lectura)</li>
+                <li><strong>POST:</strong> Crear datos o enviar información (lo usaremos en OpenAI)</li>
+                <li><strong>PUT:</strong> Actualizar datos</li>
+                <li><strong>DELETE:</strong> Borrar datos</li>
+            </ul>
+
+            <p><strong>JSON:</strong> Formato de datos universal. Ejemplo:</p>
+            <pre><code>{
+  "model": "gpt-4o-mini",
+  "messages": [
+    {"role": "user", "content": "¿Hola, quién eres?"}
+  ]
+}</code></pre>
+
+            <h3>b) OpenAI Platform: Crear cuenta, API key y billing</h3>
+            <p><strong>Paso 1: Crear cuenta en OpenAI</strong></p>
+            <ol>
+                <li>Ve a <a href="https://platform.openai.com/" target="_blank">https://platform.openai.com/</a></li>
+                <li>Haz clic en "Sign up"</li>
+                <li>Usa tu email personal (no corporativo recomendado para desarrollo)</li>
+                <li>Confirma tu email</li>
+            </ol>
+
+            <p><strong>Paso 2: Generar API Key</strong></p>
+            <ol>
+                <li>Una vez logueado, ve a <a href="https://platform.openai.com/api/keys" target="_blank">API Keys</a></li>
+                <li>Haz clic en "+ Create new secret key"</li>
+                <li><strong>Copia y guarda en un lugar seguro</strong> (nunca la compartas)</li>
+                <li>Verás algo como: <code>sk-proj-xxxxxxxxxxxxx</code></li>
+            </ol>
+
+            <p><strong>Paso 3: Configurar billing y límite de gasto</strong></p>
+            <ol>
+                <li>Ve a <a href="https://platform.openai.com/account/billing/overview" target="_blank">Billing > Overview</a></li>
+                <li>Añade un método de pago (tarjeta de crédito)</li>
+                <li>Ve a "Usage limits" (Límites de uso)</li>
+                <li><strong>Configura un hard limit</strong> (ej: 5€/mes) para evitar sorpresas</li>
+            </ol>
+
+            <div class="warning">
+                <strong>⚠️ Seguridad crítica:</strong> Tu API key es como una contraseña. Quien la tenga puede hacer llamadas a la API (y gastar dinero). NUNCA la hardcodees en tu código. NUNCA la publiques en GitHub.
+            </div>
+
+            <h3>c) Instalación: Python, pip y librerías</h3>
+            <p><strong>Requisitos previos:</strong></p>
+            <ul>
+                <li>Python 3.8+ instalado</li>
+                <li>pip (gestor de paquetes, viene con Python)</li>
+                <li>Un editor de texto (VS Code recomendado)</li>
+            </ul>
+
+            <p><strong>Instalar librerías necesarias:</strong></p>
+            <pre><code>pip install openai python-dotenv</code></pre>
+
+            <p><strong>¿Qué hace cada una?</strong></p>
+            <ul>
+                <li><code>openai</code>: Cliente oficial de OpenAI. Simplifica las llamadas HTTP a la API</li>
+                <li><code>python-dotenv</code>: Lee variables de entorno desde un archivo <code>.env</code></li>
+            </ul>
+
+            <h3>d) Anatomía de una llamada a ChatCompletions</h3>
+            <p><strong>Estructura básica en Python:</strong></p>
+            <pre><code>from openai import OpenAI
+from dotenv import load_dotenv
+import os
+
+# Cargar variables de entorno
+load_dotenv()
+
+# Crear cliente (lee OPENAI_API_KEY automáticamente del .env)
+client = OpenAI()
+
+# Hacer una llamada
+response = client.chat.completions.create(
+    model="gpt-4o-mini",  # Modelo económico
+    messages=[
+        {"role": "system", "content": "Eres un asistente útil."},
+        {"role": "user", "content": "¿Qué es una API?"}
+    ]
+)
+
+# Obtener la respuesta
+print(response.choices[0].message.content)</code></pre>
+
+            <p><strong>Parámetros importantes:</strong></p>
+            <ul>
+                <li><code>model</code>: Qué modelo usar. "gpt-4o-mini" es rápido y barato. "gpt-4o" es más potente pero más caro</li>
+                <li><code>messages</code>: Array de mensajes con roles (system, user, assistant)</li>
+                <li><code>temperature</code> (opcional): 0-2. 0 = determinista, 1 = equilibrio, 2 = muy creativo</li>
+                <li><code>max_tokens</code> (opcional): Limita la longitud de la respuesta</li>
+            </ul>
+
+            <h3>e) Estructura de la respuesta</h3>
+            <p><strong>La respuesta es un objeto con esta estructura:</strong></p>
+            <pre><code>response = {
+    "id": "chatcmpl-8bfMqxxx",
+    "object": "chat.completion",
+    "created": 1699564800,
+    "model": "gpt-4o-mini",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "Una API es..."
+            },
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 15,
+        "completion_tokens": 120,
+        "total_tokens": 135
+    }
+}
+
+# Para obtener el texto:
+texto = response.choices[0].message.content  # "Una API es..."
+
+# Para ver uso de tokens (importante para el billing):
+print(response.usage.total_tokens)  # 135 tokens</code></pre>
+
+            <div class="info-box">
+                <strong>💡 Tokens = dinero.</strong> Las llamadas se facturam por tokens (aproximadamente 1 token = 4 caracteres). Cuanto más larga la respuesta, más caro.
+            </div>
+
+            <h3>f) Variables de entorno: .env y python-dotenv</h3>
+            <p><strong>Nunca hagas esto (INSEGURO):</strong></p>
+            <pre><code># ❌ MAL: Hardcodeada, si subes a GitHub todos pueden verla
+api_key = "sk-proj-xxxxxxxxxxxxx"
+client = OpenAI(api_key=api_key)</code></pre>
+
+            <p><strong>Haz esto (SEGURO):</strong></p>
+            <p><strong>1. Crea un archivo <code>.env</code> en la raíz del proyecto:</strong></p>
+            <pre><code># .env
+OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxx
+OPENAI_MODEL=gpt-4o-mini</code></pre>
+
+            <p><strong>2. Configura <code>.gitignore</code> para que NO suba a GitHub:</strong></p>
+            <pre><code># .gitignore
+.env
+*.pyc
+__pycache__/</code></pre>
+
+            <p><strong>3. En tu código Python, carga las variables:</strong></p>
+            <pre><code>from dotenv import load_dotenv
+import os
+
+# Cargar desde .env
+load_dotenv()
+
+# Acceder a las variables
+api_key = os.getenv("OPENAI_API_KEY")
+model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")  # Valor por defecto si no existe
+
+# Crear cliente
+client = OpenAI(api_key=api_key)</code></pre>
+
+            <div class="info-box">
+                <strong>✓ Ventajas:</strong>
+                <ul>
+                    <li>API key nunca en el repositorio</li>
+                    <li>Fácil cambiar entre desarrollo y producción</li>
+                    <li>Compatible con variables de entorno del servidor</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: Práctica guiada -->
+        <div class="card">
+            <h2>💻 Práctica guiada</h2>
+
+            <h3>Ejercicio 1: Setup en OpenAI Platform (15 min)</h3>
+            <p><strong>Objetivo:</strong> Tener tu API key lista y el billing configurado.</p>
+
+            <ol>
+                <li>
+                    <strong>Crear cuenta en OpenAI Platform</strong>
+                    <ul>
+                        <li>Ve a <a href="https://platform.openai.com/" target="_blank">https://platform.openai.com/</a></li>
+                        <li>Haz clic en "Sign up" (si no tienes cuenta)</li>
+                        <li>Completa el registro con tu email y contraseña</li>
+                        <li>Confirma tu email</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <strong>Generar tu API key</strong>
+                    <ul>
+                        <li>Logueate en <a href="https://platform.openai.com/" target="_blank">platform.openai.com</a></li>
+                        <li>Ve a "API keys" en el menú lateral izquierdo</li>
+                        <li>Haz clic en "+ Create new secret key"</li>
+                        <li>Dale un nombre (ej: "desarrollo-juan")</li>
+                        <li><strong>Cópiala inmediatamente</strong> — no podrás verla de nuevo</li>
+                        <li>Pégala en un archivo <code>.env</code> (lo haremos después)</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <strong>Configurar billing</strong>
+                    <ul>
+                        <li>Ve a <a href="https://platform.openai.com/account/billing/overview" target="_blank">Billing > Overview</a></li>
+                        <li>Haz clic en "Add to a new card" o selecciona una existente</li>
+                        <li>Añade una tarjeta de crédito/débito (se te cargará según uso, no hay suscripción)</li>
+                        <li>Ve a "Usage limits" en el menú izquierdo</li>
+                        <li>Configura un "Hard limit" (ej: 5€) para protegerte</li>
+                        <li>Comprueba que el hard limit está activo</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <strong>Verificación:</strong> Captura pantalla de tu API key creada y tu límite de gasto configurado. Guarda como evidencia.
+                </li>
+            </ol>
+
+            <h3>Ejercicio 2: Entorno Python + Primera llamada (25 min)</h3>
+            <p><strong>Objetivo:</strong> Hacer tu primera llamada a la API desde Python.</p>
+
+            <p><strong>Paso 1: Crear estructura de proyecto</strong></p>
+            <pre><code>mkdir mi-primer-chatgpt
+cd mi-primer-chatgpt
+python -m venv venv
+# En Linux/Mac:
+source venv/bin/activate
+# En Windows:
+venv\Scripts\activate</code></pre>
+
+            <p><strong>Paso 2: Instalar librerías</strong></p>
+            <pre><code>pip install openai python-dotenv</code></pre>
+
+            <p><strong>Paso 3: Crear archivos</strong></p>
+            <p>Crea un archivo <code>.env</code> en la raíz:</p>
+            <pre><code># .env
+OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxx</code></pre>
+
+            <p>Crea un archivo <code>.gitignore</code>:</p>
+            <pre><code>.env
+venv/
+__pycache__/
+*.pyc</code></pre>
+
+            <p><strong>Paso 4: Script principal <code>main.py</code></strong></p>
+            <pre><code>from openai import OpenAI
+from dotenv import load_dotenv
+
+# Cargar .env
+load_dotenv()
+
+# Crear cliente
+client = OpenAI()
+
+# Hacer una llamada
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {
+            "role": "system",
+            "content": "Eres un asistente útil que responde en español."
+        },
+        {
+            "role": "user",
+            "content": "¿Qué es una API REST?"
+        }
+    ]
+)
+
+# Imprimir respuesta
+print("Respuesta de ChatGPT:")
+print(response.choices[0].message.content)
+print(f"\nTokens usados: {response.usage.total_tokens}")</code></pre>
+
+            <p><strong>Paso 5: Ejecutar</strong></p>
+            <pre><code>python main.py</code></pre>
+
+            <p>Deberías ver la respuesta de ChatGPT impresa en consola.</p>
+
+            <h3>Ejercicio 3: Input interactivo (15 min)</h3>
+            <p><strong>Objetivo:</strong> Hacer un script que permita escribir preguntas y recibir respuestas.</p>
+
+            <p>Crea un archivo <code>chat.py</code>:</p>
+            <pre><code>from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI()
+
+# Guardar historial de conversación
+messages = [
+    {
+        "role": "system",
+        "content": "Eres un asistente útil. Responde siempre en español."
+    }
+]
+
+print("=== Chat con OpenAI ===")
+print("Escribe 'salir' para terminar\n")
+
+while True:
+    # Entrada del usuario
+    user_input = input("Tú: ").strip()
+
+    if user_input.lower() == "salir":
+        print("¡Hasta luego!")
+        break
+
+    if not user_input:
+        continue
+
+    # Añadir mensaje del usuario al historial
+    messages.append({"role": "user", "content": user_input})
+
+    # Llamar a la API
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages
+    )
+
+    # Obtener respuesta
+    assistant_message = response.choices[0].message.content
+
+    # Guardar respuesta en historial
+    messages.append({"role": "assistant", "content": assistant_message})
+
+    # Mostrar respuesta
+    print(f"ChatGPT: {assistant_message}\n")</code></pre>
+
+            <p><strong>Ejecutar:</strong></p>
+            <pre><code>python chat.py</code></pre>
+
+            <p>Ahora puedes tener una conversación real. Nota cómo el historial se mantiene de un mensaje a otro.</p>
+
+            <div class="timer-note">⏱️ Tiempo total sugerido: 50 minutos</div>
+        </div>
+
+        <!-- SECCIÓN 4: Mini-reto del día -->
+        <div class="card">
+            <h2>🎯 Mini-reto del día: "El traductor instantáneo"</h2>
+            <p><strong>Objetivo:</strong> Crear un traductor automático entre idiomas usando la API.</p>
+
+            <p><strong>Requisitos:</strong></p>
+            <ul>
+                <li>El script debe pedir un texto y un idioma destino</li>
+                <li>Usar la API de OpenAI para traducir</li>
+                <li>Mostrar tanto el texto original como la traducción</li>
+            </ul>
+
+            <p><strong>Esquema:</strong></p>
+            <pre><code>from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI()
+
+# Pedir entrada
+texto = input("Escribe el texto a traducir: ").strip()
+idioma = input("¿A qué idioma quieres traducir? (inglés, francés, alemán, japonés...): ").strip()
+
+# Llamada a API con instrucción clara
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {
+            "role": "system",
+            "content": f"Eres un traductor profesional. Traduce el siguiente texto SOLO al {idioma}. No añadas explicaciones, solo el texto traducido."
+        },
+        {
+            "role": "user",
+            "content": texto
+        }
+    ]
+)
+
+traduccion = response.choices[0].message.content
+
+print(f"\n📝 Original: {texto}")
+print(f"🌍 {idioma.capitalize()}: {traduccion}")</code></pre>
+
+            <p><strong>Bonus:</strong> Añade un contador de caracteres y palabras antes y después de la traducción. ¿Cambia mucho el tamaño según el idioma?</p>
+
+            <div class="info-box">
+                <strong>Consejo:</strong> Experimenta con diferentes idiomas. Algunos (chino, árabe) cambian mucho el número de caracteres. ¿Por qué crees que pasa?
+            </div>
+        </div>
+
+        <!-- Entrega de ejercicios -->
+        <div class="card">
+            <h2 class="section-title"><span class="section-icon">📤</span> Entrega de ejercicios</h2>
+            <div class="exercise-submit" id="submit-ejercicio-1" data-type="code-along">
+                <h4>📤 Entregar práctica: Setup OpenAI + Primera llamada</h4>
+                <textarea id="code-ejercicio-1" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-1" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c01', 1, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-1" class="submit-status"></div>
+            </div>
+            <hr>
+            <div class="exercise-submit" id="submit-ejercicio-2" data-type="code-along">
+                <h4>📤 Entregar práctica: Input interactivo con OpenAI</h4>
+                <textarea id="code-ejercicio-2" rows="12" placeholder="Pega aquí tu código completo..."></textarea>
+                <label><input type="checkbox" required> Me funciona correctamente al ejecutarlo</label>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-2" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c01', 2, this)" class="btn btn-submit">Entregar 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-2" class="submit-status"></div>
+            </div>
+            <hr>
+            <div class="exercise-submit" id="submit-ejercicio-3" data-type="mini-reto">
+                <h4>📤 Entregar mini-reto: El traductor instantáneo</h4>
+                <textarea id="code-ejercicio-3" rows="12" placeholder="Pega aquí tu código..."></textarea>
+                <textarea id="output-ejercicio-3" rows="4" placeholder="Pega aquí el output de tu programa..."></textarea>
+                <div class="submit-row">
+                    <textarea id="notes-ejercicio-3" rows="2" placeholder="Notas opcionales..."></textarea>
+                    <button onclick="CourseProgress.submitExercise('m3-c01', 3, this)" class="btn btn-submit">Entregar reto 📤</button>
+                </div>
+                <div id="submit-status-ejercicio-3" class="submit-status"></div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 5: Test de conocimiento -->
+        <div class="card">
+            <h2>🧪 Test de conocimiento</h2>
+            <p>Contesta las 10 preguntas para evaluar tu comprensión. Necesitas <strong>8/10</strong> para pasar.</p>
+            <div id="quiz-container"></div>
+        </div>
+
+        <!-- Navegación entre clases -->
+        <div class="clase-nav">
+            <a href="index.html">← Módulo 3</a>
+            <span> | </span>
+            <a href="clase-02.html">Clase 02 →</a>
+        </div>
+
+    </div>
+
+    <!-- Script para cargar el sistema de progreso y quiz -->
+    <script src="../js/progress.js"></script>
+    <script>
+        const quizQuestions = [
+            {
+                question: "¿Qué es una API key y por qué hay que mantenerla segura?",
+                options: [
+                    "Es un contraseña temporal que expira cada hora",
+                    "Es un identificador único que permite hacer llamadas a la API. Quien la tenga puede gastar dinero en tu cuenta",
+                    "Es el nombre del modelo de IA que usas",
+                    "Es un archivo de configuración que se sube a GitHub"
+                ],
+                correct: 1,
+                explanation: "La API key es como una contraseña. Quien la tenga puede hacer llamadas (y gastar dinero) en tu cuenta. Por eso NUNCA se hardcodea ni se comparte."
+            },
+            {
+                question: "¿Cuál es el modelo más económico y recomendado para desarrollo?",
+                options: [
+                    "gpt-4",
+                    "gpt-4o",
+                    "gpt-4o-mini",
+                    "gpt-3.5-turbo"
+                ],
+                correct: 2,
+                explanation: "'gpt-4o-mini' es rápido, barato y excelente para desarrollo. GPT-4 es más potente pero 10x más caro. GPT-3.5 es antiguo."
+            },
+            {
+                question: "¿Cuál es la estructura correcta del array de mensajes en ChatCompletions?",
+                options: [
+                    "[\"pregunta\", \"respuesta\", \"pregunta\"]",
+                    "[{\"role\": \"user\", \"content\": \"...\"}, {\"role\": \"assistant\", \"content\": \"...\"}]",
+                    "[{\"pregunta\": \"...\", \"respuesta\": \"...\"}]",
+                    "Solo necesitas pasar un string con la pregunta"
+                ],
+                correct: 1,
+                explanation: "Cada mensaje es un objeto con 'role' (system, user, assistant) y 'content' (el texto). El rol define quién habla."
+            },
+            {
+                question: "¿Dónde está el texto de la respuesta en el objeto response?",
+                options: [
+                    "response.message",
+                    "response.content",
+                    "response.choices[0].message.content",
+                    "response[0].text"
+                ],
+                correct: 2,
+                explanation: "La estructura es anidada: response > choices (array) > [0] (primer elemento) > message > content (el texto real)."
+            },
+            {
+                question: "¿Qué es python-dotenv y para qué sirve?",
+                options: [
+                    "Un modelo de IA",
+                    "Una librería que lee variables de entorno desde un archivo .env",
+                    "Un servidor web",
+                    "Una base de datos"
+                ],
+                correct: 1,
+                explanation: "python-dotenv te permite cargar variables (como OPENAI_API_KEY) desde un archivo .env sin hardcodearlas en el código."
+            },
+            {
+                question: "¿Qué debe incluir SIEMPRE en tu .gitignore?",
+                options: [
+                    "Solo archivos .py",
+                    ".env, venv/, __pycache__/",
+                    "Nada, es opcional",
+                    "Solo la carpeta 'datos/'"
+                ],
+                correct: 1,
+                explanation: "NUNCA subas .env (contiene API keys), venv/ (librerías locales) ni __pycache__/ (archivos generados)."
+            },
+            {
+                question: "¿Qué es REST en REST API?",
+                options: [
+                    "Un acrónimo de 'Rest and Relax'",
+                    "Representational State Transfer — un estándar para APIs usando HTTP",
+                    "Un modelo de IA específico",
+                    "Una base de datos"
+                ],
+                correct: 1,
+                explanation: "REST define cómo estructurar una API. Usa verbos HTTP (GET, POST, PUT, DELETE) para acciones sobre recursos."
+            },
+            {
+                question: "En una conversación con historial, ¿qué role tiene el mensaje anterior de la IA?",
+                options: [
+                    "user",
+                    "system",
+                    "assistant",
+                    "bot"
+                ],
+                correct: 2,
+                explanation: "'assistant' es el rol para mensajes previos de la IA. 'user' es para mensajes del usuario. 'system' para instrucciones de contexto."
+            },
+            {
+                question: "¿Qué representa 'tokens' en la facturación de OpenAI?",
+                options: [
+                    "El número de palabras exactamente",
+                    "Aproximadamente 1 token = 4 caracteres. Se facturan por tokens usados",
+                    "Un pago fijo mensual",
+                    "El número de llamadas API"
+                ],
+                correct: 1,
+                explanation: "Los tokens son la unidad de facturación. Más tokens = más caro. Una palabra ≈ 1-2 tokens, un carácter ≈ 0.25 tokens."
+            },
+            {
+                question: "¿Cuál es la mejor práctica para manejar la API key en producción?",
+                options: [
+                    "Ponerla en el código como variable global",
+                    "Compartirla en el repositorio de GitHub para que todos la vean",
+                    "Usar variables de entorno del servidor, NUNCA hardcodear",
+                    "Guardarla en un archivo .txt en el escritorio"
+                ],
+                correct: 2,
+                explanation: "En producción, usar variables de entorno del servidor (heroku, AWS, etc.). NUNCA hardcodear. En desarrollo, usar .env."
+            }
+        ];
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                CourseProgress.initQuiz('quiz-container', quizQuestions, 'm3-c01');
+                if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+                    CourseProgress.initSubmissionIndicators('m3-c01');
+                }
+            });
+        } else {
+            CourseProgress.initQuiz('quiz-container', quizQuestions, 'm3-c01');
+            if (typeof CourseProgress !== 'undefined' && CourseProgress.initSubmissionIndicators) {
+                CourseProgress.initSubmissionIndicators('m3-c01');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 2: Fundamentos de IA y LLMs</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav class="breadcrumb clase-nav">
+            <a href="../index.html">Dashboard</a>
+            <span class="separator">/</span>
+            <span class="current">Módulo 2</span>
+        </nav>
+
+        <!-- Module Header -->
+        <header class="course-header">
+            <div class="header-content">
+                <h1>Módulo 2: Fundamentos de IA y LLMs</h1>
+                <div class="module-tag">
+                    <span>Semana 3 · 10 horas · 5 clases</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Description Card -->
+        <section class="card description-card">
+            <h2>Objetivo del módulo</h2>
+            <p>
+                Entender qué es la IA, cómo funcionan los <strong>LLMs</strong>, qué son <strong>tokens</strong>, <strong>embeddings</strong> y <strong>prompts</strong>.
+                Una base teórica mínima pero sólida para trabajar con modelos de lenguaje en la práctica.
+            </p>
+            <p style="margin-top: 12px; font-size: 0.95em; color: var(--text-muted);">
+                Del concepto a la práctica: de la teoría de Deep Learning a construir prompts que funcionan.
+            </p>
+        </section>
+
+        <!-- Progress Section -->
+        <section class="card progress-section">
+            <h2>Progreso del módulo</h2>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span class="progress-text" id="progress-text">0/5 clases completadas</span>
+                    <span class="progress-percentage" id="progress-percentage">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- XP Bar -->
+            <div class="xp-bar-container" style="margin-top: 24px;">
+                <div class="xp-header">
+                    <span>Experiencia del módulo</span>
+                    <span class="xp-value" id="xp-value">0 XP</span>
+                </div>
+                <div class="xp-bar">
+                    <div class="xp-fill" id="xp-fill" style="width: 0%"></div>
+                </div>
+                <div class="xp-milestone" style="margin-top: 8px; font-size: 0.85em; color: var(--text-muted);">
+                    <span id="xp-milestone">Siguiente hito: 200 XP</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Antes de empezar -->
+        <section class="card">
+            <h2 class="section-title"><span class="section-icon">🔧</span> Antes de empezar: cuentas y herramientas</h2>
+            <p style="margin-bottom: 1em;">Créate estas cuentas <strong>antes del lunes</strong>. Todas son gratuitas y las vas a necesitar durante la semana.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Herramienta</th>
+                        <th>Para qué</th>
+                        <th>Alta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Elements of AI</strong></td>
+                        <td>Curso interactivo de Helsinki (Clases 01-02)</td>
+                        <td><a href="https://www.elementsofai.com/" target="_blank">elementsofai.com ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>ChatGPT</strong></td>
+                        <td>Practicar prompts (Clases 02-05). Basta con cuenta gratuita.</td>
+                        <td><a href="https://chat.openai.com/" target="_blank">chat.openai.com ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Claude</strong></td>
+                        <td>Alternativa a ChatGPT para comparar respuestas (Clases 03-05)</td>
+                        <td><a href="https://claude.ai/" target="_blank">claude.ai ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>OpenAI Tokenizer</strong></td>
+                        <td>Ver cómo se tokenizan las frases (Clase 02)</td>
+                        <td><a href="https://platform.openai.com/tokenizer" target="_blank">platform.openai.com/tokenizer ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ollama</strong></td>
+                        <td>Correr modelos de IA en tu ordenador (Clase 04 y Boss Battle)</td>
+                        <td><a href="https://ollama.com/download" target="_blank">ollama.com/download ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hugging Face</strong></td>
+                        <td>Explorar modelos y datasets open source (Clase 04)</td>
+                        <td><a href="https://huggingface.co/join" target="_blank">huggingface.co/join ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>DeepLearning.AI</strong></td>
+                        <td>Curso gratuito de Prompt Engineering de Andrew Ng (Clase 03)</td>
+                        <td><a href="https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/" target="_blank">deeplearning.ai ↗</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Google AI Essentials</strong></td>
+                        <td>Certificación gratuita con badge oficial de Google</td>
+                        <td><a href="https://www.cloudskillsboost.google/course_templates/554" target="_blank">cloudskillsboost.google ↗</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info" style="margin-top: 1em;">
+                <strong>Requisitos para Ollama:</strong> mínimo 8 GB de RAM para modelos de 7B parámetros. Si tu PC tiene menos, usa modelos pequeños (<code>ollama run phi3</code> o <code>ollama run gemma2:2b</code>). En Windows, descarga el instalador desde <a href="https://ollama.com/download" target="_blank">ollama.com/download</a>.
+            </div>
+        </section>
+
+        <!-- Classes List -->
+        <section class="card">
+            <h2>Clases del módulo</h2>
+            <div class="clase-list">
+                <!-- Semana 3 Header -->
+                <div class="semana-header">
+                    <h3>Semana 3: Fundamentos de IA</h3>
+                </div>
+
+                <!-- Clase 1 -->
+                <a href="clase-01.html" class="clase-item" data-clase-id="1">
+                    <div class="clase-number">01</div>
+                    <div class="clase-info">
+                        <h3>Qué es la IA, ML y Deep Learning</h3>
+                        <p class="clase-meta">Lunes · Semana 3</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-1">☐</span>
+                    </div>
+                </a>
+
+                <!-- Clase 2 -->
+                <a href="clase-02.html" class="clase-item" data-clase-id="2">
+                    <div class="clase-number">02</div>
+                    <div class="clase-info">
+                        <h3>Cómo Funcionan los LLMs</h3>
+                        <p class="clase-meta">Martes · Semana 3</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-2">☐</span>
+                    </div>
+                </a>
+
+                <!-- Clase 3 -->
+                <a href="clase-03.html" class="clase-item" data-clase-id="3">
+                    <div class="clase-number">03</div>
+                    <div class="clase-info">
+                        <h3>Prompt Engineering Avanzado</h3>
+                        <p class="clase-meta">Miércoles · Semana 3</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-3">☐</span>
+                    </div>
+                </a>
+
+                <!-- Clase 4 -->
+                <a href="clase-04.html" class="clase-item" data-clase-id="4">
+                    <div class="clase-number">04</div>
+                    <div class="clase-info">
+                        <h3>Modelos Cerrados vs Open Source</h3>
+                        <p class="clase-meta">Jueves · Semana 3</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-4">☐</span>
+                    </div>
+                </a>
+
+                <!-- Clase 5 - Boss Battle -->
+                <a href="clase-05-boss-battle.html" class="clase-item boss-battle" data-clase-id="5">
+                    <div class="clase-number boss-number">🎯</div>
+                    <div class="clase-info">
+                        <h3>Boss Battle: 5 Problemas Reales con Prompts</h3>
+                        <p class="clase-meta">Viernes · Semana 3 · Reto final</p>
+                    </div>
+                    <div class="clase-check">
+                        <span class="check-icon" id="check-5">☐</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Certification Card -->
+        <section class="card certification-card">
+            <h2>Certificaciones recomendadas</h2>
+            <div class="cert-list">
+                <!-- Cert 1 -->
+                <div class="cert-content">
+                    <div class="cert-badge">🎓</div>
+                    <div class="cert-info">
+                        <h3><a href="https://www.elementsofai.com/" target="_blank" style="color: #00e676; text-decoration: none;">Elements of AI (Helsinki) ↗</a></h3>
+                        <p>Gratis, reconocida internacionalmente, +1M alumnos.</p>
+                    </div>
+                </div>
+
+                <!-- Cert 2 -->
+                <div class="cert-content" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-glow);">
+                    <div class="cert-badge">🎓</div>
+                    <div class="cert-info">
+                        <h3><a href="https://www.cloudskillsboost.google/course_templates/554" target="_blank" style="color: #00e676; text-decoration: none;">Google AI Essentials ↗</a></h3>
+                        <p>Badge oficial de Google.</p>
+                    </div>
+                </div>
+
+                <!-- Cert 3 -->
+                <div class="cert-content" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-glow);">
+                    <div class="cert-badge">🎓</div>
+                    <div class="cert-info">
+                        <h3><a href="https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/" target="_blank" style="color: #00e676; text-decoration: none;">DeepLearning.AI Prompt Engineering ↗</a></h3>
+                        <p>Andrew Ng, gratis, muy valorado.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="module-footer">
+            <a href="../index.html" class="footer-link">← Volver al Dashboard</a>
+            <p class="footer-text">Módulo 2 de 9 · Fundamentos de IA y LLMs</p>
+        </footer>
+    </div>
+
+    <script src="../js/progress.js"></script>
+    <script>
+        // Initialize module progress on page load
+        function initializeModuleProgress() {
+            // Get module 2 progress
+            const moduleProgress = CourseProgress.getModuleProgress(2);
+            const completedClasses = moduleProgress.completed;
+            const totalClasses = 5;
+            const progressPercentage = (completedClasses / totalClasses) * 100;
+
+            // Update progress bar
+            document.getElementById('progress-text').textContent = `${completedClasses}/${totalClasses} clases completadas`;
+            document.getElementById('progress-percentage').textContent = `${Math.round(progressPercentage)}%`;
+            document.getElementById('progress-fill').style.width = `${progressPercentage}%`;
+
+            // Update XP bar
+            const currentXP = moduleProgress.xp;
+            const maxXP = 200; // Hito para el módulo
+            const xpPercentage = Math.min((currentXP / maxXP) * 100, 100);
+            document.getElementById('xp-value').textContent = `${currentXP} XP`;
+            document.getElementById('xp-fill').style.width = `${xpPercentage}%`;
+
+            const nextMilestone = Math.ceil((currentXP + 1) / 50) * 50;
+            document.getElementById('xp-milestone').textContent = `Siguiente hito: ${nextMilestone} XP`;
+
+            // Update completion status for each class
+            for (let i = 1; i <= 5; i++) {
+                const classId = i === 5 ? 'm2-bb' : `m2-c0${i}`;
+                const isCompleted = CourseProgress.isClassCompleted(classId);
+                const checkIcon = document.getElementById(`check-${i}`);
+                const claseItem = document.querySelector(`[data-clase-id="${i}"]`);
+
+                if (isCompleted) {
+                    checkIcon.textContent = '✓';
+                    checkIcon.style.color = '#00f0ff';
+                    checkIcon.style.fontWeight = 'bold';
+                    if (claseItem) {
+                        claseItem.classList.add('completed');
+                    }
+                } else {
+                    checkIcon.textContent = '☐';
+                    checkIcon.style.color = '#8888aa';
+                }
+            }
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeModuleProgress();
+            CourseProgress.initToolChecklist(2);
+        });
+    </script>
+</body>
+</html>
