@@ -1,7 +1,7 @@
 {
-  "lastSync": "2026-06-16T15:36:53.722Z",
+  "lastSync": "2026-06-16T15:38:28.257Z",
   "student": "Juan Querol León",
-  "xp": 645,
+  "xp": 760,
   "level": 7,
   "levelTitle": "Hechicero Digital",
   "badges": [
@@ -9,7 +9,9 @@
     "lucky-strike",
     "perfect-score",
     "first-submit",
-    "python-initiate"
+    "python-initiate",
+    "api-master",
+    "ai-augmented"
   ],
   "completedClasses": [
     "m1-c02",
@@ -42,7 +44,9 @@
     "m5-c03",
     "m5-c04",
     "m5-c05",
-    "m5-c06"
+    "m5-c06",
+    "m3-bb",
+    "m4-bb"
   ],
   "testScores": {
     "m1-c01": 10,
@@ -74,12 +78,14 @@
     "m5-c03": 9,
     "m5-c04": 9,
     "m5-c05": 10,
-    "m5-c06": 10
+    "m5-c06": 10,
+    "m3-bb": 10,
+    "m4-bb": 10
   },
   "streak": 2,
-  "lastStudyDate": "2026-06-04",
+  "lastStudyDate": "2026-06-16",
   "startDate": "2026-04-07",
-  "totalRewardsEarned": 22,
+  "totalRewardsEarned": 24,
   "highestCombo": 2,
   "skillProfile": {
     "Python": {
@@ -99,18 +105,18 @@
       "color": "#00f0ff"
     },
     "APIs": {
-      "mastery": 87,
-      "completed": 6,
+      "mastery": 97,
+      "completed": 7,
       "total": 7,
-      "avgScore": 9,
+      "avgScore": 9.1,
       "icon": "🔌",
       "color": "#ff00e5"
     },
     "AI Tools": {
-      "mastery": 85,
-      "completed": 4,
+      "mastery": 98,
+      "completed": 5,
       "total": 5,
-      "avgScore": 9.3,
+      "avgScore": 9.4,
       "icon": "🤖",
       "color": "#ffe600"
     },
