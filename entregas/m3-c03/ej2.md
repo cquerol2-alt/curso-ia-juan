@@ -1,5 +1,5 @@
 ---
-status: pendiente
+status: aprobado
 classId: m3-c03
 exerciseNum: 2
 type: A
@@ -8,7 +8,7 @@ title: "Añadir streaming"
 module: 3
 moduleName: "APIs de IA — Tu Primer Chatbot"
 submittedAt: 2026-06-17T12:31:27.547Z
-lastUpdated: 2026-06-17T12:31:27.547Z
+lastUpdated: 2026-06-18T18:08:44.000Z
 xpAwarded: 5
 ---
 
@@ -82,4 +82,18 @@ while True:
 
 ## Feedback
 
-_(pendiente de revisión automática)_
+✅ **Aprobado.** El streaming está bien: `stream=True`, iteras los chunks, acumulas la respuesta y la guardas en el historial (mantienes memoria). Correcto.
+
+Un detalle a corregir: en el bucle principal imprimes la respuesta **dos veces**. `chat_streaming()` ya hace el print en streaming y luego repites el print de la respuesta. Déjalo así:
+
+```python
+while True:
+    user_input = input("Tú: ")
+    if user_input.lower() == 'salir':
+        break
+    chat_streaming(user_input)   # ya imprime; no repitas el print
+```
+
+(La función `chat()` sin streaming ya no la usas aquí, puedes borrarla.)
+
+— Revisado por Cristina · 18-jun-2026
