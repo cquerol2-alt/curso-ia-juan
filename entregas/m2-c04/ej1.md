@@ -1,5 +1,5 @@
 ---
-status: pendiente
+status: aprobado
 classId: m2-c04
 exerciseNum: 1
 type: B
@@ -8,7 +8,7 @@ title: "Mini-reto: Ollama Challenge — Duelo de Modelos"
 module: 2
 moduleName: "Fundamentos de IA y LLMs"
 submittedAt: 2026-06-17T12:20:22.373Z
-lastUpdated: 2026-06-17T12:20:22.373Z
+lastUpdated: 2026-06-18T18:08:44.000Z
 xpAwarded: 5
 ---
 
@@ -49,4 +49,10 @@ El trade-off observado es claro: el modelo pequeño es más rápido y ligero, pe
 
 ## Feedback
 
-_(pendiente de revisión automática)_
+✅ **Aprobado.** Muy bien: mediste métricas reales (tiempo, RAM, GPU/CPU) y razonaste el trade-off velocidad/consumo vs calidad, cerrando con qué elegirías en producción. Ese criterio es justo lo que busca el módulo.
+
+Para la próxima:
+- La "calidad (1-5)" es subjetiva: usa el **mismo prompt** en ambos modelos y pega un extracto de cada respuesta que justifique el 3 vs el 4.
+- Dato a entender: mistral tardó 105 s con 54% CPU / 46% GPU → no cupo entero en la GPU, por eso fue lento. No es que el modelo sea "lento", es que faltó VRAM.
+
+— Revisado por Cristina · 18-jun-2026
