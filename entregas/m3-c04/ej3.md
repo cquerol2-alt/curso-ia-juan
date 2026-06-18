@@ -1,5 +1,5 @@
 ---
-status: pendiente
+status: aprobado
 classId: m3-c04
 exerciseNum: 3
 type: A
@@ -8,7 +8,7 @@ title: "Hackea tu propio chatbot"
 module: 3
 moduleName: "APIs de IA — Tu Primer Chatbot"
 submittedAt: 2026-06-17T15:49:57.986Z
-lastUpdated: 2026-06-17T15:49:57.986Z
+lastUpdated: 2026-06-18T18:08:44.000Z
 xpAwarded: 5
 ---
 
@@ -81,4 +81,12 @@ test_chatbot(secure_system, attacks[:2])
 
 ## Feedback
 
-_(pendiente de revisión automática)_
+✅ **Aprobado. Muy buen trabajo.** Entiendes la defensa con reglas explícitas en el system prompt y pruebas inyecciones reales. Es justo el bloque de AI Safety del plan.
+
+Matiz importante (concepto clave): un buen system prompt **reduce** el prompt injection pero **no lo elimina** — es mitigación, no blindaje. La defensa de verdad es por capas: no meter secretos en el contexto, validar entrada y salida, limitar permisos de las tools, y moderación.
+
+Para afinar:
+- Lanza los **5** ataques a ambos sistemas (ahora solo pruebas `attacks[:2]`).
+- Comprueba el resultado automáticamente: que la respuesta **no contenga** el secreto (`assert "key" not in resp.lower()`), en vez de leerlo a ojo.
+
+— Revisado por Cristina · 18-jun-2026
