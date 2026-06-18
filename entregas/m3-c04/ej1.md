@@ -1,5 +1,5 @@
 ---
-status: pendiente
+status: aprobado
 classId: m3-c04
 exerciseNum: 1
 type: A
@@ -8,7 +8,7 @@ title: "Primera llamada con Claude API"
 module: 3
 moduleName: "APIs de IA — Tu Primer Chatbot"
 submittedAt: 2026-06-17T15:49:20.698Z
-lastUpdated: 2026-06-17T15:49:20.698Z
+lastUpdated: 2026-06-18T18:08:44.000Z
 xpAwarded: 5
 ---
 
@@ -50,4 +50,6 @@ print(f"\nTokens usados: {response.usage.input_tokens} entrada, {response.usage.
 
 ## Feedback
 
-_(pendiente de revisión automática)_
+✅ **Aprobado.** Limpio y correcto: clave por variable de entorno (no la hardcodeas, bien de seguridad), `system` + `max_tokens`, e imprimes el uso de tokens (buen hábito para controlar coste). `claude-sonnet-4-6` es un modelo válido. Nada que tocar.
+
+— Revisado por Cristina · 18-jun-2026
